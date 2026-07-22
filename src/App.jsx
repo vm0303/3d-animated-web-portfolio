@@ -6,10 +6,18 @@ import Contact from './components/contact/Contact'
 const App = () => {
   return (
     <div className='container'>
+      <section id="#hero">
       <Hero/>
-      <About/>
-      <Portfolio/>
-      <Contact/>
+      </section>
+      <section id="#about">
+        <About/>
+      </section>
+      <section id="#portfolio">
+        <Portfolio/>
+      </section>
+      <section id="#contact">
+        <Contact/>
+      </section>
     </div>
   )
 }
