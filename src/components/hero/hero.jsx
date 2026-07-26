@@ -1,33 +1,59 @@
-import "./hero.css"
-import { motion } from "framer-motion"
-import Speech from "./Speech"
+import "./hero.css";
+import { motion } from "motion/react";
+import Speech from "./Speech";
+
+const certificationsVariants = {
+  initial: {
+    x: -100,
+    opacity: 0,
+  },
+  animate: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      duration: 1,
+      staggerChildren: 0.4,
+    },
+  },
+};
+
 const Hero = () => {
   return (
     <div className='hero'>
       <div className="heroSection left">
         {/* TITLE */}
-        <h1 className="heroTitle">Hey There, <br /><span>I'm Vishal!</span></h1>
-        {/* SOCIALS */}
-        <div className="certifications">
-          <h2>Certifications</h2>
-          <p>Click to verify on Credly</p>
-          <div className="certificationsImages">
+        <motion.h1 
+        initial={{ y: -400, opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        transition={{ duration: 1 }}
+        className="heroTitle">
+          Hey There, <br /><span>I'm Vishal!</span></motion.h1>
+        {/* CERTIFICATIONS */}
+        <motion.div 
+          variants={certificationsVariants} 
+          initial="initial" 
+          animate="animate" 
+          className="certifications">
+
+          <motion.h2>My certifications</motion.h2>
+          <motion.p>Click to verify on Credly</motion.p>
+          <motion.div variants={certificationsVariants} className="certificationsImages">
             <a href="https://www.credly.com/badges/c4fe3356-aa55-4677-af31-f441984ae352" target="_blank" rel="noreferrer">
-              <img src="/ibm.png" alt="IBM Java Certification" title="IBM Java Certification" />
+              <motion.img variants={certificationsVariants} src="/ibm.png" alt="IBM Java Certification" title="IBM Java Certification" />
             </a>
             <a href="https://www.credly.com/badges/dc54d9be-8484-4569-9a73-e6c514391d4e" target="_blank" rel="noreferrer">
-              <img src="/google.png" alt="Google AI Professional Certification" title="Google AI Professional Certification" />
+              <motion.img variants={certificationsVariants} src="/google.png" alt="Google AI Professional Certification" title="Google AI Professional Certification" />
             </a>
             <a href="https://www.credly.com/earner/earned/badge/56cd79b9-abe5-4ed9-b89c-09e93faac39d" target="_blank" rel="noreferrer">
-              <img src="/AWS_Cloud.png" alt="AWS Cloud Practitioner Certification" title="AWS Cloud Practitioner Certification" />
+              <motion.img variants={certificationsVariants} src="/AWS_Cloud.png" alt="AWS Cloud Practitioner Certification" title="AWS Cloud Practitioner Certification" />
             </a>
-
-
-
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
         {/* SCROLL SVG */}
-        <a href="#about" className="scroll">
+        <motion.a animate={{ y: [0, 5, 0], opacity: [0, 1, 0]}} 
+        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+        
+        href="#about" className="scroll">
           <svg
             width="50px"
             height="50px"
@@ -54,7 +80,7 @@ const Hero = () => {
             />
           </svg>
 
-        </a>
+        </motion.a>
       </div>
       <div className="heroSection right">
         {/* SOCIALS */}
@@ -107,11 +133,16 @@ const Hero = () => {
                 <polyline points="9 6 18 6 18 15" />
               </svg>
             </div>
-
-
-          </div></a>
+          </div>
+        </a>
       </div>
-    </div>
+      <div className="bg">
+        {/* 3d */}
+        <div className="hImg">
+          <img src="/Hero.png" alt="Hero" title="Hero" />
+        </div>
+      </div>
+    </div >
   )
 }
 

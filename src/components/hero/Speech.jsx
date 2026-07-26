@@ -22,6 +22,10 @@ const Speech = () => {
             1000,
             'I love to travel!',
             1000,
+            'I love to shop!',
+            1000,
+            'I love to watch movies or TV shows!',
+            2000
           ]}
           wrapper="span"
           speed={40}
