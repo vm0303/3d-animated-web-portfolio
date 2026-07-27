@@ -4,7 +4,7 @@ import Speech from "./Speech";
 
 const certificationsVariants = {
   initial: {
-    x: -100,
+    x: -300,
     opacity: 0,
   },
   animate: {
@@ -17,15 +17,30 @@ const certificationsVariants = {
   },
 };
 
+const socialVariants = {
+  initial: {
+    y: -300,
+    opacity: 0,
+  },
+  animate: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 1.5,
+      staggerChildren: 0.2,
+    },
+  },
+};
+
 const Hero = () => {
   return (
     <div className='hero'>
       <div className="heroSection left">
         {/* TITLE */}
         <motion.h1 
-        initial={{ y: -400, opacity: 0 }} 
+        initial={{ y: -300, opacity: 0 }} 
         animate={{ y: 0, opacity: 1 }} 
-        transition={{ duration: 1 }}
+        transition={{ duration: 2 }}
         className="heroTitle">
           Hey There, <br /><span>I'm Vishal!</span></motion.h1>
         {/* CERTIFICATIONS */}
@@ -50,7 +65,7 @@ const Hero = () => {
           </motion.div>
         </motion.div>
         {/* SCROLL SVG */}
-        <motion.a animate={{ y: [0, 5, 0], opacity: [0, 1, 0]}} 
+        <motion.a animate={{ y: [0, 5], opacity: [0, 1, 0]}} 
         transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
         
         href="#about" className="scroll">
@@ -84,25 +99,25 @@ const Hero = () => {
       </div>
       <div className="heroSection right">
         {/* SOCIALS */}
-        <div className="socials">
-          <a href="https://github.com/vm0303" target="_blank" rel="noreferrer">
+        <motion.div variants={socialVariants} initial="initial" animate="animate" className="socials">
+          <motion.a variants={socialVariants} href="https://github.com/vm0303" target="_blank" rel="noreferrer">
             <img src="/github.png" alt="GitHub" title="GitHub" />
-          </a>
-          <a href="https://www.linkedin.com/in/vishal-madhav/" target="_blank" rel="noreferrer">
+          </motion.a>
+          <motion.a variants={socialVariants} href="https://www.linkedin.com/in/vishal-madhav/" target="_blank" rel="noreferrer">
             <img src="/linkedin.png" alt="LinkedIn" title="LinkedIn" />
-          </a>
-          <a href="https://www.instagram.com/vmadhav33/" target="_blank" rel="noreferrer">
+          </motion.a>
+          <motion.a variants={socialVariants} href="https://www.instagram.com/vmadhav33/" target="_blank" rel="noreferrer">
             <img src="/instagram.png" alt="Instagram" title="Instagram" />
-          </a>
+          </motion.a>
           <div className="socialsTextContainer">
             <div className="socialsText">FOLLOW ME</div>
           </div>
-        </div>
+        </motion.div>
         {/* BUBBLE */}
         <Speech />
         {/* CONTACT ME BUTTON */}
-        <a href="/#contact" className="contactButtonLink">
-          <div className="contactButton">
+        <motion.a href="/#contact" className="contactButtonLink" animate={{ x:[200,0],opacity:[0,1]}} transition={{ duration: 2 }}>
+          <motion.div className="contactButton" animate={{ rotate: [0, 360] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>
             <svg viewBox="0 0 200 200" width="150" height="150">
               <circle cx="100" cy="100" r="90" fill="#010134" />
               <path
@@ -133,8 +148,8 @@ const Hero = () => {
                 <polyline points="9 6 18 6 18 15" />
               </svg>
             </div>
-          </div>
-        </a>
+          </motion.div>
+        </motion.a>
       </div>
       <div className="bg">
         {/* 3d */}
