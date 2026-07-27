@@ -2,6 +2,7 @@
     height: 100%;
     overflow: hidden;
     display: flex;
+    position: relative;
 }
 
 .bg {
@@ -227,7 +228,7 @@
 
 @media (max-width: 1024px) {
     .bg {
-        height: 50%;
+        height: 55%;
     }
 
     .heroTitle {
@@ -262,12 +263,248 @@
     }
 
     .contactButton>svg {
-        width: 120px;
-        height: 120px;
+        width: 105px;
+        height: 105px;
     }
 
     .arrow svg {
+        width: 35px;
+        height: 35px;
+    }
+
+    .socials {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .socials img {
+        width: 25px;
+        height: 25px;
+    }
+
+    .socialsTextContainer {
+        width: 25px;
+        height: 25px;
+    }
+
+    .socialsText {
+        font-size: 16px;
+        transform: translateY(-25px);
+    }
+}
+
+@media (max-width: 768px) {
+
+    .hero {
+        flex-direction: column;
+    }
+
+    .bg {
+        height: 60%;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 36px;
+    }
+
+    .heroTitle {
+        font-size: 48px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 20px;
+    }
+
+    .certifications p {
+        font-size: 14px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+    }
+
+    .certificationsImages img {
         width: 40px;
         height: 40px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+        gap: 20px;
+    }
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .bubbleContainer {
+        width: 60%;
+        align-self: center;
+        margin-top: -45px;
+    }
+
+    .bubble {
+        font-size: 12px;
+        padding: 16px;
+    }
+
+    .scroll {
+        margin-bottom: 75px;
+    }
+}
+
+/* Large Phones & Phablets */
+@media (max-width: 576px) {
+    .heroTitle {
+        font-size: 40px;
+        margin-top: 30px;
+    }
+
+    .heroSection.left {
+        gap: 28px;
+    }
+
+    .certifications h2 {
+        font-size: 18px;
+    }
+
+    .certifications p {
+        font-size: 12px;
+        margin: 10px 0;
+    }
+
+    .certificationsImages img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .bubbleContainer {
+       
+        display: none;
+    }
+
+
+    .contactButton > svg {
+        width: 85px;
+        height: 85px;
+    }
+
+    .arrow svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .socials {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .socials img {
+        width: 22px;
+        height: 22px;
+    }
+
+    .socialsTextContainer {
+        width: 22px;
+        height: 22px;
+    }
+
+    .socialsText {
+        font-size: 14px;
+        transform: translateY(-22px);
+    }
+}
+
+/* Standard Mobile Phones */
+@media (max-width: 480px) {
+    .heroTitle {
+        font-size: 34px;
+        margin-top: 20px;
+    }
+
+    .heroSection.left {
+        gap: 20px;
+    }
+
+    .certifications p {
+        display: none;
+    }
+
+    .certificationsImages img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .scroll {
+        display: none;
+    }
+
+    .bubbleContainer {
+        width: 85%;
+    }
+
+    .bubble {
+        font-size: 11px;
+        padding: 10px;
+    }
+
+    .contactButton > svg {
+        width: 75px;
+        height: 75px;
+    }
+
+    .arrow svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Small / Compact Mobile Phones */
+@media (max-width: 360px) {
+    .heroTitle {
+        font-size: 28px;
+    }
+
+    .heroSection.left {
+        gap: 12px;
+    }
+
+    .certifications {
+        display: none;
+    }
+
+    .bubbleContainer {
+        width: 90%;
+    }
+
+    .bubble {
+        font-size: 10px;
+        padding: 8px;
+    }
+
+    .contactButton > svg {
+        width: 65px;
+        height: 65px;
+    }
+
+    .arrow svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .socials {
+        display: none;
     }
 }
