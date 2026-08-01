@@ -1,8 +1,8 @@
 import { TypeAnimation } from "react-type-animation"
 import { motion } from "motion/react";
-const Speech = () => {
+const Speech = ({ variants }) => {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.7, ease: "easeOut" }} className='bubbleContainer'>
+    <motion.div variants={variants} initial="initial" animate="animate" className='bubbleContainer'>
       <div className='bubble'>
         <TypeAnimation
           sequence={[

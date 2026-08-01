@@ -3,8 +3,13 @@
     overflow: hidden;
     display: flex;
     position: relative;
+    /* push content below the notch / status bar on iOS when viewport-fit=cover */
+    padding-top: env(safe-area-inset-top);
 }
 
+/* Fixed full-cover backdrop layer. Height is intentionally never overridden
+   in media queries — sizing/centering of the hero image is controlled
+   solely by .hImg below to avoid compounding two percentage values. */
 .bg {
     position: absolute;
     top: 0;
@@ -173,7 +178,7 @@
     justify-content: center;
 }
 
-@media (max-width: 1536px) {
+@media (min-width: 1280px) and (max-width: 1536px) {
     .heroTitle {
         font-size: 85px;
     }
@@ -185,17 +190,7 @@
     }
 }
 
-@media (max-width: 1280px) {
-    .bg {
-        height: 60%;
-        top: auto;
-        bottom: 0;
-    }
-
-    .hImg {
-        height: 100%;
-    }
-
+@media (min-width: 1024px) and (max-width: 1280px) {
     .heroTitle {
         font-size: 88px;
     }
@@ -220,17 +215,11 @@
     }
 
     .hImg {
-
-        height: 90%;
-
+        height: 55%;
     }
 }
 
-@media (max-width: 1024px) {
-    .bg {
-        height: 55%;
-    }
-
+@media (min-width: 768px) and (max-width: 1024px) {
     .heroTitle {
         font-size: 72px;
     }
@@ -257,9 +246,7 @@
     }
 
     .hImg {
-
-        height: 80%;
-
+        height: 45%;
     }
 
     .contactButton>svg {
@@ -293,14 +280,14 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 640px) and (max-width: 768px) {
 
     .hero {
         flex-direction: column;
     }
 
-    .bg {
-        height: 60%;
+    .hImg {
+        height: 42%;
     }
 
     .heroSection {
@@ -322,11 +309,11 @@
     }
 
     .certifications h2 {
-        font-size: 20px;
+        font-size: 25px;
     }
 
     .certifications p {
-        font-size: 14px;
+        font-size: 18px;
     }
 
     .certificationsImages {
@@ -334,80 +321,1196 @@
     }
 
     .certificationsImages img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .scroll>svg {
+        transform: translateY(-5px);
+    }
+
+    .heroSection.right {
+        justify-content: end;
+
+    }
+
+
+    .contactButton>svg {
+        width: 75px;
+        height: 75px;
+
+    }
+
+    .arrow svg {
+        width: 35px;
+        height: 35px;
+    }
+
+    .socials {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .socials img {
+        width: 25px;
+        height: 25px;
+    }
+
+    .socialsTextContainer {
+        width: 25px;
+        height: 25px;
+    }
+
+    .bubbleContainer {
+        display: none;
+    }
+
+
+}
+
+@media (min-width: 600px) and (max-width: 640px) {
+    .hImg {
+        height: 40%;
+    }
+}
+
+@media (max-width: 600px) {
+    .hImg {
+        height: 38%;
+    }
+}
+
+
+
+
+
+
+/* ═══════════════════════════════════════════════
+   PORTRAIT
+   ═══════════════════════════════════════════════ */
+
+
+
+
+
+
+/*DONE - NEXT*/
+@media (min-width: 320px) and (max-width: 359px) and (min-height: 449px) and (max-height: 568px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .heroTitle {
+        font-size: 25px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 14px;
+    }
+
+    .certifications p {
+        font-size: 12px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .certificationsImages img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .scroll>svg {
+        transform: translateY(-1px);
+        width: 30px;
+        height: 30px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+    .contactButton>svg {
+        width: 65px;
+        height:65px;
+    }
+
+    .arrow {
+        width: 65px;
+        height: 65px;
+    }
+
+    .arrow svg {
+        width: 25px;
+        height: 25px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 5px;
+    }
+
+    .socials img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .socialsTextContainer {
+        width: 18px;
+        height: 18px;
+    }
+
+    .socialsText {
+        font-size: 11px;
+        transform: translateY(-18px);
+    }
+
+    .bubbleContainer {
+        display: none;
+    }
+
+
+    .hImg {
+        height: 31%;
+    }
+
+}
+
+
+/*DONE - NEXT*/
+@media (min-width: 360px) and (max-width: 412px) and (min-height: 460px) and (max-height: 640px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .heroTitle {
+        font-size: 25px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 14px;
+    }
+
+    .certifications p {
+        font-size: 10px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .certificationsImages img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .scroll>svg {
+        transform: translateY(-10px);
+        width: 30px;
+        height: 30px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+
+    .contactButton>svg {
+        width: 70px;
+        height:70px;
+    }
+
+    .arrow {
+        width: 70px;
+        height: 70px;
+    }
+
+    .arrow svg {
+        width: 25px;
+        height: 25px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 6px;
+    }
+
+    .socials img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .socialsTextContainer {
+        width: 15px;
+        height: 15px;
+    }
+
+    .socialsText {
+        font-size: 10px;
+        transform: translateY(-15px);
+    }
+
+    .bubbleContainer {
+        display: none;
+    }
+
+    .hImg {
+        height: 36%;
+       
+    }
+}
+
+
+@media (min-width: 360px) and (max-width: 412px) and (min-height: 592px) and (max-height: 720px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 22px;
+    }
+
+    .heroTitle {
+        font-size: 27px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 16px;
+    }
+
+    .certifications p {
+        font-size: 12px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .certificationsImages img {
+        width: 33px;
+        height: 33px;
+    }
+
+    .scroll>svg {
+        transform: translateY(-5px);
+        width: 33px;
+        height: 33px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+
+    .contactButton>svg {
+        width: 73px;
+        height:73px;
+    }
+
+    .arrow {
+        width: 73px;
+        height: 73px;
+    }
+
+    .arrow svg {
+        width: 27px;
+        height: 27px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 6px;
+    }
+
+    .socials img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .socialsTextContainer {
+        width: 18px;
+        height: 18px;
+    }
+
+    .socialsText {
+        font-size: 11px;
+        transform: translateY(-18px);
+    }
+
+    .bubbleContainer {
+        display: none;
+    }
+
+    .hImg {
+        height: 36%;
+       
+    }
+}
+
+@media (min-width: 360px) and (max-width: 412px) and (min-height: 612px) and (max-height: 740px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .heroTitle {
+        font-size: 26px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 15px;
+    }
+
+    .certifications p {
+        font-size: 11px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 9px;
+    }
+
+    .certificationsImages img {
+        width: 31px;
+        height: 31px;
+    }
+
+    .scroll>svg {
+        transform: translateY(5px);
+        width: 31px;
+        height: 31px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+
+    .contactButton>svg {
+        width: 71px;
+        height:71px;
+    }
+
+    .arrow {
+        width: 71px;
+        height: 71px;
+    }
+
+    .arrow svg {
+        width: 26px;
+        height: 26px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 7px;
+    }
+
+    .socials img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .socialsTextContainer {
+        width: 16px;
+        height: 16px;
+    }
+
+    .socialsText {
+        font-size: 11px;
+        transform: translateY(-16px);
+    }
+
+    .bubbleContainer {
+        display: none;
+    }
+
+    .hImg {
+        height: 36%;
+       
+    }
+}
+
+@media (min-width: 360px) and (max-width: 388px) and (min-height: 619px) and (max-height: 748px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 22px;
+    }
+
+    .heroTitle {
+        font-size: 27px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 16px;
+    }
+
+    .certifications p {
+        font-size: 12px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .certificationsImages img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .scroll>svg {
+        transform: translateY(-10px);
+        width: 32px;
+        height: 32px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+
+    .contactButton>svg {
+        width: 72px;
+        height:72px;
+    }
+
+    .arrow {
+        width: 72px;
+        height: 72px;
+    }
+
+    .arrow svg {
+        width: 27px;
+        height: 27px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 8px;
+    }
+
+    .socials img {
+        width: 17px;
+        height: 17px;
+    }
+
+    .socialsTextContainer {
+        width: 17px;
+        height: 17px;
+    }
+
+    .socialsText {
+        font-size: 12px;
+        transform: translateY(-17px);
+    }
+
+    .bubbleContainer {
+        display: none;
+    }
+
+    .hImg {
+        height: 35%;
+       
+    }
+}
+
+@media (min-width: 360px) and (max-width: 412px) and (min-height: 632px) and (max-height: 771px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .heroTitle {
+        font-size: 28px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 17px;
+    }
+
+    .certifications p {
+        font-size: 13px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .certificationsImages img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .scroll>svg {
+        transform: translateY(10px);
+        width: 32px;
+        height: 32px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+
+    .contactButton>svg {
+        width: 72px;
+        height:72px;
+    }
+
+    .arrow {
+        width: 72px;
+        height: 72px;
+    }
+
+    .arrow svg {
+        width: 27px;
+        height: 27px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 8px;
+    }
+
+    .socials img {
+        width: 17px;
+        height: 17px;
+    }
+
+    .socialsTextContainer {
+        width: 17px;
+        height: 17px;
+    }
+
+    .socialsText {
+        font-size: 12px;
+        transform: translateY(-17px);
+    }
+
+    .bubbleContainer {
+        display: none;
+    }
+
+    .hImg {
+        height: 35%;
+       
+    }
+}
+
+/* Newer mid-range Android — Samsung S20/S23/S25, Huawei P30/Mate */
+/*DONE*/
+@media (min-width: 360px) and (max-width: 374px) and (min-height: 761px) and (max-height: 800px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .heroTitle {
+        font-size: 32px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 20px;
+    }
+
+    .certifications p {
+        font-size: 16px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 11px;
+    }
+
+    .certificationsImages img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .scroll>svg {
+        transform: translateY(90px);
         width: 40px;
         height: 40px;
     }
 
     .heroSection.right {
         justify-content: end;
-        gap: 20px;
     }
+
+    .contactButton>svg {
+        width: 85px;
+        height:85px;
+    }
+
+    .arrow {
+        width: 75px;
+        height: 75px;
+    }
+
+    .arrow svg {
+        width: 30px;
+        height: 30px;
+        transform: translateY(-2px);
+    }
+
 
     .socials {
         position: absolute;
         top: 0;
         right: 0;
+        padding: 10px;
+    }
+
+    .socials img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .socialsTextContainer {
+        width: 18px;
+        height: 18px;
+    }
+
+    .socialsText {
+        font-size: 14px;
+        transform: translateY(-18px);
     }
 
     .bubbleContainer {
-        width: 60%;
+       display: flex;
+        width: 95%;
+        transform: translateY(-265px);
         align-self: center;
-        margin-top: -45px;
-    }
 
+    }
     .bubble {
         font-size: 12px;
         padding: 16px;
     }
 
-    .scroll {
-        margin-bottom: 75px;
+    .hImg {
+        height: 33%;
+        
     }
 }
 
-/* Large Phones & Phablets */
-@media (max-width: 576px) {
-    .heroTitle {
-        font-size: 40px;
-        margin-top: 30px;
+
+@media (min-width: 360px) and (max-width: 390px) and (min-height: 761px) and (max-height: 844px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
     }
 
     .heroSection.left {
-        gap: 28px;
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .heroTitle {
+        font-size: 32px;
+    }
+
+    .certifications {
+        width: 100%;
     }
 
     .certifications h2 {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .certifications p {
-        font-size: 12px;
-        margin: 10px 0;
+        font-size: 16px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 11px;
     }
 
     .certificationsImages img {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
     }
 
-    .bubbleContainer {
-       
-        display: none;
+    .scroll>svg {
+        transform: translateY(90px);
+        width: 40px;
+        height: 40px;
     }
 
+    .heroSection.right {
+        justify-content: end;
+    }
 
-    .contactButton > svg {
+    .contactButton>svg {
         width: 85px;
-        height: 85px;
+        height:85px;
+    }
+
+    .arrow {
+        width: 75px;
+        height: 75px;
     }
 
     .arrow svg {
-        width: 28px;
-        height: 28px;
+        width: 30px;
+        height: 30px;
+        transform: translateY(-2px);
     }
 
+
     .socials {
-        gap: 8px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 10px;
+    }
+
+    .socials img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .socialsTextContainer {
+        width: 18px;
+        height: 18px;
+    }
+
+    .socialsText {
+        font-size: 14px;
+        transform: translateY(-18px);
+    }
+
+    .bubbleContainer {
+       display: flex;
+        width: 95%;
+        transform: translateY(-265px);
+        align-self: center;
+
+    }
+    .bubble {
+        font-size: 12px;
+        padding: 16px;
+    }
+
+    .hImg {
+        height: 33%;
+        
+    }
+}
+
+/*DONE*/
+/* iPhone 6, 7, 8, SE (2020/2022) */
+@media (min-width: 375px) and (max-width: 389px) and (min-height: 667px) and (max-height: 811px)  {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .heroTitle {
+        font-size: 36px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 20px;
+    }
+
+    .certifications p {
+        font-size: 16px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 11px;
+    }
+
+    .certificationsImages img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .scroll>svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+    .contactButton>svg {
+        width: 85px;
+        height:85px;
+    }
+
+    .arrow {
+        width: 75px;
+        height: 75px;
+    }
+
+    .arrow svg {
+        width: 30px;
+        height: 30px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 8px;
+    }
+
+    .socials img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .socialsTextContainer {
+        width: 20px;
+        height: 20px;
+    }
+
+    .socialsText {
+        font-size: 12px;
+        transform: translateY(-20px);
+    }
+
+    .bubbleContainer {
+       display: none;
+
+    }
+    
+
+    .hImg {
+        height: 35%;
+        
+    }
+}
+
+/*Done*/
+/* iPhone X, 11 Pro */
+@media (min-width: 375px) and (max-width: 389px) and (min-height: 812px) and (max-height: 843px)
+ {
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .heroTitle {
+        font-size: 36px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 23px;
+    }
+
+    .certifications p {
+        font-size: 19px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 14px;
+    }
+
+    .certificationsImages img {
+        width: 41px;
+        height: 41px;
+    }
+
+    .scroll>svg {
+        transform: translateY(90px);
+        width: 43px;
+        height: 43px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+    .contactButton>svg {
+        width: 85px;
+        height:85px;
+    }
+
+    .arrow {
+        width: 75px;
+        height: 75px;
+    }
+
+    .arrow svg {
+        width: 30px;
+        height: 30px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 8px;
+    }
+
+    .socials img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .socialsTextContainer {
+        width: 20px;
+        height: 20px;
+    }
+
+    .socialsText {
+        font-size: 15px;
+        transform: translateY(-20px);
+    }
+
+    .bubbleContainer {
+       display: flex;
+        width: 95%;
+        transform: translateY(-265px);
+        align-self: center;
+
+    }
+    .bubble {
+        font-size: 12px;
+        padding: 16px;
+    }
+
+    .hImg {
+        height: 33%;
+        
+    }
+}
+
+/* iPhone 12, 13, 14, 17e */
+@media (min-width: 390px)  and (max-width: 392px) and (min-height: 844px) and (max-height:874px)
+{
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .heroTitle {
+        font-size: 34px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 22px;
+    }
+
+    .certifications p {
+        font-size: 18px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .certificationsImages img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .scroll>svg {
+        transform: translateY(100px);
+        width: 44px;
+        height: 44px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+    .contactButton>svg {
+        width: 85px;
+        height:85px;
+    }
+
+    .arrow {
+        width: 75px;
+        height: 75px;
+    }
+
+    .arrow svg {
+        width: 30px;
+        height: 30px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
         padding: 10px;
     }
 
@@ -422,89 +1525,233 @@
     }
 
     .socialsText {
-        font-size: 14px;
+        font-size: 17px;
         transform: translateY(-22px);
-    }
-}
-
-/* Standard Mobile Phones */
-@media (max-width: 480px) {
-    .heroTitle {
-        font-size: 34px;
-        margin-top: 20px;
-    }
-
-    .heroSection.left {
-        gap: 20px;
-    }
-
-    .certifications p {
-        display: none;
-    }
-
-    .certificationsImages img {
-        width: 32px;
-        height: 32px;
-    }
-
-    .scroll {
-        display: none;
     }
 
     .bubbleContainer {
-        width: 85%;
-    }
+       display: flex;
+        width: 95%;
+        transform: translateY(-265px);
+        align-self: center;
 
+    }
     .bubble {
-        font-size: 11px;
-        padding: 10px;
+        font-size: 12px;
+        padding: 16px;
     }
 
-    .contactButton > svg {
-        width: 75px;
-        height: 75px;
-    }
-
-    .arrow svg {
-        width: 24px;
-        height: 24px;
+    .hImg {
+        height: 33%;
+        
     }
 }
 
-/* Small / Compact Mobile Phones */
-@media (max-width: 360px) {
-    .heroTitle {
-        font-size: 28px;
+/* iPhone 14 Pro, 15, 15 Pro, 16 — Pixel 3/4a/5/6, Xiaomi */
+@media (min-width: 393px) and (max-width: 414px) and (min-height: 875px) and (max-height: 906px)
+{
+    .hero {
+        flex-direction: column;
+    }
+
+    .heroSection {
+        width: 100%;
     }
 
     .heroSection.left {
-        gap: 12px;
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .heroTitle {
+        font-size: 32px;
     }
 
     .certifications {
-        display: none;
+        width: 100%;
     }
 
-    .bubbleContainer {
-        width: 90%;
+    .certifications h2 {
+        font-size: 20px;
     }
 
-    .bubble {
-        font-size: 10px;
-        padding: 8px;
+    .certifications p {
+        font-size: 16px;
     }
 
-    .contactButton > svg {
-        width: 65px;
-        height: 65px;
+    .certificationsImages {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .certificationsImages img {
+        width: 42px;
+        height: 42px;
+    }
+
+    .scroll>svg {
+        transform: translateY(100px);
+        width: 42px;
+        height: 42px;
+    }
+
+    .heroSection.right {
+        justify-content: end;
+    }
+
+    .contactButton>svg {
+        width: 99px;
+        height:90px;
+    }
+
+    .arrow {
+        width: 80px;
+        height: 80px;
     }
 
     .arrow svg {
+        width: 40px;
+        height: 40px;
+        transform: translateY(-2px);
+    }
+
+
+    .socials {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 7px;
+    }
+
+    .socials img {
         width: 20px;
         height: 20px;
     }
 
-    .socials {
-        display: none;
+    .socialsTextContainer {
+        width: 20px;
+        height: 20px;
+    }
+
+    .socialsText {
+        font-size: 15px;
+        transform: translateY(-20px);
+    }
+
+    .bubbleContainer {
+       display: flex;
+        width: 95%;
+        transform: translateY(-265px);
+        align-self: center;
+
+    }
+    .bubble {
+        font-size: 12px;
+        padding: 13px;
+    }
+
+    .hImg {
+        height: 33%;
+        
     }
 }
+
+/* Pixel 8 Pro, 9 Pro XL */
+@media (max-width: 448px) and (max-height: 997px) {}
+
+/* Common Android flagship — Pixel 6/7/8, OnePlus 8/9, Samsung A/Note */
+@media (max-width: 412px) and (max-height: 919px) {}
+
+/* iPhone 6s Plus, 7 Plus, 8 Plus */
+@media (max-width: 414px) and (max-height: 736px) {}
+
+/* iPhone 11, XR, XS Max */
+@media (max-width: 414px) and (max-height: 896px) {}
+
+/* iPhone 12/13 Pro Max, 14 Plus, 15 Plus, 16 Plus */
+@media (max-width: 430px) and (max-height: 932px) {}
+
+/* iPhone 16 Pro Max, 17 Pro Max */
+@media (max-width: 440px) and (max-height: 956px) {}
+
+
+/* ═══════════════════════════════════════════════
+   LANDSCAPE
+   ═══════════════════════════════════════════════ */
+
+/* iPhone 5, SE (1st gen) landscape */
+@media (max-width: 568px) and (max-height: 320px) {}
+
+/* Common Android landscape — Samsung S6-S9, LG, HTC */
+@media (max-width: 640px) and (max-height: 360px) {}
+
+/* Newer mid-range Android landscape */
+@media (max-width: 800px) and (max-height: 360px) {}
+
+/* iPhone 6, 7, 8 landscape */
+@media (max-width: 667px) and (max-height: 375px) {}
+
+/* iPhone X, 11 Pro landscape */
+@media (max-width: 812px) and (max-height: 375px) {}
+
+/* iPhone 12, 13, 14 landscape */
+@media (max-width: 844px) and (max-height: 390px) {}
+
+/* iPhone 14 Pro, 15, 16 landscape */
+@media (max-width: 875px) and (max-height: 393px) {}
+
+/* Common Android flagship landscape */
+@media (max-width: 919px) and (max-height: 412px) {}
+
+/* iPhone 11, XR landscape */
+@media (max-width: 896px) and (max-height: 414px) {}
+
+/* iPhone 15 Plus, 16 Plus landscape */
+@media (max-width: 932px) and (max-height: 430px) {}
+
+/* iPhone 16 Pro Max, 17 Pro Max landscape */
+@media (max-width: 956px) and (max-height: 440px) {}
+
+
+/* ═══════════════════════════════════════════════
+   TABLET PORTRAIT
+   ═══════════════════════════════════════════════ */
+
+/* iPad Mini, Samsung Fold */
+@media (max-width: 768px) and (max-height: 1024px) {}
+
+/* iPad 10.2" */
+@media (max-width: 810px) and (max-height: 1080px) {}
+
+/* iPad Air 2020, iPad Air 11" M2 */
+@media (max-width: 820px) and (max-height: 1180px) {}
+
+/* iPad Air, iPad Pro 11" */
+@media (max-width: 834px) and (max-height: 1194px) {}
+
+/* iPad Pro 12.9" */
+@media (max-width: 1024px) and (max-height: 1366px) {}
+
+
+/* ═══════════════════════════════════════════════
+   TABLET LANDSCAPE
+   ═══════════════════════════════════════════════ */
+
+/* iPad Mini landscape */
+@media (max-width: 1024px) and (max-height: 768px) {}
+
+/* iPad mini 7 (2024) landscape */
+@media (max-width: 1133px) and (max-height: 744px) {}
+
+/* iPad Air 2020, iPad Air 11" M2 landscape */
+@media (max-width: 1180px) and (max-height: 820px) {}
+
+/* iPad Pro 11" landscape */
+@media (max-width: 1194px) and (max-height: 834px) {}
+
+/* iPad Pro 12.9", Surface, MacBook Air 13" landscape */
+@media (max-width: 1366px) and (max-height: 1024px) {}
+
+/* iPad Pro 13" M4 landscape */
+@media (max-width: 1376px) and (max-height: 1032px) {}
