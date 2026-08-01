@@ -6,6 +6,8 @@ const Speech = ({ variants }) => {
       <div className='bubble'>
         <TypeAnimation
           sequence={[
+            'I love to watch movies or TV shows!',
+            1000,
             'I love to play video games!',
             1000,
             'I love to play basketball!',
@@ -23,8 +25,6 @@ const Speech = ({ variants }) => {
             'I love to travel!',
             1000,
             'I love to shop!',
-            1000,
-            'I love to watch movies or TV shows!',
             2000
           ]}
           wrapper="span"
