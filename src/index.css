@@ -99,6 +99,78 @@ section {
 }
 
 
+@media (min-width: 869px) {
+  .container {
+    max-width: 869px;
+  }
+}
+
+
+@media (min-width: 873px) {
+  .container {
+    max-width: 873px;
+  }
+}
+
+
+@media (min-width: 896px) {
+  .container {
+    max-width: 896px;
+  }
+}
+
+
+@media (min-width: 905px) {
+  .container {
+    max-width: 905px;
+  }
+}
+@media (min-width: 924px) {
+  .container {
+    max-width: 924px;
+  }
+}
+
+@media (min-width: 926px) {
+  .container {
+    max-width: 926px;
+  }
+}
+
+@media (min-width: 932px) {
+  .container {
+    max-width: 932px;
+  }
+}
+
+@media (min-width: 952px) {
+  .container {
+    max-width: 952px;
+  }
+}
+
+
+
+
+@media (min-width: 960px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 984px) {
+  .container {
+    max-width: 984px;
+  }
+}
+
+@media (min-width: 998px) {
+  .container {
+    max-width: 998px;
+  }
+}
+
+
 @media (min-width: 1024px)  {
   .container {
     max-width: 1024px;

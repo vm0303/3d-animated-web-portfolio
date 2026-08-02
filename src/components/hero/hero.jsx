@@ -93,13 +93,16 @@ const socialVariants = {
   },
 };
 
+const mobileMediaQuery =
+  "(max-width: 884px) and (max-height: 1104px) and (min-height: 1025px), (max-width: 820px) and (max-height: 1180px) and (min-height: 1081px), (max-width: 984px) and (max-height: 1092px) and (min-height: 1025px)";
+
 const Hero = () => {
   const [isMobile, setIsMobile] = useState(
-    () => window.matchMedia("(max-width: 768px)").matches
+    () => window.matchMedia(mobileMediaQuery).matches
   );
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
+    const mq = window.matchMedia(mobileMediaQuery);
     const handler = (e) => setIsMobile(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
