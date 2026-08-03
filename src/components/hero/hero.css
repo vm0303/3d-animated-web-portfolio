@@ -3804,6 +3804,596 @@
         transform: translateY(-17px);
     }
 }
+/*DONE*/
+@media (max-width: 600px) and (max-height: 960px) and (min-height: 920px)  
+{
+
+    .hero {
+        flex-direction: column;
+    }
+
+    .bg {
+        height: 55%;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 35px;
+    }
+
+    .heroTitle {
+        font-size: 48px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 30px;
+    }
+
+    .certifications p {
+        font-size: 20px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+    }
+
+    .certificationsImages img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .scroll >svg {
+        width: 50px;
+        height: 50px;
+        transform: translateY(75px);
+    }
+
+    .heroSection.right {
+        justify-content: end;
+        gap: 20px;
+    }
+
+     .socials {
+        position: absolute;
+        gap: 20px;
+        padding: 10px;
+        top: 0;
+    }
+
+    .socials img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .socialsTextContainer {
+        width: 32px;
+        height: 32px;
+    }
+
+    .socialsText {
+        font-size: 17px;
+        transform: translateY(-32px);
+    }
+
+    .bubbleContainer {
+        width: 75%;
+        align-self: center;
+        transform: translateY(-125px);
+    }
+
+    .bubble {
+        font-size: 15px;
+        padding: 20px;
+    }
+
+     .contactButton>svg {
+        width: 125px;
+        height: 125px;
+    }
+
+    .arrow svg {
+        width: 45px;
+        height: 45px;
+    }
+
+    
+}
+/*DONE*/
+@media (max-width: 568px) and (max-height: 320px) and (min-height: 280px)  
+ {
+    .bg {
+        height: 57%;
+    }
+
+    .heroSection.left {
+        gap: 15px;
+    }
+
+    .heroTitle {
+        font-size: 27px;
+    }
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 14px;
+    }
+
+    .certifications p {
+        font-size: 12px;
+    }
+
+    .certificationsImages img {
+        width: 32px;
+        height: 32px;
+    }
+    
+
+    .scroll > svg {
+        width: 32px;
+        height: 32px;
+        transform: translateY(15px);
+    }
+
+    .bubbleContainer {
+        width: 82%;
+        transform: translateY(60px);
+
+    }
+    .bubbleContainer img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .bubble {
+        font-size: 8px;
+        padding: 13px;
+
+    }
+
+    .contactButton {
+        margin-top: 70px;
+    }
+   
+  
+    .contactButton>svg {
+        width: 75px;
+        height: 75px;
+    
+        
+    }
+
+    .arrow svg {
+        width: 28px;
+        height: 28px;
+        transform: translateX(-3px);
+
+    }
+
+    .socials {
+        gap: 4px;
+        padding: 7px;
+    }
+
+    .socials img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .socialsTextContainer {
+        width: 15px;
+        height: 15px;
+    }
+
+    .socialsText {
+        font-size: 10px;
+        transform: translateY(-15px);
+    }
+}
+/*DONE*/
+@media (max-width: 540px) and (max-height: 360px) and (min-height: 320px)
+ {
+    .bg {
+        height: 58%;
+    }
+
+    .heroSection.left {
+        gap: 15px;
+    }
+
+    .heroTitle {
+        font-size: 27px;
+    }
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 14px;
+    }
+
+    .certifications p {
+        font-size: 12px;
+    }
+
+    .certificationsImages img {
+        width: 32px;
+        height: 32px;
+    }
+    
+
+    .scroll > svg {
+        width: 32px;
+        height: 32px;
+        transform: translateY(15px);
+    }
+
+    .bubbleContainer {
+        width: 82%;
+        transform: translateY(60px);
+
+    }
+    .bubbleContainer img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .bubble {
+        font-size: 8px;
+        padding: 11px;
+
+    }
+
+    .contactButton {
+        margin-top: 85px;
+    }
+   
+  
+    .contactButton>svg {
+        width: 80px;
+        height: 80px;
+    
+        
+    }
+
+    .arrow svg {
+        width: 30px;
+        height: 30px;
+       
+
+    }
+
+    .socials {
+        gap: 4px;
+        padding: 7px;
+    }
+
+    .socials img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .socialsTextContainer {
+        width: 15px;
+        height: 15px;
+    }
+
+    .socialsText {
+        font-size: 10px;
+        transform: translateY(-15px);
+    }
+}
+/*DONE*/
+@media (max-width: 540px) and (max-height: 960px) and (min-height: 920px)  
+{
+
+    .hero {
+        flex-direction: column;
+    }
+
+    .bg {
+        height: 50%;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .heroTitle {
+        font-size: 45px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 27px;
+    }
+
+    .certifications p {
+        font-size: 17px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+    }
+
+    .certificationsImages img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .scroll >svg {
+        width: 45px;
+        height: 45px;
+        transform: translateY(75px);
+    }
+
+    .heroSection.right {
+        justify-content: end;
+        gap: 20px;
+    }
+
+     .socials {
+        position: absolute;
+        gap: 20px;
+        padding: 8px;
+        top: 0;
+    }
+
+    .socials img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .socialsTextContainer {
+        width: 32px;
+        height: 32px;
+    }
+
+    .socialsText {
+        font-size: 17px;
+        transform: translateY(-32px);
+    }
+
+    .bubbleContainer {
+        width: 75%;
+        align-self: center;
+        transform: translateY(-125px);
+    }
+
+    .bubble {
+        font-size: 15px;
+        padding: 20px;
+
+    }
+
+     .contactButton>svg {
+        width: 125px;
+        height: 125px;
+    }
+
+    .arrow svg {
+        width: 45px;
+        height: 45px;
+    }
+
+    
+}
+/*DONE*/
+@media (max-width: 480px) and (max-height: 320px) and (min-height: 280px)
+ {
+    .bg {
+        height: 52%;
+    }
+
+    .heroSection.left {
+        gap: 15px;
+    }
+
+    .heroTitle {
+        font-size: 26px;
+    }
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 13px;
+    }
+
+    .certifications p {
+        font-size: 11px;
+    }
+
+    .certificationsImages img {
+        width: 30px;
+        height: 30px;
+    }
+    
+
+    .scroll > svg {
+        width: 30px;
+        height: 30px;
+        transform: translateY(10px);
+    }
+
+    .bubbleContainer {
+        width: 87%;
+        transform: translateY(60px);
+
+    }
+    .bubbleContainer img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .bubble {
+        font-size: 7px;
+        padding: 10px;
+
+    }
+
+    .contactButton {
+        margin-top: 75px;
+    }
+   
+  
+    .contactButton>svg {
+        width: 75px;
+        height: 75px;
+    
+        
+    }
+
+    .arrow svg {
+        width: 25px;
+        height: 25px;
+       
+
+    }
+
+    .socials {
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .socials img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .socialsTextContainer {
+        width: 15px;
+        height: 15px;
+    }
+
+    .socialsText {
+        font-size: 10px;
+        transform: translateY(-15px);
+    }
+}
+/*DONE*/
+@media (max-width: 448px) and (max-height: 997px) and (min-height: 970px)
+{
+
+    .hero {
+        flex-direction: column;
+    }
+
+    .bg {
+        height: 50%;
+    }
+
+    .heroSection {
+        width: 100%;
+    }
+
+    .heroSection.left {
+        align-items: center;
+        text-align: center;
+        gap: 35px;
+    }
+
+    .heroTitle {
+        font-size: 48px;
+    }
+
+    .certifications {
+        width: 100%;
+    }
+
+    .certifications h2 {
+        font-size: 30px;
+    }
+
+    .certifications p {
+        font-size: 20px;
+    }
+
+    .certificationsImages {
+        justify-content: center;
+    }
+
+    .certificationsImages img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .scroll >svg {
+        width: 50px;
+        height: 50px;
+        transform: translateY(75px);
+    }
+
+    .heroSection.right {
+        justify-content: end;
+        gap: 20px;
+    }
+
+     .socials {
+        position: absolute;
+        gap: 20px;
+        padding: 10px;
+        top: 0;
+    }
+
+    .socials img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .socialsTextContainer {
+        width: 32px;
+        height: 32px;
+    }
+
+    .socialsText {
+        font-size: 17px;
+        transform: translateY(-32px);
+    }
+
+    .bubbleContainer {
+        width: 75%;
+        align-self: center;
+        transform: translateY(-125px);
+    }
+
+    .bubble {
+        font-size: 15px;
+        padding: 20px;
+    }
+
+     .contactButton>svg {
+        width: 125px;
+        height: 125px;
+    }
+
+    .arrow svg {
+        width: 45px;
+        height: 45px;
+    }
+
+    
+}
+
 
 
 
