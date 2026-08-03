@@ -99,7 +99,8 @@ const mobileMediaQuery =
   "(max-width: 984px) and (max-height: 1092px) and (min-height: 1025px), " +
   "(max-width: 834px)  and (max-height: 1194px) and (min-height: 1085px), " +
   "(max-width: 800px) and (max-height: 1280px) and (min-height: 1180px), " +
-  "(max-width: 768px) and (max-height: 1025px) and (min-height: 1000px)";
+  "(max-width: 768px) and (max-height: 1076px) and (min-height: 1000px), " +
+  "(max-width: 744px) and (max-height: 1133px) and (min-height: 1030px)";
 
 const Hero = () => {
   const [isMobile, setIsMobile] = useState(
