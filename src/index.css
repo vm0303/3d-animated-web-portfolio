@@ -98,6 +98,47 @@ section {
   }
 }
 
+@media (min-width: 834px) {
+  .container {
+    max-width: 834px;
+  }
+}
+
+@media (min-width: 840px) {
+  .container {
+    max-width: 840px;
+  }
+}
+
+@media (min-width: 844px) {
+  .container {
+    max-width: 844px;
+  }
+}
+
+@media (min-width: 846px) {
+  .container {
+    max-width: 846px;
+  }
+}
+
+@media (min-width: 851px) {
+  .container {
+    max-width: 851px;
+  }
+}
+
+@media (min-width: 852px) {
+  .container {
+    max-width: 852px;
+  }
+}
+@media (min-width: 854px) {
+  .container {
+    max-width: 854px;
+  }
+}
+
 
 @media (min-width: 869px) {
   .container {
@@ -113,6 +154,47 @@ section {
 }
 
 
+@media (min-width: 874px) {
+  .container {
+    max-width: 874px;
+  }
+}
+
+@media (min-width: 880px) {
+  .container {
+    max-width: 880px;
+  }
+}
+
+@media (min-width: 883px) {
+  .container {
+    max-width: 883px;
+  }
+}
+
+
+
+@media (min-width: 884px) {
+  .container {
+    max-width: 884px;
+  }
+}
+
+
+@media (min-width: 891px) {
+  .container {
+    max-width: 891px;
+  }
+}
+
+@media (min-width: 892px) {
+  .container {
+    max-width: 892px;
+  }
+}
+
+
+
 @media (min-width: 896px) {
   .container {
     max-width: 896px;
@@ -123,6 +205,43 @@ section {
 @media (min-width: 905px) {
   .container {
     max-width: 905px;
+  }
+}
+
+@media (min-width: 906px) {
+  .container {
+    max-width: 906px;
+  }
+}
+
+
+@media (min-width: 912px) {
+  .container {
+    max-width: 912px;
+  }
+}
+
+@media (min-width: 914px) {
+  .container {
+    max-width: 914px;
+  }
+}
+
+@media (min-width: 915px) {
+  .container {
+    max-width: 915px;
+  }
+}
+
+@media (min-width: 918px) {
+  .container {
+    max-width: 918px;
+  }
+}
+
+@media (min-width: 919px) {
+  .container {
+    max-width: 919px;
   }
 }
 @media (min-width: 924px) {
