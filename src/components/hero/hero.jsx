@@ -66,7 +66,7 @@ const bubbleVariants = {
   initial: { opacity: 0 },
   animate: {
     opacity: 1,
-    transition: { duration: 1, delay:  0.8, ease: "easeOut" },
+    transition: { duration: 1, delay: 0.8, ease: "easeOut" },
   },
 };
 
@@ -94,7 +94,12 @@ const socialVariants = {
 };
 
 const mobileMediaQuery =
-  "(max-width: 884px) and (max-height: 1104px) and (min-height: 1025px), (max-width: 820px) and (max-height: 1180px) and (min-height: 1081px), (max-width: 984px) and (max-height: 1092px) and (min-height: 1025px)";
+  "(max-width: 884px) and (max-height: 1104px) and (min-height: 1025px), " +
+  "(max-width: 820px) and (max-height: 1180px) and (min-height: 1081px), " +
+  "(max-width: 984px) and (max-height: 1092px) and (min-height: 1025px), " +
+  "(max-width: 834px)  and (max-height: 1194px) and (min-height: 1085px), " +
+  "(max-width: 800px) and (max-height: 1280px) and (min-height: 1180px), " +
+  "(max-width: 768px) and (max-height: 1025px) and (min-height: 1000px)";
 
 const Hero = () => {
   const [isMobile, setIsMobile] = useState(
@@ -115,17 +120,17 @@ const Hero = () => {
     <div className='hero'>
       <div className="heroSection left">
         {/* TITLE */}
-        <motion.h1 
-        variants={activeHeroTitleVariants}
-        initial="initial"
-        animate="animate"
-        className="heroTitle">
+        <motion.h1
+          variants={activeHeroTitleVariants}
+          initial="initial"
+          animate="animate"
+          className="heroTitle">
           Hey There, <br /><span>I'm Vishal!</span></motion.h1>
         {/* CERTIFICATIONS */}
-        <motion.div 
-          variants={activeCertVariants} 
-          initial="initial" 
-          animate="animate" 
+        <motion.div
+          variants={activeCertVariants}
+          initial="initial"
+          animate="animate"
           className="certifications">
 
           <motion.h2>My certifications</motion.h2>
@@ -143,10 +148,10 @@ const Hero = () => {
           </motion.div>
         </motion.div>
         {/* SCROLL SVG */}
-        <motion.a animate={{ y: [0, 5], opacity: [0, 1, 0]}} 
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-        
-        href="#about" className="scroll">
+        <motion.a animate={{ y: [0, 5], opacity: [0, 1, 0] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+
+          href="#about" className="scroll">
           <svg
             width="50px"
             height="50px"
@@ -194,7 +199,7 @@ const Hero = () => {
         {/* BUBBLE */}
         <Speech variants={activeBubbleVariants} />
         {/* CONTACT ME BUTTON */}
-        <motion.a href="/#contact" className="contactButtonLink" animate={{ x:[200,0],opacity:[0,1]}} transition={{ duration: 2 }}>
+        <motion.a href="/#contact" className="contactButtonLink" animate={{ x: [200, 0], opacity: [0, 1] }} transition={{ duration: 2 }}>
           <motion.div className="contactButton" animate={{ rotate: [0, 360] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>
             <svg viewBox="0 0 200 200" width="150" height="150">
               <circle cx="100" cy="100" r="90" fill="#010134" />

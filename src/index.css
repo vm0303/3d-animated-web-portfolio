@@ -91,10 +91,87 @@ section {
 
   }
 }
+@media (min-width: 770px) {
+  .container {
+    max-width: 770px;
+
+  }
+}
+
+@media (min-width: 771px) {
+  .container {
+    max-width: 771px;
+
+  }
+}
+
+@media (min-width: 780px) {
+  .container {
+    max-width: 780px;
+
+  }
+}
+
+@media (min-width: 786px) {
+  .container {
+    max-width: 786px;
+
+  }
+}
+
+@media (min-width: 800px) {
+  .container {
+    max-width: 800px;
+  }
+}
+
+@media (min-width: 808px) {
+  .container {
+    max-width: 808px;
+  }
+}
+
+
+@media (min-width: 810px) {
+  .container {
+    max-width: 810px;
+  }
+}
+
+@media (min-width: 812px) {
+  .container {
+    max-width: 812px;
+  }
+}
+
+
+@media (min-width: 816px) {
+  .container {
+    max-width: 816px;
+  }
+}
+
+@media (min-width: 817px) {
+  .container {
+    max-width: 817px;
+  }
+}
 
 @media (min-width: 820px) {
   .container {
     max-width: 820px;
+  }
+}
+
+@media (min-width: 823px) {
+  .container {
+    max-width: 823px;
+  }
+}
+
+@media (min-width: 830px) {
+  .container {
+    max-width: 830px;
   }
 }
 
