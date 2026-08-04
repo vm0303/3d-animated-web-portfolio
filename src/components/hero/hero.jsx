@@ -97,11 +97,21 @@ const mobileMediaQuery =
   "(max-width: 884px) and (max-height: 1104px) and (min-height: 1025px), " +
   "(max-width: 820px) and (max-height: 1180px) and (min-height: 1081px), " +
   "(max-width: 984px) and (max-height: 1092px) and (min-height: 1025px), " +
-  "(max-width: 834px)  and (max-height: 1194px) and (min-height: 1085px), " +
+  "(max-width: 834px) and (max-height: 1194px) and (min-height: 1085px), " +
   "(max-width: 800px) and (max-height: 1280px) and (min-height: 1180px), " +
   "(max-width: 768px) and (max-height: 1076px) and (min-height: 1000px), " +
   "(max-width: 744px) and (max-height: 1133px) and (min-height: 1030px), " +
-  "(max-width: 600px) and (max-height: 960px) and (min-height: 920px)";
+  "(max-width: 600px) and (max-height: 960px) and (min-height: 920px)," +
+  "(max-width: 448px) and (max-height: 997px) and (min-height: 970px)," +
+  "(max-width: 432px) and (max-height: 768px) and (min-height: 720px), " +
+  "(max-width: 430px) and (max-height: 932px) and (min-height: 912px), " +
+  "(max-width: 428px) and (max-height: 926px) and (min-height: 900px), " +
+  "(max-width: 427px) and (max-height: 952px) and (min-height: 920px), " +
+  "(max-width: 420px) and (max-height: 912px) and (min-height: 890px), " +
+  "(max-width: 414px) and (max-height: 896px) and (min-height: 876px), " +
+  "(max-width: 414px) and (max-height: 736px) and (min-height: 710px)," +
+  "(max-width: 412px) and (max-height: 919px) and (min-height: 885px), " +
+  "(max-width: 412px) and (max-height: 892px) and (min-height: 876px)";
 
 const Hero = () => {
   const [isMobile, setIsMobile] = useState(
