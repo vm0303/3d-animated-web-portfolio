@@ -1,7 +1,9 @@
 import "./hero.css";
 import { motion } from "motion/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Speech from "./Speech";
+import { Canvas } from "@react-three/fiber";
+import Shape from "./Shape";
 
 
 const heroTitleVariants = {
@@ -35,7 +37,7 @@ const heroTitleMobileVariants =
 
 const certificationsVariants = {
   initial: {
-    x: -300,
+    x: -350,
     opacity: 0,
   },
   animate: {
@@ -43,7 +45,7 @@ const certificationsVariants = {
     opacity: 1,
     transition: {
       duration: 1,
-      staggerChildren: 0.4,
+      staggerChildren: 0.5,
     },
   },
 };
@@ -54,6 +56,7 @@ const certificationsMobileVariants = {
     opacity: 0,
   },
   animate: {
+    x: 0,
     opacity: 1,
     transition: {
       duration: 1,
@@ -80,7 +83,7 @@ const bubbleMobileVariants = {
 
 const socialVariants = {
   initial: {
-    y: -300,
+    y: -350,
     opacity: 0,
   },
   animate: {
@@ -93,7 +96,22 @@ const socialVariants = {
   },
 };
 
+const backgroundVariants = {
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+    transition: {
+      duration: 1.6,
+      delay: 0.7,
+    },
+  },
+};
+
 const mobileMediaQuery =
+  "(max-width: 1024px) and (orientation: portrait), " +
+  "(max-width: 1032px) and (max-height: 1376px) and (orientation: portrait), " +
   "(max-width: 884px) and (max-height: 1104px) and (min-height: 1025px), " +
   "(max-width: 820px) and (max-height: 1180px) and (min-height: 1081px), " +
   "(max-width: 984px) and (max-height: 1092px) and (min-height: 1025px), " +
@@ -135,11 +153,13 @@ const mobileMediaQuery =
   "(max-width: 320px) and (min-width: 320px) and (max-height: 480px) and (min-height: 320px)";
 
 const Hero = () => {
+  const hasMounted = useRef(false);
   const [isMobile, setIsMobile] = useState(
     () => window.matchMedia(mobileMediaQuery).matches
   );
 
   useEffect(() => {
+    hasMounted.current = true;
     const mq = window.matchMedia(mobileMediaQuery);
     const handler = (e) => setIsMobile(e.matches);
     mq.addEventListener("change", handler);
@@ -162,7 +182,7 @@ const Hero = () => {
         {/* CERTIFICATIONS */}
         <motion.div
           variants={activeCertVariants}
-          initial="initial"
+          initial={hasMounted.current ? false : "initial"}
           animate="animate"
           className="certifications">
 
@@ -232,7 +252,7 @@ const Hero = () => {
         {/* BUBBLE */}
         <Speech variants={activeBubbleVariants} />
         {/* CONTACT ME BUTTON */}
-        <motion.a href="/#contact" className="contactButtonLink" animate={{ x: [200, 0], opacity: [0, 1] }} transition={{ duration: 2 }}>
+        <motion.a href="/#contact" className="contactButtonLink" animate={{ x: [300, 0], opacity: [0, 1] }} transition={{ duration: 2 }}>
           <motion.div className="contactButton" animate={{ rotate: [0, 360] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>
             <svg viewBox="0 0 200 200" width="150" height="150">
               <circle cx="100" cy="100" r="90" fill="#010134" />
@@ -267,12 +287,17 @@ const Hero = () => {
           </motion.div>
         </motion.a>
       </div>
-      <div className="bg">
+      <motion.div className="bg" variants={backgroundVariants} initial="initial" animate="animate">
         {/* 3d */}
+        <Canvas>
+          <Suspense fallback="Loading...">
+            <Shape />
+          </Suspense>
+        </Canvas>
         <div className="hImg">
           <img src="/Hero.png" alt="Hero" title="Hero" />
         </div>
-      </div>
+      </motion.div>
     </div >
   )
 }

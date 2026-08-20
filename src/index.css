@@ -1,563 +1,87 @@
-* {
+:root {
+    --content-max-width: 2000px;
+    --page-gutter: 16px;
+}
+
+ * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
 html {
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
 }
 
 body {
-   background: linear-gradient(45deg, #03003d 0%, #010128 35%, #000809 100%);
-  color: white;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  min-height: 100vh;
-
+    min-width: 320px;
+    min-height: 100vh;
+    min-height: 100svh;
+    background: linear-gradient(45deg, #03003d 0%, #010128 35%, #000809 100%);
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 a {
-  text-decoration: none;
-  color: white;
+    color: white;
+    text-decoration: none;
 }
 
 .container {
-  max-width: 1536px;
-  padding-left: 16px;
-  padding-right: 16px;
-  margin-left: auto;
-  margin-right: auto;
+    width: 100%;
+    max-width: var(--content-max-width);
+    padding-inline: var(--page-gutter);
+    margin-inline: auto;
 }
 
 section {
-  height: 100vh;
-  scroll-snap-align: center;
-}
-
-@media (min-width: 320px) {
-  .container {
-    max-width: 320px;
-  }
-}
-
-@media (min-width: 360px) {
-  .container {
-    max-width: 360px;
-  }
-}
-
-@media (min-width: 375px) {
-  .container {
-    max-width: 375px;
-  }
-}
-
-@media (min-width: 390px) {
-  .container {
-    max-width: 390px;
-  }
-}
-
-@media (min-width: 393px) {
-  .container {
-    max-width: 393px;
-  }
-}
-
-@media (min-width: 412px) {
-  .container {
-    max-width: 412px;
-  }
-}
-
-@media (min-width: 414px) {
-  .container {
-    max-width: 414px;
-  }
-}
-
-@media (min-width: 420px) {
-  .container {
-    max-width: 420px;
-  }
-}
-
-@media (min-width: 427px) {
-  .container {
-    max-width: 427px;
-  }
-}
-
-@media (min-width: 428px) {
-  .container {
-    max-width: 428px;
-  }
-}
-
-@media (min-width: 430px) {
-  .container {
-    max-width: 430px;
-  }
-}
-
-@media (min-width: 432px) {
-  .container {
-    max-width: 432px;
-  }
-}
-
-@media (min-width: 448px) {
-  .container {
-    max-width: 448px;
-  }
+    height: 100vh;
+    scroll-snap-align: center;
 }
 
 
+
+/* Large phones and small landscape windows */
 @media (min-width: 480px) {
-  .container {
-    max-width: 480px;
-  }
+    .container {
+        --page-gutter: 16px;
+    }
 }
 
 
-@media (min-width: 540px) {
-  .container {
-    max-width: 540px;
-  }
-}
-
-@media (min-width: 568px) {
-  .container {
-    max-width: 568px;
-  }
-}
-
-@media (min-width: 576px) {
-  .container {
-    max-width: 576px;
-  }
-}
-
-@media (min-width: 600px) {
-  .container {
-    max-width: 600px;
-  }
-}
-
-
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
-  }
-}
-
-@media (min-width: 667px) {
-  .container {
-    max-width: 667px;
-  }
-}
-
-@media (min-width: 695px) {
-  .container {
-    max-width: 695px;
-  }
-}
-
-
-@media (min-width: 720px) {
-  .container {
-    max-width: 720px;
-
-  }
-}
-
-@media (min-width: 731px) {
-  .container {
-    max-width: 731px;
-
-  }
-}
-
-@media (min-width: 736px) {
-  .container {
-    max-width: 736px;
-
-  }
-}
-
-@media (min-width: 740px) {
-  .container {
-    max-width: 740px;
-
-  }
-}
-
-@media (min-width: 744px) {
-  .container {
-    max-width: 744px;
-
-  }
-}
-
-@media (min-width: 747px) {
-  .container {
-    max-width: 747px;
-
-  }
-}
-
-@media (min-width: 760px) {
-  .container {
-    max-width: 760px;
-
-  }
-}
-
+/* Tablets, foldables, and large phone landscape */
 @media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-
-  }
-}
-@media (min-width: 770px) {
-  .container {
-    max-width: 770px;
-
-  }
+    :root {
+        --page-gutter: 24px;
+    }
 }
 
-@media (min-width: 771px) {
-  .container {
-    max-width: 771px;
-
-  }
+/* Tablet landscape and small laptops */
+@media (min-width: 1024px) {
+    :root {
+        --page-gutter: 32px;
+    }
 }
 
-@media (min-width: 780px) {
-  .container {
-    max-width: 780px;
-
-  }
-}
-
-@media (min-width: 786px) {
-  .container {
-    max-width: 786px;
-
-  }
-}
-
-@media (min-width: 800px) {
-  .container {
-    max-width: 800px;
-  }
-}
-
-@media (min-width: 808px) {
-  .container {
-    max-width: 808px;
-  }
-}
-
-
-@media (min-width: 810px) {
-  .container {
-    max-width: 810px;
-  }
-}
-
-@media (min-width: 812px) {
-  .container {
-    max-width: 812px;
-  }
-}
-
-
-@media (min-width: 816px) {
-  .container {
-    max-width: 816px;
-  }
-}
-
-@media (min-width: 817px) {
-  .container {
-    max-width: 817px;
-  }
-}
-
-@media (min-width: 820px) {
-  .container {
-    max-width: 820px;
-  }
-}
-
-@media (min-width: 823px) {
-  .container {
-    max-width: 823px;
-  }
-}
-
-@media (min-width: 830px) {
-  .container {
-    max-width: 830px;
-  }
-}
-
-@media (min-width: 834px) {
-  .container {
-    max-width: 834px;
-  }
-}
-
-@media (min-width: 840px) {
-  .container {
-    max-width: 840px;
-  }
-}
-
-@media (min-width: 844px) {
-  .container {
-    max-width: 844px;
-  }
-}
-
-@media (min-width: 846px) {
-  .container {
-    max-width: 846px;
-  }
-}
-
-@media (min-width: 851px) {
-  .container {
-    max-width: 851px;
-  }
-}
-
-@media (min-width: 852px) {
-  .container {
-    max-width: 852px;
-  }
-}
-@media (min-width: 854px) {
-  .container {
-    max-width: 854px;
-  }
-}
-
-
-@media (min-width: 869px) {
-  .container {
-    max-width: 869px;
-  }
-}
-
-
-@media (min-width: 873px) {
-  .container {
-    max-width: 873px;
-  }
-}
-
-
-@media (min-width: 874px) {
-  .container {
-    max-width: 874px;
-  }
-}
-
-@media (min-width: 880px) {
-  .container {
-    max-width: 880px;
-  }
-}
-
-@media (min-width: 883px) {
-  .container {
-    max-width: 883px;
-  }
-}
-
-
-
-@media (min-width: 884px) {
-  .container {
-    max-width: 884px;
-  }
-}
-
-
-@media (min-width: 891px) {
-  .container {
-    max-width: 891px;
-  }
-}
-
-@media (min-width: 892px) {
-  .container {
-    max-width: 892px;
-  }
-}
-
-
-
-@media (min-width: 896px) {
-  .container {
-    max-width: 896px;
-  }
-}
-
-
-@media (min-width: 905px) {
-  .container {
-    max-width: 905px;
-  }
-}
-
-@media (min-width: 906px) {
-  .container {
-    max-width: 906px;
-  }
-}
-
-
-@media (min-width: 912px) {
-  .container {
-    max-width: 912px;
-  }
-}
-
-@media (min-width: 914px) {
-  .container {
-    max-width: 914px;
-  }
-}
-
-@media (min-width: 915px) {
-  .container {
-    max-width: 915px;
-  }
-}
-
-@media (min-width: 918px) {
-  .container {
-    max-width: 918px;
-  }
-}
-
-@media (min-width: 919px) {
-  .container {
-    max-width: 919px;
-  }
-}
-@media (min-width: 924px) {
-  .container {
-    max-width: 924px;
-  }
-}
-
-@media (min-width: 926px) {
-  .container {
-    max-width: 926px;
-  }
-}
-
-@media (min-width: 932px) {
-  .container {
-    max-width: 932px;
-  }
-}
-
-@media (min-width: 952px) {
-  .container {
-    max-width: 952px;
-  }
-}
-
-
-
-
-@media (min-width: 960px) {
-  .container {
-    max-width: 960px;
-  }
-}
-
-@media (min-width: 984px) {
-  .container {
-    max-width: 984px;
-  }
-}
-
-@media (min-width: 998px) {
-  .container {
-    max-width: 998px;
-  }
-}
-
-
-@media (min-width: 1024px)  {
-  .container {
-    max-width: 1024px;
-
-  }
-}
-
-@media (min-width: 1097px)  {
-  .container {
-    max-width: 1097px;
-
-  }
-}
-
-@media (min-width: 1133px) {
-  .container {
-    max-width: 1133px;
-  }
-}
-
-@media (min-width: 1140px) {
-  .container {
-    max-width: 1140px;
-  }
-}
-
-
-
+/* Standard laptops */
 @media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
-  }
+    :root {
+        --page-gutter: 40px;
+    }
 }
 
-@media (min-width: 1366px) {
-  .container {
-    max-width: 1366px;
-  }
-}
-
+/* Large laptops */
 @media (min-width: 1440px) {
-  .container {
-    max-width: 1440px;
-  }
+    :root {
+        --page-gutter: 48px;
+    }
 }
 
+/* Wide laptop and desktop layouts */
 @media (min-width: 1536px) {
-  .container {
-    max-width: 1536px;
-  }
+    :root {
+        --page-gutter: 56px;
+    }
 }
-
-@media (min-width: 1745px) {
-  .container {
-    max-width: 1745px;
-  }
-}
-
-@media (min-width: 1920px) {
-  .container {
-    max-width: 1920px;
-  }
-}
-
