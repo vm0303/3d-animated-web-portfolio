@@ -111,46 +111,7 @@ const backgroundVariants = {
 
 const mobileMediaQuery =
   "(max-width: 1024px) and (orientation: portrait), " +
-  "(max-width: 1032px) and (max-height: 1376px) and (orientation: portrait), " +
-  "(max-width: 884px) and (max-height: 1104px) and (min-height: 1025px), " +
-  "(max-width: 820px) and (max-height: 1180px) and (min-height: 1081px), " +
-  "(max-width: 984px) and (max-height: 1092px) and (min-height: 1025px), " +
-  "(max-width: 834px) and (max-height: 1194px) and (min-height: 1085px), " +
-  "(max-width: 800px) and (max-height: 1280px) and (min-height: 1180px), " +
-  "(max-width: 768px) and (max-height: 1076px) and (min-height: 1000px), " +
-  "(max-width: 744px) and (max-height: 1133px) and (min-height: 1030px), " +
-  "(max-width: 600px) and (max-height: 960px) and (min-height: 920px)," +
-  "(max-width: 448px) and (max-height: 997px) and (min-height: 970px)," +
-  "(max-width: 432px) and (max-height: 768px) and (min-height: 720px), " +
-  "(max-width: 430px) and (max-height: 932px) and (min-height: 912px), " +
-  "(max-width: 428px) and (max-height: 926px) and (min-height: 900px), " +
-  "(max-width: 427px) and (max-height: 952px) and (min-height: 920px), " +
-  "(max-width: 420px) and (max-height: 912px) and (min-height: 890px), " +
-  "(max-width: 414px) and (max-height: 896px) and (min-height: 876px), " +
-  "(max-width: 414px) and (max-height: 736px) and (min-height: 710px)," +
-  "(max-width: 412px) and (max-height: 919px) and (min-height: 885px), " +
-  "(max-width: 412px) and (max-height: 892px) and (min-height: 876px)," +
-  "(max-width: 412px) and (max-height: 876px) and (min-height: 860px)," +
-  "(max-width: 412px) and (max-height: 829px) and (min-height: 805px), " +
-  "(max-width: 393px) and (max-height: 873px) and (min-height: 840px), " +
-  "(max-width: 393px) and (max-height: 834px) and (min-height: 817px), " +
-  "(max-width: 393px) and (min-width: 391px) and (max-height: 817px) and (min-height: 780px), " +
-  "(max-width: 393px) and (max-height: 786px) and (min-height: 746px), " +
-  "(max-width: 390px) and (max-height: 844px) and (min-height: 817px), " +
-  "(max-width: 390px) and (max-height: 695px) and (min-height: 630px), " +
-  "(max-width: 384px) and (max-height: 854px) and (min-height: 817px), " +
-  "(max-width: 384px) and (max-height: 640px) and (min-height: 590px), " +
-  "(max-width: 375px) and (max-height: 812px) and (min-height: 795px), " + 
-  "(max-width: 375px) and (max-height: 667px) and (min-height: 540px), " +
-  "(max-width: 360px) and (max-height: 924px) and (min-height: 880px), " +
-  "(max-width: 360px) and (max-height: 840px) and (min-height: 790px), " +
-  "(max-width: 360px) and (min-width: 321px) and (max-height: 780px) and (min-height: 730px), " +
-  "(max-width: 360px) and (min-width: 321px) and (max-height: 760px) and (min-height: 700px), " +
-  "(max-width: 360px) and (max-height: 640px) and (min-height: 550px), " +
-  "(max-width: 320px) and (max-height: 640px) and (min-height: 530px)," +
-  "(max-width: 320px) and (max-height: 568px) and (min-height: 530px), " +
-  "(max-width: 320px) and (max-height: 540px) and (min-height: 510px), " +
-  "(max-width: 320px) and (min-width: 320px) and (max-height: 480px) and (min-height: 320px)";
+  "(max-height: 1376px) and (orientation: portrait)"
 
 const Hero = () => {
   const hasMounted = useRef(false);

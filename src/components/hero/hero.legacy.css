@@ -43,7 +43,7 @@
 
 .heroTitle {
     margin-top: 50px;
-    font-size: 80px;
+    font-size: 90px;
     color: #62acf7;
 }
 
@@ -124,7 +124,7 @@
 }
 
 .bubbleContainer {
-    width: 60%;
+    width: 55%;
     display: flex;
     align-items: end;
     gap: 8px;
@@ -176,18 +176,18 @@
 }
 
 
- /* =========================================================
+/* =========================================================
    INTEGRATED 38 VIEWPORT FAMILIES — REUSED YESVIZ LOGIC
-   ========================================================= 
+   ========================================================= */
 
 
-NO MORE CHANGES!
-Done
-FINAL CHECK PASSED
- =========================================================
+/*NO MORE CHANGES!*/
+/*Done*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    01.
    iPad Pro 13" M4
-   =========================================================  */
+   ========================================================= */
 
 @media (max-width: 1376px) and (min-height: 900px) and (max-height: 989px) and (orientation: landscape) {
     .bg {
@@ -401,15 +401,15 @@ FINAL CHECK PASSED
     }
 }
 
-/* NO MORE CHANGES!
-Done
-FINAL CHECK PASSED
- =========================================================
+/*NO MORE CHANGES!*/
+/*Done*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    02.
    iPad Air 13" M2
    and
    iPad Pro 12.9"
-   =========================================================  */
+   ========================================================= */
 
 @media (min-width: 1365px) and (max-width: 1366px) and (min-height: 905px) and (max-height: 981px) and (orientation: landscape) {
     .bg {
@@ -623,12 +623,12 @@ FINAL CHECK PASSED
     }
 }
 
-/* NO MORE CHANGES!
-Done
- =========================================================
+/*NO MORE CHANGES!*/
+/*Done*/
+/* =========================================================
    03. 1280 × 800
    Huawei MatePad Pro - Unsure on browser, but this is the closest match to the device
-   =========================================================  */
+   ========================================================= */
 
 @media (min-width: 1279px) and (max-width: 1280px) and (min-height: 690px) and (max-height: 800px) and (orientation: landscape) {
     .bg {
@@ -829,13 +829,13 @@ Done
     }
 }
 
-/* NO MORE CHANGES!
-Done
-FINAL CHECK PASSED
- =========================================================
+/*NO MORE CHANGES!*/
+/*Done*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    04. 1210 × 834 
    iPad Pro 11 (2024) Landscape
-   =========================================================  */
+   ========================================================= */
 
 
 @media (min-width: 1209px) and (max-width: 1210px) and (min-height: 710px) and (max-height: 791px) and (orientation: landscape) {
@@ -971,15 +971,15 @@ FINAL CHECK PASSED
 
 }
 
-/* NO MORE CHANGES!
-Done
-FINAL CHECK PASSED
- =========================================================
+/*NO MORE CHANGES!*/
+/*Done*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    05. 1194 × 834
    iPad Pro 11 (2024) Portrait
    iPad Pro 11 (2022) Portrait
    iPad Pro 11 (2022) Landscape
-   =========================================================  */
+   ========================================================= */
 
 
 @media (min-width: 1193px) and (max-width: 1194px) and (min-height: 715px) and (max-height: 791px) and (orientation: landscape) {
@@ -1339,14 +1339,14 @@ FINAL CHECK PASSED
     }
 }
 
-/* Done
-NO MORE CHANGES!
-FINAL CHECK PASSED
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    06. 1180 × 820
    iPad Air 11
    iPad 11
-   =========================================================  */
+   ========================================================= */
 
 
 @media (max-width: 1180px) and (max-height: 777px) and (orientation: landscape) {
@@ -1498,6 +1498,7 @@ FINAL CHECK PASSED
 
 
 }
+
 
 @media (min-width: 819px) and (max-width: 820px) and (min-height: 1056px) and (max-height: 1137px) and (orientation: portrait) {
     .hero {
@@ -1725,15 +1726,15 @@ FINAL CHECK PASSED
 
     }
 }
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    07. 1133 × 744
    iPad mini 7
-   =========================================================  */
+   ========================================================= */
 
 
-@media (min-width: 1132px) and (max-width: 1133px) and (min-height: 650px)and (max-height: 744px) and (orientation: landscape) {
+@media (min-width: 1132px) and (max-width: 1133px) and (max-height: 744px) and (orientation: landscape) {
     .bg {
 
         height: 80%;
@@ -1893,7 +1894,7 @@ NO MORE CHANGES!
 }
 
 
-@media (min-width: 743px) and (max-width: 744px) and (max-height: 1020px) and (max-height: 1133px) and (orientation: portrait) {
+@media (min-width: 743px) and (max-width: 744px) and (max-height: 1133px) and (orientation: portrait) {
     .hero {
 
         flex-direction: column;
@@ -2096,14 +2097,14 @@ NO MORE CHANGES!
 
 }
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    08. 1104 × 884
-   ========================================================= 
- */
+   ========================================================= */
 
-@media (min-width: 1103px) and (max-width: 1104px) and (min-height: 720px) and (max-height: 884px) and (orientation: landscape) {
+
+@media (min-width: 1103px) and (max-width: 1104px) and (max-height: 884px) and (orientation: landscape) {
     .bg {
 
         height: 75%;
@@ -2232,7 +2233,7 @@ NO MORE CHANGES!
 }
 
 
-@media (min-width:883px) and (max-width: 884px) and (min-height:1000px) and (max-height: 1104px) and (orientation: portrait) {
+@media (min-width:883px) and(max-width: 884px) and (max-height: 1104px) and (orientation: portrait) {
     .hero {
 
         flex-direction: column;
@@ -2437,15 +2438,15 @@ NO MORE CHANGES!
 
 }
 
-/* Done
-NO MORE CHANGES!
-FINAL CHECK PASSED
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    09. 1092 × 984
    Samsung Galaxy Z Fold7
-   =========================================================  */
+   ========================================================= */
 
-/* Unfolded (Landscape) */
+/*Unfolded (Landscape)*/
 @media (max-width: 840px) and (min-height: 563px) and (max-height: 984px) and (orientation: landscape) {
     .bg {
 
@@ -2593,7 +2594,7 @@ FINAL CHECK PASSED
 
 }
 
-/* Unfolded (Portrait) */
+/*Unfolded (Portrait)*/
 @media (max-width: 754px) and (min-height: 653px) and (max-height: 698px) and (orientation: portrait) {
     .hero {
 
@@ -2807,7 +2808,7 @@ FINAL CHECK PASSED
 
 }
 
-/* Folded (Portrait) */
+/*Folded (Portrait)*/
 @media (max-width: 415px) and (max-height: 820px) and (orientation: portrait)
 {
     .hero {
@@ -3019,7 +3020,7 @@ FINAL CHECK PASSED
 
 }
 
-/* Folded (Landscape) */
+/*Folded (Landscape)*/
 @media  (max-width: 876px) and (min-height: 325px) and (max-height: 365px)
        and (orientation: landscape)
 {
@@ -3177,13 +3178,13 @@ FINAL CHECK PASSED
     }
 }
 
-/* Done
-NO MORE CHANGES!
-FINAL CHECK PASSED
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    10. 1080 × 810
    iPad 10.2
-   =========================================================  */
+   ========================================================= */
 
 
 @media (max-width: 1080px) and (min-height: 678px) and (max-height: 758px) and (orientation: landscape) {
@@ -3532,13 +3533,13 @@ FINAL CHECK PASSED
 
 }
 
-/* Done
-NO MORE CHANGES!
-FINAL CHECK PASSED
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    11. 1024 × 768
    iPad Mini
-   =========================================================  */
+   ========================================================= */
 
 
 @media (max-width: 1024px) and (max-height: 692px) and (orientation: landscape) {
@@ -3881,14 +3882,14 @@ FINAL CHECK PASSED
 
 }
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    12. 1007 × 601
-   =========================================================  */
+   ========================================================= */
 
- 
-@media (max-width: 1007px) and (min-height: 510px) and (max-height: 601px) and (orientation: landscape) {
+/* 
+@media (max-width: 1007px) and (max-height: 601px) and (orientation: landscape) {
     .bg {
 
         height: 72%;
@@ -4257,15 +4258,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    13. 1004 × 412
-   =========================================================  */
+   ========================================================= */
 
- 
+/* 
 @media (max-width: 1004px) and (max-height: 412px) and (orientation: landscape) {
     .bg {
 
@@ -4599,15 +4600,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
-FINAL CHECK PASSED
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    14. 997 × 448
    Pixel 8 Pro and Google Pixel 9 Pro XL
-   =========================================================  */
+   ========================================================= */
 
 
 @media (max-width: 911px) and (max-height: 448px) and (orientation: landscape) 
@@ -4962,13 +4963,13 @@ FINAL CHECK PASSED
 
 }
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    15. 962 × 601
-   =========================================================  */
+   ========================================================= */
 
- 
+/* 
 @media (max-width: 962px) and (max-height: 601px) and (orientation: landscape) {
     .bg {
 
@@ -5328,16 +5329,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
-FINAL CHECK PASSED
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/*FINAL CHECK PASSED*/
+/* =========================================================
    16. 956 × 440
    iPhone 17 Pro Max
-   ========================================================= 
- */
+   ========================================================= */
+
 
 @media (max-width: 956px) and (max-height: 440px) and (orientation: landscape) {
     .bg {
@@ -5704,12 +5705,12 @@ FINAL CHECK PASSED
 
 }
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    17. 952 × 427
    Google Pixel 9 Pro
-   =========================================================  */
+   ========================================================= */
 
 
 @media (max-width: 952px) and (max-height: 427px) and (orientation: landscape){
@@ -6075,14 +6076,14 @@ NO MORE CHANGES!
 
 }
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    18. 932 × 430
-   ========================================================= 
- */
+   ========================================================= */
 
- @media (max-width: 932px) and (max-height: 430px) and (orientation: landscape) {
+
+/* @media (max-width: 932px) and (max-height: 430px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -6439,16 +6440,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    19. 926 × 428
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 926px) and (max-height: 428px) and (orientation: landscape) {
+/* @media (max-width: 926px) and (max-height: 428px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -6804,15 +6805,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    20. 924 × 360
-   =========================================================  */
+   ========================================================= */
 
- 
+/* 
 @media (max-width: 924px) and (max-height: 360px) and (orientation: landscape) {
     .bg {
 
@@ -7155,16 +7156,16 @@ NO MORE CHANGES!
 
 
 
-} 
-/* 
-Done
-NO MORE CHANGES!
- =========================================================
+} */
+
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    21. 918 × 412
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 918px) and (max-height: 412px) and (orientation: landscape) {
+/* @media (max-width: 918px) and (max-height: 412px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -7519,15 +7520,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    22. 915 × 412
-   ========================================================= 
+   ========================================================= */
 
-  */
+/* 
 @media (max-width: 915px) and (max-height: 412px) and (orientation: landscape)
 {
     .bg {
@@ -7885,16 +7886,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    23. 912 × 420
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 912px) and (max-height: 420px) and (orientation: landscape){
+/* @media (max-width: 912px) and (max-height: 420px) and (orientation: landscape){
     .bg {
 
         height: 85%;
@@ -8250,16 +8251,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    24. 905 × 412
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 905px) and (max-height: 412px) and (orientation: landscape) {
+/* @media (max-width: 905px) and (max-height: 412px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -8615,16 +8616,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    25. 896 × 414
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 896px) and (max-height: 414px) and (orientation: landscape) {
+/* @media (max-width: 896px) and (max-height: 414px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -8979,16 +8980,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    26. 892 × 412
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 892px) and (max-height: 412px) and (orientation: landscape) {
+/* @media (max-width: 892px) and (max-height: 412px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -9344,16 +9345,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    27. 891 × 412
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 891px) and (max-height: 412px) and (orientation: landscape) {
+/* @media (max-width: 891px) and (max-height: 412px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -9708,15 +9709,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    28. 874 × 402
-   =========================================================  */
+   ========================================================= */
 
- 
+/* 
 @media (max-width: 874px) and (max-height: 402px) and (orientation: landscape) {
     .bg {
 
@@ -10072,15 +10073,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    29. 873 × 393
-   ========================================================= 
+   ========================================================= */
 
-  */
+/* 
 @media (max-width: 873px) and (max-height: 393px) and (orientation: landscape) {
     .bg {
 
@@ -10430,19 +10431,19 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
 
 
 
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    30. 852 × 393
-   =========================================================  */
+   ========================================================= */
 
- 
+/* 
 @media (max-width: 852px) and (max-height: 393px) and (orientation: landscape) {
     .bg {
 
@@ -10796,16 +10797,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    31. 844 × 390
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 844px) and (max-height: 390px) and (orientation: landscape)  {
+/* @media (max-width: 844px) and (max-height: 390px) and (orientation: landscape)  {
     .bg {
 
         height: 85%;
@@ -11157,15 +11158,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    32. 840 × 360
-   =========================================================  */
+   ========================================================= */
 
- @media (max-width: 840px) and (max-height: 360px) and (orientation: landscape) {
+/* @media (max-width: 840px) and (max-height: 360px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -11540,15 +11541,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    33. 832 × 384
-   =========================================================  */
+   ========================================================= */
 
- 
+/* 
 @media (max-width: 832px) and (max-height: 384px) and (orientation: landscape) {
     .bg {
 
@@ -11901,15 +11902,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    34. 812 × 375
-   =========================================================  */
+   ========================================================= */
 
- 
+/* 
 @media (max-width: 812px) and (max-height: 375px) and (orientation: landscape) {
     .bg {
 
@@ -12275,16 +12276,16 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    35. 808 × 360
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 808px) and (max-height: 360px) and (orientation: landscape) {
+/* @media (max-width: 808px) and (max-height: 360px) and (orientation: landscape) {
     .bg {
 
         height: 85%;
@@ -12656,15 +12657,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    36. 800 × 360
-   =========================================================  */
+   ========================================================= */
 
- 
+/* 
 @media (max-width: 800px) and (max-height: 360px) and (orientation: landscape) {
     .bg {
 
@@ -13038,14 +13039,14 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
-/* Done
-NO MORE CHANGES!
- =========================================================
+/*Done*/
+/*NO MORE CHANGES!*/
+/* =========================================================
    37. 780 × 360
-   ========================================================= 
-  */
+   ========================================================= */
+/* 
 
 @media (max-width: 780px) and (max-height: 360px) and (orientation: landscape) {
     .bg {
@@ -13419,15 +13420,15 @@ NO MORE CHANGES!
 
 
 
-} 
+} */
 
 
- /* =========================================================
+/* =========================================================
    38. 667 × 375
-   =========================================================  */
+   ========================================================= */
 
 
- @media (max-width: 667px) and (max-height: 375px) and (orientation: landscape)  {
+/* @media (max-width: 667px) and (max-height: 375px) and (orientation: landscape)  {
     .bg {
 
         height: 85%;
@@ -13751,7 +13752,4 @@ NO MORE CHANGES!
         height: 30px;
 
     }
-} 
-
-
-
+} */
