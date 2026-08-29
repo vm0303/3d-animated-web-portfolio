@@ -20,7 +20,8 @@
     "qa:hero:classify": "node qa/viewport-audit/classify-hero-media-queries.cjs",
     "qa:hero:families": "node qa/viewport-audit/derive-hero-v2-family-candidates.cjs",
     "qa:hero:compare-families": "node qa/viewport-audit/compare-hero-v2-family-candidates.cjs",
-    "qa:hero:architecture": "node qa/viewport-audit/propose-hero-v2-architecture.cjs"
+    "qa:hero:architecture": "node qa/viewport-audit/propose-hero-v2-architecture.cjs",
+    "qa:hero:base-boundaries": "node qa/viewport-audit/analyze-hero-v2-base-boundaries.cjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
