@@ -16,7 +16,8 @@
     "qa:testmu:appium:android:list": "node qa/testmu/appium/run-android-matrix.cjs --list",
     "qa:hero:inventory": "node qa/viewport-audit/generate-hero-media-inventory.cjs",
     "qa:hero:coverage": "node qa/viewport-audit/map-hero-geometry-coverage.cjs",
-    "qa:hero:cascade": "node qa/viewport-audit/analyze-hero-property-cascade.cjs"
+    "qa:hero:cascade": "node qa/viewport-audit/analyze-hero-property-cascade.cjs",
+    "qa:hero:classify": "node qa/viewport-audit/classify-hero-media-queries.cjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
