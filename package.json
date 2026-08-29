@@ -14,7 +14,8 @@
     "qa:testmu:appium:pixel9:landscape": "node qa/testmu/appium/pixel9-chrome-landscape_appium.cjs",
     "qa:testmu:appium:android:matrix": "node qa/testmu/appium/run-android-matrix.cjs",
     "qa:testmu:appium:android:list": "node qa/testmu/appium/run-android-matrix.cjs --list",
-    "qa:hero:inventory": "node qa/viewport-audit/generate-hero-media-inventory.cjs"
+    "qa:hero:inventory": "node qa/viewport-audit/generate-hero-media-inventory.cjs",
+    "qa:hero:coverage": "node qa/viewport-audit/map-hero-geometry-coverage.cjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
