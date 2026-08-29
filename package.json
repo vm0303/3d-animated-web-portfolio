@@ -19,7 +19,8 @@
     "qa:hero:cascade": "node qa/viewport-audit/analyze-hero-property-cascade.cjs",
     "qa:hero:classify": "node qa/viewport-audit/classify-hero-media-queries.cjs",
     "qa:hero:families": "node qa/viewport-audit/derive-hero-v2-family-candidates.cjs",
-    "qa:hero:compare-families": "node qa/viewport-audit/compare-hero-v2-family-candidates.cjs"
+    "qa:hero:compare-families": "node qa/viewport-audit/compare-hero-v2-family-candidates.cjs",
+    "qa:hero:architecture": "node qa/viewport-audit/propose-hero-v2-architecture.cjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
