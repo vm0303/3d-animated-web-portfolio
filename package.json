@@ -1,5 +1,5 @@
 {
-  "name": "lama-dev-portfolio",
+  "name": "vm-3d-animated-web-portfolio",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,7 +13,8 @@
     "qa:testmu:appium:pixel9:portrait": "node qa/testmu/appium/pixel9-chrome-portrait_appium.cjs",
     "qa:testmu:appium:pixel9:landscape": "node qa/testmu/appium/pixel9-chrome-landscape_appium.cjs",
     "qa:testmu:appium:android:matrix": "node qa/testmu/appium/run-android-matrix.cjs",
-    "qa:testmu:appium:android:list": "node qa/testmu/appium/run-android-matrix.cjs --list"
+    "qa:testmu:appium:android:list": "node qa/testmu/appium/run-android-matrix.cjs --list",
+    "qa:hero:inventory": "node qa/viewport-audit/generate-hero-media-inventory.cjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
