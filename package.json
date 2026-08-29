@@ -7,7 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "qa:testmu:pixel9:portrait:android": "node qa/testmu/pixel9-portrait-android.cjs",
+    "qa:testmu:pixel9:landscape:android": "node qa/testmu/pixel9-landscape.cjs",
+    "qa:testmu:appium:pixel9:portrait": "node qa/testmu/appium/pixel9-chrome-portrait_appium.cjs",
+    "qa:testmu:appium:pixel9:landscape": "node qa/testmu/appium/pixel9-chrome-landscape_appium.cjs",
+    "qa:testmu:appium:android:matrix": "node qa/testmu/appium/run-android-matrix.cjs",
+    "qa:testmu:appium:android:list": "node qa/testmu/appium/run-android-matrix.cjs --list"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
@@ -30,6 +36,8 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
-    "vite": "^5.4.10"
+    "playwright": "^1.59.0",
+    "vite": "^5.4.10",
+    "webdriverio": "^9.31.2"
   }
 }
