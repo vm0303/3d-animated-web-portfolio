@@ -130,6 +130,221 @@ const safeAreaSnapshot = () => {
   }
 }
 
+const viewportUnitSnapshot = () => {
+  const measure = (unit) => {
+    const probe = document.createElement("div")
+    probe.style.position = "fixed"
+    probe.style.visibility = "hidden"
+    probe.style.pointerEvents = "none"
+    probe.style.inset = "0 auto auto 0"
+    probe.style.width = "1px"
+    probe.style.height = `100${unit}`
+    probe.style.zIndex = "-2147483648"
+
+    document.documentElement.appendChild(probe)
+    const px = round(probe.getBoundingClientRect().height)
+    probe.remove()
+    return px
+  }
+
+  const svh = measure("svh")
+  const dvh = measure("dvh")
+  const lvh = measure("lvh")
+
+  return {
+    svh,
+    dvh,
+    lvh,
+    lvhMinusDvh:
+      lvh != null && dvh != null
+        ? round(lvh - dvh)
+        : null,
+    safariLiquidReserve:
+      lvh != null && dvh != null
+        ? round((2 * lvh) - dvh)
+        : null,
+    liquidContentGuard:
+      lvh != null && dvh != null
+        ? round(
+            Math.min(
+              128,
+              Math.max(
+                88,
+                3 * (lvh - dvh)
+              )
+            )
+          )
+        : null,
+    liquidClassActive:
+      document.documentElement.classList.contains("ios-safari-liquid-ui"),
+  }
+}
+
+const heroViewportRelationshipSnapshot = (visual) => {
+  const box = (el) => {
+    if (!el) return null
+    const r = el.getBoundingClientRect()
+    return {
+      top: round(r.top),
+      bottom: round(r.bottom),
+      left: round(r.left),
+      right: round(r.right),
+      width: round(r.width),
+      height: round(r.height),
+      pageTop: round(r.top + window.scrollY),
+      pageBottom: round(r.bottom + window.scrollY),
+      pageLeft: round(r.left + window.scrollX),
+      pageRight: round(r.right + window.scrollX),
+    }
+  }
+
+  const hero = document.querySelector(".hero")
+  const heroSection = hero?.closest("section") || document.querySelector("section:first-of-type")
+  const sections = [...document.querySelectorAll("section")]
+  const heroSectionIndex = heroSection ? sections.indexOf(heroSection) : -1
+  const nextSection = heroSectionIndex >= 0 ? sections[heroSectionIndex + 1] : null
+  const contact = document.querySelector(".contactButton")
+  const contactPaint = document.querySelector(".contactButton > svg circle")
+  const socials = document.querySelector(".socials")
+
+  const heroBox = box(hero)
+  const sectionBox = box(heroSection)
+  const nextSectionBox = box(nextSection)
+  const contactBox = box(contact)
+  const contactPaintBox = box(contactPaint)
+  const socialsBox = box(socials)
+
+  const visualPageTop = round(visual?.pageTop ?? window.scrollY)
+  const visualHeight = round(visual?.height ?? window.innerHeight)
+  const visualPageBottom =
+    visualPageTop != null && visualHeight != null
+      ? round(visualPageTop + visualHeight)
+      : null
+
+  const heroAtVisibleStart =
+    sectionBox?.pageTop != null &&
+    visualPageTop != null &&
+    Math.abs(sectionBox.pageTop - visualPageTop) <= 2
+
+  return {
+    hero: heroBox,
+    heroSection: sectionBox,
+    nextSection: nextSectionBox,
+    contact: contactBox,
+    contactPaint: contactPaintBox,
+    socials: socialsBox,
+    visualPageTop,
+    visualPageBottom,
+    heroAtVisibleStart,
+    contactBelowVisualViewportPx:
+      contactBox?.pageBottom != null && visualPageBottom != null
+        ? round(Math.max(0, contactBox.pageBottom - visualPageBottom))
+        : null,
+    nextSectionVisiblePx:
+      heroAtVisibleStart &&
+      nextSectionBox?.pageTop != null &&
+      visualPageBottom != null
+        ? round(Math.max(0, visualPageBottom - nextSectionBox.pageTop))
+        : null,
+    nextSectionTopRelativeToVisualViewport:
+      nextSectionBox?.pageTop != null && visualPageTop != null
+        ? round(nextSectionBox.pageTop - visualPageTop)
+        : null,
+    contactPaintRightGap:
+      contactPaintBox?.pageRight != null &&
+      visual?.pageLeft != null &&
+      visual?.width != null
+        ? round((visual.pageLeft + visual.width) - contactPaintBox.pageRight)
+        : null,
+    contactPaintHeroRightGap:
+      contactPaintBox?.pageRight != null && heroBox?.pageRight != null
+        ? round(heroBox.pageRight - contactPaintBox.pageRight)
+        : null,
+    contactPaintHeroBottomGap:
+      contactPaintBox?.pageBottom != null && heroBox?.pageBottom != null
+        ? round(heroBox.pageBottom - contactPaintBox.pageBottom)
+        : null,
+    socialsRightGap:
+      socialsBox?.pageRight != null &&
+      visual?.pageLeft != null &&
+      visual?.width != null
+        ? round((visual.pageLeft + visual.width) - socialsBox.pageRight)
+        : null,
+    socialsHeroRightGap:
+      socialsBox?.pageRight != null && heroBox?.pageRight != null
+        ? round(heroBox.pageRight - socialsBox.pageRight)
+        : null,
+  }
+}
+
+const sectionViewportSnapshot = (visual) => {
+  const sections = [...document.querySelectorAll(".container > section")]
+  const visualPageTop = round(visual?.pageTop ?? window.scrollY)
+  const visualHeight = round(visual?.height ?? window.innerHeight)
+  const visualPageBottom =
+    visualPageTop != null && visualHeight != null
+      ? round(visualPageTop + visualHeight)
+      : null
+
+  return sections.map((section, index) => {
+    const r = section.getBoundingClientRect()
+    const cs = getComputedStyle(section)
+    const firstContent = section.firstElementChild
+    const cr = firstContent?.getBoundingClientRect() || null
+
+    const pageTop = round(r.top + window.scrollY)
+    const pageBottom = round(r.bottom + window.scrollY)
+    const contentPageTop = cr
+      ? round(cr.top + window.scrollY)
+      : null
+
+    return {
+      index,
+      id: section.id || null,
+      top: round(r.top),
+      bottom: round(r.bottom),
+      pageTop,
+      pageBottom,
+      height: round(r.height),
+      scrollSnapAlign: cs.scrollSnapAlign || null,
+      scrollSnapStop: cs.scrollSnapStop || null,
+      paddingTop: round(Number.parseFloat(cs.paddingTop) || 0),
+      paddingBottom: round(Number.parseFloat(cs.paddingBottom) || 0),
+      firstContentClass:
+        firstContent?.className
+          ? String(firstContent.className)
+          : null,
+      firstContentTop: cr ? round(cr.top) : null,
+      firstContentPageTop: contentPageTop,
+      firstContentOffsetFromSectionTop:
+        contentPageTop != null && pageTop != null
+          ? round(contentPageTop - pageTop)
+          : null,
+      sectionTopRelativeToVisualViewport:
+        pageTop != null && visualPageTop != null
+          ? round(pageTop - visualPageTop)
+          : null,
+      sectionBottomRelativeToVisualViewport:
+        pageBottom != null && visualPageTop != null
+          ? round(pageBottom - visualPageTop)
+          : null,
+      visibleIntersectionPx:
+        visualPageTop != null &&
+        visualPageBottom != null &&
+        pageTop != null &&
+        pageBottom != null
+          ? round(
+              Math.max(
+                0,
+                Math.min(pageBottom, visualPageBottom) -
+                  Math.max(pageTop, visualPageTop)
+              )
+            )
+          : null,
+    }
+  })
+}
+
 const collectMeasurement = () => {
   const visual = window.visualViewport || null
   const root = document.documentElement
@@ -138,6 +353,9 @@ const collectMeasurement = () => {
   const cssMediaOrientation = portrait ? "portrait" : landscape ? "landscape" : null
   const safeArea = safeAreaSnapshot()
   const browser = detectBrowser()
+  const heroViewportRelationship = heroViewportRelationshipSnapshot(visual)
+  const viewportUnits = viewportUnitSnapshot()
+  const sectionViewportRelationships = sectionViewportSnapshot(visual)
 
   return {
     capturedAt: new Date().toISOString(),
@@ -217,6 +435,9 @@ const collectMeasurement = () => {
     },
     safeAreaInsets: safeArea.insets,
     safeAreaMeasurement: safeArea.measurement,
+    heroViewportRelationship,
+    viewportUnits,
+    sectionViewportRelationships,
   }
 }
 

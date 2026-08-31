@@ -1,0 +1,227 @@
+{
+  "version": 1,
+  "scope": {
+    "releaseYearMin": 2020,
+    "releaseYearMax": 2026,
+    "portraitMaxPhoneWidth": 600,
+    "landscapeMaxPhoneHeight": 600
+  },
+  "portrait": {
+    "pressureBands": [
+      {
+        "id": "EXTREME_SHORT",
+        "maxHeight": 600
+      },
+      {
+        "id": "SEVERE_SHORT",
+        "minHeight": 601,
+        "maxHeight": 680
+      },
+      {
+        "id": "COMPACT",
+        "minHeight": 681,
+        "maxHeight": 730
+      },
+      {
+        "id": "NORMAL",
+        "minHeight": 731,
+        "maxHeight": 800
+      },
+      {
+        "id": "TALL",
+        "minHeight": 801
+      }
+    ],
+    "bubbleHiddenBands": [
+      "EXTREME_SHORT",
+      "SEVERE_SHORT"
+    ],
+    "gaps": {
+      "titleToCertifications": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 28,
+        "reviewMax": 42
+      },
+      "certificationsToBubble": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 30,
+        "reviewMax": 48
+      },
+      "bubbleToScroll": {
+        "hardMin": 0,
+        "idealMin": 8,
+        "idealMax": 24,
+        "reviewMax": 36
+      },
+      "scrollToImage": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 44,
+        "reviewMax": 64
+      }
+    }
+  },
+  "landscape": {
+    "pressureBands": [
+      {
+        "id": "EXTREME_SHORT",
+        "maxHeight": 285
+      },
+      {
+        "id": "SEVERE_SHORT",
+        "minHeight": 286,
+        "maxHeight": 320
+      },
+      {
+        "id": "COMPACT",
+        "minHeight": 321,
+        "maxHeight": 352
+      },
+      {
+        "id": "NORMAL",
+        "minHeight": 353
+      }
+    ],
+    "zones": {
+      "leftMaxRatio": 0.5,
+      "rightMinRatio": 0.5,
+      "upperMaxRatio": 0.48,
+      "lowerMinRatio": 0.52
+    }
+  },
+  "socials": {
+    "topReviewMax": 28,
+    "rightReviewMax": 64,
+    "centerXSpreadMax": 8,
+    "viewportRightReviewMax": 18,
+    "heroRightReviewMax": 4,
+    "viewportRightIdealMin": 10,
+    "viewportRightIdealMax": 28
+  },
+  "contact": {
+    "bottomReviewMax": 36,
+    "rightReviewMax": 36,
+    "rotationSafetyPx": 1,
+    "viewportRightIdealMax": 24,
+    "viewportBottomIdealMax": 30,
+    "heroRightIdealMin": 0,
+    "heroRightIdealMax": 18,
+    "heroBottomIdealMin": 0,
+    "heroBottomIdealMax": 36
+  },
+  "bubble": {
+    "requireSingleLine": true,
+    "horizontalTolerancePx": 1
+  },
+  "synthetic": {
+    "portraitWidths": [
+      360,
+      390,
+      430
+    ],
+    "portraitBoundaries": [
+      600,
+      680,
+      730,
+      800
+    ],
+    "landscapeWidths": [
+      667,
+      844,
+      956
+    ],
+    "landscapeBoundaries": [
+      285,
+      320,
+      352
+    ],
+    "fuzzOffsets": [
+      -2,
+      -1,
+      0,
+      1,
+      2
+    ],
+    "sentinels": [
+      {
+        "width": 360,
+        "height": 624,
+        "orientation": "portrait",
+        "label": "360 severe low"
+      },
+      {
+        "width": 360,
+        "height": 664,
+        "orientation": "portrait",
+        "label": "360 severe measured"
+      },
+      {
+        "width": 360,
+        "height": 672,
+        "orientation": "portrait",
+        "label": "360 severe high"
+      },
+      {
+        "width": 360,
+        "height": 681,
+        "orientation": "portrait",
+        "label": "360 compact boundary"
+      },
+      {
+        "width": 360,
+        "height": 700,
+        "orientation": "portrait",
+        "label": "360 compact interpolation"
+      },
+      {
+        "width": 360,
+        "height": 780,
+        "orientation": "portrait",
+        "label": "360 normal stress"
+      },
+      {
+        "width": 667,
+        "height": 280,
+        "orientation": "landscape",
+        "label": "landscape extreme sentinel"
+      },
+      {
+        "width": 728,
+        "height": 272,
+        "orientation": "landscape",
+        "label": "landscape extreme measured-like"
+      },
+      {
+        "width": 750,
+        "height": 334,
+        "orientation": "landscape",
+        "label": "landscape compact sentinel"
+      },
+      {
+        "width": 844,
+        "height": 340,
+        "orientation": "landscape",
+        "label": "landscape compact wide"
+      },
+      {
+        "width": 956,
+        "height": 376,
+        "orientation": "landscape",
+        "label": "landscape normal wide"
+      }
+    ]
+  },
+  "image": {
+    "cropReviewAboveFraction": 0.02,
+    "cropFailAboveFraction": 0.05
+  },
+  "visualViewport": {
+    "heroStartTolerancePx": 2,
+    "contactBelowReviewPx": 1,
+    "contactBelowFailPx": 8,
+    "nextSectionVisibleReviewPx": 1,
+    "nextSectionVisibleFailPx": 8
+  }
+}

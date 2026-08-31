@@ -1,0 +1,208 @@
+/* =========================================================
+   STEP 13E — GOLDEN PHONE PORTRAIT 360–390 CANDIDATE V5
+   Reference composition: 360×681; width expansion test: 360–390px
+
+   Purpose:
+   - Preserve the 360×681 visual rhythm across heights and 360–390px phone widths.
+   - Keep bubble -> scroll -> image ordering structural.
+   - Let the visual row begin immediately after a controlled
+     scroll-to-image gap instead of using a fixed pixel image-start.
+   - Severe heights may hide the bubble; the remaining rows collapse
+     naturally and the portrait receives the reclaimed space.
+   - Candidate-only CSS: inject with Playwright; do not paste into
+     hero.css until the full phone portrait family is validated.
+   ========================================================= */
+
+@media (max-width: 390px) and (orientation: portrait) {
+  .hero {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+
+    /*
+     * Golden 360×681 rhythm:
+     *   title
+     *   certifications
+     *   bubble
+     *   scroll
+     *   ~27–30px visual breathing room
+     *   portrait + shape (takes ALL remaining height)
+     */
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      clamp(24px, 4.3svh, 30px)
+      minmax(0, 1fr) !important;
+  }
+
+  .heroSection {
+    display: contents !important;
+  }
+
+  /* Prevent intrinsic-width children from widening the single grid track. */
+  .heroTitle,
+  .certifications,
+  .bubbleContainer,
+  .scroll,
+  .contactButtonLink {
+    min-width: 0 !important;
+  }
+
+  /* -------------------------
+     TITLE
+     ------------------------- */
+  .heroTitle {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    justify-self: center !important;
+    margin-top: clamp(24px, 5svh, 40px) !important;
+    margin-bottom: clamp(16px, 2.4svh, 20px) !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  /* -------------------------
+     CERTIFICATIONS
+     ------------------------- */
+  .certifications {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    justify-self: stretch !important;
+    margin-bottom: clamp(16px, 2.5svh, 20px) !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  /* -------------------------
+     SPEECH BUBBLE
+     ------------------------- */
+  .bubbleContainer {
+    display: flex !important;
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    justify-self: center !important;
+    align-self: start !important;
+    transform: none !important;
+    width: min(92%, 330px) !important;
+    gap: 8px !important;
+    margin: 0 0 clamp(10px, 1.8svh, 14px) !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .bubble {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
+    padding: 8px 10px !important;
+  }
+
+  .bubbleContainer img {
+    flex: 0 0 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  /* -------------------------
+     SCROLL
+     ------------------------- */
+  .scroll {
+    grid-column: 1 !important;
+    grid-row: 4 !important;
+    justify-self: center !important;
+    align-self: start !important;
+    margin: 0 !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .scroll > svg {
+    transform: none !important;
+  }
+
+  /* -------------------------
+     PORTRAIT + SHAPE
+
+     Key V3 change:
+     .bg is the sixth grid row instead of an independently positioned
+     percentage-height layer. Its top therefore follows the scroll row
+     plus the controlled row-5 gap automatically at every browser height.
+
+     The width reconstructs the full visual viewport from the centered
+     Hero content width + the page gutters, avoiding a 100vw scrollbar
+     mismatch in desktop responsive emulation.
+     ------------------------- */
+  .bg {
+    position: relative !important;
+    grid-column: 1 !important;
+    grid-row: 6 !important;
+    align-self: stretch !important;
+    justify-self: center !important;
+
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    width: calc(100% + (2 * var(--page-gutter))) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin-inline: calc(-1 * var(--page-gutter)) !important;
+
+    z-index: 0 !important;
+  }
+
+  /* -------------------------
+     CONTACT
+
+     Shares the sixth row with the visual and is allowed to overlap it,
+     but the complete control stays inset from Hero bottom/right.
+     ------------------------- */
+  .contactButtonLink {
+    grid-column: 1 !important;
+    grid-row: 6 !important;
+    justify-self: end !important;
+    align-self: end !important;
+    margin: 0 !important;
+    /*
+     * 22px clears the worst-case rotation envelope for the
+     * larger 95×99px phone contact control used above 360px.
+     */
+    padding: 22px !important;
+    padding-right: max(22px, env(safe-area-inset-right, 0px)) !important;
+    padding-bottom: max(22px, env(safe-area-inset-bottom, 0px)) !important;
+    position: relative !important;
+    z-index: 3 !important;
+  }
+
+  .contactButton {
+    margin: 0 !important;
+  }
+
+  /* -------------------------
+     SOCIAL RAIL — portrait invariant
+     ------------------------- */
+  .socials {
+    position: absolute !important;
+    top: 0 !important;
+    right: var(--page-gutter) !important;
+    z-index: 4 !important;
+  }
+}
+
+/* =========================================================
+   SEVERE / EXTREME PHONE PORTRAIT
+   TestMU-backed pressure state.
+
+   Bubble is optional. Because its grid row is auto, hiding it removes
+   that row's height and automatically gives the reclaimed room to row 6
+   (portrait + shape), while preserving the same scroll -> visual gap.
+   ========================================================= */
+@media (max-width: 390px) and (max-height: 680px) and (orientation: portrait) {
+  .bubbleContainer {
+    display: none !important;
+  }
+}

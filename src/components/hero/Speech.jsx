@@ -3,11 +3,21 @@ import { motion } from "motion/react";
 
 
 const Speech = ({ variants }) => {
+  const qaParams =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+
   const qaMode =
-    typeof window !== "undefined" &&
-    new URLSearchParams(
-      window.location.search
-    ).get("qa") === "1";
+    qaParams?.get("qa") === "1";
+
+  const qaSpeechMode =
+    qaParams?.get("qaSpeech") || "longest";
+
+  const qaSpeechText =
+    qaSpeechMode === "code"
+      ? "I love to code!"
+      : "I love to watch movies or TV shows!";
 
 
   return (
@@ -38,7 +48,7 @@ const Speech = ({ variants }) => {
             and element measurements are repeatable.
           */
           <span>
-            I love to code!
+            {qaSpeechText}
           </span>
         ) : (
           <TypeAnimation

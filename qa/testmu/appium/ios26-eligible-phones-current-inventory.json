@@ -1,0 +1,38 @@
+{
+  "artifactType": "ios26-testmu-eligibility-snapshot",
+  "source": "qa-results/testmu/catalog/TESTMU__candidate-device-inventory__us__latest.json",
+  "sourceGeneratedAt": "2026-08-27T08:25:49.208Z",
+  "eligiblePhoneCount": 4,
+  "phones": [
+    {
+      "deviceName": "iPhone 13 Pro",
+      "availableOsVersions": [
+        "26",
+        "17"
+      ],
+      "latestOsVersion": "26"
+    },
+    {
+      "deviceName": "iPhone 17",
+      "availableOsVersions": [
+        "27",
+        "26"
+      ],
+      "latestOsVersion": "27"
+    },
+    {
+      "deviceName": "iPhone 17 Pro",
+      "availableOsVersions": [
+        "26"
+      ],
+      "latestOsVersion": "26"
+    },
+    {
+      "deviceName": "iPhone Air",
+      "availableOsVersions": [
+        "26"
+      ],
+      "latestOsVersion": "26"
+    }
+  ]
+}
