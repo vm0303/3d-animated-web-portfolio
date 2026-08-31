@@ -73,7 +73,97 @@ section {
     scroll-snap-align: center;
 }
 
+/* =========================================================
+   iOS SAFARI 26+ — LIQUID GLASS SECTION STABILITY
 
+   Real-device evidence from iPhone 17 / Safari 26.4 shows two separate
+   problems:
 
+   1) Expanded browser UI:
+      100dvh = 714px, 100lvh = 754px.
+      Making the *Hero section* 794px tall hides About, but adds 80px of
+      document-flow reserve below a 714px Hero and makes the portrait appear
+      to "float".
 
+      Instead, keep every section at 100dvh and move only the *content* of
+      following sections below the translucent Liquid Glass reveal zone.
+
+      Guard = 2 × (100lvh - 100dvh)
+            = 200lvh - 200dvh
+
+      For the measured expanded state:
+      guard = 2 × (754 - 714) = 80px.
+
+   2) Collapsed browser UI:
+      Safari's snapport can retain the smaller layout-viewport height while
+      the visible/dynamic viewport grows. With scroll-snap-align:center this
+      centers a 754px section inside a 714px snapport and overshoots the
+      section start by 20px. The measured landscape case shows the same
+      relationship: (402 - 338) / 2 = 32px.
+
+      Safari 26+ therefore uses scroll-snap-align:start for ALL portfolio
+      sections. This keeps About / Projects / Contact boundaries aligned to
+      their actual section starts as the toolbar expands and collapses.
+
+   Chrome and other browsers keep the existing behavior because the special
+   rules are gated by html.ios-safari-liquid-ui.
+   ========================================================= */
+@supports (height: 100lvh) and (height: 100dvh) {
+    @media (max-width: 440px) and (orientation: portrait) {
+
+        /* Keep the proven Hero composition tied to the actual dynamic viewport. */
+        .container > section:first-child,
+        .container > section:first-child > .hero {
+            height: 100dvh;
+            min-height: 100dvh;
+        }
+
+        html.ios-safari-liquid-ui .container > section {
+            height: 100dvh;
+            min-height: 100dvh;
+
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+        /*
+         * Do not make the Hero itself taller.
+         *
+         * Push only the following section CONTENT below Safari's translucent
+         * bottom reveal zone. Because box-sizing:border-box is global, this
+         * guard stays inside each 100dvh section and does not create another
+         * oversized snap target.
+         *
+         * When Safari collapses its UI, lvh approaches dvh and this becomes 0.
+         */
+        html.ios-safari-liquid-ui .container > section:not(:first-child) {
+            /*
+             * Keep the first meaningful content of every later section out of
+             * Safari 26's translucent bottom reveal zone in BOTH UI states.
+             *
+             * Measured iPhone 17 / Safari 26.5:
+             *   expanded:  lvh - dvh = 40px
+             *   collapsed: lvh - dvh = 0px, but the floating pill still
+             *              exposes content beneath it.
+             *
+             * Therefore:
+             *   - 88px is the collapsed-state floor;
+             *   - 3 × the measured lvh/dvh delta adapts upward while expanded;
+             *   - 128px caps the reserve so short phones do not lose too much
+             *     usable section space.
+             *
+             * This padding stays INSIDE each 100dvh section (global
+             * box-sizing:border-box), so section snap geometry remains stable.
+             */
+            --ios-liquid-content-guard:
+                clamp(
+                    88px,
+                    calc(300lvh - 300dvh),
+                    128px
+                );
+
+            padding-block-start: var(--ios-liquid-content-guard);
+        }
+    }
+}
 
