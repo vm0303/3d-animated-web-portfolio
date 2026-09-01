@@ -13780,7 +13780,7 @@ NO MORE CHANGES!
    - Validated against the Hero composition QA matrix before promotion.
    ========================================================= */
 
-@media (max-width: 440px) and (orientation: portrait) {
+@media (max-width: 500px) and (orientation: portrait) {
   .hero {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
@@ -14047,7 +14047,7 @@ NO MORE CHANGES!
    that row's height and automatically gives the reclaimed room to row 6
    (portrait + shape), while preserving the same scroll -> visual gap.
    ========================================================= */
-@media (max-width: 440px) and (max-height: 680px) and (orientation: portrait) {
+@media (max-width: 500px) and (max-height: 680px) and (orientation: portrait) {
   .bubbleContainer {
     display: none !important;
   }
