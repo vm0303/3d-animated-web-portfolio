@@ -34,9 +34,6 @@ const maxWidthFilter = Number(argValue('max-width') || 0) || null;
 const minHeightFilter = Number(argValue('min-height') || 0) || null;
 const maxHeightFilter = Number(argValue('max-height') || 0) || null;
 
-const normalizeName = (value = '') => String(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-const isFoldable = (name) => /(fold|flip|surface\s*duo)/i.test(name || '');
-const isTablet = (name) => /(ipad|tablet|galaxy\s*tab|matepad)/i.test(name || '');
 const round = (value) => Number.isFinite(value) ? Math.round(value * 100) / 100 : null;
 const clampScore = (value) => Math.max(0, Math.min(100, value));
 
@@ -98,17 +95,34 @@ const overrideCss = overrideCssPath
   : null;
 
 const eligibleCapture = (capture) => {
-  const year = capture.releaseYear;
   const viewport = capture.innerViewport || {};
   const orientation = capture.cssMediaOrientation || capture.cssOrientation;
-  const name = capture.deviceName || '';
 
-  if (!Number.isFinite(year) || year < contract.scope.releaseYearMin || year > contract.scope.releaseYearMax) return false;
-  if (isFoldable(name) || isTablet(name)) return false;
   if (!Number.isFinite(viewport.width) || !Number.isFinite(viewport.height)) return false;
   if (!['portrait', 'landscape'].includes(orientation)) return false;
-  if (orientation === 'portrait' && viewport.width > contract.scope.portraitMaxPhoneWidth) return false;
-  if (orientation === 'landscape' && viewport.height > contract.scope.landscapeMaxPhoneHeight) return false;
+
+  /*
+   * Phone-phase eligibility is intentionally based on measured CSS viewport
+   * geometry rather than release year or device/model names.
+   *
+   * Using the short edge makes the rule orientation-independent:
+   *   portrait  -> width
+   *   landscape -> height
+   *
+   * The current registry has slab-phone evidence through 448 CSS px and the
+   * next observed non-phone/open-device cluster begins at 520 CSS px. A 500px
+   * ceiling preserves headroom for wider future phones without hard-coding
+   * any vendor/model or calendar year.
+   *
+   * Foldable states that genuinely expose a phone-like CSS viewport may enter
+   * this composition phase; posture/hinge-specific behavior is still covered
+   * later by the dedicated foldable QA phase.
+   */
+  const shortEdge = Math.min(viewport.width, viewport.height);
+  const shortEdgeMax = Number(contract.scope.phoneShortEdgeMax);
+
+  if (Number.isFinite(shortEdgeMax) && shortEdge > shortEdgeMax) return false;
+
   return true;
 };
 
@@ -1117,6 +1131,7 @@ const main = async () => {
         registryGeneratedAt: registry.generatedAt,
         contractPath: path.relative(root, contractPath),
         overrideCssPath: overrideCssPath ? path.relative(root, overrideCssPath) : null,
+        selectionPolicy: contract.scope,
       },
       mode: {
         orientation: orientationFilter,

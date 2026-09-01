@@ -1,10 +1,9 @@
 {
   "version": 1,
   "scope": {
-    "releaseYearMin": 2020,
-    "releaseYearMax": 2026,
-    "portraitMaxPhoneWidth": 600,
-    "landscapeMaxPhoneHeight": 600
+    "selectionBasis": "css-viewport-geometry",
+    "phoneShortEdgeMax": 500,
+    "notes": "No release-year ceiling and no device-name filtering. A capture is eligible for the phone composition phase when its measured CSS viewport short edge is <= 500px. Current TestMU slab-phone evidence tops out at 448px; the next observed non-phone/open-device cluster starts at 520px, leaving a geometry-based safety gap."
   },
   "portrait": {
     "pressureBands": [
@@ -119,7 +118,9 @@
     "portraitWidths": [
       360,
       390,
-      430
+      430,
+      448,
+      500
     ],
     "portraitBoundaries": [
       600,
@@ -210,6 +211,12 @@
         "height": 376,
         "orientation": "landscape",
         "label": "landscape normal wide"
+      },
+      {
+        "width": 500,
+        "height": 960,
+        "orientation": "portrait",
+        "label": "future wide-phone portrait sentinel"
       }
     ]
   },
