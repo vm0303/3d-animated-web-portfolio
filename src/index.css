@@ -68,8 +68,6 @@ section {
     height: 100vh;
     height: 100dvh;
 
-    min-height: 320px;
-
     scroll-snap-align: center;
 }
 

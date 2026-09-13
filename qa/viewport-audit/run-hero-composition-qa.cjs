@@ -7,8 +7,12 @@ const { spawn } = require('node:child_process');
 const root = process.cwd();
 const registryPath = path.join(root, 'qa-results', 'testmu', 'catalog', 'TESTMU__geometry-registry__us__latest.json');
 const contractPath = path.join(root, 'qa', 'viewport-audit', 'hero-composition-contract.json');
-const outDir = path.join(root, 'qa-results', 'hero-composition');
-const screenshotDir = path.join(outDir, 'screenshots');
+const earlyOutputDirArg = process.argv.slice(2).find((arg) => arg.startsWith('--output-dir='));
+const earlyOutputDirValue = earlyOutputDirArg ? earlyOutputDirArg.slice('--output-dir='.length) : null;
+const outDir = earlyOutputDirValue ? path.resolve(root, earlyOutputDirValue) : path.join(root, 'qa-results', 'hero-composition');
+const goodScreenshotDir = path.join(outDir, 'good_screenshots');
+const badScreenshotDir = path.join(outDir, 'bad_screenshots');
+const legacyScreenshotDir = path.join(outDir, 'screenshots');
 const jsonOut = path.join(outDir, 'hero-composition-report.json');
 const mdOut = path.join(outDir, 'hero-composition-report.md');
 const csvOut = path.join(outDir, 'hero-composition-cases.csv');
@@ -24,15 +28,21 @@ const hasFlag = (name) => argv.includes(`--${name}`);
 const orientationFilter = argValue('orientation') || 'both';
 const quickMode = hasFlag('quick');
 const measuredOnly = hasFlag('measured-only');
+const shortSweepMode = hasFlag('short-sweep');
 const strictExit = hasFlag('strict');
-const maxScreenshots = Number(argValue('max-screenshots') || 24);
-const screenshotMode = argValue('screenshots') || 'problems';
+const maxScreenshotsRaw = argValue('max-screenshots');
+const maxScreenshots =
+  maxScreenshotsRaw == null
+    ? null
+    : Math.max(0, Number(maxScreenshotsRaw) || 0);
+const screenshotMode = argValue('screenshots') || 'all';
 const overrideCssPathRaw = argValue('override-css') || process.env.QA_HERO_OVERRIDE_CSS || null;
 const explicitBaseUrl = argValue('base-url') || process.env.QA_BASE_URL || null;
 const minWidthFilter = Number(argValue('min-width') || 0) || null;
 const maxWidthFilter = Number(argValue('max-width') || 0) || null;
 const minHeightFilter = Number(argValue('min-height') || 0) || null;
 const maxHeightFilter = Number(argValue('max-height') || 0) || null;
+const dumpCasesArg = argValue('dump-cases') || null;
 
 const round = (value) => Number.isFinite(value) ? Math.round(value * 100) / 100 : null;
 const clampScore = (value) => Math.max(0, Math.min(100, value));
@@ -208,6 +218,30 @@ if (!measuredOnly) {
   }
 }
 
+/*
+ * Focused phone-landscape calibration.
+ *
+ * This is intentionally opt-in so the permanent regression matrix does not
+ * become hundreds of visual-tuning probes. It combines:
+ *   1) every currently measured landscape geometry through the configured
+ *      short-height ceiling; and
+ *   2) a small synthetic width × height grid reaching down to 200px.
+ */
+if (shortSweepMode) {
+  const sweep = contract.landscapeShortSweep || {};
+
+  for (const width of sweep.widths || []) {
+    for (const height of sweep.heights || []) {
+      addSynthetic({
+        width,
+        height,
+        orientation: 'landscape',
+        label: `landscape short sweep ${width}x${height}`,
+      });
+    }
+  }
+}
+
 let filteredCases = cases.filter((item) => {
   if (orientationFilter !== 'both' && item.orientation !== orientationFilter) return false;
   if (minWidthFilter != null && item.width < minWidthFilter) return false;
@@ -216,11 +250,47 @@ let filteredCases = cases.filter((item) => {
   if (maxHeightFilter != null && item.height > maxHeightFilter) return false;
   return true;
 });
+if (shortSweepMode) {
+  const sweep = contract.landscapeShortSweep || {};
+  const maxMeasuredHeight = Number(
+    sweep.includeMeasuredThroughHeight ?? 355
+  );
+
+  filteredCases = filteredCases.filter((item) => {
+    if (item.orientation !== 'landscape') return false;
+
+    const isMeasuredShort =
+      item.source === 'MEASURED' &&
+      (
+        !Number.isFinite(maxMeasuredHeight) ||
+        item.height <= maxMeasuredHeight
+      );
+
+    const isSweepSynthetic =
+      (item.labels || []).some((label) =>
+        label.startsWith('landscape short sweep ')
+      ) ||
+      String(item.label || '').startsWith(
+        'landscape short sweep '
+      );
+
+    return isMeasuredShort || isSweepSynthetic;
+  });
+}
+
 if (quickMode) {
   const sentinels = new Set((contract.synthetic.sentinels || []).map((item) => `${item.orientation}|${item.width}x${item.height}`));
   filteredCases = filteredCases.filter((item) => item.source === 'MEASURED' && sentinels.has(`${item.orientation}|${item.width}x${item.height}`) || item.source === 'SYNTHETIC');
 }
 filteredCases.sort((a, b) => a.orientation.localeCompare(b.orientation) || a.height - b.height || a.width - b.width);
+
+if (dumpCasesArg) {
+  const dumpPath = path.resolve(root, dumpCasesArg);
+  fs.mkdirSync(path.dirname(dumpPath), { recursive: true });
+  fs.writeFileSync(dumpPath, JSON.stringify(filteredCases, null, 2));
+  console.log(`Wrote ${filteredCases.length} cases to ${path.relative(root, dumpPath)}`);
+  process.exit(0);
+}
 
 const findFreePort = (start = 4173) => new Promise((resolve, reject) => {
   const tryPort = (port) => {
@@ -376,6 +446,11 @@ const captureDom = async (page) => page.evaluate(() => {
   const certificationBadgeUnion = unionRects(certificationBadgeItems);
   const certificationContentUnion = unionRects([certificationTitleInk, certificationTextInk, ...certificationBadgeItems]);
 
+  const socialsVisualUnion = unionRects([
+    rect('.socials'),
+    rect('.socialsText'),
+  ]);
+
   const socialsAnchors = [...document.querySelectorAll('.socials > a')].map((el) => {
     const r = el.getBoundingClientRect();
     return { centerX: r.left + r.width / 2, centerY: r.top + r.height / 2, top: r.top, bottom: r.bottom, left: r.left, right: r.right };
@@ -424,6 +499,322 @@ const captureDom = async (page) => page.evaluate(() => {
       cropAxis,
     };
   })() : null;
+
+  const heroImageOpaqueOverlaps =
+    heroImageEl
+      ? (() => {
+          try {
+            if (
+              !heroImageEl.complete ||
+              !heroImageEl.naturalWidth ||
+              !heroImageEl.naturalHeight
+            ) {
+              return null;
+            }
+
+            const imageRect =
+              heroImageEl.getBoundingClientRect();
+            const cs =
+              getComputedStyle(heroImageEl);
+
+            /*
+             * The landscape candidate uses a transparent PNG with
+             * object-fit: contain and center-bottom positioning.
+             * Bounding-box collisions therefore over-report empty,
+             * transparent image padding as if it were the person.
+             */
+            if (cs.objectFit !== 'contain') {
+              return null;
+            }
+
+            const position =
+              cs.objectPosition
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            if (
+              position !== '50% 100%' &&
+              position !== 'center bottom'
+            ) {
+              return null;
+            }
+
+            const naturalWidth =
+              heroImageEl.naturalWidth;
+            const naturalHeight =
+              heroImageEl.naturalHeight;
+
+            const renderScale = Math.min(
+              imageRect.width / naturalWidth,
+              imageRect.height / naturalHeight
+            );
+
+            const renderedWidth =
+              naturalWidth * renderScale;
+            const renderedHeight =
+              naturalHeight * renderScale;
+
+            const renderedLeft =
+              imageRect.left +
+              (
+                imageRect.width -
+                renderedWidth
+              ) /
+                2;
+
+            const renderedTop =
+              imageRect.bottom -
+              renderedHeight;
+
+            /*
+             * Downsample the alpha mask to 25% of the source size.
+             * This is still roughly CSS-pixel precision at the
+             * landscape sizes we test, while keeping 100-case runs
+             * inexpensive.
+             */
+            const sampleScale = 0.25;
+            const canvas =
+              document.createElement('canvas');
+
+            canvas.width = Math.max(
+              1,
+              Math.round(
+                naturalWidth * sampleScale
+              )
+            );
+            canvas.height = Math.max(
+              1,
+              Math.round(
+                naturalHeight * sampleScale
+              )
+            );
+
+            const ctx = canvas.getContext(
+              '2d',
+              {
+                willReadFrequently: true,
+              }
+            );
+
+            if (!ctx) return null;
+
+            ctx.clearRect(
+              0,
+              0,
+              canvas.width,
+              canvas.height
+            );
+            ctx.drawImage(
+              heroImageEl,
+              0,
+              0,
+              canvas.width,
+              canvas.height
+            );
+
+            const scanRect = (other) => {
+              if (
+                !other ||
+                !other.found ||
+                other.display === 'none' ||
+                other.visibility ===
+                  'hidden' ||
+                other.width <= 0 ||
+                other.height <= 0
+              ) {
+                return {
+                  available: true,
+                  opaqueSamplePixels: 0,
+                };
+              }
+
+              const x0 = Math.max(
+                other.left,
+                renderedLeft
+              );
+              const x1 = Math.min(
+                other.right,
+                renderedLeft +
+                  renderedWidth
+              );
+              const y0 = Math.max(
+                other.top,
+                renderedTop
+              );
+              const y1 = Math.min(
+                other.bottom,
+                renderedTop +
+                  renderedHeight
+              );
+
+              if (
+                x1 <= x0 ||
+                y1 <= y0
+              ) {
+                return {
+                  available: true,
+                  opaqueSamplePixels: 0,
+                };
+              }
+
+              const sx0 = Math.max(
+                0,
+                Math.floor(
+                  (
+                    (
+                      x0 -
+                      renderedLeft
+                    ) /
+                    renderedWidth
+                  ) *
+                    canvas.width
+                )
+              );
+              const sx1 = Math.min(
+                canvas.width,
+                Math.ceil(
+                  (
+                    (
+                      x1 -
+                      renderedLeft
+                    ) /
+                    renderedWidth
+                  ) *
+                    canvas.width
+                )
+              );
+              const sy0 = Math.max(
+                0,
+                Math.floor(
+                  (
+                    (
+                      y0 -
+                      renderedTop
+                    ) /
+                    renderedHeight
+                  ) *
+                    canvas.height
+                )
+              );
+              const sy1 = Math.min(
+                canvas.height,
+                Math.ceil(
+                  (
+                    (
+                      y1 -
+                      renderedTop
+                    ) /
+                    renderedHeight
+                  ) *
+                    canvas.height
+                )
+              );
+
+              const sw = Math.max(
+                0,
+                sx1 - sx0
+              );
+              const sh = Math.max(
+                0,
+                sy1 - sy0
+              );
+
+              if (!sw || !sh) {
+                return {
+                  available: true,
+                  opaqueSamplePixels: 0,
+                };
+              }
+
+              const pixels =
+                ctx.getImageData(
+                  sx0,
+                  sy0,
+                  sw,
+                  sh
+                ).data;
+
+              let opaqueSamplePixels = 0;
+
+              for (
+                let i = 3;
+                i < pixels.length;
+                i += 4
+              ) {
+                /*
+                 * Ignore near-transparent edge
+                 * antialiasing noise.
+                 */
+                if (pixels[i] >= 32) {
+                  opaqueSamplePixels += 1;
+                }
+              }
+
+              return {
+                available: true,
+                opaqueSamplePixels,
+                sampledWidth: sw,
+                sampledHeight: sh,
+                sampledArea: sw * sh,
+              };
+            };
+
+            return {
+              title: scanRect(
+                rect('.heroTitle')
+              ),
+              certifications: scanRect(
+                certificationContentUnion
+              ),
+              bubble: scanRect(
+                rect('.bubbleContainer')
+              ),
+              scroll: scanRect(
+                rect('.scroll')
+              ),
+            };
+          } catch (error) {
+            return {
+              error: String(
+                error?.message || error
+              ),
+            };
+          }
+        })()
+      : null;
+
+  const heroTitleEl =
+    document.querySelector('.heroTitle');
+
+  const heroTitleMetrics = heroTitleEl
+    ? (() => {
+        const r =
+          heroTitleEl.getBoundingClientRect();
+        const cs =
+          getComputedStyle(heroTitleEl);
+        const lineHeight =
+          Number.parseFloat(cs.lineHeight);
+
+        return {
+          clientWidth: heroTitleEl.clientWidth,
+          scrollWidth: heroTitleEl.scrollWidth,
+          rectWidth: r.width,
+          rectHeight: r.height,
+          fontSize:
+            Number.parseFloat(cs.fontSize),
+          lineHeight:
+            Number.isFinite(lineHeight)
+              ? lineHeight
+              : null,
+          whiteSpace: cs.whiteSpace,
+          approxLineCount:
+            Number.isFinite(lineHeight) &&
+            lineHeight > 0
+              ? r.height / lineHeight
+              : null,
+        };
+      })()
+    : null;
 
   const bubbleText = document.querySelector('.bubble');
   const bubbleTextMetrics = bubbleText ? (() => {
@@ -477,6 +868,8 @@ const captureDom = async (page) => page.evaluate(() => {
     hero: rect('.hero'),
     section: rect('section:first-of-type'),
     nextSection: rect('section:nth-of-type(2)'),
+    leftSection: rect('.heroSection.left'),
+    rightSection: rect('.heroSection.right'),
     title: rect('.heroTitle'),
     certifications: rect('.certifications'),
     certificationTitle: rect('.certifications h2'),
@@ -492,12 +885,16 @@ const captureDom = async (page) => page.evaluate(() => {
     bubbleAvatar: rect('.bubbleContainer img'),
     scroll: rect('.scroll > svg'),
     socials: rect('.socials'),
+    socialsText: rect('.socialsText'),
+    socialsTextContainer: rect('.socialsTextContainer'),
+    socialsVisualUnion,
     socialsAnchors,
     background: rect('.bg'),
     image: rect('.hImg'),
     contact: rect('.contactButton'),
     contactVisual: rect('.contactButton > svg'),
     contactPaint: rect('.contactButton > svg circle'),
+    contactArrowSvg: rect('.arrow svg'),
     contactLink: rect('.contactButtonLink'),
     computed: {
       heroDisplay: getComputedStyle(document.querySelector('.hero')).display,
@@ -508,9 +905,12 @@ const captureDom = async (page) => page.evaluate(() => {
       backgroundHeight: getComputedStyle(document.querySelector('.bg')).height,
       bubbleDisplay: getComputedStyle(document.querySelector('.bubbleContainer')).display,
       scrollTransform: getComputedStyle(document.querySelector('.scroll > svg')).transform,
+      leftJustifyContent: getComputedStyle(document.querySelector('.heroSection.left')).justifyContent,
     },
     bubbleTextMetrics,
     heroImageMetrics,
+    heroImageOpaqueOverlaps,
+    heroTitleMetrics,
   };
 });
 
@@ -561,6 +961,7 @@ const assessCase = (testCase, dom) => {
   const issues = [];
   const hero = dom.hero;
   const isPortrait = testCase.orientation === 'portrait';
+  const { width, height } = testCase;
   const bands = isPortrait ? contract.portrait.pressureBands : contract.landscape.pressureBands;
   const pressureBand = bandForHeight(bands, testCase.height);
 
@@ -844,6 +1245,53 @@ const assessCase = (testCase, dom) => {
     }
   }
 
+  /*
+   * Phone-landscape non-negotiable:
+   * the scroll control must remain fully inside both the Hero and the
+   * browser-visible viewport. A layout that visually pushes it into About
+   * must fail even if every other composition check passes.
+   */
+  if (visible(dom.scroll) && visible(hero)) {
+    const tolerance = 1.5;
+
+    if (
+      dom.scroll.top < hero.top - tolerance ||
+      dom.scroll.bottom > hero.bottom + tolerance
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'SCROLL_OUTSIDE_HERO',
+        `Scroll control extends outside the Hero bounds.`,
+        {
+          hero,
+          scroll: dom.scroll,
+        }
+      );
+    }
+
+    if (
+      dom.scroll.pageTop != null &&
+      dom.scroll.pageBottom != null &&
+      (
+        dom.scroll.pageTop < visualPageTop - tolerance ||
+        dom.scroll.pageBottom > visualPageBottom + tolerance
+      )
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'SCROLL_OUTSIDE_VISUAL_VIEWPORT',
+        `Scroll control extends outside the browser-visible viewport.`,
+        {
+          visualPageTop,
+          visualPageBottom,
+          scroll: dom.scroll,
+        }
+      );
+    }
+  }
+
   let nextSectionVisiblePx = null;
   if (heroAtVisibleStart && visible(dom.nextSection) && dom.nextSection.pageTop != null) {
     nextSectionVisiblePx = round(Math.max(0, visualPageBottom - dom.nextSection.pageTop));
@@ -879,6 +1327,96 @@ const assessCase = (testCase, dom) => {
     scrollToImage: gap(dom.scroll, dom.image),
     heroBottomToImageBottom: visible(hero) && visible(dom.image) ? round(hero.bottom - dom.image.bottom) : null,
     heroBottomToBackgroundBottom: visible(hero) && visible(dom.background) ? round(hero.bottom - dom.background.bottom) : null,
+    imageBackgroundCenterDeltaPx:
+      visible(dom.image) && visible(dom.background)
+        ? round(Math.abs(dom.image.centerX - dom.background.centerX))
+        : null,
+    imageBackgroundCenterDeltaHeroRatio:
+      visible(hero) && visible(dom.image) && visible(dom.background) && hero.width > 0
+        ? Math.abs(dom.image.centerX - dom.background.centerX) / hero.width
+        : null,
+    bubbleRightSectionWidthRatio:
+      visible(dom.bubble) &&
+      visible(dom.rightSection) &&
+      dom.rightSection.width > 0
+        ? dom.bubble.width /
+          dom.rightSection.width
+        : null,
+    socialsTextCenterDeltaPx:
+      visible(dom.socialsText) &&
+      visible(dom.socialsTextContainer)
+        ? {
+            x: round(
+              Math.abs(
+                dom.socialsText.centerX -
+                dom.socialsTextContainer.centerX
+              )
+            ),
+            y: round(
+              Math.abs(
+                dom.socialsText.centerY -
+                dom.socialsTextContainer.centerY
+              )
+            ),
+          }
+        : null,
+    socialsTextContainment:
+      visible(dom.socialsText) &&
+      visible(dom.socialsTextContainer)
+        ? {
+            left:
+              dom.socialsText.left -
+              dom.socialsTextContainer.left,
+            right:
+              dom.socialsTextContainer.right -
+              dom.socialsText.right,
+            top:
+              dom.socialsText.top -
+              dom.socialsTextContainer.top,
+            bottom:
+              dom.socialsTextContainer.bottom -
+              dom.socialsText.bottom,
+          }
+        : null,
+    instagramToSocialTextGap:
+      Array.isArray(dom.socialsAnchors) &&
+      dom.socialsAnchors.length >= 3 &&
+      visible(dom.socialsText)
+        ? dom.socialsText.top -
+          dom.socialsAnchors[2].bottom
+        : null,
+    contactArrowCenterDeltaPx:
+      visible(dom.contactVisual) &&
+      visible(dom.contactArrowSvg)
+        ? {
+            x: round(
+              Math.abs(
+                dom.contactVisual.centerX -
+                dom.contactArrowSvg.centerX
+              )
+            ),
+            y: round(
+              Math.abs(
+                dom.contactVisual.centerY -
+                dom.contactArrowSvg.centerY
+              )
+            ),
+          }
+        : null,
+    contactArrowInsideVisual:
+      visible(dom.contactVisual) &&
+      visible(dom.contactArrowSvg)
+        ? (
+            dom.contactArrowSvg.left >=
+              dom.contactVisual.left - 1.5 &&
+            dom.contactArrowSvg.right <=
+              dom.contactVisual.right + 1.5 &&
+            dom.contactArrowSvg.top >=
+              dom.contactVisual.top - 1.5 &&
+            dom.contactArrowSvg.bottom <=
+              dom.contactVisual.bottom + 1.5
+          )
+        : null,
     contactBottomGap: edgeGap(hero, dom.contact, 'bottom'),
     contactRightGap: edgeGap(hero, dom.contact, 'right'),
     contactPaint: dom.contactPaint || null,
@@ -911,9 +1449,9 @@ const assessCase = (testCase, dom) => {
   // also intentional. Everything below represents content that should remain
   // visually separate in the user's Hero contract.
   const portraitCollisionPairs = [
-    ['TITLE_SOCIALS', dom.title, dom.socials],
-    ['CERTIFICATIONS_SOCIALS', dom.certificationContentUnion, dom.socials],
-    ['BUBBLE_SOCIALS', dom.bubble, dom.socials],
+    ['TITLE_SOCIALS', dom.title, dom.socialsVisualUnion || dom.socials],
+    ['CERTIFICATIONS_SOCIALS', dom.certificationContentUnion, dom.socialsVisualUnion || dom.socials],
+    ['BUBBLE_SOCIALS', dom.bubble, dom.socialsVisualUnion || dom.socials],
     ['SCROLL_SOCIALS', dom.scroll, dom.socials],
     ['TITLE_IMAGE', dom.title, dom.image],
     ['CERTIFICATIONS_IMAGE', dom.certificationContentUnion, dom.image],
@@ -922,23 +1460,19 @@ const assessCase = (testCase, dom) => {
     ['CERTIFICATIONS_CONTACT', dom.certificationContentUnion, dom.contact],
     ['BUBBLE_CONTACT', dom.bubble, dom.contact],
     ['SCROLL_CONTACT', dom.scroll, dom.contact],
-    ['SOCIALS_CONTACT', dom.socials, dom.contact],
+    ['SOCIALS_CONTACT', dom.socialsVisualUnion || dom.socials, dom.contact],
   ];
 
   const landscapeCollisionPairs = [
     ['TITLE_CERTIFICATIONS', dom.title, dom.certifications],
-    ['TITLE_SOCIALS', dom.title, dom.socials],
+    ['TITLE_SOCIALS', dom.title, dom.socialsVisualUnion || dom.socials],
     ['TITLE_BUBBLE', dom.title, dom.bubble],
-    ['TITLE_IMAGE', dom.title, dom.image],
-    ['CERTIFICATIONS_SOCIALS', dom.certificationContentUnion, dom.socials],
+    ['CERTIFICATIONS_SOCIALS', dom.certificationContentUnion, dom.socialsVisualUnion || dom.socials],
     ['CERTIFICATIONS_BUBBLE', dom.certificationContentUnion, dom.bubble],
-    ['CERTIFICATIONS_IMAGE', dom.certificationContentUnion, dom.image],
-    ['BUBBLE_SOCIALS', dom.bubble, dom.socials],
-    ['BUBBLE_IMAGE', dom.bubble, dom.image],
-    ['SCROLL_IMAGE', dom.scroll, dom.image],
+    ['BUBBLE_SOCIALS', dom.bubble, dom.socialsVisualUnion || dom.socials],
     ['SCROLL_CONTACT', dom.scroll, dom.contact],
     ['BUBBLE_CONTACT', dom.bubble, dom.contact],
-    ['SOCIALS_CONTACT', dom.socials, dom.contact],
+    ['SOCIALS_CONTACT', dom.socialsVisualUnion || dom.socials, dom.contact],
     ['TITLE_CONTACT', dom.title, dom.contact],
     ['CERTIFICATIONS_CONTACT', dom.certificationContentUnion, dom.contact],
   ];
@@ -946,6 +1480,84 @@ const assessCase = (testCase, dom) => {
   for (const [label, a, b] of (isPortrait ? portraitCollisionPairs : landscapeCollisionPairs)) {
     const hit = evaluateUnexpectedOverlap(issues, label, a, b);
     if (hit) metrics.unexpectedOverlaps.push({ label, ...hit });
+  }
+
+  /*
+   * In landscape, the portrait PNG contains substantial
+   * transparency. Use the sampled alpha mask for collisions
+   * against the portrait instead of the .hImg rectangle.
+   */
+  if (!isPortrait) {
+    const alphaPairs = [
+      ['TITLE_IMAGE', 'title', dom.title],
+      [
+        'CERTIFICATIONS_IMAGE',
+        'certifications',
+        dom.certificationContentUnion,
+      ],
+      ['BUBBLE_IMAGE', 'bubble', dom.bubble],
+      ['SCROLL_IMAGE', 'scroll', dom.scroll],
+    ];
+
+    for (
+      const [
+        label,
+        alphaKey,
+        otherRect,
+      ] of alphaPairs
+    ) {
+      const alpha =
+        dom.heroImageOpaqueOverlaps?.[
+          alphaKey
+        ];
+
+      if (alpha?.available) {
+        if (
+          Number(
+            alpha.opaqueSamplePixels ||
+              0
+          ) > 4
+        ) {
+          addIssue(
+            issues,
+            'FAIL',
+            `${label}_COLLISION`,
+            `${label} intersects visible portrait pixels.`,
+            alpha
+          );
+
+          metrics.unexpectedOverlaps.push(
+            {
+              label,
+              alphaAware: true,
+              ...alpha,
+            }
+          );
+        }
+      } else {
+        /*
+         * If alpha sampling is unavailable,
+         * retain the conservative box check.
+         */
+        const hit =
+          evaluateUnexpectedOverlap(
+            issues,
+            label,
+            otherRect,
+            dom.image
+          );
+
+        if (hit) {
+          metrics.unexpectedOverlaps.push(
+            {
+              label,
+              fallbackBoxCheck: true,
+              ...hit,
+            }
+          );
+        }
+      }
+    }
   }
 
   if (isPortrait) {
@@ -984,6 +1596,367 @@ const assessCase = (testCase, dom) => {
     }
   } else {
     const z = contract.landscape.zones;
+
+    const bubbleMinViewportWidth =
+      Number(
+        contract.landscape
+          .bubbleMinViewportWidth || 0
+      );
+
+    const bubbleMinViewportHeight =
+      Number(
+        contract.landscape
+          .bubbleMinViewportHeight || 0
+      );
+
+    const bubbleShouldHide =
+      (
+        contract.landscape
+          .bubbleHiddenBands || []
+      ).includes(pressureBand) ||
+      (
+        Number.isFinite(
+          bubbleMinViewportWidth
+        ) &&
+        bubbleMinViewportWidth > 0 &&
+        width < bubbleMinViewportWidth
+      ) ||
+      (
+        Number.isFinite(
+          bubbleMinViewportHeight
+        ) &&
+        bubbleMinViewportHeight > 0 &&
+        height < bubbleMinViewportHeight
+      );
+
+    const bubbleIsVisible =
+      visible(dom.bubble);
+
+    if (!shortSweepMode) {
+      if (bubbleShouldHide && bubbleIsVisible) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_BUBBLE_SHOULD_HIDE',
+          `Bubble is visible in ${pressureBand}.`
+        );
+      }
+
+      if (!bubbleShouldHide && !bubbleIsVisible) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_BUBBLE_SHOULD_SHOW',
+          `Bubble is hidden in ${pressureBand}.`
+        );
+      }
+    }
+
+    if (
+      dom.heroTitleMetrics
+        ?.approxLineCount != null &&
+      Number.isFinite(
+        contract.landscape
+          .titleMaxApproxLines
+      ) &&
+      dom.heroTitleMetrics
+        .approxLineCount >
+        contract.landscape
+          .titleMaxApproxLines
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'LANDSCAPE_TITLE_EXTRA_WRAP',
+        `Hero title uses approximately ` +
+          `${dom.heroTitleMetrics.approxLineCount.toFixed(2)} ` +
+          `lines instead of the intended two.`,
+        dom.heroTitleMetrics
+      );
+    }
+
+    if (
+      bubbleIsVisible &&
+      contract.bubble.requireSingleLine &&
+      dom.bubbleTextMetrics
+    ) {
+      const m = dom.bubbleTextMetrics;
+      const nowrapFits =
+        m.scrollWidth <=
+        m.clientWidth +
+          contract.bubble
+            .horizontalTolerancePx;
+
+      if (!nowrapFits) {
+        addIssue(
+          issues,
+          'FAIL',
+          'BUBBLE_TEXT_OVERFLOW',
+          `Longest QA phrase exceeds bubble width by ` +
+            `${(m.scrollWidth - m.clientWidth).toFixed(1)}px.`,
+          m
+        );
+      }
+    }
+
+    if (shortSweepMode) {
+      const visualContract =
+        contract.landscapeShortSweep
+          ?.visualContract || {};
+
+      if (
+        visualContract.leftJustifyContent &&
+        dom.computed.leftJustifyContent !==
+          visualContract.leftJustifyContent
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_LEFT_NOT_EVENLY_DISTRIBUTED',
+          `Short-landscape left column uses ` +
+            `${dom.computed.leftJustifyContent}; expected ` +
+            `${visualContract.leftJustifyContent}.`
+        );
+      }
+
+      const bubbleRatio =
+        metrics.bubbleRightSectionWidthRatio;
+
+      const bubbleMaxRatio =
+        Number(
+          visualContract
+            .bubbleMaxRightSectionWidthRatio
+        );
+
+      if (
+        bubbleRatio != null &&
+        Number.isFinite(bubbleMaxRatio) &&
+        bubbleRatio > bubbleMaxRatio
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_BUBBLE_WIDTH_EXPANDED',
+          `Bubble consumes ` +
+            `${(bubbleRatio * 100).toFixed(1)}% ` +
+            `of the right Hero section; maximum is ` +
+            `${(bubbleMaxRatio * 100).toFixed(0)}%.`
+        );
+      }
+
+      const certTitleTextGap =
+        visible(dom.certificationTitle) &&
+        visible(dom.certificationText)
+          ? dom.certificationText.top -
+            dom.certificationTitle.bottom
+          : null;
+
+      const certTextBadgesGap =
+        visible(dom.certificationText) &&
+        visible(dom.certificationImages)
+          ? dom.certificationImages.top -
+            dom.certificationText.bottom
+          : null;
+
+      const certTitleTextMin =
+        Number(
+          visualContract.certTitleToTextMin
+        );
+
+      const certTextBadgesMin =
+        Number(
+          visualContract.certTextToBadgesMin
+        );
+
+      if (
+        certTitleTextGap != null &&
+        Number.isFinite(certTitleTextMin) &&
+        certTitleTextGap < certTitleTextMin
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_CERT_TITLE_TEXT_TOO_TIGHT',
+          `Certification title-to-text gap is ` +
+            `${certTitleTextGap.toFixed(1)}px; ` +
+            `minimum is ${certTitleTextMin}px.`
+        );
+      }
+
+      if (
+        certTextBadgesGap != null &&
+        Number.isFinite(certTextBadgesMin) &&
+        certTextBadgesGap < certTextBadgesMin
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_CERT_TEXT_BADGES_TOO_TIGHT',
+          `Certification text-to-badges gap is ` +
+            `${certTextBadgesGap.toFixed(1)}px; ` +
+            `minimum is ${certTextBadgesMin}px.`
+        );
+      }
+
+      const socialCenter =
+        metrics.socialsTextCenterDeltaPx;
+
+      const socialCenterTolerance =
+        Number(
+          visualContract
+            .socialsTextCenterTolerancePx
+        );
+
+      if (
+        socialCenter &&
+        Number.isFinite(
+          socialCenterTolerance
+        ) &&
+        (
+          socialCenter.x >
+            socialCenterTolerance ||
+          socialCenter.y >
+            socialCenterTolerance
+        )
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_SOCIAL_TEXT_OFF_CENTER',
+          `FOLLOW ME center differs from its container by ` +
+            `${socialCenter.x.toFixed(1)}px x / ` +
+            `${socialCenter.y.toFixed(1)}px y.`
+        );
+      }
+
+      const socialContainment =
+        metrics.socialsTextContainment;
+
+      const socialContainmentTolerance =
+        Number(
+          visualContract
+            .socialLabelContainmentTolerancePx
+        );
+
+      if (
+        socialContainment &&
+        Number.isFinite(
+          socialContainmentTolerance
+        ) &&
+        (
+          socialContainment.left <
+            -socialContainmentTolerance ||
+          socialContainment.right <
+            -socialContainmentTolerance ||
+          socialContainment.top <
+            -socialContainmentTolerance ||
+          socialContainment.bottom <
+            -socialContainmentTolerance
+        )
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_SOCIAL_TEXT_ESCAPES_CONTAINER',
+          `FOLLOW ME painted bounds extend outside ` +
+            `.socialsTextContainer.`
+        );
+      }
+
+      const socialSequenceMinGap =
+        Number(
+          visualContract
+            .socialSequenceMinGapPx
+        );
+
+      if (
+        metrics.instagramToSocialTextGap != null &&
+        Number.isFinite(
+          socialSequenceMinGap
+        ) &&
+        metrics.instagramToSocialTextGap <
+          socialSequenceMinGap
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_SOCIAL_TEXT_OVERLAPS_INSTAGRAM',
+          `Instagram-to-FOLLOW-ME visual gap is ` +
+            `${metrics.instagramToSocialTextGap.toFixed(1)}px; ` +
+            `minimum is ${socialSequenceMinGap}px.`
+        );
+      }
+
+      const arrowCenter =
+        metrics.contactArrowCenterDeltaPx;
+
+      const arrowCenterTolerance =
+        Number(
+          visualContract
+            .contactArrowCenterTolerancePx
+        );
+
+      if (
+        arrowCenter &&
+        Number.isFinite(
+          arrowCenterTolerance
+        ) &&
+        (
+          arrowCenter.x >
+            arrowCenterTolerance ||
+          arrowCenter.y >
+            arrowCenterTolerance
+        )
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_CONTACT_ARROW_OFF_CENTER',
+          `Contact arrow differs from the contact SVG center by ` +
+            `${arrowCenter.x.toFixed(1)}px x / ` +
+            `${arrowCenter.y.toFixed(1)}px y.`
+        );
+      }
+
+      if (
+        metrics.contactArrowInsideVisual ===
+        false
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_CONTACT_ARROW_ESCAPES_BUTTON',
+          `Contact arrow extends outside the contact SVG.`
+        );
+      }
+    }
+
+    const alignment = contract.landscape.imageBackgroundAlignment || {};
+    const centerRatio = metrics.imageBackgroundCenterDeltaHeroRatio;
+
+    if (
+      centerRatio != null &&
+      Number.isFinite(alignment.failAboveHeroWidthRatio) &&
+      centerRatio > alignment.failAboveHeroWidthRatio
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'LANDSCAPE_IMAGE_BG_CENTER_MISALIGNED',
+        `Portrait center is ${(centerRatio * 100).toFixed(1)}% of Hero width away from the background center.`
+      );
+    } else if (
+      centerRatio != null &&
+      Number.isFinite(alignment.reviewAboveHeroWidthRatio) &&
+      centerRatio > alignment.reviewAboveHeroWidthRatio
+    ) {
+      addIssue(
+        issues,
+        'REVIEW',
+        'LANDSCAPE_IMAGE_BG_CENTER_ALIGNMENT',
+        `Portrait center is ${(centerRatio * 100).toFixed(1)}% of Hero width away from the background center.`
+      );
+    }
     if (visible(hero)) {
       const xRatio = (box) => (box.centerX - hero.left) / hero.width;
       const yRatio = (box) => (box.centerY - hero.top) / hero.height;
@@ -1016,6 +1989,38 @@ const assessCase = (testCase, dom) => {
     }
     if (visible(dom.certificationText) && visible(dom.certificationImages) && dom.certificationImages.top < dom.certificationText.bottom) {
       addIssue(issues, 'FAIL', 'LANDSCAPE_CERT_BADGE_ORDER', 'Certification badges overlap the certification text.');
+    }
+
+    const internalGaps = contract.landscape.certificationInternalGaps || {};
+
+    if (visible(dom.certificationTitle) && visible(dom.certificationText)) {
+      const titleTextGap = dom.certificationText.top - dom.certificationTitle.bottom;
+      if (
+        Number.isFinite(internalGaps.titleToTextHardMin) &&
+        titleTextGap < internalGaps.titleToTextHardMin
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_CERT_TITLE_TEXT_TOO_TIGHT',
+          `Certification title-to-text gap is ${titleTextGap.toFixed(1)}px.`
+        );
+      }
+    }
+
+    if (visible(dom.certificationText) && visible(dom.certificationImages)) {
+      const textBadgeGap = dom.certificationImages.top - dom.certificationText.bottom;
+      if (
+        Number.isFinite(internalGaps.textToBadgesHardMin) &&
+        textBadgeGap < internalGaps.textToBadgesHardMin
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'LANDSCAPE_CERT_TEXT_BADGES_TOO_TIGHT',
+          `Certification text-to-badges gap is ${textBadgeGap.toFixed(1)}px.`
+        );
+      }
     }
   }
 
@@ -1085,26 +2090,92 @@ const main = async () => {
       .filter((item) => item.status !== 'PASS')
       .sort((a, b) => a.score - b.score || a.orientation.localeCompare(b.orientation) || a.height - b.height || a.width - b.width);
 
-    fs.mkdirSync(screenshotDir, { recursive: true });
-    for (const file of fs.readdirSync(screenshotDir)) {
-      if (file.endsWith('.png')) fs.unlinkSync(path.join(screenshotDir, file));
-    }
+    /*
+     * Keep screenshots visually reviewable:
+     *
+     *   PASS            -> good_screenshots/
+     *   REVIEW / FAIL   -> bad_screenshots/
+     *
+     * REVIEW is intentionally grouped with FAIL because both need human
+     * attention. The filename still preserves the exact status.
+     *
+     * Remove the legacy screenshots/ folder so stale problem-only captures
+     * from older runs cannot be mistaken for the current run.
+     */
+    fs.rmSync(legacyScreenshotDir, {
+      recursive: true,
+      force: true,
+    });
+    fs.rmSync(goodScreenshotDir, {
+      recursive: true,
+      force: true,
+    });
+    fs.rmSync(badScreenshotDir, {
+      recursive: true,
+      force: true,
+    });
+
+    fs.mkdirSync(goodScreenshotDir, {
+      recursive: true,
+    });
+    fs.mkdirSync(badScreenshotDir, {
+      recursive: true,
+    });
 
     if (screenshotMode !== 'none') {
-      const screenshotCandidates = screenshotMode === 'all'
-        ? results
-        : sortedProblems;
-      const chosen = screenshotCandidates.slice(0, Math.max(0, maxScreenshots));
+      const screenshotCandidates =
+        screenshotMode === 'problems'
+          ? sortedProblems
+          : results;
+
+      const chosen =
+        maxScreenshots == null
+          ? screenshotCandidates
+          : screenshotCandidates.slice(
+              0,
+              maxScreenshots
+            );
+
       for (const item of chosen) {
-        await page.setViewportSize({ width: item.width, height: item.height });
+        await page.setViewportSize({
+          width: item.width,
+          height: item.height,
+        });
+
         await page.evaluate(async () => {
           window.scrollTo(0, 0);
-          await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-          await new Promise((resolve) => setTimeout(resolve, 80));
+          await new Promise((resolve) =>
+            requestAnimationFrame(() =>
+              requestAnimationFrame(resolve)
+            )
+          );
+          await new Promise((resolve) =>
+            setTimeout(resolve, 80)
+          );
         });
-        const filename = `${String(100 - item.score).padStart(3, '0')}__${item.status}__${item.orientation}__${item.width}x${item.height}__${sanitize(item.label || item.id)}.png`;
-        await page.screenshot({ path: path.join(screenshotDir, filename), fullPage: false });
-        item.screenshot = path.relative(root, path.join(screenshotDir, filename));
+
+        const filename =
+          `${String(100 - item.score).padStart(3, '0')}` +
+          `__${item.status}` +
+          `__${item.orientation}` +
+          `__${item.width}x${item.height}` +
+          `__${sanitize(item.label || item.id)}.png`;
+
+        const targetDir =
+          item.status === 'PASS'
+            ? goodScreenshotDir
+            : badScreenshotDir;
+
+        const screenshotPath =
+          path.join(targetDir, filename);
+
+        await page.screenshot({
+          path: screenshotPath,
+          fullPage: false,
+        });
+
+        item.screenshot =
+          path.relative(root, screenshotPath);
       }
     }
 
@@ -1137,8 +2208,22 @@ const main = async () => {
         orientation: orientationFilter,
         quick: quickMode,
         measuredOnly,
+        shortSweepMode,
         screenshotMode,
-        maxScreenshots,
+        maxScreenshots:
+          maxScreenshots == null
+            ? 'all'
+            : maxScreenshots,
+        screenshotDirectories: {
+          good: path.relative(
+            root,
+            goodScreenshotDir
+          ),
+          bad: path.relative(
+            root,
+            badScreenshotDir
+          ),
+        },
         filters: {
           minWidth: minWidthFilter,
           maxWidth: maxWidthFilter,
@@ -1267,7 +2352,14 @@ const main = async () => {
     console.log(`JSON: ${path.relative(root, jsonOut)}`);
     console.log(`Markdown: ${path.relative(root, mdOut)}`);
     console.log(`CSV: ${path.relative(root, csvOut)}`);
-    console.log(`Screenshots: ${path.relative(root, screenshotDir)}`);
+    console.log(
+      `Good screenshots: ` +
+      `${path.relative(root, goodScreenshotDir)}`
+    );
+    console.log(
+      `Bad/review screenshots: ` +
+      `${path.relative(root, badScreenshotDir)}`
+    );
 
     if (strictExit && report.summary.fail > 0) process.exitCode = 1;
   } finally {
