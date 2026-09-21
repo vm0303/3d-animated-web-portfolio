@@ -1,0 +1,381 @@
+/*
+ * HERO V2 — PHONE LANDSCAPE CANDIDATE V1
+ *
+ * Geometry target:
+ *   orientation: landscape
+ *   CSS viewport short edge <= 500px
+ *
+ * Current measured TestMU envelope:
+ *   667–980px wide
+ *   264–442px tall
+ *
+ * Design goals:
+ * - Title / certifications / scroll remain in the left lane.
+ * - Portrait + shape live in the center/right visual lane.
+ * - Social rail remains vertical at the Hero top-right.
+ * - Contact remains fully visible at the Hero bottom-right.
+ * - Bubble is optional under compact height pressure and returns in NORMAL.
+ * - Portrait source image is never cropped.
+ * - No device names or release-year rules.
+ *
+ * QA-only candidate. Load with --override-css.
+ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  /*
+   * The global section min-height: 320px is larger than real browser
+   * viewports such as 720×264. For the phone-landscape Hero, the section
+   * and Hero must follow the actual dynamic viewport so bottom-anchored
+   * controls do not land below the visible browser area.
+   */
+  .container > section:first-child {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    scroll-snap-align: start !important;
+  }
+
+  .container > section:first-child > .hero {
+    height: 100dvh !important;
+    min-height: 0 !important;
+  }
+
+  .hero {
+    position: relative !important;
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 40%)
+      minmax(0, 42%)
+      minmax(72px, 18%) !important;
+
+    grid-template-rows:
+      auto
+      minmax(0, 1fr)
+      auto !important;
+
+    overflow: hidden !important;
+
+    --landscape-contact-size:
+      clamp(68px, 24svh, 86px);
+
+    --landscape-corner-gap:
+      clamp(5px, 2svh, 8px);
+  }
+
+  /*
+   * Flatten the two historical 50/50 wrappers so the Hero children can
+   * participate directly in one landscape grid.
+   */
+  .heroSection {
+    display: contents !important;
+  }
+
+  .heroTitle,
+  .certifications,
+  .scroll,
+  .bubbleContainer,
+  .contactButtonLink {
+    min-width: 0 !important;
+  }
+
+  /* -------------------------
+     TITLE — upper-left
+     ------------------------- */
+  .heroTitle {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    justify-self: start !important;
+    align-self: start !important;
+
+    width: 100% !important;
+
+    margin:
+      clamp(10px, 4.5svh, 20px)
+      0
+      0 !important;
+
+    font-size:
+      clamp(32px, 10svh, 48px) !important;
+
+    line-height: 0.98 !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  /* -------------------------
+     CERTIFICATIONS — left / middle
+     ------------------------- */
+  .certifications {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: stretch !important;
+    align-self: center !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .certifications h2 {
+    font-size:
+      clamp(14px, 5svh, 19px) !important;
+
+    line-height: 1.05 !important;
+  }
+
+  .certifications p {
+    font-size:
+      clamp(10px, 3.6svh, 13px) !important;
+
+    line-height: 1.1 !important;
+
+    margin:
+      clamp(4px, 1.6svh, 8px)
+      0 !important;
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(6px, 1.2vw, 10px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      clamp(30px, 12svh, 42px) !important;
+
+    height:
+      clamp(30px, 12svh, 42px) !important;
+
+    padding:
+      clamp(4px, 1.6svh, 7px) !important;
+  }
+
+  /* -------------------------
+     SCROLL — lower-left
+     ------------------------- */
+  .scroll {
+    display: block !important;
+
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    justify-self: start !important;
+    align-self: end !important;
+
+    width: max-content !important;
+
+    margin:
+      0
+      0
+      clamp(7px, 2.7svh, 14px)
+      0 !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+
+    transform: none !important;
+  }
+
+  .scroll > svg {
+    width:
+      clamp(30px, 11svh, 42px) !important;
+
+    height:
+      clamp(30px, 11svh, 42px) !important;
+
+    transform: none !important;
+  }
+
+  /* -------------------------
+     SOCIALS — top-right invariant
+     ------------------------- */
+  .socials {
+    position: absolute !important;
+
+    top: 0 !important;
+    right: 0 !important;
+
+    z-index: 4 !important;
+  }
+
+  /* -------------------------
+     BACKGROUND + PORTRAIT
+
+     Keep the shape full-bleed, but constrain the portrait image to a
+     center/right lane that begins beyond the left content column.
+     ------------------------- */
+  .bg {
+    position: absolute !important;
+
+    top: 0 !important;
+    bottom: 0 !important;
+    left: calc(-1 * var(--page-gutter)) !important;
+    right: auto !important;
+
+    width:
+      calc(100% + (2 * var(--page-gutter))) !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    z-index: 0 !important;
+  }
+
+  .hImg {
+    position: absolute !important;
+
+    left: 42% !important;
+    right: 22% !important;
+    top: 22% !important;
+    bottom: 0 !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+  }
+
+  .hImg img {
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+
+  /* -------------------------
+     CONTACT — bottom-right
+     ------------------------- */
+  .contactButtonLink {
+    position: absolute !important;
+
+    right: 0 !important;
+    bottom:
+      max(
+        var(--landscape-corner-gap),
+        env(safe-area-inset-bottom, 0px)
+      ) !important;
+
+    width:
+      var(--landscape-contact-size) !important;
+
+    height:
+      var(--landscape-contact-size) !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    z-index: 3 !important;
+  }
+
+  .contactButton {
+    position: relative !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  .contactButton > svg {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow svg {
+    width:
+      clamp(24px, 8svh, 34px) !important;
+
+    height:
+      clamp(24px, 8svh, 34px) !important;
+  }
+
+  /* -------------------------
+     BUBBLE — optional under pressure
+
+     EXTREME / SEVERE / COMPACT heights reclaim the space for the portrait.
+     NORMAL heights get the intended right/upper-middle bubble.
+     ------------------------- */
+  .bubbleContainer {
+    display: none !important;
+  }
+}
+
+@media (min-height: 353px) and (max-height: 500px) and (orientation: landscape) {
+  .bubbleContainer {
+    display: flex !important;
+
+    position: absolute !important;
+
+    top:
+      clamp(72px, 20svh, 92px) !important;
+
+    right:
+      clamp(58px, 8vw, 82px) !important;
+
+    width:
+      min(30vw, 250px) !important;
+
+    gap: 6px !important;
+
+    align-items: end !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+    z-index: 3 !important;
+  }
+
+  .bubble {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+
+    padding: 7px 9px !important;
+
+    font-size: 10px !important;
+    line-height: 1.1 !important;
+
+    white-space: nowrap !important;
+  }
+
+  .bubbleContainer img {
+    flex: 0 0 28px !important;
+
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  /*
+   * In NORMAL heights, leave a clean upper-right lane for the bubble.
+   * The image remains large but begins lower, so the two elements do not
+   * collide.
+   */
+  .hImg {
+    left: 42% !important;
+    right: 24% !important;
+    top: 32% !important;
+  }
+}

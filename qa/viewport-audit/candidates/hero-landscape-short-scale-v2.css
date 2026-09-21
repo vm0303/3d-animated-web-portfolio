@@ -1,0 +1,307 @@
+/*
+ * HERO V2 — SHORT PHONE LANDSCAPE SCALE CALIBRATOR V2
+ *
+ * Scope:
+ *   width  <= 1100px
+ *   height <= 355px
+ *   landscape only
+ *
+ * This candidate is deliberately layered on top of the current production
+ * hero.css. It does NOT modify any social-rail selector.
+ *
+ * Visual rules:
+ * - .heroSection.left keeps justify-content: space-between.
+ * - title / certifications / scroll scale down with height.
+ * - bubble keeps its EXISTING production width (71% in the <=780 golden rule,
+ *   60% from base styles above that). V2 never overrides bubble width.
+ * - only the most extreme synthetic heights (<=240px) hide the bubble.
+ * - contact circle + arrow scale from one shared size variable so the artwork
+ *   remains together.
+ * - scroll and contact remain inside the actual 100dvh Hero.
+ *
+ * QA-only. Load with --override-css.
+ */
+
+@media (max-width: 1100px) and (max-height: 355px) and (orientation: landscape) {
+  /*
+   * Critical below 320px: the global section min-height must not make the Hero
+   * taller than the browser-visible landscape viewport.
+   */
+  .container > section:first-child {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    scroll-snap-align: start !important;
+  }
+
+  .container > section:first-child > .hero,
+  .hero {
+    height: 100dvh !important;
+    min-height: 0 !important;
+  }
+
+  .hero {
+    position: relative !important;
+    overflow: hidden !important;
+
+    /*
+     * 355px -> 70px (matches the approved 356px contact scale)
+     * 264px -> ~52px
+     * 200px -> 46px floor
+     */
+    --short-contact-size:
+      clamp(46px, 19.72svh, 70px);
+  }
+
+  /* =========================================================
+     LEFT LANE — preserve the original even flex distribution
+     ========================================================= */
+  .heroSection.left {
+    height: 100% !important;
+
+    justify-content:
+      space-between !important;
+
+    /*
+     * This remains only a minimum separation. space-between distributes the
+     * remaining vertical room evenly between title / certifications / scroll.
+     */
+    gap:
+      clamp(8px, 4.8svh, 17px) !important;
+  }
+
+  .heroTitle {
+    margin-top:
+      clamp(22px, 14svh, 50px) !important;
+
+    font-size:
+      clamp(20px, 7.9svh, 28px) !important;
+
+    line-height: 1.14 !important;
+  }
+
+  /*
+   * Do NOT change .certifications width. Keep the production composition and
+   * only scale the text/icons vertically.
+   */
+  .certifications h2 {
+    font-size:
+      clamp(10px, 3.66svh, 13px) !important;
+
+    line-height: 1.16 !important;
+  }
+
+  .certifications p {
+    margin:
+      clamp(5px, 4.5svh, 16px)
+      0 !important;
+
+    font-size:
+      clamp(8px, 2.82svh, 10px) !important;
+
+    line-height: 1.18 !important;
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(6px, 2.8svh, 10px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    height:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    /*
+     * Preserve the original white-circle visual while allowing the icon shell
+     * to shrink with height.
+     */
+    padding:
+      clamp(3px, 1.69svh, 6px) !important;
+  }
+
+  /*
+   * Keep scroll as the third flex child. No absolute positioning: the left
+   * lane's space-between distribution places it naturally at the bottom.
+   */
+  .scroll {
+    display: block !important;
+
+    margin-bottom:
+      clamp(16px, 14svh, 50px) !important;
+
+    width: max-content !important;
+  }
+
+  .scroll > svg {
+    display: block !important;
+
+    width:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    height:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    /*
+     * Scale the approved +25px golden offset down instead of replacing the
+     * scroll with a completely different positioning model.
+     */
+    transform:
+      translateY(
+        clamp(8px, 7.04svh, 25px)
+      ) !important;
+  }
+
+  /* =========================================================
+     BUBBLE — preserve its production width
+     ========================================================= */
+
+  /*
+   * No `width` declaration on .bubbleContainer by design.
+   * <=780px therefore keeps the user's 71% golden width.
+   * >780px keeps the base 60% width.
+   */
+  .bubbleContainer {
+    /*
+     * Only reduce the vertical translation as height becomes short.
+     * This keeps the same right-column flex structure.
+     */
+    transform:
+      translateY(
+        clamp(28px, 21svh, 75px)
+      ) !important;
+  }
+
+  .bubbleContainer img {
+    width:
+      clamp(20px, 8.45svh, 30px) !important;
+
+    height:
+      clamp(20px, 8.45svh, 30px) !important;
+  }
+
+  .bubble {
+    font-size:
+      clamp(8px, 2.82svh, 10px) !important;
+
+    line-height: 1.14 !important;
+
+    padding:
+      clamp(4px, 2.25svh, 8px) !important;
+  }
+
+  /* =========================================================
+     CONTACT — preserve the artwork as one proportional unit
+     ========================================================= */
+
+  /*
+   * Keep contact in the right flex column so the bubble's existing flex
+   * placement is not destroyed. Remove the 98px golden margin-top only for
+   * the short family, then keep a small bottom clearance.
+   */
+  .contactButton {
+    margin-top: 0 !important;
+  }
+
+  .contactButtonLink {
+    margin-bottom:
+      clamp(8px, 3.95svh, 14px) !important;
+  }
+
+  .contactButton > svg {
+    display: block !important;
+
+    width:
+      var(--short-contact-size) !important;
+
+    height:
+      var(--short-contact-size) !important;
+  }
+
+  /*
+   * Golden geometry at 70px contact size:
+   *   .arrow wrapper = 80px  => 80/70
+   *   arrow SVG      = 25px  => 25/70
+   *   translate X    = -6px  => -6/70
+   *   translate Y    = -2px  => -2/70
+   *
+   * Scale all four from the same variable. This preserves the relationship
+   * instead of independently "eyeballing" the arrow.
+   */
+  .arrow {
+    width:
+      calc(
+        var(--short-contact-size) *
+        1.142857
+      ) !important;
+
+    height:
+      calc(
+        var(--short-contact-size) *
+        1.142857
+      ) !important;
+  }
+
+  .arrow svg {
+    width:
+      calc(
+        var(--short-contact-size) *
+        0.357143
+      ) !important;
+
+    height:
+      calc(
+        var(--short-contact-size) *
+        0.357143
+      ) !important;
+
+    transform:
+      translate(
+        calc(
+          var(--short-contact-size) *
+          -0.085714
+        ),
+        calc(
+          var(--short-contact-size) *
+          -0.028571
+        )
+      ) !important;
+  }
+
+  /* =========================================================
+     MIDDLE VISUAL — same relationship, smaller short-height canvas
+     ========================================================= */
+  .bg {
+    top: auto !important;
+    bottom: 0 !important;
+
+    height:
+      clamp(
+        150px,
+        calc(100svh - 35px),
+        320px
+      ) !important;
+  }
+
+  /*
+   * Keep the portrait's existing production positioning and let its percentage
+   * height naturally shrink with the actual Hero height.
+   */
+  .hImg img {
+    object-fit: contain !important;
+    object-position:
+      center bottom !important;
+  }
+}
+
+/*
+ * The 200/220/240 synthetic probes demonstrate an environment with too little
+ * vertical room for all right-column content while the social rail remains
+ * untouched. Remove only the optional bubble there.
+ */
+@media (max-width: 1100px) and (max-height: 240px) and (orientation: landscape) {
+  .bubbleContainer {
+    display: none !important;
+  }
+}

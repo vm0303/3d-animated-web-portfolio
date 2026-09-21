@@ -1,0 +1,274 @@
+/* =========================================================
+   HERO V2 — PHONE LANDSCAPE 356–500 CANDIDATE (NORMAL V1)
+
+   Purpose:
+   - Extend the approved V7 short-landscape composition upward from 356px.
+   - Leave the validated <=355px V7 production block untouched.
+   - Preserve the current Hero.jsx DOM.
+   - Scale the same relationships smoothly with svh instead of switching back
+     to desktop-sized typography / controls at 356px.
+
+   QA-only candidate. Inject with --override-css.
+   ========================================================= */
+
+@media (max-width: 1100px) and (min-height: 356px) and (max-height: 500px) and (orientation: landscape) {
+  .container > section:first-child {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    scroll-snap-align: start !important;
+  }
+
+  .container > section:first-child > .hero,
+  .hero {
+    height: 100dvh !important;
+    min-height: 0 !important;
+  }
+
+  .hero {
+    position: relative !important;
+    overflow: hidden !important;
+
+    /* Continuations of the V7 short-height scale at the 355/356 boundary. */
+    --normal-contact-size: clamp(70px, 19.72svh, 90px);
+    --normal-social-icon: clamp(21px, 5.92svh, 28px);
+    --normal-social-gap: clamp(7px, 1.97svh, 10px);
+    --normal-social-pad: clamp(5px, 1.41svh, 7px);
+    --normal-social-font: clamp(10px, 2.82svh, 13px);
+    --normal-social-text-pad: clamp(8px, 2.25svh, 10px);
+    --normal-social-label-extra-gap: clamp(7px, 1.8svh, 9px);
+    --normal-social-navy-tab-overlap: clamp(18px, 5svh, 22px);
+    --normal-social-label-height: clamp(71px, 20svh, 90px);
+  }
+
+  /* =========================================================
+     LEFT LANE — same structure as V7, larger normal-height scale
+     ========================================================= */
+  .heroSection.left {
+    height: 100% !important;
+    justify-content: space-between !important;
+    gap: clamp(17px, 4.8svh, 24px) !important;
+  }
+
+  .heroTitle {
+    margin-top: clamp(50px, 14svh, 58px) !important;
+    font-size: clamp(28px, 7.9svh, 40px) !important;
+    line-height: 1.14 !important;
+  }
+
+  .certifications h2 {
+    font-size: clamp(13px, 3.66svh, 19px) !important;
+    line-height: 1.16 !important;
+  }
+
+  .certifications p {
+    margin: clamp(10px, 3.6svh, 16px) 0 !important;
+    font-size: clamp(10px, 2.82svh, 14px) !important;
+    line-height: 1.18 !important;
+  }
+
+  .certificationsImages {
+    gap: clamp(8px, 2.2svh, 10px) !important;
+  }
+
+  .certificationsImages img {
+    width: clamp(35px, 9.86svh, 48px) !important;
+    height: clamp(35px, 9.86svh, 48px) !important;
+    padding: clamp(6px, 1.69svh, 8px) !important;
+  }
+
+  .scroll {
+    display: block !important;
+    margin-bottom: clamp(50px, 14svh, 58px) !important;
+    width: max-content !important;
+  }
+
+  .scroll > svg {
+    display: block !important;
+    width: clamp(35px, 9.86svh, 48px) !important;
+    height: clamp(35px, 9.86svh, 48px) !important;
+    transform: translateY(clamp(25px, 7.04svh, 34px)) !important;
+  }
+
+  /* =========================================================
+     SOCIAL RAIL — continue the approved V7 visual/DOM model
+     ========================================================= */
+  .socials {
+    position: relative !important;
+    isolation: isolate !important;
+    flex: 0 0 auto !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    gap: var(--normal-social-gap) !important;
+    padding: var(--normal-social-pad) !important;
+    margin: 0 !important;
+
+    background-color: transparent !important;
+    z-index: 6 !important;
+  }
+
+  .socials::before {
+    content: "" !important;
+    position: absolute !important;
+    z-index: 0 !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    height: calc(
+      var(--normal-social-pad)
+      + var(--normal-social-icon)
+      + var(--normal-social-icon)
+      + var(--normal-social-icon)
+      + var(--normal-social-gap)
+      + var(--normal-social-gap)
+      + var(--normal-social-gap)
+      + var(--normal-social-label-extra-gap)
+      + var(--normal-social-navy-tab-overlap)
+    ) !important;
+
+    background-color: #010134 !important;
+    border-bottom-right-radius: 10px !important;
+    pointer-events: none !important;
+  }
+
+  .socials > a,
+  .socialsTextContainer {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .socials > a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: var(--normal-social-icon) !important;
+    height: var(--normal-social-icon) !important;
+    line-height: 0 !important;
+  }
+
+  .socials img {
+    display: block !important;
+    width: var(--normal-social-icon) !important;
+    height: var(--normal-social-icon) !important;
+  }
+
+  .socialsTextContainer {
+    /* Preserve the user-approved V7 +1px optical centering. */
+    transform: translateX(1px) !important;
+
+    width: var(--normal-social-icon) !important;
+    height: var(--normal-social-label-height) !important;
+    flex: 0 0 var(--normal-social-label-height) !important;
+
+    margin-top: var(--normal-social-label-extra-gap) !important;
+
+    display: grid !important;
+    place-items: center !important;
+    overflow: visible !important;
+  }
+
+  .socialsText {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+
+    rotate: none !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    transform-origin: center center !important;
+
+    width: max-content !important;
+    height: var(--normal-social-icon) !important;
+    padding: 0 var(--normal-social-text-pad) !important;
+
+    font-size: var(--normal-social-font) !important;
+    line-height: 1 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* =========================================================
+     BUBBLE — keep it in the right-column flex flow
+     ========================================================= */
+  .bubbleContainer {
+    display: flex !important;
+    transform: none !important;
+  }
+
+  .bubbleContainer img {
+    width: clamp(30px, 8.45svh, 40px) !important;
+    height: clamp(30px, 8.45svh, 40px) !important;
+  }
+
+  .bubble {
+    font-size: clamp(10px, 2.82svh, 13px) !important;
+    line-height: 1.14 !important;
+    padding: clamp(8px, 2.25svh, 11px) !important;
+  }
+
+  /* =========================================================
+     CONTACT — same structural centering pattern as V7
+     ========================================================= */
+  .contactButtonLink {
+    position: relative !important;
+    flex: 0 0 auto !important;
+
+    width: var(--normal-contact-size) !important;
+    height: var(--normal-contact-size) !important;
+
+    margin: 0 0 clamp(6px, 1.4svh, 8px) 0 !important;
+    padding: 0 !important;
+    z-index: 5 !important;
+  }
+
+  .contactButton {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+  }
+
+  .contactButton > svg {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow {
+    position: absolute !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+    margin: auto !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .arrow svg {
+    width: clamp(25px, calc(var(--normal-contact-size) * 0.357143), 32px) !important;
+    height: clamp(25px, calc(var(--normal-contact-size) * 0.357143), 32px) !important;
+    transform: none !important;
+  }
+
+  /* =========================================================
+     MIDDLE VISUAL — continuous growth above the V7 320px cap
+     ========================================================= */
+  .bg {
+    top: auto !important;
+    bottom: 0 !important;
+    height: clamp(320px, calc(100svh - 35px), 430px) !important;
+  }
+
+  .hImg img {
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+}

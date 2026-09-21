@@ -1,0 +1,534 @@
+/* =========================================================
+   HERO V2 — FOLDABLE LANDSCAPE V2
+
+   Candidate only. Do not promote to production yet.
+
+   Scope:
+   1) folded outer short landscape: keep certification title + copy on one line
+   2) unfolded / medium-width foldable landscape bridge:
+      700–999px wide, 501–900px high
+
+   Portrait remains untouched.
+   Frozen phone/tablet production CSS remains untouched.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   FOLDED OUTER LANDSCAPE — ONE-LINE CERTIFICATION COPY
+
+   Initial measured target:
+   Galaxy Z Fold8 folded outer landscape: 663x389
+
+   Keep the already-approved phone-landscape composition, but give the
+   certification text its natural intrinsic width so the heading and Credly
+   sentence do not wrap unnecessarily.
+   --------------------------------------------------------- */
+
+@media
+  (min-width: 620px)
+  and (max-width: 699px)
+  and (min-height: 356px)
+  and (max-height: 430px)
+  and (orientation: landscape) {
+
+  .certifications {
+    width: max-content !important;
+    max-width: 145px !important;
+  }
+
+  .certifications h2,
+  .certifications p {
+    white-space: nowrap !important;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   BOOK-FOLD / DUO MEDIUM LANDSCAPE BRIDGE
+
+   Covers the gap between the frozen phone-landscape and tablet-landscape
+   production ranges.
+
+   Measured target:
+   Galaxy Z Fold8 unfolded inner landscape: 932x520
+
+   Also intentionally exercises future / synthetic book-fold and
+   single-display foldable landscape geometries.
+   --------------------------------------------------------- */
+
+@media
+  (min-width: 700px)
+  and (max-width: 999px)
+  and (min-height: 501px)
+  and (max-height: 900px)
+  and (orientation: landscape) {
+
+  .hero {
+    position: relative !important;
+
+    --fold-land-title:
+      clamp(46px, 8svh, 64px);
+
+    --fold-land-cert-title:
+      clamp(20px, 3.2svh, 26px);
+
+    --fold-land-cert-copy:
+      clamp(13px, 2.1svh, 17px);
+
+    --fold-land-cert-icon:
+      clamp(42px, 7svh, 58px);
+
+    --fold-land-scroll:
+      clamp(42px, 7svh, 56px);
+
+    --fold-land-bubble-font:
+      clamp(12px, 1.5vw, 14px);
+
+    --fold-land-bubble-avatar:
+      clamp(38px, 6.5svh, 48px);
+
+    --fold-land-contact:
+      clamp(82px, 16svh, 112px);
+
+    --fold-land-social-icon:
+      clamp(24px, 4.8svh, 28px);
+
+    --fold-land-social-gap:
+      clamp(6px, 1.1svh, 8px);
+
+    --fold-land-social-pad:
+      clamp(6px, 1.1svh, 8px);
+
+    --fold-land-social-font:
+      clamp(11px, 2svh, 13px);
+
+    --fold-land-social-text-pad:
+      clamp(6px, 1.2svh, 8px);
+
+    --fold-land-social-label-extra-gap:
+      clamp(5px, 1svh, 7px);
+
+    --fold-land-social-label-height:
+      clamp(68px, 13svh, 90px);
+
+    --fold-land-social-navy-tab-overlap:
+      clamp(14px, 2.8svh, 18px);
+  }
+
+  /* -------------------------
+     LEFT LANE
+     ------------------------- */
+
+  .heroSection.left {
+    justify-content: flex-start !important;
+    gap: 0 !important;
+  }
+
+  .heroTitle {
+    margin-top:
+      clamp(16px, 3.2svh, 26px) !important;
+
+    margin-bottom:
+      clamp(12px, 2.4svh, 20px) !important;
+
+    font-size:
+      var(--fold-land-title) !important;
+
+    line-height: 1.03 !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .certifications {
+    width:
+      min(52%, 280px) !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .certifications h2 {
+    font-size:
+      var(--fold-land-cert-title) !important;
+
+    line-height: 1.12 !important;
+    white-space: nowrap !important;
+  }
+
+  .certifications p {
+    margin-block:
+      clamp(7px, 1.3svh, 10px) !important;
+
+    margin-inline: 0 !important;
+
+    font-size:
+      var(--fold-land-cert-copy) !important;
+
+    line-height: 1.16 !important;
+    white-space: nowrap !important;
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(7px, 1.3svh, 11px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      var(--fold-land-cert-icon) !important;
+
+    height:
+      var(--fold-land-cert-icon) !important;
+
+    padding:
+      clamp(6px, 1svh, 8px) !important;
+  }
+
+  .scroll {
+    margin-top: auto !important;
+
+    margin-bottom:
+      clamp(10px, 2.1svh, 18px) !important;
+
+    width: max-content !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .scroll > svg {
+    display: block !important;
+
+    width:
+      var(--fold-land-scroll) !important;
+
+    height:
+      var(--fold-land-scroll) !important;
+
+    transform: none !important;
+  }
+
+  /* -------------------------
+     CENTRAL PORTRAIT / THREE.JS
+     ------------------------- */
+
+  .bg {
+    z-index: 0 !important;
+  }
+
+  .bg canvas {
+    transform:
+      translateX(-3vw)
+      scale(0.62) !important;
+
+    transform-origin: center center !important;
+  }
+
+  .hImg {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    margin: auto !important;
+
+    height:
+      clamp(50%, 54svh, 62%) !important;
+
+    width: max-content !important;
+
+    max-width:
+      min(46vw, 460px) !important;
+
+    transform:
+      translateX(-3vw) !important;
+
+    z-index: 1 !important;
+  }
+
+  .hImg img {
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+
+  /* -------------------------
+     RIGHT LANE
+     ------------------------- */
+
+  .heroSection.right {
+    justify-content: flex-start !important;
+    gap: 0 !important;
+  }
+
+  /* SOCIAL RAIL — use the proven centered-rotation model so the
+     visible FOLLOW ME label is included in the rail's layout height. */
+  .socials {
+    position: relative !important;
+    isolation: isolate !important;
+    flex: 0 0 auto !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    gap:
+      var(--fold-land-social-gap) !important;
+
+    padding:
+      var(--fold-land-social-pad) !important;
+
+    margin: 0 !important;
+
+    background-color: transparent !important;
+    z-index: 6 !important;
+  }
+
+  .socials::before {
+    content: "" !important;
+
+    position: absolute !important;
+    z-index: 0 !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    height: calc(
+      var(--fold-land-social-pad)
+      + var(--fold-land-social-icon)
+      + var(--fold-land-social-icon)
+      + var(--fold-land-social-icon)
+      + var(--fold-land-social-gap)
+      + var(--fold-land-social-gap)
+      + var(--fold-land-social-gap)
+      + var(--fold-land-social-label-extra-gap)
+      + var(--fold-land-social-navy-tab-overlap)
+    ) !important;
+
+    background-color: #010134 !important;
+    border-bottom-right-radius: 10px !important;
+
+    pointer-events: none !important;
+  }
+
+  .socials > a,
+  .socialsTextContainer {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .socials > a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width:
+      var(--fold-land-social-icon) !important;
+
+    height:
+      var(--fold-land-social-icon) !important;
+
+    line-height: 0 !important;
+  }
+
+  .socials img {
+    display: block !important;
+
+    width:
+      var(--fold-land-social-icon) !important;
+
+    height:
+      var(--fold-land-social-icon) !important;
+  }
+
+  .socialsTextContainer {
+    width:
+      var(--fold-land-social-icon) !important;
+
+    height:
+      var(--fold-land-social-label-height) !important;
+
+    flex:
+      0 0
+      var(--fold-land-social-label-height) !important;
+
+    margin-top:
+      var(--fold-land-social-label-extra-gap) !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    overflow: visible !important;
+  }
+
+  .socialsText {
+    position: absolute !important;
+
+    left: 50% !important;
+    top: 50% !important;
+
+    rotate: none !important;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(90deg) !important;
+
+    transform-origin: center center !important;
+
+    width: max-content !important;
+
+    height:
+      var(--fold-land-social-icon) !important;
+
+    padding:
+      0
+      var(--fold-land-social-text-pad) !important;
+
+    font-size:
+      var(--fold-land-social-font) !important;
+
+    line-height: 1 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-bottom-right-radius: 10px !important;
+    border-top-left-radius: 10px !important;
+  }
+
+  /* Bubble sits directly after the complete social rail, keeping the
+     upper-right lane clear of the central portrait. */
+  .bubbleContainer {
+    display: flex !important;
+
+    width:
+      min(76%, 280px) !important;
+
+    gap:
+      clamp(6px, 1.2svh, 8px) !important;
+
+    align-items: center !important;
+
+    margin-top:
+      clamp(8px, 1.7svh, 14px) !important;
+
+    transform: none !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .bubble {
+    width: auto !important;
+    min-width: 0 !important;
+
+    height: auto !important;
+
+    flex: 1 1 auto !important;
+    align-self: center !important;
+
+    white-space: nowrap !important;
+
+    font-size:
+      var(--fold-land-bubble-font) !important;
+
+    line-height: 1.16 !important;
+
+    padding-block:
+      clamp(8px, 1.6svh, 10px) !important;
+
+    padding-inline:
+      clamp(9px, 1.3vw, 12px) !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .bubble > span {
+    display: block !important;
+    line-height: inherit !important;
+  }
+
+  .bubbleContainer img {
+    flex:
+      0 0
+      var(--fold-land-bubble-avatar) !important;
+
+    width:
+      var(--fold-land-bubble-avatar) !important;
+
+    height:
+      var(--fold-land-bubble-avatar) !important;
+
+    align-self: center !important;
+  }
+
+  /* CONTACT — structural centering model, but sized for foldable height. */
+  .contactButtonLink {
+    position: relative !important;
+
+    flex: 0 0 auto !important;
+
+    width:
+      var(--fold-land-contact) !important;
+
+    height:
+      var(--fold-land-contact) !important;
+
+    margin-top: auto !important;
+
+    margin-right:
+      clamp(6px, 1vw, 10px) !important;
+
+    margin-bottom:
+      clamp(8px, 1.8svh, 14px) !important;
+
+    padding: 0 !important;
+
+    z-index: 5 !important;
+  }
+
+  .contactButton {
+    position: relative !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  .contactButton > svg {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow {
+    position: absolute !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: auto !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .arrow svg {
+    width:
+      clamp(26px, calc(var(--fold-land-contact) * 0.34), 38px) !important;
+
+    height:
+      clamp(26px, calc(var(--fold-land-contact) * 0.34), 38px) !important;
+
+    transform: none !important;
+  }
+}

@@ -1,0 +1,439 @@
+{
+  "version": 2,
+  "scope": {
+    "selectionBasis": "TestMU certified foldable posture/display state + measured CSS viewport geometry",
+    "deviceType": "foldable",
+    "notes": "Verified real foldable posture/display states remain the measured source of truth. Closed clamshell widget/cover screens are outside Hero scope. V2 adds a broad synthetic geometry envelope for current book-style foldables and Surface Duo so the candidate can be stress-tested in one run before collecting the remaining real TestMU posture captures. iPhone Duo outer/inner geometries are included as synthetic posture/display-state sentinels using Apple pixel specs and an inferred 3x CSS scale; they are not treated as measured real-device evidence."
+  },
+  "portrait": {
+    "pressureBands": [
+      {
+        "id": "COMPACT",
+        "maxHeight": 760
+      },
+      {
+        "id": "NORMAL",
+        "minHeight": 761,
+        "maxHeight": 900
+      },
+      {
+        "id": "TALL",
+        "minHeight": 901
+      }
+    ],
+    "bubbleHiddenBands": [],
+    "gaps": {
+      "titleToCertifications": {
+        "hardMin": 0,
+        "idealMin": 10,
+        "idealMax": 48,
+        "reviewMax": 76
+      },
+      "certificationsToBubble": {
+        "hardMin": 0,
+        "idealMin": 10,
+        "idealMax": 48,
+        "reviewMax": 76
+      },
+      "bubbleToScroll": {
+        "hardMin": 0,
+        "idealMin": 8,
+        "idealMax": 42,
+        "reviewMax": 68
+      },
+      "scrollToImage": {
+        "hardMin": 0,
+        "idealMin": 10,
+        "idealMax": 82,
+        "reviewMax": 110
+      }
+    }
+  },
+  "landscape": {
+    "pressureBands": [
+      {
+        "id": "COMPACT_FOLDABLE",
+        "maxHeight": 600
+      },
+      {
+        "id": "NORMAL_FOLDABLE",
+        "minHeight": 601,
+        "maxHeight": 760
+      },
+      {
+        "id": "TALL_FOLDABLE",
+        "minHeight": 761
+      }
+    ],
+    "zones": {
+      "leftMaxRatio": 0.5,
+      "rightMinRatio": 0.5,
+      "upperMaxRatio": 0.5,
+      "lowerMinRatio": 0.5
+    },
+    "bubbleHiddenBands": [],
+    "imageBackgroundAlignment": {
+      "reviewAboveHeroWidthRatio": 0.025,
+      "failAboveHeroWidthRatio": 0.05
+    },
+    "certificationInternalGaps": {
+      "titleToTextHardMin": 3,
+      "textToBadgesHardMin": 4
+    },
+    "bubbleMinViewportWidth": 0,
+    "bubbleMinViewportHeight": 0,
+    "titleMaxApproxLines": 2.2
+  },
+  "socials": {
+    "topReviewMax": 40,
+    "rightReviewMax": 72,
+    "centerXSpreadMax": 8,
+    "viewportRightReviewMax": 40,
+    "heroRightReviewMax": 6,
+    "viewportRightIdealMin": 8,
+    "viewportRightIdealMax": 40
+  },
+  "contact": {
+    "bottomReviewMax": 56,
+    "rightReviewMax": 56,
+    "rotationSafetyPx": 1,
+    "viewportRightIdealMax": 40,
+    "viewportBottomIdealMax": 48,
+    "heroRightIdealMin": 0,
+    "heroRightIdealMax": 28,
+    "heroBottomIdealMin": 0,
+    "heroBottomIdealMax": 56
+  },
+  "bubble": {
+    "requireSingleLine": true,
+    "horizontalTolerancePx": 1
+  },
+  "synthetic": {
+    "portraitWidths": [],
+    "portraitBoundaries": [],
+    "landscapeWidths": [],
+    "landscapeBoundaries": [],
+    "fuzzOffsets": [
+      -1,
+      0,
+      1
+    ],
+    "sentinels": [
+      {
+        "width": 400,
+        "height": 960,
+        "orientation": "portrait",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "Samsung Fold7/Fold8 Ultra outer portrait envelope"
+      },
+      {
+        "width": 960,
+        "height": 400,
+        "orientation": "landscape",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "Samsung Fold7/Fold8 Ultra outer landscape envelope"
+      },
+      {
+        "width": 412,
+        "height": 923,
+        "orientation": "portrait",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "Pixel Fold outer portrait envelope"
+      },
+      {
+        "width": 923,
+        "height": 412,
+        "orientation": "landscape",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "Pixel Fold outer landscape envelope"
+      },
+      {
+        "width": 431,
+        "height": 933,
+        "orientation": "portrait",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "OnePlus Open outer portrait envelope"
+      },
+      {
+        "width": 933,
+        "height": 431,
+        "orientation": "landscape",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "OnePlus Open outer landscape envelope"
+      },
+      {
+        "width": 412,
+        "height": 912,
+        "orientation": "portrait",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "Oppo Find N outer portrait envelope"
+      },
+      {
+        "width": 912,
+        "height": 412,
+        "orientation": "landscape",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "Oppo Find N outer landscape envelope"
+      },
+      {
+        "width": 645,
+        "height": 715,
+        "orientation": "portrait",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "tablet",
+        "label": "Samsung compact inner portrait envelope"
+      },
+      {
+        "width": 715,
+        "height": 645,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "foldable",
+        "label": "Samsung compact inner landscape envelope"
+      },
+      {
+        "width": 984,
+        "height": 1092,
+        "orientation": "portrait",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "tablet",
+        "label": "Samsung large inner portrait envelope"
+      },
+      {
+        "width": 1092,
+        "height": 984,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "tablet",
+        "label": "Samsung large inner landscape envelope"
+      },
+      {
+        "width": 692,
+        "height": 717,
+        "orientation": "portrait",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "tablet",
+        "label": "Pixel Fold near-square inner portrait envelope"
+      },
+      {
+        "width": 717,
+        "height": 692,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "foldable",
+        "label": "Pixel Fold near-square inner landscape envelope"
+      },
+      {
+        "width": 782,
+        "height": 896,
+        "orientation": "portrait",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "tablet",
+        "label": "OnePlus Open inner portrait envelope"
+      },
+      {
+        "width": 896,
+        "height": 782,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "foldable",
+        "label": "OnePlus Open inner landscape envelope"
+      },
+      {
+        "width": 804,
+        "height": 876,
+        "orientation": "portrait",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "tablet",
+        "label": "Oppo Find N inner portrait envelope"
+      },
+      {
+        "width": 876,
+        "height": 804,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "foldable",
+        "label": "Oppo Find N inner landscape envelope"
+      },
+      {
+        "width": 834,
+        "height": 578,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "foldable",
+        "label": "TestMU Fold8 Ultra observed geometry clue"
+      },
+      {
+        "width": 752,
+        "height": 653,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "foldable",
+        "label": "TestMU Fold8 Ultra compact geometry clue"
+      },
+      {
+        "width": 725,
+        "height": 700,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "foldable",
+        "label": "TestMU Pixel 9 Pro Fold geometry clue"
+      },
+      {
+        "width": 540,
+        "height": 720,
+        "orientation": "portrait",
+        "displayState": "single-display-or-unspanned",
+        "layoutFamily": "tablet",
+        "label": "Surface Duo single-display portrait envelope"
+      },
+      {
+        "width": 720,
+        "height": 540,
+        "orientation": "landscape",
+        "displayState": "single-display-or-unspanned",
+        "layoutFamily": "foldable",
+        "label": "Surface Duo single-display landscape envelope"
+      },
+      {
+        "width": 720,
+        "height": 1114,
+        "orientation": "portrait",
+        "displayState": "dual-display-or-spanned",
+        "layoutFamily": "tablet",
+        "label": "Surface Duo spanned portrait envelope"
+      },
+      {
+        "width": 1114,
+        "height": 720,
+        "orientation": "landscape",
+        "displayState": "dual-display-or-spanned",
+        "layoutFamily": "tablet",
+        "label": "Surface Duo spanned landscape envelope"
+      },
+      {
+        "width": 932,
+        "height": 500,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "layoutFamily": "phone",
+        "label": "phone-to-foldable height boundary 500"
+      },
+      {
+        "width": 932,
+        "height": 501,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "layoutFamily": "foldable",
+        "label": "phone-to-foldable height boundary 501"
+      },
+      {
+        "width": 999,
+        "height": 700,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "layoutFamily": "foldable",
+        "label": "foldable-to-tablet width boundary 999"
+      },
+      {
+        "width": 1000,
+        "height": 700,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "layoutFamily": "tablet",
+        "label": "foldable-to-tablet width boundary 1000"
+      },
+      {
+        "width": 466,
+        "height": 678,
+        "orientation": "portrait",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "iPhone Duo outer portrait synthetic CSS geometry (Apple pixels / inferred 3x)"
+      },
+      {
+        "width": 678,
+        "height": 466,
+        "orientation": "landscape",
+        "displayState": "folded-outer-display",
+        "foldState": "folded",
+        "layoutFamily": "phone",
+        "label": "iPhone Duo outer landscape synthetic CSS geometry (Apple pixels / inferred 3x)"
+      },
+      {
+        "width": 626,
+        "height": 890,
+        "orientation": "portrait",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "tablet",
+        "label": "iPhone Duo inner portrait synthetic CSS geometry (Apple pixels / inferred 3x)"
+      },
+      {
+        "width": 890,
+        "height": 626,
+        "orientation": "landscape",
+        "displayState": "unfolded-inner-display",
+        "foldState": "unfolded",
+        "posture": "flat",
+        "layoutFamily": "foldable",
+        "label": "iPhone Duo inner landscape synthetic CSS geometry (Apple pixels / inferred 3x)"
+      }
+    ]
+  },
+  "image": {
+    "cropReviewAboveFraction": 0.02,
+    "cropFailAboveFraction": 0.05
+  },
+  "visualViewport": {
+    "heroStartTolerancePx": 2,
+    "contactBelowReviewPx": 1,
+    "contactBelowFailPx": 8,
+    "nextSectionVisibleReviewPx": 1,
+    "nextSectionVisibleFailPx": 8
+  }
+}
