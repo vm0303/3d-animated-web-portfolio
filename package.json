@@ -1,5 +1,5 @@
 {
-  "name": "lama-dev-portfolio",
+  "name": "vm-3d-portfolio",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@gltf-transform/cli": "^4.5.0",
     "@react-three/eslint-plugin": "^0.1.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
