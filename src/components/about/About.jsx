@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, useInView } from "motion/react";
 
 
 import AboutModelContainer from "./stage/AboutModelContainer";
-
+import LaptopScreenModal from "./LaptopScreenModal";
 import "./about.css";
 
 const titleVariants = {
@@ -43,12 +43,27 @@ const listVariants = {
 
 const paragraphVariants = {
   initial: {
-    x: -40,
+    x: -80,
     opacity: 0,
   },
 
   animate: {
     x: 0,
+    opacity: 1,
+
+    transition: {
+      duration: 0.6,
+    },
+  },
+};
+
+
+const buttonVariants = {
+  initial: {
+    opacity: 0,
+  },
+
+  animate: {
     opacity: 1,
 
     transition: {
@@ -63,6 +78,40 @@ const About = () => {
 
   const aboutRef = useRef(null);
 
+  const [
+    isLaptopScreenOpen,
+    setIsLaptopScreenOpen,
+  ] = useState(false);
+
+
+
+  const screenTriggerRef =
+    useRef(null);
+
+
+  const [
+    isLaptopModelReady,
+    setIsLaptopModelReady,
+  ] = useState(false);
+
+
+  const openLaptopScreen =
+    useCallback(() => {
+      setIsLaptopScreenOpen(true);
+    }, []);
+
+
+  const closeLaptopScreen =
+    useCallback(() => {
+      setIsLaptopScreenOpen(false);
+    }, []);
+
+
+  const handleLaptopModelReady =
+    useCallback(() => {
+      setIsLaptopModelReady(true);
+    }, []);
+
   const isInView = useInView(aboutRef, {
     amount: 0.15,
     once: false,
@@ -71,7 +120,53 @@ const About = () => {
   useEffect(() => {
     if (!isInView) {
       setActiveScene("developer");
+      setIsLaptopModelReady(false);
     }
+  }, [isInView]);
+
+  useEffect(() => {
+    if (activeScene !== "developer") {
+      setIsLaptopModelReady(false);
+    }
+  }, [activeScene]);
+
+  /*
+ * If About leaves view or another
+ * model chapter becomes active,
+ * make sure the laptop modal closes.
+ */
+  useEffect(() => {
+    if (
+      !isInView ||
+      activeScene !== "developer"
+    ) {
+      closeLaptopScreen();
+    }
+  }, [
+    isInView,
+    activeScene,
+    closeLaptopScreen,
+  ]);
+
+
+  /*
+   * Preload the readable screen image
+   * once About becomes visible.
+   *
+   * This avoids a visible image-loading
+   * delay the first time View Screen
+   * is pressed.
+   */
+  useEffect(() => {
+    if (!isInView) {
+      return;
+    }
+
+    const image =
+      new Image();
+
+    image.src =
+      "/about/laptop-screen.png";
   }, [isInView]);
 
 
@@ -220,11 +315,46 @@ const About = () => {
 
       <div className="aSection right">
         {isInView && (
-          <AboutModelContainer
-            activeScene={activeScene}
-          />
+          <>
+            <AboutModelContainer
+              activeScene={activeScene}
+              onLaptopReady={handleLaptopModelReady}
+            />
+
+
+            {activeScene === "developer" && isLaptopModelReady && (
+              <motion.button
+                ref={screenTriggerRef}
+                type="button"
+                className="aboutScreenTrigger"
+                variants={buttonVariants}
+                initial="initial"
+                animate="animate"
+                aria-haspopup="dialog"
+                onClick={openLaptopScreen}
+              >
+                <span>
+                  View screen
+                </span>
+
+                <span
+                  aria-hidden="true"
+                  className="aboutScreenTriggerIcon"
+                >
+                  ↗
+                </span>
+              </motion.button>
+            )}
+          </>
         )}
       </div>
+
+
+      <LaptopScreenModal
+        open={isLaptopScreenOpen}
+        onClose={closeLaptopScreen}
+        returnFocusRef={screenTriggerRef}
+      />
     </div>
   );
 };

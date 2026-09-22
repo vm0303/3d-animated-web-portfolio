@@ -172,3 +172,569 @@
     width: 100% !important;
     height: 100% !important;
 }
+/* =========================================
+   LAPTOP SCREEN VIEWER
+   ========================================= */
+
+.aboutScreenTrigger {
+    position: absolute;
+
+    left: 50%;
+    bottom:
+        clamp(
+            22px,
+            3.5svh,
+            42px
+        );
+
+    z-index: 5;
+
+    transform:
+        translateX(-50%);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding:
+        10px
+        16px;
+
+    border:
+        1px solid
+        rgba(
+            28,
+            181,
+            224,
+            0.62
+        );
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            1,
+            8,
+            22,
+            0.74
+        );
+
+    backdrop-filter:
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    letter-spacing: 0.02em;
+
+    cursor: pointer;
+
+    box-shadow:
+        0
+        10px
+        30px
+        rgba(
+            0,
+            0,
+            0,
+            0.28
+        );
+
+    transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+
+.aboutScreenTrigger:hover {
+    transform:
+        translateX(-50%)
+        translateY(-2px);
+
+    border-color:
+        rgba(
+            28,
+            181,
+            224,
+            0.95
+        );
+
+    background:
+        rgba(
+            3,
+            25,
+            54,
+            0.88
+        );
+
+    box-shadow:
+        0
+        14px
+        34px
+        rgba(
+            0,
+            0,
+            0,
+            0.36
+        );
+}
+
+
+.aboutScreenTrigger:focus-visible {
+    outline:
+        2px solid
+        #1CB5E0;
+
+    outline-offset:
+        4px;
+}
+
+
+.aboutScreenTriggerIcon {
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+
+
+/* =========================================
+   MODAL BACKDROP
+   ========================================= */
+
+.laptopScreenModal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 10000;
+
+    display: grid;
+    place-items: center;
+
+    padding:
+        clamp(
+            12px,
+            2vw,
+            28px
+        );
+
+    background:
+        rgba(
+            0,
+            4,
+            14,
+            0.88
+        );
+
+    backdrop-filter:
+        blur(14px);
+
+    -webkit-backdrop-filter:
+        blur(14px);
+
+    animation:
+        laptop-screen-backdrop-in
+        180ms
+        ease-out
+        both;
+}
+
+
+
+/* =========================================
+   MODAL WINDOW
+   ========================================= */
+
+.laptopScreenDialog {
+    position: relative;
+
+    width:
+        min(
+            70vw,
+            1600px
+        );
+
+    height:
+        min(
+            90dvh,
+            1000px
+        );
+
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(
+            28,
+            181,
+            224,
+            0.4
+        );
+
+    border-radius:
+        clamp(
+            14px,
+            1.5vw,
+            24px
+        );
+
+    background:
+        #020817;
+
+    box-shadow:
+        0
+        30px
+        100px
+        rgba(
+            0,
+            0,
+            0,
+            0.65
+        );
+
+    animation:
+        laptop-screen-dialog-in
+        240ms
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        both;
+}
+
+
+/* =========================================
+   MODAL TOOLBAR
+   ========================================= */
+
+.laptopScreenToolbar {
+    flex: 0 0 auto;
+
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding:
+        10px
+        12px
+        10px
+        18px;
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+    background:
+        rgba(
+            0,
+            8,
+            24,
+            0.96
+        );
+}
+
+
+.laptopScreenTitle {
+    margin: 0;
+
+    font-size:
+        clamp(
+            14px,
+            1vw,
+            16px
+        );
+
+    font-weight: 700;
+
+    letter-spacing:
+        0.02em;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.9
+        );
+}
+
+
+.laptopScreenClose {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.16
+        );
+
+    border-radius: 50%;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.06
+        );
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 26px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+
+.laptopScreenClose:hover {
+    transform:
+        scale(1.05);
+
+    background:
+        rgba(
+            28,
+            181,
+            224,
+            0.16
+        );
+
+    border-color:
+        rgba(
+            28,
+            181,
+            224,
+            0.72
+        );
+}
+
+
+.laptopScreenClose:focus-visible {
+    outline:
+        2px solid
+        #1CB5E0;
+
+    outline-offset:
+        3px;
+}
+
+
+
+/* =========================================
+   SCREEN IMAGE
+   ========================================= */
+
+.laptopScreenViewport {
+    flex: 1 1 auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    display: grid;
+    place-items: center;
+
+    padding:
+        clamp(
+            8px,
+            1.2vw,
+            18px
+        );
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(
+                20,
+                67,
+                114,
+                0.16
+            ),
+            rgba(
+                0,
+                4,
+                14,
+                0
+            )
+            65%
+        );
+}
+
+
+.laptopScreenImage {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    object-fit: contain;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+}
+
+
+
+/* =========================================
+   MODAL ANIMATION
+   ========================================= */
+
+@keyframes laptop-screen-backdrop-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes laptop-screen-dialog-in {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(12px)
+            scale(0.975);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+
+/* =========================================
+   SMALL VIEWPORT MODAL
+   ========================================= */
+
+@media (max-width: 600px) {
+    .laptopScreenModal {
+        padding: 0;
+    }
+
+
+    .laptopScreenDialog {
+        width: 100vw;
+        height: 100dvh;
+
+        max-height: none;
+
+        border: 0;
+        border-radius: 0;
+    }
+
+
+    .laptopScreenToolbar {
+        padding-top:
+            max(
+                10px,
+                env(safe-area-inset-top)
+            );
+
+        padding-right:
+            max(
+                12px,
+                env(safe-area-inset-right)
+            );
+
+        padding-left:
+            max(
+                16px,
+                env(safe-area-inset-left)
+            );
+    }
+
+
+    .laptopScreenViewport {
+        padding-right:
+            max(
+                8px,
+                env(safe-area-inset-right)
+            );
+
+        padding-bottom:
+            max(
+                8px,
+                env(safe-area-inset-bottom)
+            );
+
+        padding-left:
+            max(
+                8px,
+                env(safe-area-inset-left)
+            );
+    }
+}
+
+
+
+/* =========================================
+   REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .laptopScreenModal,
+    .laptopScreenDialog {
+        animation: none;
+    }
+
+
+    .aboutScreenTrigger,
+    .laptopScreenClose {
+        transition: none;
+    }
+}
