@@ -93,6 +93,7 @@ const StageBoundsAnchor = () => {
 
 const AboutModelContainer = ({
     activeScene,
+    onLaptopReady,
 }) => {
     const [
         renderSceneId,
@@ -429,6 +430,24 @@ const AboutModelContainer = ({
                     setTransition(null);
 
 
+                    /*
+                     * The incoming Laptop has now genuinely
+                     * loaded and completed normalization.
+                     *
+                     * Notify About only at this point so the
+                     * View Screen button never appears while
+                     * the previous model is still being shown.
+                     */
+                    if (
+                        current.toSceneId ===
+                        "developer" &&
+                        current.toItem.id ===
+                        "laptop"
+                    ) {
+                        onLaptopReady?.();
+                    }
+
+
                     triggerLamaZoom();
 
                     return;
@@ -476,6 +495,7 @@ const AboutModelContainer = ({
                 cancelWarmupFrames,
                 commitCarouselReady,
                 triggerLamaZoom,
+                onLaptopReady,
             ]
         );
 
@@ -1050,6 +1070,12 @@ const AboutModelContainer = ({
 
                 duration:
                     SLIDE_DURATION,
+
+                onModelReady:
+                    renderSceneId === "developer" &&
+                        activeItem.id === "laptop"
+                        ? onLaptopReady
+                        : undefined,
             },
         ];
     }
