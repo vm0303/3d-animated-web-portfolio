@@ -1,0 +1,249 @@
+/*
+ * ABOUT PHONE PORTRAIT — V1
+ *
+ * Strategy:
+ * - Replace the desktop 50/50 split with a vertical composition.
+ * - Preserve readable copy instead of squeezing it into a half-width column.
+ * - Keep the first paragraph (all technical scene controls) and hobbies
+ *   paragraph visible on constrained phones.
+ * - Treat the middle explanatory paragraph as secondary content on shorter
+ *   phone viewports; restore it automatically when vertical room allows.
+ * - Give the 3D stage the full phone width so Stage/Bounds can render models
+ *   at a useful visual size without changing per-model visualScale values.
+ * - Keep the laptop screen viewer compact and clearly separated on phones.
+ */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .about {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .aSection {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .aSection.left {
+    flex: 0 0 auto !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+
+    padding-inline-end: 0 !important;
+    padding-block-start:
+      clamp(
+        10px,
+        2.2svh,
+        20px
+      ) !important;
+  }
+
+  .aTitle {
+    margin:
+      0
+      0
+      clamp(
+        8px,
+        1.5svh,
+        14px
+      ) !important;
+
+    font-size:
+      clamp(
+        32px,
+        min(9.4vw, 5.8svh),
+        40px
+      ) !important;
+
+    line-height: 1.02 !important;
+  }
+
+  .aboutList {
+    width: 100% !important;
+
+    gap:
+      clamp(
+        7px,
+        1.25svh,
+        11px
+      ) !important;
+  }
+
+  .aboutList p {
+    font-size:
+      clamp(
+        14px,
+        min(3.8vw, 2.25svh),
+        15px
+      ) !important;
+
+    line-height: 1.42 !important;
+  }
+
+  /*
+   * The model stage owns all height that remains after readable copy.
+   * Full width is the important change: the desktop half-width stage is
+   * what made every phone model look artificially tiny.
+   */
+  .aSection.right {
+    flex: 1 1 0 !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    min-height:
+      clamp(
+        180px,
+        31svh,
+        320px
+      ) !important;
+
+    position: relative !important;
+  }
+
+  .aboutModelContainer,
+  .aboutCanvasShell {
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+
+  .aboutScreenTrigger {
+    bottom:
+      clamp(
+        8px,
+        1.8svh,
+        16px
+      ) !important;
+
+    gap: 6px !important;
+
+    padding:
+      8px
+      12px !important;
+
+    font-size:
+      clamp(
+        12px,
+        3.4vw,
+        14px
+      ) !important;
+  }
+
+  /*
+   * Phone modal: use a contained card instead of turning the dialog itself
+   * into another full-height screen. The dashboard remains fully visible,
+   * while the surrounding shell stays visually distinct.
+   */
+  .laptopScreenModal {
+    padding:
+      max(
+        10px,
+        env(safe-area-inset-top)
+      )
+      max(
+        10px,
+        env(safe-area-inset-right)
+      )
+      max(
+        10px,
+        env(safe-area-inset-bottom)
+      )
+      max(
+        10px,
+        env(safe-area-inset-left)
+      ) !important;
+  }
+
+  .laptopScreenDialog {
+    width: 100% !important;
+    height: auto !important;
+
+    max-height:
+      calc(
+        100dvh - 20px
+      ) !important;
+
+    border:
+      1px solid
+      rgba(
+        28,
+        181,
+        224,
+        0.52
+      ) !important;
+
+    border-radius:
+      clamp(
+        12px,
+        3.8vw,
+        18px
+      ) !important;
+  }
+
+  .laptopScreenToolbar {
+    min-height: 44px !important;
+
+    padding:
+      7px
+      8px
+      7px
+      13px !important;
+  }
+
+  .laptopScreenTitle {
+    font-size:
+      clamp(
+        13px,
+        3.6vw,
+        15px
+      ) !important;
+  }
+
+  .laptopScreenClose {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .laptopScreenViewport {
+    flex: 0 0 auto !important;
+
+    padding:
+      clamp(
+        7px,
+        2.2vw,
+        10px
+      ) !important;
+  }
+
+  .laptopScreenImage {
+    width: 100% !important;
+    height: auto !important;
+
+    max-width: 100% !important;
+    max-height:
+      calc(
+        100dvh - 76px
+      ) !important;
+
+    object-fit: contain !important;
+  }
+}
+
+
+/*
+ * Height-pressure policy:
+ *
+ * The middle paragraph adds context but no unique model selector.
+ * On shorter phone portrait viewports, omit it rather than compressing all
+ * three paragraphs or starving the 3D stage. The first paragraph retains
+ * Developer / Backend / Frontend / Cloud controls, and the final paragraph
+ * retains Hobbies.
+ */
+@media (max-width: 500px) and (max-height: 819px) and (orientation: portrait) {
+  .aboutList > p:nth-child(2) {
+    display: none !important;
+  }
+}
