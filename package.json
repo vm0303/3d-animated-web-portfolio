@@ -67,7 +67,15 @@
     "qa:hero:closure:foldables": "node qa/viewport-audit/run-hero-foldable-composition-qa.cjs --strict --output-dir=qa-results/final-closure/foldables",
     "qa:hero:certify:exhaustive": "node qa/viewport-audit/run-hero-cross-browser-certification.cjs --contract=qa/viewport-audit/hero-cross-browser-exhaustive-contract.json --output-dir=qa-results/final-closure/cross-browser-exhaustive --screenshots=bad --strict",
     "qa:hero:certify:exhaustive:list": "node qa/viewport-audit/run-hero-cross-browser-certification.cjs --contract=qa/viewport-audit/hero-cross-browser-exhaustive-contract.json --list",
-    "qa:hero:closure:all": "node qa/viewport-audit/run-hero-final-closure.cjs"
+    "qa:hero:closure:all": "node qa/viewport-audit/run-hero-final-closure.cjs",
+    "qa:about:quick": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick",
+    "qa:about:phone:portrait": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all",
+    "qa:about:phone:landscape": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-landscape --model=all",
+    "qa:about:tablet:portrait": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=tablet-portrait --model=all",
+    "qa:about:tablet:landscape": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=tablet-landscape --model=all",
+    "qa:about:foldable": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=foldable --model=all",
+    "qa:about:desktop:standard": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=desktop-standard --model=all",
+    "qa:about:desktop:wide": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=desktop-wide --model=all"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
