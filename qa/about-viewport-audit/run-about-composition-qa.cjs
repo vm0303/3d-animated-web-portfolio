@@ -23,6 +23,7 @@ const modelFilter = argValue('model') || 'all';
 const sceneFilter = argValue('scene') || null;
 const quick = hasFlag('quick');
 const strict = hasFlag('strict');
+const includeModal = hasFlag('modal');
 const screenshotMode = argValue('screenshots') || 'bad';
 const explicitBaseUrl = argValue('base-url') || process.env.QA_BASE_URL || null;
 const port = Number(argValue('port') || process.env.QA_PORT || 4174);
@@ -334,11 +335,26 @@ const evaluateMetrics = (metrics, state) => {
     });
   }
 
-  if (r.left && r.right && r.left.right > r.right.left + tol) {
-    addIssue(issues, 'FAIL', 'ABOUT_COLUMNS_OVERLAP', 'Text and model layout regions overlap.', {
-      left: r.left,
-      right: r.right,
-    });
+  if (r.left && r.right) {
+    const overlapX =
+      Math.min(r.left.right, r.right.right) -
+      Math.max(r.left.left, r.right.left);
+
+    const overlapY =
+      Math.min(r.left.bottom, r.right.bottom) -
+      Math.max(r.left.top, r.right.top);
+
+    if (
+      overlapX > tol &&
+      overlapY > tol
+    ) {
+      addIssue(issues, 'FAIL', 'ABOUT_REGIONS_OVERLAP', 'Text and model layout regions overlap.', {
+        left: r.left,
+        right: r.right,
+        overlapX,
+        overlapY,
+      });
+    }
   }
 
   const visibleContentRects = [r.title, r.list, r.model, r.screenTrigger].filter(Boolean);
@@ -395,6 +411,100 @@ const evaluateMetrics = (metrics, state) => {
   return issues;
 };
 
+const collectModalMetrics = async (page) => page.evaluate(() => {
+  const rect = (el) => {
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return {
+      left: r.left,
+      top: r.top,
+      right: r.right,
+      bottom: r.bottom,
+      width: r.width,
+      height: r.height,
+    };
+  };
+
+  const modal = document.querySelector('.laptopScreenModal');
+  const dialog = document.querySelector('.laptopScreenDialog');
+  const toolbar = document.querySelector('.laptopScreenToolbar');
+  const close = document.querySelector('.laptopScreenClose');
+  const imageViewport = document.querySelector('.laptopScreenViewport');
+  const image = document.querySelector('.laptopScreenImage');
+
+  return {
+    viewport: {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      visualWidth: window.visualViewport?.width ?? window.innerWidth,
+      visualHeight: window.visualViewport?.height ?? window.innerHeight,
+    },
+    rects: {
+      modal: rect(modal),
+      dialog: rect(dialog),
+      toolbar: rect(toolbar),
+      close: rect(close),
+      imageViewport: rect(imageViewport),
+      image: rect(image),
+    },
+    image: image ? {
+      naturalWidth: image.naturalWidth,
+      naturalHeight: image.naturalHeight,
+      complete: image.complete,
+    } : null,
+  };
+});
+
+const evaluateModalMetrics = (metrics) => {
+  const issues = [];
+  const tol = contract.thresholds.containmentTolerancePx;
+  const r = metrics.rects;
+  const width = metrics.viewport.visualWidth;
+  const height = metrics.viewport.visualHeight;
+
+  if (!r.modal || !r.dialog || !r.close || !r.image) {
+    addIssue(issues, 'FAIL', 'MODAL_STRUCTURE_MISSING', 'Laptop screen modal did not render all required elements.');
+    return issues;
+  }
+
+  if (
+    r.dialog.left < -tol ||
+    r.dialog.top < -tol ||
+    r.dialog.right > width + tol ||
+    r.dialog.bottom > height + tol
+  ) {
+    addIssue(issues, 'FAIL', 'MODAL_VIEWPORT_ESCAPE', 'Laptop screen dialog extends outside the visible viewport.', {
+      dialog: r.dialog,
+      visualViewport: { width, height },
+    });
+  }
+
+  if (
+    r.close.left < r.dialog.left - tol ||
+    r.close.top < r.dialog.top - tol ||
+    r.close.right > r.dialog.right + tol ||
+    r.close.bottom > r.dialog.bottom + tol
+  ) {
+    addIssue(issues, 'FAIL', 'MODAL_CLOSE_ESCAPE', 'Modal close control is outside the dialog.', {
+      close: r.close,
+      dialog: r.dialog,
+    });
+  }
+
+  if (
+    r.image.width <= 0 ||
+    r.image.height <= 0 ||
+    !metrics.image?.complete
+  ) {
+    addIssue(issues, 'FAIL', 'MODAL_IMAGE_NOT_READY', 'Laptop screen image is missing, collapsed, or not loaded.', {
+      image: r.image,
+      source: metrics.image,
+    });
+  }
+
+  return issues;
+};
+
 const statusForIssues = (issues) => {
   if (issues.some((issue) => issue.severity === 'FAIL')) return 'FAIL';
   if (issues.some((issue) => issue.severity === 'REVIEW')) return 'REVIEW';
@@ -418,7 +528,7 @@ const csvEscape = (value) => {
   const results = [];
 
   try {
-    console.log(`About composition QA: ${viewportCases.length} viewport cases × ${modelStates.length} model states.`);
+    console.log(`About composition QA: ${viewportCases.length} viewport cases × ${modelStates.length} model states${includeModal ? ' + laptop modal sentinel' : ''}.`);
     console.log(`Family: ${family}${quick ? ' (quick)' : ''}`);
     console.log(`Base URL: ${baseUrl}`);
     if (overrideCssPath) console.log(`Override CSS: ${path.relative(root, overrideCssPath)} (pre-mount)`);
@@ -492,6 +602,65 @@ const csvEscape = (value) => {
             const filename = `${status}__${sanitize(testCase.aboutFamily)}__${testCase.width}x${testCase.height}__${sanitize(state.scene)}-${sanitize(state.model)}__${sanitize(testCase.id)}.png`;
             await page.screenshot({ path: path.join(dir, filename), fullPage: false });
           }
+
+          /*
+           * Modal is a separate laptop-only sentinel. It does not multiply
+           * every model state, but it gives each requested viewport one
+           * explicit open-modal geometry check and screenshot.
+           */
+          if (
+            includeModal &&
+            state.scene === 'developer' &&
+            state.model === 'laptop'
+          ) {
+            await page.locator('.aboutScreenTrigger').click();
+            await page.waitForSelector('.laptopScreenDialog', {
+              state: 'visible',
+              timeout: 10000,
+            });
+            await page.waitForFunction(() => {
+              const image = document.querySelector('.laptopScreenImage');
+              return Boolean(image?.complete && image.naturalWidth > 0);
+            }, null, { timeout: 10000 });
+
+            const modalMetrics = await collectModalMetrics(page);
+            const modalIssues = evaluateModalMetrics(modalMetrics);
+            const modalStatus = statusForIssues(modalIssues);
+
+            results.push({
+              id: `${testCase.id}__developer-laptop-modal`,
+              family: testCase.aboutFamily,
+              viewportId: testCase.id,
+              width: testCase.width,
+              height: testCase.height,
+              label: testCase.label,
+              source: testCase.source || 'SYNTHETIC',
+              scene: 'developer',
+              model: 'laptop-modal',
+              status: modalStatus,
+              issues: modalIssues,
+              metrics: modalMetrics,
+            });
+
+            const shootModal =
+              screenshotMode === 'all' ||
+              (screenshotMode === 'bad' && modalStatus !== 'PASS');
+
+            if (shootModal) {
+              const dir = modalStatus === 'PASS' ? goodDir : badDir;
+              const filename = `${modalStatus}__${sanitize(testCase.aboutFamily)}__${testCase.width}x${testCase.height}__developer-laptop-modal__${sanitize(testCase.id)}.png`;
+              await page.screenshot({
+                path: path.join(dir, filename),
+                fullPage: false,
+              });
+            }
+
+            await page.locator('.laptopScreenClose').click();
+            await page.waitForSelector('.laptopScreenDialog', {
+              state: 'detached',
+              timeout: 10000,
+            });
+          }
         } catch (error) {
           results.push({
             id: `${testCase.id}__${state.scene}-${state.model}`,
@@ -534,6 +703,7 @@ const csvEscape = (value) => {
     ...counts,
     overrideCssPath: overrideCssPath ? path.relative(root, overrideCssPath) : null,
     candidateLoadMode: overrideCssPath ? 'About.jsx pre-render module injection' : null,
+    modalSentinel: includeModal,
   };
 
   fs.writeFileSync(path.join(outputDir, 'about-composition-report.json'), JSON.stringify({ summary, results }, null, 2));
