@@ -189,6 +189,55 @@ const collectMetrics = async (page) => page.evaluate(() => {
   const canvas = document.querySelector('.aboutCanvasShell canvas');
   const screenTrigger = document.querySelector('.aboutScreenTrigger');
 
+  const lineTokensFor = (root) => {
+    if (!root) return [];
+
+    const tokens = [];
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT
+    );
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const text = node.textContent || '';
+      const regex = /\S+/g;
+      let match;
+
+      while ((match = regex.exec(text))) {
+        const range = document.createRange();
+        range.setStart(node, match.index);
+        range.setEnd(node, match.index + match[0].length);
+
+        const tokenRect = range.getBoundingClientRect();
+        if (tokenRect.width > 0 && tokenRect.height > 0) {
+          tokens.push({
+            text: match[0],
+            top: tokenRect.top,
+            left: tokenRect.left,
+          });
+        }
+      }
+    }
+
+    tokens.sort((a, b) => {
+      if (Math.abs(a.top - b.top) > 2) return a.top - b.top;
+      return a.left - b.left;
+    });
+
+    const lines = [];
+    for (const token of tokens) {
+      let line = lines.find((item) => Math.abs(item.top - token.top) <= 2);
+      if (!line) {
+        line = { top: token.top, tokens: [] };
+        lines.push(line);
+      }
+      line.tokens.push(token.text);
+    }
+
+    return lines.map((line) => line.tokens);
+  };
+
   const paragraphMetrics = paragraphs.map((el) => ({
     rect: rect(el),
     visible: isVisible(el),
@@ -198,6 +247,7 @@ const collectMetrics = async (page) => page.evaluate(() => {
     clientWidth: el.clientWidth,
     scrollHeight: el.scrollHeight,
     clientHeight: el.clientHeight,
+    lineTokens: lineTokensFor(el),
   }));
 
   return {
@@ -260,11 +310,21 @@ const addIssue = (issues, severity, code, message, metrics = null) => {
   issues.push({ severity, code, message, metrics });
 };
 
-const evaluateMetrics = (metrics, state) => {
+const evaluateMetrics = (metrics, state, familyName) => {
   const issues = [];
   const t = contract.thresholds;
   const tol = t.containmentTolerancePx;
   const r = metrics.rects;
+
+  const minTitleFontPx =
+    familyName === 'phone-portrait'
+      ? (t.phonePortraitMinTitleFontPx ?? t.minTitleFontPx)
+      : t.minTitleFontPx;
+
+  const minBodyFontPx =
+    familyName === 'phone-portrait'
+      ? (t.phonePortraitMinBodyFontPx ?? t.minBodyFontPx)
+      : t.minBodyFontPx;
 
   if (metrics.document.scrollWidth > metrics.viewport.innerWidth + t.horizontalOverflowTolerancePx) {
     addIssue(issues, 'FAIL', 'HORIZONTAL_OVERFLOW', 'Document is wider than the viewport.', {
@@ -286,15 +346,18 @@ const evaluateMetrics = (metrics, state) => {
   }
 
   const visibleParagraphs = metrics.paragraphs.filter((item) => item.visible);
-  if (!metrics.title?.visible || metrics.title.fontSize < t.minTitleFontPx) {
-    addIssue(issues, 'FAIL', 'TITLE_READABILITY', 'About title is missing or below the readability floor.', metrics.title);
+  if (!metrics.title?.visible || metrics.title.fontSize < minTitleFontPx) {
+    addIssue(issues, 'FAIL', 'TITLE_READABILITY', 'About title is missing or below the readability floor.', {
+      ...metrics.title,
+      minTitleFontPx,
+    });
   }
 
   for (const p of visibleParagraphs) {
-    if (p.fontSize < t.minBodyFontPx) {
+    if (p.fontSize < minBodyFontPx) {
       addIssue(issues, 'FAIL', 'BODY_TEXT_TOO_SMALL', 'Visible About copy is below the body-text readability floor.', {
         fontSize: p.fontSize,
-        minBodyFontPx: t.minBodyFontPx,
+        minBodyFontPx,
       });
       break;
     }
@@ -307,11 +370,41 @@ const evaluateMetrics = (metrics, state) => {
     }
   }
 
-  if (metrics.visibleParagraphCount < t.recommendedVisibleParagraphs) {
-    addIssue(issues, 'REVIEW', 'CONTENT_REDUCED', 'Fewer About paragraphs are visible. This can be acceptable when omission is intentional and the composition remains complete.', {
+  if (
+    familyName === 'phone-portrait' &&
+    metrics.visibleParagraphCount < (t.requiredVisibleParagraphs ?? 3)
+  ) {
+    addIssue(issues, 'FAIL', 'CONTENT_MISSING', 'Phone portrait must keep all three About paragraphs visible.', {
+      visibleParagraphCount: metrics.visibleParagraphCount,
+      requiredVisibleParagraphs: t.requiredVisibleParagraphs ?? 3,
+    });
+  } else if (metrics.visibleParagraphCount < t.recommendedVisibleParagraphs) {
+    addIssue(issues, 'REVIEW', 'CONTENT_REDUCED', 'Fewer About paragraphs are visible.', {
       visibleParagraphCount: metrics.visibleParagraphCount,
       recommendedVisibleParagraphs: t.recommendedVisibleParagraphs,
     });
+  }
+
+  for (const p of visibleParagraphs) {
+    for (const lineTokens of p.lineTokens || []) {
+      if (lineTokens.length !== 1) continue;
+
+      const onlyToken = lineTokens[0];
+
+      if (/^[.,;:!?]+$/.test(onlyToken)) {
+        addIssue(issues, 'FAIL', 'PUNCTUATION_ONLY_LINE', 'A punctuation mark wrapped onto a line by itself.', {
+          token: onlyToken,
+          lines: p.lineTokens,
+        });
+        break;
+      }
+
+      addIssue(issues, 'FAIL', 'SINGLE_WORD_LINE', 'A paragraph contains a line with only one word/token.', {
+        token: onlyToken,
+        lines: p.lineTokens,
+      });
+      break;
+    }
   }
 
   if (!r.model || !r.canvas || r.model.width <= 0 || r.model.height <= 0 || r.canvas.width <= 0 || r.canvas.height <= 0) {
@@ -575,7 +668,11 @@ const csvEscape = (value) => {
 
           await page.waitForTimeout(contract.settleMs);
           const metrics = await collectMetrics(page);
-          const issues = evaluateMetrics(metrics, state);
+          const issues = evaluateMetrics(
+            metrics,
+            state,
+            testCase.aboutFamily
+          );
           for (const error of runtimeErrors) {
             addIssue(issues, 'FAIL', 'RUNTIME_ERROR', error);
           }

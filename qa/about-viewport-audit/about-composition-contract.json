@@ -13,16 +13,56 @@
     "desktop-wide": "desktop-wide"
   },
   "modelStates": [
-    { "scene": "developer", "model": "laptop", "label": "Developer — Laptop" },
-    { "scene": "backend", "model": "java", "label": "Backend — Java" },
-    { "scene": "backend", "model": "spring", "label": "Backend — Spring" },
-    { "scene": "frontend", "model": "react", "label": "Frontend — React" },
-    { "scene": "cloud", "model": "cloud", "label": "Cloud & Automation — Cloud" },
-    { "scene": "cloud", "model": "gears", "label": "Cloud & Automation — Gears" },
-    { "scene": "hobbies", "model": "dumbbell", "label": "Hobbies — Dumbbell" },
-    { "scene": "hobbies", "model": "ps5", "label": "Hobbies — PS5" },
-    { "scene": "hobbies", "model": "bicycle", "label": "Hobbies — Bicycle" },
-    { "scene": "hobbies", "model": "clapperboard", "label": "Hobbies — Clapperboard" }
+    {
+      "scene": "developer",
+      "model": "laptop",
+      "label": "Developer — Laptop"
+    },
+    {
+      "scene": "backend",
+      "model": "java",
+      "label": "Backend — Java"
+    },
+    {
+      "scene": "backend",
+      "model": "spring",
+      "label": "Backend — Spring"
+    },
+    {
+      "scene": "frontend",
+      "model": "react",
+      "label": "Frontend — React"
+    },
+    {
+      "scene": "cloud",
+      "model": "cloud",
+      "label": "Cloud & Automation — Cloud"
+    },
+    {
+      "scene": "cloud",
+      "model": "gears",
+      "label": "Cloud & Automation — Gears"
+    },
+    {
+      "scene": "hobbies",
+      "model": "dumbbell",
+      "label": "Hobbies — Dumbbell"
+    },
+    {
+      "scene": "hobbies",
+      "model": "ps5",
+      "label": "Hobbies — PS5"
+    },
+    {
+      "scene": "hobbies",
+      "model": "bicycle",
+      "label": "Hobbies — Bicycle"
+    },
+    {
+      "scene": "hobbies",
+      "model": "clapperboard",
+      "label": "Hobbies — Clapperboard"
+    }
   ],
   "settleMs": 2200,
   "thresholds": {
@@ -34,12 +74,16 @@
     "recommendedVisibleParagraphs": 2,
     "minModelRegionWidthPx": 160,
     "minModelRegionHeightPx": 160,
-    "nextSectionReviewPx": 3
+    "nextSectionReviewPx": 3,
+    "phonePortraitMinTitleFontPx": 28,
+    "phonePortraitMinBodyFontPx": 10.5,
+    "requiredVisibleParagraphs": 3
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
     "allowIntentionalSecondaryContentOmission": true,
     "doNotShrinkBelowReadabilityFloor": true,
-    "preferBalancedCompositionOverForcingAllCopy": true
+    "preferBalancedCompositionOverForcingAllCopy": true,
+    "phonePortraitKeepAllParagraphs": true
   }
 }
