@@ -75,7 +75,9 @@
     "qa:about:tablet:landscape": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=tablet-landscape --model=all",
     "qa:about:foldable": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=foldable --model=all",
     "qa:about:desktop:standard": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=desktop-standard --model=all",
-    "qa:about:desktop:wide": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=desktop-wide --model=all"
+    "qa:about:desktop:wide": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=desktop-wide --model=all",
+    "qa:about:phone:portrait:v1": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v1.css --output-dir=qa-results/about/phone-portrait-v1",
+    "qa:about:phone:portrait:modal": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=laptop --quick --modal --screenshots=all"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
