@@ -1,6 +1,7 @@
 import {
   ComputerModel
 } from "../computer/ComputerModel";
+import GearsModel from "../gears/GearsModel";
 
 import JavaModel from "../java/JavaModel";
 import SpringModel from "../spring/SpringModel";
@@ -38,7 +39,7 @@ export const ABOUT_SCENES = {
      * Full centered/rotating dwell time.
      * The slide duration is separate.
      */
-    interval: 6500,
+    interval: 5000,
 
     items: [
       {
@@ -84,6 +85,13 @@ export const ABOUT_SCENES = {
   cloud: {
     id: "cloud",
 
+    /*
+     * Cloud first, then automation gears.
+     * Uses the same carousel behavior
+     * as Backend and Hobbies.
+     */
+    interval: 5000,
+
     items: [
       {
         id: "cloud",
@@ -94,14 +102,26 @@ export const ABOUT_SCENES = {
 
         visualScale: 1.3,
       },
+
+      {
+        id: "gears",
+        Model: GearsModel,
+        assetPath: "./about/gears.glb",
+
+        stageIntensity: 0.65,
+
+        visualScale: 1.3,
+      },
     ],
   },
+
+
 
 
   hobbies: {
     id: "hobbies",
 
-    interval: 6500,
+    interval: 5000,
 
     items: [
       {

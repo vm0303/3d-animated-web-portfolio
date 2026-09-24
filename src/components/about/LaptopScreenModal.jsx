@@ -1,21 +1,31 @@
-import { useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
+import {
+  useEffect,
+  useRef,
+} from "react";
+
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+} from "motion/react";
+
+import {
+  createPortal,
+} from "react-dom";
 
 
-const LaptopScreenModal = ({
-  open,
+const LaptopScreenModalContent = ({
   onClose,
   returnFocusRef,
 }) => {
-  const closeButtonRef = useRef(null);
+  const closeButtonRef =
+    useRef(null);
+
+  const reduceMotion =
+    useReducedMotion();
 
 
   useEffect(() => {
-    if (!open) {
-      return undefined;
-    }
-
-
     const html =
       document.documentElement;
 
@@ -37,20 +47,14 @@ const LaptopScreenModal = ({
       "hidden";
 
 
+    /*
+     * X is intentionally the ONLY
+     * user-controlled close action.
+     *
+     * Escape does not close the modal.
+     * Clicking the backdrop does not close it.
+     */
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-
-        onClose();
-
-        return;
-      }
-
-
-      /*
-       * The modal only has one interactive
-       * control, so keep keyboard focus inside it.
-       */
       if (event.key === "Tab") {
         event.preventDefault();
 
@@ -101,44 +105,102 @@ const LaptopScreenModal = ({
         ?.focus();
     };
   }, [
-    open,
-    onClose,
     returnFocusRef,
   ]);
 
 
-  if (
-    !open ||
-    typeof document === "undefined"
-  ) {
-    return null;
-  }
+  const backdropTransition = {
+    duration:
+      reduceMotion
+        ? 0
+        : 0.2,
+
+    ease: "easeOut",
+  };
 
 
-  return createPortal(
-    <div
+  const dialogTransition = {
+    duration:
+      reduceMotion
+        ? 0
+        : 0.24,
+
+    ease: [
+      0.22,
+      1,
+      0.36,
+      1,
+    ],
+  };
+
+
+  return (
+    <motion.div
       className="laptopScreenModal"
-      onPointerDown={(event) => {
-        if (
-          event.target ===
-          event.currentTarget
-        ) {
-          onClose();
-        }
+
+      initial={{
+        opacity: 0,
       }}
+
+      animate={{
+        opacity: 1,
+      }}
+
+      exit={{
+        opacity: 0,
+      }}
+
+      transition={
+        backdropTransition
+      }
     >
-      <div
+      <motion.div
         className="laptopScreenDialog"
+
         role="dialog"
         aria-modal="true"
         aria-labelledby="laptop-screen-title"
+
+        initial={
+          reduceMotion
+            ? false
+            : {
+                opacity: 0,
+                y: 10,
+                scale: 0.985,
+              }
+        }
+
+        animate={{
+          opacity: 1,
+          y: 0,
+          scale: 1,
+        }}
+
+        exit={
+          reduceMotion
+            ? {
+                opacity: 0,
+              }
+            : {
+                opacity: 0,
+                y: 6,
+                scale: 0.99,
+              }
+        }
+
+        transition={
+          dialogTransition
+        }
       >
         <div
-          className="laptopScreenToolbar"
+          className=
+            "laptopScreenToolbar"
         >
           <h2
             id="laptop-screen-title"
-            className="laptopScreenTitle"
+            className=
+              "laptopScreenTitle"
           >
             Portfolio screen
           </h2>
@@ -147,29 +209,67 @@ const LaptopScreenModal = ({
           <button
             ref={closeButtonRef}
             type="button"
-            className="laptopScreenClose"
-            aria-label="Close portfolio screen"
+            className=
+              "laptopScreenClose"
+            aria-label=
+              "Close portfolio screen"
             onClick={onClose}
           >
-            <span aria-hidden="true">
-              ×
-            </span>
+            <span
+              className=
+                "laptopScreenCloseIcon"
+              aria-hidden="true"
+            />
           </button>
         </div>
 
 
         <div
-          className="laptopScreenViewport"
+          className=
+            "laptopScreenViewport"
         >
           <img
-            className="laptopScreenImage"
-            src="/about/laptop-screen.png"
-            alt="Full-stack software engineer portfolio dashboard showing Vishal Madhav, Java and Spring, React, AWS, and profile details."
+            className=
+              "laptopScreenImage"
+            src=
+              "/about/laptop-screen.png"
+            alt=
+              "Full-stack software engineer portfolio dashboard showing Vishal Madhav, Java and Spring, React, AWS, and profile details."
             draggable="false"
           />
         </div>
-      </div>
-    </div>,
+      </motion.div>
+    </motion.div>
+  );
+};
+
+
+const LaptopScreenModal = ({
+  open,
+  onClose,
+  returnFocusRef,
+}) => {
+  if (
+    typeof document ===
+    "undefined"
+  ) {
+    return null;
+  }
+
+
+  return createPortal(
+    <AnimatePresence>
+      {open && (
+        <LaptopScreenModalContent
+          key="laptop-screen-modal"
+          onClose={onClose}
+          returnFocusRef={
+            returnFocusRef
+          }
+        />
+      )}
+    </AnimatePresence>,
+
     document.body
   );
 };

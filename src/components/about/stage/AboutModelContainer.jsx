@@ -30,7 +30,7 @@ import CarouselModelSlot
  * Carousel-only movement.
  * Text-section changes do NOT use these values.
  */
-const SLIDE_DURATION = 0.9;
+const SLIDE_DURATION = 0.85;
 const SLIDE_DISTANCE = 2.8;
 const EDGE_SCALE = 0.88;
 
@@ -1223,7 +1223,7 @@ const AboutModelContainer = ({
 
                             autoRotate={autoRotateEnabled}
 
-                            autoRotateSpeed={2}
+                            autoRotateSpeed={2.5}
 
                             enableDamping
                             dampingFactor={0.06}
