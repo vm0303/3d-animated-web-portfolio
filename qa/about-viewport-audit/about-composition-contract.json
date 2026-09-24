@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "artifactType": "about-composition-contract",
+  "purpose": "Responsive geometry QA for the About section and its deterministic 3D model states.",
+  "viewportSource": "qa/viewport-audit/hero-cross-browser-exhaustive-contract.json",
+  "familyGroups": {
+    "phone-portrait": "phone-portrait-exhaustive",
+    "phone-landscape": "phone-landscape-exhaustive",
+    "tablet-portrait": "tablet-portrait-exhaustive",
+    "tablet-landscape": "tablet-landscape-exhaustive",
+    "foldable": "foldable-exhaustive",
+    "desktop-standard": "desktop-standard",
+    "desktop-wide": "desktop-wide"
+  },
+  "modelStates": [
+    { "scene": "developer", "model": "laptop", "label": "Developer — Laptop" },
+    { "scene": "backend", "model": "java", "label": "Backend — Java" },
+    { "scene": "backend", "model": "spring", "label": "Backend — Spring" },
+    { "scene": "frontend", "model": "react", "label": "Frontend — React" },
+    { "scene": "cloud", "model": "cloud", "label": "Cloud & Automation — Cloud" },
+    { "scene": "cloud", "model": "gears", "label": "Cloud & Automation — Gears" },
+    { "scene": "hobbies", "model": "dumbbell", "label": "Hobbies — Dumbbell" },
+    { "scene": "hobbies", "model": "ps5", "label": "Hobbies — PS5" },
+    { "scene": "hobbies", "model": "bicycle", "label": "Hobbies — Bicycle" },
+    { "scene": "hobbies", "model": "clapperboard", "label": "Hobbies — Clapperboard" }
+  ],
+  "settleMs": 2200,
+  "thresholds": {
+    "containmentTolerancePx": 2,
+    "horizontalOverflowTolerancePx": 2,
+    "minTitleFontPx": 32,
+    "minBodyFontPx": 14,
+    "minBodyLineHeightRatio": 1.35,
+    "recommendedVisibleParagraphs": 2,
+    "minModelRegionWidthPx": 160,
+    "minModelRegionHeightPx": 160,
+    "nextSectionReviewPx": 3
+  },
+  "designPolicy": {
+    "readabilityBeforeDensity": true,
+    "allowIntentionalSecondaryContentOmission": true,
+    "doNotShrinkBelowReadabilityFloor": true,
+    "preferBalancedCompositionOverForcingAllCopy": true
+  }
+}
