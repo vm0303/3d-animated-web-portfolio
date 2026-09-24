@@ -94,7 +94,31 @@ const StageBoundsAnchor = () => {
 const AboutModelContainer = ({
     activeScene,
     onLaptopReady,
+    qaMode = false,
+    qaModelId = null,
 }) => {
+    const initialScene =
+        ABOUT_SCENES[
+        activeScene
+        ] ??
+        ABOUT_SCENES.developer;
+
+
+    const requestedQaIndex =
+        qaMode && qaModelId
+            ? initialScene.items.findIndex(
+                (item) =>
+                    item.id === qaModelId
+            )
+            : -1;
+
+
+    const initialIndex =
+        requestedQaIndex >= 0
+            ? requestedQaIndex
+            : 0;
+
+
     const [
         renderSceneId,
         setRenderSceneId,
@@ -104,7 +128,7 @@ const AboutModelContainer = ({
     const [
         activeIndex,
         setActiveIndex,
-    ] = useState(0);
+    ] = useState(initialIndex);
 
 
     /*
@@ -150,7 +174,15 @@ const AboutModelContainer = ({
     const [
         sceneZoomActive,
         setSceneZoomActive,
-    ] = useState(true);
+    ] = useState(
+        () => !qaMode
+    );
+
+
+    const [
+        qaModelReady,
+        setQaModelReady,
+    ] = useState(false);
 
 
     const transitionSequenceRef =
@@ -201,6 +233,12 @@ const AboutModelContainer = ({
 
     const triggerLamaZoom =
         useCallback(() => {
+            if (qaMode) {
+                setSceneZoomActive(false);
+                return;
+            }
+
+
             if (
                 sceneZoomTimerRef
                     .current
@@ -233,13 +271,19 @@ const AboutModelContainer = ({
                     },
                     LAMA_ZOOM_DURATION
                 );
-        }, []);
+        }, [qaMode]);
 
 
     /*
      * Initial Laptop zoom.
      */
     useEffect(() => {
+        if (qaMode) {
+            setSceneZoomActive(false);
+            return undefined;
+        }
+
+
         sceneZoomTimerRef.current =
             window.setTimeout(
                 () => {
@@ -266,7 +310,7 @@ const AboutModelContainer = ({
                 );
             }
         };
-    }, []);
+    }, [qaMode]);
 
 
     /*
@@ -696,6 +740,8 @@ const AboutModelContainer = ({
 
     useEffect(() => {
         const canRunCarousel =
+            !qaMode &&
+
             activeScene ===
             renderSceneId &&
 
@@ -751,6 +797,7 @@ const AboutModelContainer = ({
         sceneZoomActive,
         isInteracting,
         beginTransition,
+        qaMode,
     ]);
 
 
@@ -1072,9 +1119,26 @@ const AboutModelContainer = ({
                     SLIDE_DURATION,
 
                 onModelReady:
-                    renderSceneId === "developer" &&
-                        activeItem.id === "laptop"
-                        ? onLaptopReady
+                    (
+                        qaMode ||
+                        (
+                            renderSceneId === "developer" &&
+                            activeItem.id === "laptop"
+                        )
+                    )
+                        ? () => {
+                            if (qaMode) {
+                                setQaModelReady(true);
+                            }
+
+
+                            if (
+                                renderSceneId === "developer" &&
+                                activeItem.id === "laptop"
+                            ) {
+                                onLaptopReady?.();
+                            }
+                        }
                         : undefined,
             },
         ];
@@ -1124,11 +1188,13 @@ const AboutModelContainer = ({
 
 
     const controlsEnabled =
+        !qaMode &&
         !sceneZoomActive &&
         !isSceneTransition;
 
 
     const autoRotateEnabled =
+        !qaMode &&
         !sceneZoomActive &&
         !isSceneTransition;
 
@@ -1137,6 +1203,34 @@ const AboutModelContainer = ({
         <div
             className=
             "aboutModelContainer"
+
+            data-about-qa={
+                qaMode
+                    ? "true"
+                    : undefined
+            }
+
+            data-about-scene={
+                qaMode
+                    ? renderSceneId
+                    : undefined
+            }
+
+            data-about-model={
+                qaMode
+                    ? activeItem.id
+                    : undefined
+            }
+
+            data-about-ready={
+                qaMode
+                    ? (
+                        qaModelReady
+                            ? "true"
+                            : "false"
+                    )
+                    : undefined
+            }
         >
             <div
                 className=
@@ -1151,6 +1245,7 @@ const AboutModelContainer = ({
                  */
                 style={{
                     pointerEvents:
+                        qaMode ||
                         isCarouselTransition
                             ? "none"
                             : "auto",
