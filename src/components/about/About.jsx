@@ -349,10 +349,9 @@ const About = () => {
                   "aboutKeywordText"
               >
                 Java and Spring-based
-                systems
+                systems,
               </span>
-            </button>
-            ,{" "}
+            </button>{" "}
 
             <button
               type="button"
@@ -381,10 +380,10 @@ const About = () => {
                   "aboutKeywordText"
               >
                 modern front-end
-                development
+                development,
               </span>
-            </button>
-            , and{" "}
+            </button>{" "}
+            and{" "}
 
             <button
               type="button"
@@ -412,10 +411,10 @@ const About = () => {
                 className=
                   "aboutKeywordText"
               >
-                cloud &amp; automation
+                cloud &amp; automation,
               </span>
-            </button>
-            , building applications
+            </button>{" "}
+            building applications
             and tools that are designed
             to scale and stay dependable.
           </motion.p>
@@ -480,10 +479,9 @@ const About = () => {
                 working out, gaming,
                 cycling, or getting lost
                 in a good movie or TV
-                series
+                series.
               </span>
             </button>
-            .
           </motion.p>
         </motion.div>
       </div>
