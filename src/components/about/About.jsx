@@ -1,10 +1,25 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, useInView } from "motion/react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from "react";
+
+import {
+  motion,
+  useInView,
+  AnimatePresence,
+} from "motion/react";
 
 
-import AboutModelContainer from "./stage/AboutModelContainer";
-import LaptopScreenModal from "./LaptopScreenModal";
+import AboutModelContainer
+  from "./stage/AboutModelContainer";
+
+import LaptopScreenModal
+  from "./LaptopScreenModal";
+
 import "./about.css";
+
 
 const titleVariants = {
   initial: {
@@ -24,6 +39,7 @@ const titleVariants = {
   },
 };
 
+
 const listVariants = {
   initial: {
     x: -80,
@@ -40,6 +56,7 @@ const listVariants = {
     },
   },
 };
+
 
 const paragraphVariants = {
   initial: {
@@ -67,22 +84,36 @@ const buttonVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.6,
+      duration: 1.2,
+    },
+  },
+
+  exit: {
+    opacity: 0,
+
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
     },
   },
 };
 
-const About = () => {
-  const [activeScene, setActiveScene] =
-    useState("developer");
 
-  const aboutRef = useRef(null);
+const About = () => {
+  const [
+    activeScene,
+    setActiveScene,
+  ] = useState("developer");
+
+
+  const aboutRef =
+    useRef(null);
+
 
   const [
     isLaptopScreenOpen,
     setIsLaptopScreenOpen,
   ] = useState(false);
-
 
 
   const screenTriggerRef =
@@ -112,29 +143,40 @@ const About = () => {
       setIsLaptopModelReady(true);
     }, []);
 
-  const isInView = useInView(aboutRef, {
-    amount: 0.15,
-    once: false,
-  });
+
+  const isInView =
+    useInView(
+      aboutRef,
+      {
+        amount: 0.15,
+        once: false,
+      }
+    );
+
 
   useEffect(() => {
     if (!isInView) {
       setActiveScene("developer");
+
       setIsLaptopModelReady(false);
     }
   }, [isInView]);
 
+
   useEffect(() => {
-    if (activeScene !== "developer") {
+    if (
+      activeScene !== "developer"
+    ) {
       setIsLaptopModelReady(false);
     }
   }, [activeScene]);
 
+
   /*
- * If About leaves view or another
- * model chapter becomes active,
- * make sure the laptop modal closes.
- */
+   * If About leaves view or another
+   * model chapter becomes active,
+   * make sure the laptop modal closes.
+   */
   useEffect(() => {
     if (
       !isInView ||
@@ -162,14 +204,14 @@ const About = () => {
       return;
     }
 
+
     const image =
       new Image();
+
 
     image.src =
       "/about/laptop-screen.png";
   }, [isInView]);
-
-
 
 
   return (
@@ -180,7 +222,11 @@ const About = () => {
       <div className="aSection left">
         <motion.h1
           className="aTitle"
-          variants={titleVariants}
+
+          variants={
+            titleVariants
+          }
+
           animate={
             isInView
               ? "animate"
@@ -190,121 +236,222 @@ const About = () => {
           About Me
         </motion.h1>
 
+
         <motion.div
           className="aboutList"
-          variants={listVariants}
+
+          variants={
+            listVariants
+          }
+
           animate={
             isInView
               ? "animate"
               : "initial"
           }
         >
-          <motion.p variants={paragraphVariants}>
+          <motion.p
+            variants={
+              paragraphVariants
+            }
+          >
             I’m a{" "}
+
             <button
               type="button"
-              className="aboutKeyword"
-              data-active={activeScene === "developer"}
-              aria-pressed={activeScene === "developer"}
-              onClick={() => setActiveScene("developer")}
+
+              className=
+                "aboutKeyword"
+
+              data-active={
+                activeScene ===
+                "developer"
+              }
+
+              aria-pressed={
+                activeScene ===
+                "developer"
+              }
+
+              onClick={() =>
+                setActiveScene(
+                  "developer"
+                )
+              }
             >
-              <span className="aboutKeywordText">
+              <span
+                className=
+                  "aboutKeywordText"
+              >
                 full-stack software engineer
               </span>
             </button>{" "}
-            who enjoys turning complex problems
-            into reliable, intuitive experiences.
-            Over the years, I’ve worked across{" "}
+
+            who enjoys turning complex
+            problems into reliable,
+            intuitive experiences.
+
+            Over the years, I’ve
+            worked across{" "}
+
             <button
               type="button"
-              className="aboutKeyword"
+
+              className=
+                "aboutKeyword"
+
               data-active={
-                activeScene === "backend"
+                activeScene ===
+                "backend"
               }
+
               aria-pressed={
-                activeScene === "backend"
+                activeScene ===
+                "backend"
               }
+
               onClick={() =>
-                setActiveScene("backend")
+                setActiveScene(
+                  "backend"
+                )
               }
             >
-              <span className="aboutKeywordText">
-                Java and Spring-based systems
+              <span
+                className=
+                  "aboutKeywordText"
+              >
+                Java and Spring-based
+                systems
               </span>
             </button>
             ,{" "}
+
             <button
               type="button"
-              className="aboutKeyword"
+
+              className=
+                "aboutKeyword"
+
               data-active={
-                activeScene === "frontend"
+                activeScene ===
+                "frontend"
               }
+
               aria-pressed={
-                activeScene === "frontend"
+                activeScene ===
+                "frontend"
               }
+
               onClick={() =>
-                setActiveScene("frontend")
+                setActiveScene(
+                  "frontend"
+                )
               }
             >
-              <span className="aboutKeywordText">
-                modern front-end development
+              <span
+                className=
+                  "aboutKeywordText"
+              >
+                modern front-end
+                development
               </span>
             </button>
             , and{" "}
+
             <button
               type="button"
-              className="aboutKeyword"
+
+              className=
+                "aboutKeyword"
+
               data-active={
-                activeScene === "cloud"
+                activeScene ===
+                "cloud"
               }
+
               aria-pressed={
-                activeScene === "cloud"
+                activeScene ===
+                "cloud"
               }
+
               onClick={() =>
-                setActiveScene("cloud")
+                setActiveScene(
+                  "cloud"
+                )
               }
             >
-              <span className="aboutKeywordText">
+              <span
+                className=
+                  "aboutKeywordText"
+              >
                 cloud &amp; automation
               </span>
             </button>
-            , building applications and tools
-            that are designed to scale and stay
-            dependable.
+            , building applications
+            and tools that are designed
+            to scale and stay dependable.
           </motion.p>
 
-          <motion.p variants={paragraphVariants}>
-            What keeps me excited about software
-            is the constant opportunity to learn,
-            experiment, and build something
-            better. Whether I’m creating an
-            interactive interface, improving a
-            backend service, automating a
-            deployment workflow, or exploring
-            new technologies, I enjoy
-            understanding how all the pieces fit
-            together.
+
+          <motion.p
+            variants={
+              paragraphVariants
+            }
+          >
+            What keeps me excited about
+            software is the constant
+            opportunity to learn,
+            experiment, and build
+            something better.
+
+            Whether I’m creating an
+            interactive interface,
+            improving a backend service,
+            automating a deployment
+            workflow, or exploring new
+            technologies, I enjoy
+            understanding how all the
+            pieces fit together.
           </motion.p>
 
-          <motion.p variants={paragraphVariants}>
-            Outside of development, you’ll
-            usually find me{" "}
+
+          <motion.p
+            variants={
+              paragraphVariants
+            }
+          >
+            Outside of development,
+            you’ll usually find me{" "}
+
             <button
               type="button"
-              className="aboutKeyword"
+
+              className=
+                "aboutKeyword"
+
               data-active={
-                activeScene === "hobbies"
+                activeScene ===
+                "hobbies"
               }
+
               aria-pressed={
-                activeScene === "hobbies"
+                activeScene ===
+                "hobbies"
               }
+
               onClick={() =>
-                setActiveScene("hobbies")
+                setActiveScene(
+                  "hobbies"
+                )
               }
             >
-              <span className="aboutKeywordText">
-                working out, gaming, cycling, or
-                getting lost in a good movie or TV
+              <span
+                className=
+                  "aboutKeywordText"
+              >
+                working out, gaming,
+                cycling, or getting lost
+                in a good movie or TV
                 series
               </span>
             </button>
@@ -313,50 +460,92 @@ const About = () => {
         </motion.div>
       </div>
 
+
       <div className="aSection right">
         {isInView && (
           <>
             <AboutModelContainer
-              activeScene={activeScene}
-              onLaptopReady={handleLaptopModelReady}
+              activeScene={
+                activeScene
+              }
+
+              onLaptopReady={
+                handleLaptopModelReady
+              }
             />
 
 
-            {activeScene === "developer" && isLaptopModelReady && (
-              <motion.button
-                ref={screenTriggerRef}
-                type="button"
-                className="aboutScreenTrigger"
-                variants={buttonVariants}
-                initial="initial"
-                animate="animate"
-                aria-haspopup="dialog"
-                onClick={openLaptopScreen}
-              >
-                <span>
-                  View screen
-                </span>
+            <AnimatePresence>
+              {activeScene ===
+                "developer" &&
+                isLaptopModelReady && (
+                  <motion.button
+                    key=
+                      "view-screen-button"
 
-                <span
-                  aria-hidden="true"
-                  className="aboutScreenTriggerIcon"
-                >
-                  ↗
-                </span>
-              </motion.button>
-            )}
+                    ref={
+                      screenTriggerRef
+                    }
+
+                    type="button"
+
+                    className=
+                      "aboutScreenTrigger"
+
+                    variants={
+                      buttonVariants
+                    }
+
+                    initial="initial"
+
+                    animate="animate"
+
+                    exit="exit"
+
+                    aria-haspopup=
+                      "dialog"
+
+                    onClick={
+                      openLaptopScreen
+                    }
+                  >
+                    <span>
+                      View screen
+                    </span>
+
+
+                    <span
+                      aria-hidden="true"
+
+                      className=
+                        "aboutScreenTriggerIcon"
+                    >
+                      ↗
+                    </span>
+                  </motion.button>
+                )}
+            </AnimatePresence>
           </>
         )}
       </div>
 
 
       <LaptopScreenModal
-        open={isLaptopScreenOpen}
-        onClose={closeLaptopScreen}
-        returnFocusRef={screenTriggerRef}
+        open={
+          isLaptopScreenOpen
+        }
+
+        onClose={
+          closeLaptopScreen
+        }
+
+        returnFocusRef={
+          screenTriggerRef
+        }
       />
     </div>
   );
 };
+
 
 export default About;
