@@ -18,6 +18,10 @@ import AboutModelContainer
 import LaptopScreenModal
   from "./LaptopScreenModal";
 
+import {
+  readAboutQaConfig,
+} from "../../qaSrc/aboutQa";
+
 import "./about.css";
 
 
@@ -100,10 +104,28 @@ const buttonVariants = {
 
 
 const About = () => {
+  /*
+   * QA-only deterministic scene/model selection.
+   * Production behavior is unchanged unless about-qa=1
+   * is present in the URL.
+   */
+  const aboutQaRef =
+    useRef(
+      readAboutQaConfig()
+    );
+
+  const aboutQa =
+    aboutQaRef.current;
+
+
   const [
     activeScene,
     setActiveScene,
-  ] = useState("developer");
+  ] = useState(
+    () =>
+      aboutQa.scene ??
+      "developer"
+  );
 
 
   const aboutRef =
@@ -155,12 +177,18 @@ const About = () => {
 
 
   useEffect(() => {
-    if (!isInView) {
+    if (
+      !isInView &&
+      !aboutQa.enabled
+    ) {
       setActiveScene("developer");
 
       setIsLaptopModelReady(false);
     }
-  }, [isInView]);
+  }, [
+    isInView,
+    aboutQa.enabled,
+  ]);
 
 
   useEffect(() => {
@@ -471,6 +499,14 @@ const About = () => {
 
               onLaptopReady={
                 handleLaptopModelReady
+              }
+
+              qaMode={
+                aboutQa.enabled
+              }
+
+              qaModelId={
+                aboutQa.model
               }
             />
 
