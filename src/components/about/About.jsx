@@ -316,10 +316,18 @@ const About = () => {
             </button>{" "}
 
             who enjoys turning complex
+            <br
+              className=
+                "aboutResponsiveBreak aboutBreakTargetAfterComplex"
+            />
             problems into reliable,
             intuitive experiences.
 
             Over the years, I’ve
+            <br
+              className=
+                "aboutResponsiveBreak aboutBreakTargetAfterYears"
+            />
             worked across{" "}
 
             <span
@@ -395,12 +403,28 @@ const About = () => {
                   className=
                     "aboutKeywordText"
                 >
-                  modern front-end
-                  development,
+                  <span>
+                    modern
+                  </span>{" "}
+
+                  <br
+                    className=
+                      "aboutResponsiveBreak aboutBreak500Frontend"
+                  />
+
+                  <span>
+                    front-end development,
+                  </span>
                 </span>
-              </button>{" "}
-              and{" "}
+              </button>
             </span>
+
+            <br
+              className=
+                "aboutResponsiveBreak aboutBreak360AfterFrontend"
+            />
+
+            {" "}and{" "}
 
             <button
               type="button"
@@ -431,9 +455,29 @@ const About = () => {
                 cloud &amp; automation,
               </span>
             </button>{" "}
-            building applications
-            and tools that are designed
-            to scale and stay dependable.
+            building
+
+            <br
+              className=
+                "aboutResponsiveBreak aboutBreak500AfterBuilding"
+            />
+
+            {" "}applications
+            and tools that are
+
+            <br
+              className=
+                "aboutResponsiveBreak aboutBreak360AfterAre"
+            />
+
+            {" "}designed to
+
+            <br
+              className=
+                "aboutResponsiveBreak aboutBreak500BeforeScale"
+            />
+
+            {" "}scale and stay dependable.
           </motion.p>
 
 
