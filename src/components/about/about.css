@@ -108,6 +108,11 @@
 }
 
 
+.aboutResponsiveBreak {
+    display: none;
+}
+
+
 .aboutKeywordText {
     padding:
         0.02em
