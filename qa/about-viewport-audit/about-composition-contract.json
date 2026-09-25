@@ -77,7 +77,9 @@
     "nextSectionReviewPx": 3,
     "phonePortraitMinTitleFontPx": 28,
     "phonePortraitMinBodyFontPx": 10.5,
-    "requiredVisibleParagraphs": 3
+    "requiredVisibleParagraphs": 3,
+    "phonePortraitMinComponentGapPx": 14,
+    "phonePortraitGapEqualityTolerancePx": 2.5
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
