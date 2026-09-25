@@ -1,0 +1,107 @@
+/* =========================================================
+   HERO V2 — PHONE PORTRAIT FLUID SCALE RECOVERY V1
+
+   Purpose:
+   - Restore the responsive scale values that the validated portrait grid was
+     previously inheriting from legacy device-specific media queries.
+   - Keep the current production portrait structure/placement unchanged.
+   - Replace the hidden dependency with one generalized <=500px fluid layer.
+   - No device names and no exact-device viewport patches.
+
+   QA-only candidate. Inject with --override-css.
+   ========================================================= */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .hero {
+    --portrait-title-size:
+      clamp(32px, min(10.25vw, 5.2svh), 42px);
+
+    --portrait-cert-title-size:
+      clamp(20px, min(5.9vw, 3.2svh), 26px);
+
+    --portrait-cert-copy-size:
+      clamp(12.5px, min(3.65vw, 2.2svh), 17px);
+
+    --portrait-cert-icon-size:
+      clamp(36px, 10.6vw, 47px);
+
+    --portrait-scroll-size:
+      clamp(40px, 11.8vw, 50px);
+
+    --portrait-social-icon:
+      clamp(23px, 6.9vw, 30px);
+
+    --portrait-social-box:
+      clamp(17px, 5.4vw, 23px);
+
+    --portrait-social-font:
+      clamp(12px, 3.7vw, 15px);
+  }
+
+  /* Exactly two intentional title lines: the JSX <br> remains the break. */
+  .heroTitle {
+    width: max-content !important;
+    max-width: calc(100% - 72px) !important;
+
+    font-size: var(--portrait-title-size) !important;
+    line-height: 1.08 !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+
+  /* Legacy phone rules supplied width:100%; the production grid needs to own it. */
+  .certifications {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .certifications h2 {
+    width: 100% !important;
+    font-size: var(--portrait-cert-title-size) !important;
+    line-height: 1.15 !important;
+  }
+
+  .certifications p {
+    margin: clamp(10px, 1.8svh, 14px) 0 !important;
+    font-size: var(--portrait-cert-copy-size) !important;
+    line-height: 1.2 !important;
+  }
+
+  .certificationsImages {
+    justify-content: center !important;
+    gap: clamp(8px, 2.5vw, 10px) !important;
+  }
+
+  .certificationsImages img {
+    width: var(--portrait-cert-icon-size) !important;
+    height: var(--portrait-cert-icon-size) !important;
+    padding: clamp(5px, 1.6vw, 8px) !important;
+  }
+
+  /* The portrait grid owns placement; this layer only restores visual scale. */
+  .scroll > svg {
+    width: var(--portrait-scroll-size) !important;
+    height: var(--portrait-scroll-size) !important;
+    transform: none !important;
+  }
+
+  .socials {
+    gap: clamp(10px, 2.8vw, 12px) !important;
+    padding: clamp(5px, 1.4vw, 6px) !important;
+  }
+
+  .socials img {
+    width: var(--portrait-social-icon) !important;
+    height: var(--portrait-social-icon) !important;
+  }
+
+  .socialsTextContainer {
+    width: var(--portrait-social-box) !important;
+    height: var(--portrait-social-box) !important;
+  }
+
+  .socialsText {
+    font-size: var(--portrait-social-font) !important;
+    transform: translateY(clamp(-27px, -6.2vw, -20px)) !important;
+  }
+}

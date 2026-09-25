@@ -18,6 +18,10 @@ import AboutModelContainer
 import LaptopScreenModal
   from "./LaptopScreenModal";
 
+import {
+  readAboutQaConfig,
+} from "../../qaSrc/aboutQa";
+
 import "./about.css";
 
 
@@ -100,10 +104,28 @@ const buttonVariants = {
 
 
 const About = () => {
+  /*
+   * QA-only deterministic scene/model selection.
+   * Production behavior is unchanged unless about-qa=1
+   * is present in the URL.
+   */
+  const aboutQaRef =
+    useRef(
+      readAboutQaConfig()
+    );
+
+  const aboutQa =
+    aboutQaRef.current;
+
+
   const [
     activeScene,
     setActiveScene,
-  ] = useState("developer");
+  ] = useState(
+    () =>
+      aboutQa.scene ??
+      "developer"
+  );
 
 
   const aboutRef =
@@ -155,12 +177,18 @@ const About = () => {
 
 
   useEffect(() => {
-    if (!isInView) {
+    if (
+      !isInView &&
+      !aboutQa.enabled
+    ) {
       setActiveScene("developer");
 
       setIsLaptopModelReady(false);
     }
-  }, [isInView]);
+  }, [
+    isInView,
+    aboutQa.enabled,
+  ]);
 
 
   useEffect(() => {
@@ -321,10 +349,9 @@ const About = () => {
                   "aboutKeywordText"
               >
                 Java and Spring-based
-                systems
+                systems,
               </span>
-            </button>
-            ,{" "}
+            </button>{" "}
 
             <button
               type="button"
@@ -353,10 +380,10 @@ const About = () => {
                   "aboutKeywordText"
               >
                 modern front-end
-                development
+                development,
               </span>
-            </button>
-            , and{" "}
+            </button>{" "}
+            and{" "}
 
             <button
               type="button"
@@ -384,10 +411,10 @@ const About = () => {
                 className=
                   "aboutKeywordText"
               >
-                cloud &amp; automation
+                cloud &amp; automation,
               </span>
-            </button>
-            , building applications
+            </button>{" "}
+            building applications
             and tools that are designed
             to scale and stay dependable.
           </motion.p>
@@ -452,10 +479,9 @@ const About = () => {
                 working out, gaming,
                 cycling, or getting lost
                 in a good movie or TV
-                series
+                series.
               </span>
             </button>
-            .
           </motion.p>
         </motion.div>
       </div>
@@ -471,6 +497,14 @@ const About = () => {
 
               onLaptopReady={
                 handleLaptopModelReady
+              }
+
+              qaMode={
+                aboutQa.enabled
+              }
+
+              qaModelId={
+                aboutQa.model
               }
             />
 

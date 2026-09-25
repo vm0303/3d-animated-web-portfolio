@@ -1,0 +1,551 @@
+/* =========================================================
+   HERO V2 — TABLET PORTRAIT CANDIDATE V4
+
+   Candidate-only tablet portrait layout.
+   Does NOT modify frozen phone CSS.
+
+   Scope:
+   - portrait only
+   - width 501px through 1100px
+   - covers current measured tablet portrait geometries
+     and the 1024/1025 synthetic boundary probes
+
+   Strategy:
+   - use the successful phone portrait ordering as a structural model
+   - give tablets their own fluid scale instead of inheriting desktop sizes
+   - title -> certifications -> bubble -> scroll -> visual row
+   - the visual row owns all remaining height
+   - contact anchors to bottom-right of the Hero
+   - socials anchor to top-right
+
+   V4 spacing refinement:
+   - keep V3's stronger tablet sizing
+   - add more breathing room between title / certifications / bubble / scroll
+   - slightly reduce the visual row to 92% so the overall composition feels
+     less cramped on tablets
+   - phone production CSS remains untouched
+   ========================================================= */
+
+@media (min-width: 501px) and (max-width: 1100px) and (orientation: portrait) {
+  .hero {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    position: relative !important;
+    overflow: hidden !important;
+
+    /*
+     * Tablet scale is limited by BOTH width and height.
+     * This keeps compact 744–820px tablets from inheriting desktop sizing
+     * while still allowing larger 985–1032px tablets to breathe.
+     */
+    --tablet-title-size:
+      clamp(54px, min(8.4vw, 6.3svh), 74px);
+
+    --tablet-cert-title-size:
+      clamp(32px, min(4.8vw, 3.6svh), 44px);
+
+    --tablet-cert-copy-size:
+      clamp(18px, min(2.75vw, 2.05svh), 23px);
+
+    --tablet-cert-icon-size:
+      clamp(58px, min(8.2vw, 6.1svh), 76px);
+
+    --tablet-bubble-font:
+      clamp(17px, min(2.4vw, 1.8svh), 21px);
+
+    --tablet-bubble-avatar:
+      clamp(48px, min(6.6vw, 5.05svh), 60px);
+
+    --tablet-scroll-size:
+      clamp(48px, min(7vw, 5.2svh), 62px);
+
+    --tablet-contact-size:
+      clamp(104px, min(15vw, 11svh), 132px);
+
+    --tablet-social-icon:
+      clamp(34px, min(4.9vw, 3.7svh), 42px);
+
+    --tablet-social-font:
+      clamp(17px, min(2.5vw, 1.9svh), 20px);
+
+    --tablet-corner-gap:
+      clamp(10px, 1.5vw, 18px);
+
+    /*
+     * Structural rhythm.
+     * The final row receives every remaining pixel, preventing the image
+     * from independently floating upward through title/cert/bubble content.
+     */
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      clamp(18px, 1.8svh, 28px)
+      minmax(0, 1fr) !important;
+  }
+
+  /*
+   * The existing left/right wrappers are desktop layout containers.
+   * Tablet portrait promotes their children directly into the Hero grid.
+   */
+  .heroSection {
+    display: contents !important;
+  }
+
+  .heroTitle,
+  .certifications,
+  .bubbleContainer,
+  .scroll,
+  .contactButtonLink {
+    min-width: 0 !important;
+  }
+
+  /* =========================================================
+     TITLE
+     ========================================================= */
+  .heroTitle {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    justify-self: center !important;
+
+    width: max-content !important;
+    max-width: calc(100% - 130px) !important;
+
+    margin-top:
+      clamp(34px, 4.4svh, 62px) !important;
+
+    margin-bottom:
+      clamp(22px, 2.2svh, 34px) !important;
+
+    font-size:
+      var(--tablet-title-size) !important;
+
+    line-height: 1.08 !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  /* =========================================================
+     CERTIFICATIONS
+     ========================================================= */
+  .certifications {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: stretch !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+    margin-bottom:
+      clamp(20px, 2.0svh, 30px) !important;
+
+    text-align: center !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .certifications h2 {
+    width: 100% !important;
+
+    font-size:
+      var(--tablet-cert-title-size) !important;
+
+    line-height: 1.15 !important;
+  }
+
+  .certifications p {
+    margin:
+      clamp(8px, 1.1svh, 14px)
+      0 !important;
+
+    font-size:
+      var(--tablet-cert-copy-size) !important;
+
+    line-height: 1.2 !important;
+  }
+
+  .certificationsImages {
+    justify-content: center !important;
+
+    gap:
+      clamp(10px, 1.6vw, 16px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      var(--tablet-cert-icon-size) !important;
+
+    height:
+      var(--tablet-cert-icon-size) !important;
+
+    padding:
+      clamp(7px, 1.1vw, 10px) !important;
+  }
+
+  /* =========================================================
+     SPEECH BUBBLE
+     ========================================================= */
+  .bubbleContainer {
+    display: flex !important;
+
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    justify-self: center !important;
+    align-self: start !important;
+
+    width:
+      min(76%, 610px) !important;
+
+    gap:
+      clamp(8px, 1.2vw, 12px) !important;
+
+    margin:
+      0
+      0
+      clamp(16px, 1.8svh, 24px) !important;
+
+    transform: none !important;
+
+    align-items: center !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .bubble {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+
+    align-self: center !important;
+
+    white-space: nowrap !important;
+
+    font-size:
+      var(--tablet-bubble-font) !important;
+
+    line-height: 1.15 !important;
+
+    /*
+     * Symmetric vertical padding, following the final phone-landscape lesson:
+     * visual bubble height comes from equal top/bottom breathing room.
+     */
+    padding-block:
+      clamp(11px, 1.15svh, 14px) !important;
+
+    padding-inline:
+      clamp(14px, 2vw, 20px) !important;
+  }
+
+  .bubbleContainer img {
+    flex:
+      0 0
+      var(--tablet-bubble-avatar) !important;
+
+    width:
+      var(--tablet-bubble-avatar) !important;
+
+    height:
+      var(--tablet-bubble-avatar) !important;
+
+    align-self: center !important;
+  }
+
+  /* =========================================================
+     SCROLL
+     ========================================================= */
+  .scroll {
+    display: block !important;
+
+    grid-column: 1 !important;
+    grid-row: 4 !important;
+
+    justify-self: center !important;
+    align-self: start !important;
+
+    width: max-content !important;
+
+    margin: 0 !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .scroll > svg {
+    display: block !important;
+
+    width:
+      var(--tablet-scroll-size) !important;
+
+    height:
+      var(--tablet-scroll-size) !important;
+
+    transform: none !important;
+  }
+
+  /* =========================================================
+     PORTRAIT + SHAPE
+
+     The visual becomes the final grid row rather than an independently
+     positioned 75%-height desktop layer. This is the primary structural fix
+     for all baseline title/cert/bubble/image collisions.
+     ========================================================= */
+  .bg {
+    position: relative !important;
+
+    grid-column: 1 !important;
+    grid-row: 6 !important;
+
+    align-self: end !important;
+    justify-self: center !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    /*
+     * V2 proportion refinement:
+     * keep the visual centered/bottom-anchored but make the combined
+     * Canvas + portrait composition slightly smaller so the upper
+     * content can carry more visual weight.
+     */
+    width:
+      min(
+        90vw,
+        calc(100% + (2 * var(--page-gutter)))
+      ) !important;
+
+    /*
+     * V3 keeps the visual slightly reduced overall, but restores more of
+     * the final row height so the scroll-to-image gap stays in the tablet
+     * QA ideal band rather than leaving a large dead zone.
+     */
+    height: 92% !important;
+    min-height: 0 !important;
+
+    margin-inline:
+      calc(-1 * var(--page-gutter)) !important;
+
+    overflow: hidden !important;
+
+    z-index: 0 !important;
+  }
+
+  .hImg {
+    position: absolute !important;
+
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    margin: auto !important;
+  }
+
+  .hImg img {
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+
+  /* =========================================================
+     CONTACT
+     ========================================================= */
+  .contactButtonLink {
+    position: absolute !important;
+
+    right:
+      max(
+        var(--tablet-corner-gap),
+        env(safe-area-inset-right, 0px)
+      ) !important;
+
+    bottom:
+      max(
+        var(--tablet-corner-gap),
+        env(safe-area-inset-bottom, 0px)
+      ) !important;
+
+    width:
+      var(--tablet-contact-size) !important;
+
+    height:
+      var(--tablet-contact-size) !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: 3 !important;
+  }
+
+  .contactButton {
+    position: relative !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  .contactButton > svg {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow svg {
+    width:
+      clamp(34px, 4.7vw, 46px) !important;
+
+    height:
+      clamp(34px, 4.7vw, 46px) !important;
+
+    transform: none !important;
+  }
+
+  /* =========================================================
+     SOCIAL RAIL
+
+     Keep the familiar top-right portrait placement, but give tablets their
+     own scale rather than inheriting desktop 28px/16px dimensions blindly.
+     ========================================================= */
+  .socials {
+    position: absolute !important;
+
+    top: 0 !important;
+    right: 0 !important;
+
+    gap:
+      clamp(11px, 1.5svh, 15px) !important;
+
+    padding:
+      clamp(6px, 0.85vw, 9px) !important;
+
+    z-index: 4 !important;
+  }
+
+  .socials img {
+    width:
+      var(--tablet-social-icon) !important;
+
+    height:
+      var(--tablet-social-icon) !important;
+  }
+
+  .socialsTextContainer {
+    width:
+      var(--tablet-social-icon) !important;
+
+    height:
+      var(--tablet-social-icon) !important;
+  }
+
+  .socialsText {
+    height: 100% !important;
+
+    font-size:
+      var(--tablet-social-font) !important;
+
+    padding:
+      0
+      clamp(8px, 1.2vw, 12px) !important;
+
+    transform:
+      translateY(
+        calc(-1 * var(--tablet-social-icon))
+      ) !important;
+  }
+}
+
+
+/* =========================================================
+   TABLET PORTRAIT COMPACT-HEIGHT PRESSURE
+
+   This is a behavior-based height pressure state, not a named-device patch.
+   It applies only when tablet portrait has less vertical room.
+   ========================================================= */
+
+@media (min-width: 501px) and (max-width: 1100px) and (max-height: 1050px) and (orientation: portrait) {
+  .hero {
+    --tablet-title-size:
+      clamp(50px, min(7.7vw, 5.75svh), 62px);
+
+    --tablet-cert-title-size:
+      clamp(29px, min(4.35vw, 3.25svh), 36px);
+
+    --tablet-cert-copy-size:
+      clamp(17px, min(2.5vw, 1.9svh), 20px);
+
+    --tablet-cert-icon-size:
+      clamp(54px, min(7.6vw, 5.6svh), 64px);
+
+    --tablet-bubble-font:
+      clamp(16px, min(2.25vw, 1.7svh), 18px);
+
+    --tablet-bubble-avatar:
+      clamp(46px, min(6.3vw, 4.8svh), 52px);
+
+    --tablet-scroll-size:
+      clamp(44px, min(6.5vw, 5.0svh), 52px);
+
+    --tablet-contact-size:
+      clamp(96px, min(14vw, 10.5svh), 112px);
+
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      clamp(12px, 1.2svh, 16px)
+      minmax(0, 1fr) !important;
+  }
+
+  .heroTitle {
+    margin-top:
+      clamp(30px, 3.8svh, 40px) !important;
+
+    margin-bottom:
+      clamp(16px, 1.7svh, 22px) !important;
+  }
+
+  .certifications {
+    margin-bottom:
+      clamp(14px, 1.6svh, 20px) !important;
+  }
+
+  .bubbleContainer {
+    margin-bottom:
+      clamp(10px, 1.2svh, 14px) !important;
+  }
+
+  .bubble {
+    padding-block:
+      clamp(10px, 1.05svh, 12px) !important;
+
+    padding-inline:
+      clamp(12px, 1.7vw, 16px) !important;
+  }
+}

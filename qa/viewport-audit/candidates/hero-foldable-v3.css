@@ -1,0 +1,476 @@
+/* =========================================================
+   HERO V2 — FOLDABLE LANDSCAPE V3
+
+   Candidate only. Do not promote yet.
+
+   Goals from visual review:
+   - 475x605 portrait: untouched
+   - 704x749 portrait: untouched
+   - 663x389 folded landscape:
+       * certification title stays on one line
+       * certification copy stays on one line
+       * speech bubble stays on one line
+   - 932x520 unfolded landscape:
+       * use the approved TABLET LANDSCAPE V6 composition model
+       * restore breathing room / scale instead of compressing everything
+
+   No device-name selectors. Geometry only.
+   ========================================================= */
+
+
+/* =========================================================
+   FOLDED OUTER — NARROW NORMAL-LANDSCAPE FINISH
+
+   Intentionally ends at 666px so the previously frozen 667px+ phone
+   landscape family is not reopened.
+
+   Target evidence: 663x389.
+   ========================================================= */
+
+@media
+  (min-width: 620px)
+  and (max-width: 666px)
+  and (min-height: 356px)
+  and (max-height: 500px)
+  and (orientation: landscape) {
+
+  .certifications {
+    width: max-content !important;
+    max-width: 150px !important;
+  }
+
+  .certifications h2,
+  .certifications p {
+    white-space: nowrap !important;
+  }
+
+  .bubbleContainer {
+    width: 70% !important;
+    gap: 6px !important;
+    transform: translateX(8px) !important;
+  }
+
+  .bubble {
+    height: auto !important;
+    white-space: nowrap !important;
+
+    font-size: 10px !important;
+    line-height: 1.14 !important;
+
+    padding-block: 10px !important;
+    padding-inline: 8px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .bubbleContainer img {
+    width: 30px !important;
+    height: 30px !important;
+    flex: 0 0 30px !important;
+  }
+}
+
+
+/* =========================================================
+   UNFOLDED BOOK-FOLD LANDSCAPE BRIDGE
+
+   This is deliberately the approved Tablet Landscape V6 composition
+   extended downward into the missing 700–999px width band.
+
+   The structure stays roomy:
+   - left and right columns keep space-between distribution
+   - portrait keeps the approved ~64svh height relationship
+   - Three.js shape uses the approved 0.70 scale
+   - bubble/social/contact use tablet-like visual weight
+
+   Width-aware clamps only reduce scale when the inner display itself
+   becomes materially narrower than the 932px Fold8 evidence.
+
+   Target evidence: Galaxy Z Fold8 inner landscape 932x520.
+   ========================================================= */
+
+@media
+  (min-width: 700px)
+  and (max-width: 999px)
+  and (min-height: 501px)
+  and (max-height: 650px)
+  and (orientation: landscape) {
+
+  .hero {
+    position: relative !important;
+
+    --fold-tablet-title:
+      clamp(50px, 6vw, 56px);
+
+    --fold-tablet-cert-title:
+      clamp(20px, 2.6vw, 24px);
+
+    --fold-tablet-cert-copy:
+      clamp(13px, 1.72vw, 16px);
+
+    --fold-tablet-cert-icon:
+      clamp(46px, 5.8vw, 56px);
+
+    --fold-tablet-scroll:
+      clamp(46px, 5.6vw, 52px);
+
+    --fold-tablet-bubble-font:
+      clamp(12px, 1.72vw, 16px);
+
+    --fold-tablet-bubble-avatar:
+      clamp(42px, 5.2vw, 50px);
+
+    --fold-tablet-contact:
+      clamp(90px, 18svh, 108px);
+
+    --fold-tablet-social-icon:
+      clamp(26px, 3.4vw, 32px);
+
+    --fold-tablet-social-font:
+      clamp(13px, 1.72vw, 16px);
+  }
+
+  /* -------------------------
+     LEFT CONTENT
+     Keep the production tablet-landscape spacing model.
+     ------------------------- */
+
+  .heroTitle {
+    margin-top:
+      clamp(18px, 3.8svh, 26px) !important;
+
+    font-size:
+      var(--fold-tablet-title) !important;
+
+    line-height: 1.04 !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .certifications {
+    width:
+      min(66%, 410px) !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .certifications h2 {
+    font-size:
+      var(--fold-tablet-cert-title) !important;
+
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+  }
+
+  .certifications p {
+    margin-block: 10px !important;
+    margin-inline: 0 !important;
+
+    font-size:
+      var(--fold-tablet-cert-copy) !important;
+
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(9px, 1.4svh, 12px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      var(--fold-tablet-cert-icon) !important;
+
+    height:
+      var(--fold-tablet-cert-icon) !important;
+
+    padding:
+      clamp(7px, 1.1svh, 9px) !important;
+  }
+
+  .scroll {
+    margin-bottom:
+      clamp(16px, 3.2svh, 26px) !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .scroll > svg {
+    width:
+      var(--fold-tablet-scroll) !important;
+
+    height:
+      var(--fold-tablet-scroll) !important;
+
+    transform: none !important;
+  }
+
+  /* -------------------------
+     CENTRAL PORTRAIT / THREE.JS SHAPE
+     Same visual relationship as Tablet Landscape V6.
+     ------------------------- */
+
+  .bg {
+    z-index: 0 !important;
+  }
+
+  .bg canvas {
+    transform: scale(0.70) !important;
+    transform-origin: center center !important;
+  }
+
+  .hImg {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    margin: auto !important;
+
+    height:
+      clamp(60%, 64svh, 67%) !important;
+
+    width: max-content !important;
+
+    max-width:
+      min(50vw, 640px) !important;
+
+    transform: none !important;
+
+    z-index: 1 !important;
+  }
+
+  .hImg img {
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+
+  /* -------------------------
+     RIGHT CONTENT
+     Preserve space-between from the base Hero; do not stack this lane
+     tightly at the top.
+     ------------------------- */
+
+  .heroSection.right {
+    gap:
+      clamp(8px, 1.8svh, 16px) !important;
+  }
+
+  .bubbleContainer {
+    width:
+      min(82%, 540px) !important;
+
+    gap:
+      clamp(7px, 1.4svh, 10px) !important;
+
+    align-items: center !important;
+
+    transform: none !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .bubble {
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+
+    flex: 1 1 auto !important;
+    align-self: center !important;
+
+    white-space: nowrap !important;
+
+    font-size:
+      var(--fold-tablet-bubble-font) !important;
+
+    line-height: 1.2 !important;
+
+    padding-block: 12px !important;
+
+    padding-inline:
+      clamp(12px, 1.6vw, 18px) !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .bubble > span {
+    display: block !important;
+    line-height: inherit !important;
+  }
+
+  .bubbleContainer img {
+    flex:
+      0 0
+      var(--fold-tablet-bubble-avatar) !important;
+
+    width:
+      var(--fold-tablet-bubble-avatar) !important;
+
+    height:
+      var(--fold-tablet-bubble-avatar) !important;
+
+    align-self: center !important;
+  }
+
+  /* -------------------------
+     SOCIALS
+     Restore tablet-landscape visual weight. Keep the exact production
+     rotation model rather than the compressed V2 foldable rail.
+     ------------------------- */
+
+  .socials {
+    display: flex !important;
+    flex-direction: column !important;
+
+    gap:
+      clamp(9px, 1.15vw, 12px) !important;
+
+    padding:
+      clamp(9px, 1.15vw, 12px) !important;
+
+    background-color: #010134 !important;
+    border-bottom-right-radius: 10px !important;
+
+    position: static !important;
+    isolation: auto !important;
+
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+
+  .socials::before {
+    content: none !important;
+  }
+
+  .socials > a {
+    display: block !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    line-height: normal !important;
+  }
+
+  .socials img {
+    display: block !important;
+
+    width:
+      var(--fold-tablet-social-icon) !important;
+
+    height:
+      var(--fold-tablet-social-icon) !important;
+  }
+
+  .socialsTextContainer {
+    width:
+      var(--fold-tablet-social-icon) !important;
+
+    height:
+      var(--fold-tablet-social-icon) !important;
+
+    min-height: 0 !important;
+
+    flex:
+      0 0
+      var(--fold-tablet-social-icon) !important;
+
+    margin-top: 0 !important;
+
+    position: static !important;
+
+    display: block !important;
+    overflow: visible !important;
+
+    transform: none !important;
+  }
+
+  .socialsText {
+    background-color: #62acf7 !important;
+
+    font-size:
+      var(--fold-tablet-social-font) !important;
+
+    rotate: 90deg !important;
+
+    width: max-content !important;
+
+    height:
+      var(--fold-tablet-social-icon) !important;
+
+    transform-origin: left top !important;
+
+    transform:
+      translateY(calc(-1 * var(--fold-tablet-social-icon))) !important;
+
+    padding:
+      0 clamp(7px, 0.9vw, 8px) !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    position: static !important;
+
+    left: auto !important;
+    top: auto !important;
+
+    line-height: normal !important;
+
+    border-bottom-right-radius: 10px !important;
+    border-top-left-radius: 10px !important;
+  }
+
+  /* -------------------------
+     CONTACT
+     ------------------------- */
+
+  .contactButtonLink {
+    margin-top: 0 !important;
+
+    margin-bottom:
+      clamp(10px, 2.4svh, 16px) !important;
+
+    margin-right:
+      clamp(8px, 1.2vw, 14px) !important;
+
+    width: auto !important;
+    height: auto !important;
+  }
+
+  .contactButton > svg {
+    width:
+      var(--fold-tablet-contact) !important;
+
+    height:
+      var(--fold-tablet-contact) !important;
+  }
+
+  .arrow {
+    width:
+      var(--fold-tablet-contact) !important;
+
+    height:
+      var(--fold-tablet-contact) !important;
+  }
+
+  .arrow svg {
+    width:
+      clamp(30px, 6svh, 40px) !important;
+
+    height:
+      clamp(30px, 6svh, 40px) !important;
+
+    transform: none !important;
+  }
+}

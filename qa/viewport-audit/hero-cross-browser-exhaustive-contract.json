@@ -1,0 +1,3849 @@
+{
+  "version": 3,
+  "artifactType": "hero-exhaustive-cross-browser-certification-contract",
+  "purpose": "Final Hero closure sweep across Chromium, Firefox, and WebKit, with a visual-scale contract for wide desktops and explicit 2026 Apple geometry probes. Frozen phone/tablet/foldable production CSS remains outside the wide-desktop candidate scope.",
+  "browsers": [
+    "chromium",
+    "firefox",
+    "webkit"
+  ],
+  "baselineBrowser": "chromium",
+  "thresholds": {
+    "viewportContainmentTolerancePx": 2,
+    "horizontalOverflowTolerancePx": 2,
+    "imageBottomAnchorTolerancePx": 3,
+    "crossBrowserGeometryReviewPx": 5,
+    "crossBrowserGeometryFailPx": 14,
+    "crossBrowserGeometryReviewRatio": 0.008,
+    "crossBrowserGeometryFailRatio": 0.02,
+    "computedFontSizeTolerancePx": 0.25,
+    "desktopInsetSymmetryTolerancePx": 2,
+    "minimumDesktopHeroInsetPx": 16,
+    "wideDesktopScaleToleranceRatio": 0.035
+  },
+  "notes": "Exhaustive union of every current phone/tablet/foldable QA family case plus the full desktop matrix. Generated from current contracts/TestMU registry for final closure; IDs are family-prefixed to keep Chromium baselines unambiguous.",
+  "wideDesktopScale": {
+    "anchorWidth": 1920,
+    "anchorHeight": 1080,
+    "heightScaleMultiplier": 1.215,
+    "maxScale": 1.8,
+    "references": {
+      "heroTitleFont": 80,
+      "certificationTitleFont": 24,
+      "certificationCopyFont": 16,
+      "certificationIcon": 56,
+      "scroll": 50,
+      "bubbleFont": 16,
+      "bubbleAvatar": 50,
+      "socialIcon": 28,
+      "socialsTextFont": 16,
+      "contactGraphic": 150
+    },
+    "portraitHeightRatioMin": 0.75,
+    "shortUltrawide": {
+      "minWidth": 3200,
+      "maxHeight": 1600,
+      "portraitHeightRatioMin": 0.8
+    },
+    "superUltrawide": {
+      "minWidth": 5000,
+      "maxHeight": 1600,
+      "portraitHeightRatioMin": 0.84
+    },
+    "note": "Required scale = min(maxScale, width/1920, (height/1080)*1.215), with a small tolerance. This intentionally catches layouts that are collision-free but visually underscaled. V3 also enforces absolute wide-desktop floors so the first post-1920 cases cannot pass while remaining visually laptop-sized.",
+    "absoluteMinimums": {
+      "heroTitleFont": 84,
+      "certificationTitleFont": 28,
+      "certificationCopyFont": 18,
+      "certificationIcon": 60,
+      "scroll": 54,
+      "bubbleFont": 18,
+      "bubbleAvatar": 54,
+      "socialIcon": 30,
+      "socialsTextFont": 18,
+      "contactGraphic": 160
+    }
+  },
+  "wideDesktopShell": {
+    "edgeGutterMinPx": 32,
+    "edgeGutterViewportRatio": 0.015,
+    "edgeGutterMaxPx": 64,
+    "shellMinPx": 2400,
+    "shellHeightMultiplier": 2.1,
+    "shellMaxPx": 3600,
+    "widthTolerancePx": 4,
+    "note": "The Hero-only shell should use nearly all available width until the height-aware composition cap is reached. This catches the excessive side void that V1 allowed at 3440px+."
+  },
+  "wideDesktopContact": {
+    "circleTextUserFontMax": 22,
+    "circleTextEffectiveToGraphicRatioMax": 0.11,
+    "arrowToGraphicRatioMax": 0.4,
+    "note": "The contact SVG already scales from its 200x200 viewBox. Its internal text and arrow must not receive a second full viewport scale."
+  },
+  "groups": {
+    "phone-portrait-exhaustive": [
+      {
+        "id": "phone-portrait__measured-portrait-375x547",
+        "width": 375,
+        "height": 547,
+        "label": "iPhone SE (2020)",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-375x548",
+        "width": 375,
+        "height": 548,
+        "label": "iPhone SE (2022)",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x598",
+        "width": 360,
+        "height": 598,
+        "label": "portrait 600px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x598",
+        "width": 390,
+        "height": 598,
+        "label": "portrait 600px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x598",
+        "width": 430,
+        "height": 598,
+        "label": "portrait 600px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x598",
+        "width": 448,
+        "height": 598,
+        "label": "portrait 600px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x598",
+        "width": 500,
+        "height": 598,
+        "label": "portrait 600px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x599",
+        "width": 360,
+        "height": 599,
+        "label": "portrait 600px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x599",
+        "width": 390,
+        "height": 599,
+        "label": "portrait 600px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x599",
+        "width": 430,
+        "height": 599,
+        "label": "portrait 600px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x599",
+        "width": 448,
+        "height": 599,
+        "label": "portrait 600px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x599",
+        "width": 500,
+        "height": 599,
+        "label": "portrait 600px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x600",
+        "width": 360,
+        "height": 600,
+        "label": "portrait 600px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x600",
+        "width": 390,
+        "height": 600,
+        "label": "portrait 600px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x600",
+        "width": 430,
+        "height": 600,
+        "label": "portrait 600px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x600",
+        "width": 448,
+        "height": 600,
+        "label": "portrait 600px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x600",
+        "width": 500,
+        "height": 600,
+        "label": "portrait 600px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x601",
+        "width": 360,
+        "height": 601,
+        "label": "portrait 600px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x601",
+        "width": 390,
+        "height": 601,
+        "label": "portrait 600px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x601",
+        "width": 430,
+        "height": 601,
+        "label": "portrait 600px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x601",
+        "width": 448,
+        "height": 601,
+        "label": "portrait 600px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x601",
+        "width": 500,
+        "height": 601,
+        "label": "portrait 600px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x602",
+        "width": 360,
+        "height": 602,
+        "label": "portrait 600px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x602",
+        "width": 390,
+        "height": 602,
+        "label": "portrait 600px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x602",
+        "width": 430,
+        "height": 602,
+        "label": "portrait 600px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x602",
+        "width": 448,
+        "height": 602,
+        "label": "portrait 600px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x602",
+        "width": 500,
+        "height": 602,
+        "label": "portrait 600px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-475x605",
+        "width": 475,
+        "height": 605,
+        "label": "Galaxy Z Fold8",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x624",
+        "width": 360,
+        "height": 624,
+        "label": "Realme GT2 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-375x628",
+        "width": 375,
+        "height": 628,
+        "label": "iPhone 12 Mini",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-375x629",
+        "width": 375,
+        "height": 629,
+        "label": "iPhone 13 Mini",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x639",
+        "width": 360,
+        "height": 639,
+        "label": "Galaxy S26",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x645",
+        "width": 360,
+        "height": 645,
+        "label": "Galaxy S24, Galaxy S25",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x649",
+        "width": 360,
+        "height": 649,
+        "label": "Galaxy S22 5G, Galaxy S23",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-393x659",
+        "width": 393,
+        "height": 659,
+        "label": "iPhone 15, iPhone 15 Pro, iPhone 16",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-393x660",
+        "width": 393,
+        "height": 660,
+        "label": "iPhone 14 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-390x663",
+        "width": 390,
+        "height": 663,
+        "label": "iPhone 13, iphone 14",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x664",
+        "width": 360,
+        "height": 664,
+        "label": "OnePlus 11, Oppo A54, Oppo Reno8",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-390x664",
+        "width": 390,
+        "height": 664,
+        "label": "iPhone 12, iPhone 12 Pro, iPhone 13",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x668",
+        "width": 360,
+        "height": 668,
+        "label": "OnePlus Nord CE 3",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x669",
+        "width": 360,
+        "height": 669,
+        "label": "Galaxy S21 5G",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-390x669",
+        "width": 390,
+        "height": 669,
+        "label": "iphone 14",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x670",
+        "width": 360,
+        "height": 670,
+        "label": "Galaxy S20",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-360x672",
+        "width": 360,
+        "height": 672,
+        "label": "realMe GT2 Pro, RealMe GT2 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x678",
+        "width": 360,
+        "height": 678,
+        "label": "portrait 680px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x678",
+        "width": 390,
+        "height": 678,
+        "label": "portrait 680px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-402x678",
+        "width": 402,
+        "height": 678,
+        "label": "iPhone 16 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x678",
+        "width": 430,
+        "height": 678,
+        "label": "portrait 680px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x678",
+        "width": 448,
+        "height": 678,
+        "label": "portrait 680px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x678",
+        "width": 500,
+        "height": 678,
+        "label": "portrait 680px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x679",
+        "width": 360,
+        "height": 679,
+        "label": "portrait 680px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x679",
+        "width": 390,
+        "height": 679,
+        "label": "portrait 680px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x679",
+        "width": 430,
+        "height": 679,
+        "label": "portrait 680px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x679",
+        "width": 448,
+        "height": 679,
+        "label": "portrait 680px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x679",
+        "width": 500,
+        "height": 679,
+        "label": "portrait 680px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x680",
+        "width": 360,
+        "height": 680,
+        "label": "portrait 680px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x680",
+        "width": 390,
+        "height": 680,
+        "label": "portrait 680px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x680",
+        "width": 430,
+        "height": 680,
+        "label": "portrait 680px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x680",
+        "width": 448,
+        "height": 680,
+        "label": "portrait 680px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x680",
+        "width": 500,
+        "height": 680,
+        "label": "portrait 680px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x681",
+        "width": 360,
+        "height": 681,
+        "label": "360 compact boundary",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x681",
+        "width": 390,
+        "height": 681,
+        "label": "portrait 680px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x681",
+        "width": 430,
+        "height": 681,
+        "label": "portrait 680px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x681",
+        "width": 448,
+        "height": 681,
+        "label": "portrait 680px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x681",
+        "width": 500,
+        "height": 681,
+        "label": "portrait 680px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x682",
+        "width": 360,
+        "height": 682,
+        "label": "portrait 680px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x682",
+        "width": 390,
+        "height": 682,
+        "label": "portrait 680px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x682",
+        "width": 430,
+        "height": 682,
+        "label": "portrait 680px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x682",
+        "width": 448,
+        "height": 682,
+        "label": "portrait 680px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x682",
+        "width": 500,
+        "height": 682,
+        "label": "portrait 680px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-402x684",
+        "width": 402,
+        "height": 684,
+        "label": "iPhone 17 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-384x689",
+        "width": 384,
+        "height": 689,
+        "label": "Galaxy S24 Ultra",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-384x690",
+        "width": 384,
+        "height": 690,
+        "label": "Galaxy S26 Ultra",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-384x692",
+        "width": 384,
+        "height": 692,
+        "label": "Galaxy S22 Ultra 5G, Galaxy S23 Ultra",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-392x694",
+        "width": 392,
+        "height": 694,
+        "label": "Pixel 5",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-384x697",
+        "width": 384,
+        "height": 697,
+        "label": "Galaxy S25 Ultra",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-392x697",
+        "width": 392,
+        "height": 697,
+        "label": "Pixel 4a",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-390x699",
+        "width": 390,
+        "height": 699,
+        "label": "iPhone 13 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x700",
+        "width": 360,
+        "height": 700,
+        "label": "360 compact interpolation",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-402x714",
+        "width": 402,
+        "height": 714,
+        "label": "iPhone 16 Pro, iPhone 17, iphone 17 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-384x722",
+        "width": 384,
+        "height": 722,
+        "label": "Galaxy S21 Ultra 5G",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x728",
+        "width": 360,
+        "height": 728,
+        "label": "portrait 730px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x728",
+        "width": 390,
+        "height": 728,
+        "label": "portrait 730px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x728",
+        "width": 430,
+        "height": 728,
+        "label": "portrait 730px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x728",
+        "width": 448,
+        "height": 728,
+        "label": "portrait 730px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x728",
+        "width": 500,
+        "height": 728,
+        "label": "portrait 730px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x729",
+        "width": 360,
+        "height": 729,
+        "label": "portrait 730px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x729",
+        "width": 390,
+        "height": 729,
+        "label": "portrait 730px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x729",
+        "width": 430,
+        "height": 729,
+        "label": "portrait 730px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x729",
+        "width": 448,
+        "height": 729,
+        "label": "portrait 730px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x729",
+        "width": 500,
+        "height": 729,
+        "label": "portrait 730px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x730",
+        "width": 360,
+        "height": 730,
+        "label": "portrait 730px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x730",
+        "width": 390,
+        "height": 730,
+        "label": "portrait 730px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x730",
+        "width": 430,
+        "height": 730,
+        "label": "portrait 730px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x730",
+        "width": 448,
+        "height": 730,
+        "label": "portrait 730px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x730",
+        "width": 500,
+        "height": 730,
+        "label": "portrait 730px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x731",
+        "width": 360,
+        "height": 731,
+        "label": "portrait 730px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x731",
+        "width": 390,
+        "height": 731,
+        "label": "portrait 730px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x731",
+        "width": 430,
+        "height": 731,
+        "label": "portrait 730px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x731",
+        "width": 448,
+        "height": 731,
+        "label": "portrait 730px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x731",
+        "width": 500,
+        "height": 731,
+        "label": "portrait 730px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x732",
+        "width": 360,
+        "height": 732,
+        "label": "portrait 730px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x732",
+        "width": 390,
+        "height": 732,
+        "label": "portrait 730px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x732",
+        "width": 430,
+        "height": 732,
+        "label": "portrait 730px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x732",
+        "width": 448,
+        "height": 732,
+        "label": "portrait 730px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x732",
+        "width": 500,
+        "height": 732,
+        "label": "portrait 730px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-430x739",
+        "width": 430,
+        "height": 739,
+        "label": "iPhone 16 Plus",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-430x740",
+        "width": 430,
+        "height": 740,
+        "label": "iPhone 14 Pro Max",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-392x745",
+        "width": 392,
+        "height": 745,
+        "label": "Vivo T1 5G",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-428x745",
+        "width": 428,
+        "height": 745,
+        "label": "iPhone 13 Pro Max",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-392x746",
+        "width": 392,
+        "height": 746,
+        "label": "vivo V20",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x746",
+        "width": 411,
+        "height": 746,
+        "label": "Pixel 6 Pro, Pixel 7 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-420x746",
+        "width": 420,
+        "height": 746,
+        "label": "iPhone Air",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-428x746",
+        "width": 428,
+        "height": 746,
+        "label": "iPhone 12 Pro Max, iPhone 14 Plus",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x748",
+        "width": 411,
+        "height": 748,
+        "label": "Pixel 10 Pro, Pixel 11 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x750",
+        "width": 411,
+        "height": 750,
+        "label": "Pixel 11 Pro XL",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x752",
+        "width": 411,
+        "height": 752,
+        "label": "Galaxy Note20 Ultra 5G",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x753",
+        "width": 411,
+        "height": 753,
+        "label": "Pixel 9, Pixel 10",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-402x754",
+        "width": 402,
+        "height": 754,
+        "label": "iPhone 17",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-440x755",
+        "width": 440,
+        "height": 755,
+        "label": "iPhone 16 Pro Max",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x758",
+        "width": 411,
+        "height": 758,
+        "label": "Pixel 7",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x760",
+        "width": 411,
+        "height": 760,
+        "label": "Pixel 8",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-440x760",
+        "width": 440,
+        "height": 760,
+        "label": "iPhone 16 Pro Max",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x761",
+        "width": 411,
+        "height": 761,
+        "label": "Pixel 6",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-440x766",
+        "width": 440,
+        "height": 766,
+        "label": "iPhone 17 Pro Max",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-430x775",
+        "width": 430,
+        "height": 775,
+        "label": "iPhone 15 Plus, iPhone 15 Pro Max",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x780",
+        "width": 360,
+        "height": 780,
+        "label": "360 normal stress",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-411x780",
+        "width": 411,
+        "height": 780,
+        "label": "Galaxy A32",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-427x780",
+        "width": 427,
+        "height": 780,
+        "label": "Pixel 9 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-440x796",
+        "width": 440,
+        "height": 796,
+        "label": "iPhone 17 Pro Max",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x798",
+        "width": 360,
+        "height": 798,
+        "label": "portrait 800px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x798",
+        "width": 390,
+        "height": 798,
+        "label": "portrait 800px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x798",
+        "width": 430,
+        "height": 798,
+        "label": "portrait 800px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x798",
+        "width": 448,
+        "height": 798,
+        "label": "portrait 800px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x798",
+        "width": 500,
+        "height": 798,
+        "label": "portrait 800px boundary -2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x799",
+        "width": 360,
+        "height": 799,
+        "label": "portrait 800px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x799",
+        "width": 390,
+        "height": 799,
+        "label": "portrait 800px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x799",
+        "width": 430,
+        "height": 799,
+        "label": "portrait 800px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x799",
+        "width": 448,
+        "height": 799,
+        "label": "portrait 800px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x799",
+        "width": 500,
+        "height": 799,
+        "label": "portrait 800px boundary -1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x800",
+        "width": 360,
+        "height": 800,
+        "label": "portrait 800px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x800",
+        "width": 390,
+        "height": 800,
+        "label": "portrait 800px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x800",
+        "width": 430,
+        "height": 800,
+        "label": "portrait 800px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x800",
+        "width": 448,
+        "height": 800,
+        "label": "portrait 800px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x800",
+        "width": 500,
+        "height": 800,
+        "label": "portrait 800px boundary +0",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x801",
+        "width": 360,
+        "height": 801,
+        "label": "portrait 800px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x801",
+        "width": 390,
+        "height": 801,
+        "label": "portrait 800px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x801",
+        "width": 430,
+        "height": 801,
+        "label": "portrait 800px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x801",
+        "width": 448,
+        "height": 801,
+        "label": "portrait 800px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x801",
+        "width": 500,
+        "height": 801,
+        "label": "portrait 800px boundary +1",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-360x802",
+        "width": 360,
+        "height": 802,
+        "label": "portrait 800px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-390x802",
+        "width": 390,
+        "height": 802,
+        "label": "portrait 800px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-430x802",
+        "width": 430,
+        "height": 802,
+        "label": "portrait 800px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-448x802",
+        "width": 448,
+        "height": 802,
+        "label": "portrait 800px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x802",
+        "width": 500,
+        "height": 802,
+        "label": "portrait 800px boundary +2",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-432x810",
+        "width": 432,
+        "height": 810,
+        "label": "Moto G54 5G",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-443x816",
+        "width": 443,
+        "height": 816,
+        "label": "Pixel 10 Pro XL",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-448x827",
+        "width": 448,
+        "height": 827,
+        "label": "Pixel 9 Pro XL",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__measured-portrait-448x843",
+        "width": 448,
+        "height": 843,
+        "label": "Pixel 8 Pro",
+        "family": "phone-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-402x874",
+        "width": 402,
+        "height": 874,
+        "label": "2026 iPhone 18 Pro portrait synthetic 3x CSS probe (1206x2622 physical / 3)",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-440x956",
+        "width": 440,
+        "height": 956,
+        "label": "2026 iPhone 18 Pro Max portrait synthetic 3x CSS probe (1320x2868 physical / 3)",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "phone-portrait__synthetic-portrait-500x960",
+        "width": 500,
+        "height": 960,
+        "label": "future wide-phone portrait sentinel",
+        "family": "phone-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      }
+    ],
+    "phone-landscape-exhaustive": [
+      {
+        "id": "phone-landscape__measured-landscape-720x264",
+        "width": 720,
+        "height": 264,
+        "label": "OnePlus 11",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-720x268",
+        "width": 720,
+        "height": 268,
+        "label": "Oppo A54, Oppo Reno8",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-724x268",
+        "width": 724,
+        "height": 268,
+        "label": "OnePlus Nord CE 3",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-728x272",
+        "width": 728,
+        "height": 272,
+        "label": "realMe GT2 Pro, RealMe GT2 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-695x274",
+        "width": 695,
+        "height": 274,
+        "label": "Galaxy S26",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-701x274",
+        "width": 701,
+        "height": 274,
+        "label": "Galaxy S24",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-705x274",
+        "width": 705,
+        "height": 274,
+        "label": "Galaxy S23",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-728x276",
+        "width": 728,
+        "height": 276,
+        "label": "realMe GT2 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x280",
+        "width": 667,
+        "height": 280,
+        "label": "landscape extreme sentinel",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-701x280",
+        "width": 701,
+        "height": 280,
+        "label": "Galaxy S25",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-705x280",
+        "width": 705,
+        "height": 280,
+        "label": "Galaxy S22 5G",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-725x280",
+        "width": 725,
+        "height": 280,
+        "label": "Galaxy S21 5G",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-726x280",
+        "width": 726,
+        "height": 280,
+        "label": "Galaxy S20",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x283",
+        "width": 667,
+        "height": 283,
+        "label": "landscape 285px boundary -2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x283",
+        "width": 844,
+        "height": 283,
+        "label": "landscape 285px boundary -2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x283",
+        "width": 956,
+        "height": 283,
+        "label": "landscape 285px boundary -2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x284",
+        "width": 667,
+        "height": 284,
+        "label": "landscape 285px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x284",
+        "width": 844,
+        "height": 284,
+        "label": "landscape 285px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x284",
+        "width": 956,
+        "height": 284,
+        "label": "landscape 285px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x285",
+        "width": 667,
+        "height": 285,
+        "label": "landscape 285px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x285",
+        "width": 844,
+        "height": 285,
+        "label": "landscape 285px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x285",
+        "width": 956,
+        "height": 285,
+        "label": "landscape 285px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x286",
+        "width": 667,
+        "height": 286,
+        "label": "landscape 285px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x286",
+        "width": 844,
+        "height": 286,
+        "label": "landscape 285px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x286",
+        "width": 956,
+        "height": 286,
+        "label": "landscape 285px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x287",
+        "width": 667,
+        "height": 287,
+        "label": "landscape 285px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x287",
+        "width": 844,
+        "height": 287,
+        "label": "landscape 285px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x287",
+        "width": 956,
+        "height": 287,
+        "label": "landscape 285px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-745x298",
+        "width": 745,
+        "height": 298,
+        "label": "Galaxy S24 Ultra",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-747x298",
+        "width": 747,
+        "height": 298,
+        "label": "Galaxy S26 Ultra",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-753x298",
+        "width": 753,
+        "height": 298,
+        "label": "Galaxy S25 Ultra",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-748x303",
+        "width": 748,
+        "height": 303,
+        "label": "Galaxy S22 Ultra 5G, Galaxy S23 Ultra",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-778x303",
+        "width": 778,
+        "height": 303,
+        "label": "Galaxy S21 Ultra 5G",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-809x304",
+        "width": 809,
+        "height": 304,
+        "label": "Vivo T1 5G",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-753x308",
+        "width": 753,
+        "height": 308,
+        "label": "Pixel 4a, Pixel 5",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-803x308",
+        "width": 803,
+        "height": 308,
+        "label": "vivo V20",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-806x314",
+        "width": 806,
+        "height": 314,
+        "label": "Pixel 6 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x318",
+        "width": 667,
+        "height": 318,
+        "label": "landscape 320px boundary -2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x318",
+        "width": 844,
+        "height": 318,
+        "label": "landscape 320px boundary -2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x318",
+        "width": 956,
+        "height": 318,
+        "label": "landscape 320px boundary -2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x319",
+        "width": 667,
+        "height": 319,
+        "label": "landscape 320px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x319",
+        "width": 844,
+        "height": 319,
+        "label": "landscape 320px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x319",
+        "width": 956,
+        "height": 319,
+        "label": "landscape 320px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x320",
+        "width": 667,
+        "height": 320,
+        "label": "landscape 320px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x320",
+        "width": 844,
+        "height": 320,
+        "label": "landscape 320px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x320",
+        "width": 956,
+        "height": 320,
+        "label": "landscape 320px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x321",
+        "width": 667,
+        "height": 321,
+        "label": "landscape 320px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x321",
+        "width": 844,
+        "height": 321,
+        "label": "landscape 320px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x321",
+        "width": 956,
+        "height": 321,
+        "label": "landscape 320px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x322",
+        "width": 667,
+        "height": 322,
+        "label": "landscape 320px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x322",
+        "width": 844,
+        "height": 322,
+        "label": "landscape 320px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x322",
+        "width": 956,
+        "height": 322,
+        "label": "landscape 320px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-667x325",
+        "width": 667,
+        "height": 325,
+        "label": "iPhone SE (2020), iPhone SE (2022)",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-812x325",
+        "width": 812,
+        "height": 325,
+        "label": "iPhone 12 Mini",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-750x326",
+        "width": 750,
+        "height": 326,
+        "label": "iPhone 17 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-844x326",
+        "width": 844,
+        "height": 326,
+        "label": "iPhone 13 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-802x327",
+        "width": 802,
+        "height": 327,
+        "label": "Pixel 7 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-812x327",
+        "width": 812,
+        "height": 327,
+        "label": "iPhone 13 Mini",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-814x327",
+        "width": 814,
+        "height": 327,
+        "label": "Pixel 7",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-816x327",
+        "width": 816,
+        "height": 327,
+        "label": "Pixel 8",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-817x327",
+        "width": 817,
+        "height": 327,
+        "label": "Pixel 6",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-874x328",
+        "width": 874,
+        "height": 328,
+        "label": "iphone 17 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-804x331",
+        "width": 804,
+        "height": 331,
+        "label": "Pixel 10 Pro, Pixel 11 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-806x331",
+        "width": 806,
+        "height": 331,
+        "label": "Pixel 11 Pro XL",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-808x331",
+        "width": 808,
+        "height": 331,
+        "label": "Galaxy Note20 Ultra 5G",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-809x331",
+        "width": 809,
+        "height": 331,
+        "label": "Pixel 9, Pixel 10",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-836x331",
+        "width": 836,
+        "height": 331,
+        "label": "Galaxy A32",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-750x334",
+        "width": 750,
+        "height": 334,
+        "label": "iphone 14",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-874x338",
+        "width": 874,
+        "height": 338,
+        "label": "iPhone 16 Pro, iPhone 17",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-844x340",
+        "width": 844,
+        "height": 340,
+        "label": "iPhone 12, iPhone 12 Pro, iPhone 13",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-852x343",
+        "width": 852,
+        "height": 343,
+        "label": "iPhone 14 Pro, iPhone 15, iPhone 15 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-836x347",
+        "width": 836,
+        "height": 347,
+        "label": "Pixel 9 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-866x348",
+        "width": 866,
+        "height": 348,
+        "label": "Moto G54 5G",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x350",
+        "width": 667,
+        "height": 350,
+        "label": "landscape short golden 667x350",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x350",
+        "width": 844,
+        "height": 350,
+        "label": "landscape 352px boundary -2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x350",
+        "width": 956,
+        "height": 350,
+        "label": "landscape 352px boundary -2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x351",
+        "width": 667,
+        "height": 351,
+        "label": "landscape 352px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x351",
+        "width": 844,
+        "height": 351,
+        "label": "landscape 352px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x351",
+        "width": 956,
+        "height": 351,
+        "label": "landscape 352px boundary -1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x352",
+        "width": 667,
+        "height": 352,
+        "label": "landscape 352px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x352",
+        "width": 844,
+        "height": 352,
+        "label": "landscape 352px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-874x352",
+        "width": 874,
+        "height": 352,
+        "label": "iPhone 16 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x352",
+        "width": 956,
+        "height": 352,
+        "label": "landscape 352px boundary +0",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x353",
+        "width": 667,
+        "height": 353,
+        "label": "landscape 352px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x353",
+        "width": 844,
+        "height": 353,
+        "label": "landscape 352px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x353",
+        "width": 956,
+        "height": 353,
+        "label": "landscape 352px boundary +1",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-667x354",
+        "width": 667,
+        "height": 354,
+        "label": "landscape 352px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-844x354",
+        "width": 844,
+        "height": 354,
+        "label": "landscape 352px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x354",
+        "width": 956,
+        "height": 354,
+        "label": "landscape 352px boundary +2",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-912x356",
+        "width": 912,
+        "height": 356,
+        "label": "iPhone Air",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-932x356",
+        "width": 932,
+        "height": 356,
+        "label": "iPhone 15 Plus",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-872x362",
+        "width": 872,
+        "height": 362,
+        "label": "Pixel 10 Pro XL",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-899x364",
+        "width": 899,
+        "height": 364,
+        "label": "Pixel 8 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-932x366",
+        "width": 932,
+        "height": 366,
+        "label": "iPhone 15 Pro Max",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-883x368",
+        "width": 883,
+        "height": 368,
+        "label": "Pixel 9 Pro XL",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-956x376",
+        "width": 956,
+        "height": 376,
+        "label": "iPhone 17 Pro Max",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-825x378",
+        "width": 825,
+        "height": 378,
+        "label": "iPhone 16 Pro Max",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-926x378",
+        "width": 926,
+        "height": 378,
+        "label": "iPhone 12 Pro Max, iPhone 13 Pro Max, iPhone 14 Plus",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-932x380",
+        "width": 932,
+        "height": 380,
+        "label": "iPhone 14 Pro Max, iPhone 15 Pro Max, iPhone 16 Plus",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-832x384",
+        "width": 832,
+        "height": 384,
+        "label": "iPhone 17 Pro Max",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-663x389",
+        "width": 663,
+        "height": 389,
+        "label": "Galaxy Z Fold8",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-956x390",
+        "width": 956,
+        "height": 390,
+        "label": "iPhone 16 Pro Max",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-874x402",
+        "width": 874,
+        "height": 402,
+        "label": "2026 iPhone 18 Pro landscape synthetic 3x CSS probe",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__synthetic-landscape-956x440",
+        "width": 956,
+        "height": 440,
+        "label": "2026 iPhone 18 Pro Max landscape synthetic 3x CSS probe",
+        "family": "phone-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "phone-landscape__measured-landscape-980x442",
+        "width": 980,
+        "height": 442,
+        "label": "iPhone 16 Pro",
+        "family": "phone-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      }
+    ],
+    "tablet-portrait-exhaustive": [
+      {
+        "id": "tablet-portrait__measured-portrait-810x994",
+        "width": 810,
+        "height": 994,
+        "label": "iPad 10.2 (2020)",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-810x1010",
+        "width": 810,
+        "height": 1010,
+        "label": "iPad 10.2 (2020)",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-768x1024",
+        "width": 768,
+        "height": 1024,
+        "label": "tablet portrait classic 768x1024",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-753x1030",
+        "width": 753,
+        "height": 1030,
+        "label": "Galaxy Tab S9",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-744x1046",
+        "width": 744,
+        "height": 1046,
+        "label": "portrait 1047px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-834x1046",
+        "width": 834,
+        "height": 1046,
+        "label": "portrait 1047px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1046",
+        "width": 1024,
+        "height": 1046,
+        "label": "portrait 1047px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1046",
+        "width": 1032,
+        "height": 1046,
+        "label": "portrait 1047px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-744x1047",
+        "width": 744,
+        "height": 1047,
+        "label": "iPad Mini (2021)",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-834x1047",
+        "width": 834,
+        "height": 1047,
+        "label": "portrait 1047px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1047",
+        "width": 1024,
+        "height": 1047,
+        "label": "portrait 1047px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1047",
+        "width": 1032,
+        "height": 1047,
+        "label": "portrait 1047px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-744x1048",
+        "width": 744,
+        "height": 1048,
+        "label": "portrait 1047px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-834x1048",
+        "width": 834,
+        "height": 1048,
+        "label": "portrait 1047px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1048",
+        "width": 1024,
+        "height": 1048,
+        "label": "portrait 1047px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1048",
+        "width": 1032,
+        "height": 1048,
+        "label": "portrait 1047px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-820x1094",
+        "width": 820,
+        "height": 1094,
+        "label": "iPad 10.9 (2022)",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-800x1100",
+        "width": 800,
+        "height": 1100,
+        "label": "Pixel Tablet",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-820x1106",
+        "width": 820,
+        "height": 1106,
+        "label": "iPad 11 (2025), iPad Air (2022)",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-800x1112",
+        "width": 800,
+        "height": 1112,
+        "label": "Galaxy Tab A9+",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-744x1119",
+        "width": 744,
+        "height": 1119,
+        "label": "portrait 1120px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-834x1119",
+        "width": 834,
+        "height": 1119,
+        "label": "portrait 1120px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1119",
+        "width": 1024,
+        "height": 1119,
+        "label": "portrait 1120px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1119",
+        "width": 1032,
+        "height": 1119,
+        "label": "portrait 1120px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-744x1120",
+        "width": 744,
+        "height": 1120,
+        "label": "portrait 1120px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-834x1120",
+        "width": 834,
+        "height": 1120,
+        "label": "iPad Pro 11 (2022)",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1120",
+        "width": 1024,
+        "height": 1120,
+        "label": "portrait 1120px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1120",
+        "width": 1032,
+        "height": 1120,
+        "label": "portrait 1120px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-744x1121",
+        "width": 744,
+        "height": 1121,
+        "label": "portrait 1120px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-834x1121",
+        "width": 834,
+        "height": 1121,
+        "label": "portrait 1120px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1121",
+        "width": 1024,
+        "height": 1121,
+        "label": "portrait 1120px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1121",
+        "width": 1032,
+        "height": 1121,
+        "label": "portrait 1120px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-820x1180",
+        "width": 820,
+        "height": 1180,
+        "label": "tablet portrait 820x1180",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-744x1291",
+        "width": 744,
+        "height": 1291,
+        "label": "portrait 1292px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-834x1291",
+        "width": 834,
+        "height": 1291,
+        "label": "portrait 1292px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1291",
+        "width": 1024,
+        "height": 1291,
+        "label": "portrait 1292px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1291",
+        "width": 1032,
+        "height": 1291,
+        "label": "portrait 1292px boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-744x1292",
+        "width": 744,
+        "height": 1292,
+        "label": "portrait 1292px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-834x1292",
+        "width": 834,
+        "height": 1292,
+        "label": "portrait 1292px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-1024x1292",
+        "width": 1024,
+        "height": 1292,
+        "label": "iPad Air 13 (2024), iPad Pro 12.9 (2022)",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1292",
+        "width": 1032,
+        "height": 1292,
+        "label": "portrait 1292px boundary +0",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-744x1293",
+        "width": 744,
+        "height": 1293,
+        "label": "portrait 1292px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-834x1293",
+        "width": 834,
+        "height": 1293,
+        "label": "portrait 1292px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1293",
+        "width": 1024,
+        "height": 1293,
+        "label": "portrait 1292px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1032x1293",
+        "width": 1032,
+        "height": 1293,
+        "label": "portrait 1292px boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-1032x1302",
+        "width": 1032,
+        "height": 1302,
+        "label": "iPad Pro 13 (2024)",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1023x1366",
+        "width": 1023,
+        "height": 1366,
+        "label": "tablet portrait 1024 boundary -1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1024x1366",
+        "width": 1024,
+        "height": 1366,
+        "label": "tablet portrait 1024 boundary",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__synthetic-portrait-1025x1366",
+        "width": 1025,
+        "height": 1366,
+        "label": "tablet portrait 1024 boundary +1",
+        "family": "tablet-portrait",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "tablet-portrait__measured-portrait-985x1410",
+        "width": 985,
+        "height": 1410,
+        "label": "Galaxy Tab S9 Ultra",
+        "family": "tablet-portrait",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      }
+    ],
+    "tablet-landscape-exhaustive": [
+      {
+        "id": "tablet-landscape__synthetic-landscape-1080x578",
+        "width": 1080,
+        "height": 578,
+        "label": "landscape 579px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x578",
+        "width": 1204,
+        "height": 578,
+        "label": "landscape 579px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x578",
+        "width": 1366,
+        "height": 578,
+        "label": "landscape 579px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x578",
+        "width": 1578,
+        "height": 578,
+        "label": "landscape 579px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1080x579",
+        "width": 1080,
+        "height": 579,
+        "label": "landscape 579px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1204x579",
+        "width": 1204,
+        "height": 579,
+        "label": "Galaxy Tab S9",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x579",
+        "width": 1366,
+        "height": 579,
+        "label": "landscape 579px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x579",
+        "width": 1578,
+        "height": 579,
+        "label": "landscape 579px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1080x580",
+        "width": 1080,
+        "height": 580,
+        "label": "landscape 579px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x580",
+        "width": 1204,
+        "height": 580,
+        "label": "landscape 579px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x580",
+        "width": 1366,
+        "height": 580,
+        "label": "landscape 579px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x580",
+        "width": 1578,
+        "height": 580,
+        "label": "landscape 579px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x600",
+        "width": 1204,
+        "height": 600,
+        "label": "tablet landscape short stress",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1280x620",
+        "width": 1280,
+        "height": 620,
+        "label": "Pixel Tablet",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1280x632",
+        "width": 1280,
+        "height": 632,
+        "label": "Galaxy Tab A9+",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1133x658",
+        "width": 1133,
+        "height": 658,
+        "label": "iPad Mini (2021)",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1280x720",
+        "width": 1280,
+        "height": 720,
+        "label": "tablet landscape 1280x720",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1080x724",
+        "width": 1080,
+        "height": 724,
+        "label": "iPad 10.2 (2020)",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1180x734",
+        "width": 1180,
+        "height": 734,
+        "label": "iPad 10.9 (2022)",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1080x739",
+        "width": 1080,
+        "height": 739,
+        "label": "landscape 740px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x739",
+        "width": 1204,
+        "height": 739,
+        "label": "landscape 740px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x739",
+        "width": 1366,
+        "height": 739,
+        "label": "landscape 740px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x739",
+        "width": 1578,
+        "height": 739,
+        "label": "landscape 740px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1080x740",
+        "width": 1080,
+        "height": 740,
+        "label": "iPad 10.2 (2020)",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x740",
+        "width": 1204,
+        "height": 740,
+        "label": "landscape 740px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x740",
+        "width": 1366,
+        "height": 740,
+        "label": "landscape 740px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x740",
+        "width": 1578,
+        "height": 740,
+        "label": "landscape 740px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1080x741",
+        "width": 1080,
+        "height": 741,
+        "label": "landscape 740px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x741",
+        "width": 1204,
+        "height": 741,
+        "label": "landscape 740px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x741",
+        "width": 1366,
+        "height": 741,
+        "label": "landscape 740px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x741",
+        "width": 1578,
+        "height": 741,
+        "label": "landscape 740px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1180x746",
+        "width": 1180,
+        "height": 746,
+        "label": "iPad 11 (2025), iPad Air (2022)",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1194x760",
+        "width": 1194,
+        "height": 760,
+        "label": "iPad Pro 11 (2022)",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1024x768",
+        "width": 1024,
+        "height": 768,
+        "label": "tablet landscape 1024 edge",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1025x768",
+        "width": 1025,
+        "height": 768,
+        "label": "tablet landscape 1025 edge",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x768",
+        "width": 1366,
+        "height": 768,
+        "label": "tablet landscape 1366x768",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1578x802",
+        "width": 1578,
+        "height": 802,
+        "label": "Galaxy Tab S9 Ultra",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1600x900",
+        "width": 1600,
+        "height": 900,
+        "label": "future wide tablet landscape",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1366x950",
+        "width": 1366,
+        "height": 950,
+        "label": "iPad Air 13 (2024), iPad Pro 12.9 (2022)",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1080x957",
+        "width": 1080,
+        "height": 957,
+        "label": "landscape 958px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x957",
+        "width": 1204,
+        "height": 957,
+        "label": "landscape 958px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x957",
+        "width": 1366,
+        "height": 957,
+        "label": "landscape 958px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x957",
+        "width": 1578,
+        "height": 957,
+        "label": "landscape 958px boundary -1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1080x958",
+        "width": 1080,
+        "height": 958,
+        "label": "landscape 958px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x958",
+        "width": 1204,
+        "height": 958,
+        "label": "landscape 958px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x958",
+        "width": 1366,
+        "height": 958,
+        "label": "landscape 958px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__measured-landscape-1376x958",
+        "width": 1376,
+        "height": 958,
+        "label": "iPad Pro 13 (2024)",
+        "family": "tablet-landscape",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x958",
+        "width": 1578,
+        "height": 958,
+        "label": "landscape 958px boundary +0",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1080x959",
+        "width": 1080,
+        "height": 959,
+        "label": "landscape 958px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1204x959",
+        "width": 1204,
+        "height": 959,
+        "label": "landscape 958px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1366x959",
+        "width": 1366,
+        "height": 959,
+        "label": "landscape 958px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "tablet-landscape__synthetic-landscape-1578x959",
+        "width": 1578,
+        "height": 959,
+        "label": "landscape 958px boundary +1",
+        "family": "tablet-landscape",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      }
+    ],
+    "foldable-exhaustive": [
+      {
+        "id": "foldable__measured-folded-outer-display-landscape-663x389",
+        "width": 663,
+        "height": 389,
+        "label": "Galaxy Z Fold8 \u2014 folded-outer-display \u2014 phone",
+        "family": "foldable",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-landscape-960x400",
+        "width": 960,
+        "height": 400,
+        "label": "Samsung Fold7/Fold8 Ultra outer landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-landscape-912x412",
+        "width": 912,
+        "height": 412,
+        "label": "Oppo Find N outer landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-landscape-923x412",
+        "width": 923,
+        "height": 412,
+        "label": "Pixel Fold outer landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-landscape-933x431",
+        "width": 933,
+        "height": 431,
+        "label": "OnePlus Open outer landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-landscape-678x466",
+        "width": 678,
+        "height": 466,
+        "label": "iPhone Duo outer landscape synthetic CSS geometry (Apple pixels / inferred 3x)",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-932x500",
+        "width": 932,
+        "height": 500,
+        "label": "phone-to-foldable height boundary 500",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-932x501",
+        "width": 932,
+        "height": 501,
+        "label": "phone-to-foldable height boundary 501",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__measured-unfolded-inner-display-landscape-932x520",
+        "width": 932,
+        "height": 520,
+        "label": "Galaxy Z Fold8 \u2014 unfolded-inner-display \u2014 foldable",
+        "family": "foldable",
+        "source": "MEASURED",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-single-display-or-unspanned-landscape-720x540",
+        "width": 720,
+        "height": 540,
+        "label": "Surface Duo single-display landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-834x578",
+        "width": 834,
+        "height": 578,
+        "label": "TestMU Fold8 Ultra observed geometry clue",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-890x626",
+        "width": 890,
+        "height": 626,
+        "label": "iPhone Duo inner landscape synthetic CSS geometry (Apple pixels / inferred 3x)",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-715x645",
+        "width": 715,
+        "height": 645,
+        "label": "Samsung compact inner landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-752x653",
+        "width": 752,
+        "height": 653,
+        "label": "TestMU Fold8 Ultra compact geometry clue",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-717x692",
+        "width": 717,
+        "height": 692,
+        "label": "Pixel Fold near-square inner landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-725x700",
+        "width": 725,
+        "height": 700,
+        "label": "TestMU Pixel 9 Pro Fold geometry clue",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-999x700",
+        "width": 999,
+        "height": 700,
+        "label": "foldable-to-tablet width boundary 999",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-1000x700",
+        "width": 1000,
+        "height": 700,
+        "label": "foldable-to-tablet width boundary 1000",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-dual-display-or-spanned-landscape-1114x720",
+        "width": 1114,
+        "height": 720,
+        "label": "Surface Duo spanned landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-896x782",
+        "width": 896,
+        "height": 782,
+        "label": "OnePlus Open inner landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-876x804",
+        "width": 876,
+        "height": 804,
+        "label": "Oppo Find N inner landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-landscape-1092x984",
+        "width": 1092,
+        "height": 984,
+        "label": "Samsung large inner landscape envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "landscape"
+      },
+      {
+        "id": "foldable__measured-folded-outer-display-portrait-475x605",
+        "width": 475,
+        "height": 605,
+        "label": "Galaxy Z Fold8 \u2014 folded-outer-display \u2014 phone",
+        "family": "foldable",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-portrait-466x678",
+        "width": 466,
+        "height": 678,
+        "label": "iPhone Duo outer portrait synthetic CSS geometry (Apple pixels / inferred 3x)",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-portrait-645x715",
+        "width": 645,
+        "height": 715,
+        "label": "Samsung compact inner portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-portrait-692x717",
+        "width": 692,
+        "height": 717,
+        "label": "Pixel Fold near-square inner portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-single-display-or-unspanned-portrait-540x720",
+        "width": 540,
+        "height": 720,
+        "label": "Surface Duo single-display portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__measured-unfolded-inner-display-portrait-704x749",
+        "width": 704,
+        "height": 749,
+        "label": "Galaxy Z Fold8 \u2014 unfolded-inner-display \u2014 tablet",
+        "family": "foldable",
+        "source": "MEASURED",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-portrait-804x876",
+        "width": 804,
+        "height": 876,
+        "label": "Oppo Find N inner portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-portrait-626x890",
+        "width": 626,
+        "height": 890,
+        "label": "iPhone Duo inner portrait synthetic CSS geometry (Apple pixels / inferred 3x)",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-portrait-782x896",
+        "width": 782,
+        "height": 896,
+        "label": "OnePlus Open inner portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-portrait-412x912",
+        "width": 412,
+        "height": 912,
+        "label": "Oppo Find N outer portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-portrait-412x923",
+        "width": 412,
+        "height": 923,
+        "label": "Pixel Fold outer portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-portrait-431x933",
+        "width": 431,
+        "height": 933,
+        "label": "OnePlus Open outer portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-folded-outer-display-portrait-400x960",
+        "width": 400,
+        "height": 960,
+        "label": "Samsung Fold7/Fold8 Ultra outer portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-unfolded-inner-display-portrait-984x1092",
+        "width": 984,
+        "height": 1092,
+        "label": "Samsung large inner portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      },
+      {
+        "id": "foldable__synthetic-dual-display-or-spanned-portrait-720x1114",
+        "width": 720,
+        "height": 1114,
+        "label": "Surface Duo spanned portrait envelope",
+        "family": "foldable",
+        "source": "SYNTHETIC",
+        "orientation": "portrait"
+      }
+    ],
+    "desktop-standard": [
+      {
+        "id": "desktop-1024x768",
+        "width": 1024,
+        "height": 768,
+        "label": "small laptop / tablet-desktop overlap"
+      },
+      {
+        "id": "desktop-1280x720",
+        "width": 1280,
+        "height": 720,
+        "label": "HD laptop"
+      },
+      {
+        "id": "desktop-1366x768",
+        "width": 1366,
+        "height": 768,
+        "label": "common laptop"
+      },
+      {
+        "id": "desktop-1440x900",
+        "width": 1440,
+        "height": 900,
+        "label": "16:10 desktop"
+      },
+      {
+        "id": "desktop-1536x864",
+        "width": 1536,
+        "height": 864,
+        "label": "scaled 1080p desktop"
+      },
+      {
+        "id": "desktop-1600x900",
+        "width": 1600,
+        "height": 900,
+        "label": "wide laptop / desktop"
+      },
+      {
+        "id": "desktop-1920x1080",
+        "width": 1920,
+        "height": 1080,
+        "label": "Full HD standard-desktop anchor"
+      }
+    ],
+    "desktop-wide": [
+      {
+        "id": "desktop-1921x1080",
+        "width": 1921,
+        "height": 1080,
+        "label": "first wide-desktop CSS pixel / post-1920 handoff"
+      },
+      {
+        "id": "desktop-2000x1200",
+        "width": 2000,
+        "height": 1200,
+        "label": "early wide-desktop calibration"
+      },
+      {
+        "id": "desktop-2560x1440",
+        "width": 2560,
+        "height": 1440,
+        "label": "QHD wide-desktop calibration"
+      },
+      {
+        "id": "desktop-3440x1440",
+        "width": 3440,
+        "height": 1440,
+        "label": "21:9 ultrawide calibration"
+      },
+      {
+        "id": "desktop-3840x1600",
+        "width": 3840,
+        "height": 1600,
+        "label": "high-width ultrawide pressure"
+      },
+      {
+        "id": "desktop-3840x2160",
+        "width": 3840,
+        "height": 2160,
+        "label": "4K-class large desktop"
+      },
+      {
+        "id": "desktop-5120x1440",
+        "width": 5120,
+        "height": 1440,
+        "label": "32:9 super-ultrawide short-height pressure"
+      },
+      {
+        "id": "desktop-5120x2160",
+        "width": 5120,
+        "height": 2160,
+        "label": "5K-class wide high-resolution stress"
+      },
+      {
+        "id": "desktop-7680x2160",
+        "width": 7680,
+        "height": 2160,
+        "label": "extreme dual-4K-width CSS viewport stress"
+      }
+    ]
+  }
+}

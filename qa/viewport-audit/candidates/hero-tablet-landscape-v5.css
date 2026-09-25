@@ -1,0 +1,449 @@
+/* =========================================================
+   HERO V2 — TABLET LANDSCAPE CANDIDATE V5
+
+   Candidate-only medium-landscape composition.
+   Phone portrait / phone landscape / tablet portrait are untouched.
+
+   Purpose:
+   - restore a larger portrait while independently shrinking the blue Shape
+   - enlarge certifications and speech bubble for tablet readability
+   - use the proven centered FOLLOW ME rotation model
+   - retain the familiar desktop-style left/right composition
+   - handle short tablet browser heights with height-fluid scaling
+
+   This is a behavior-based medium landscape range. If this is eventually
+   promoted, desktop/laptop regression must be run because some small laptop
+   viewport geometries can overlap the same CSS range.
+   ========================================================= */
+
+@media
+  (min-width: 1000px)
+  and (max-width: 1700px)
+  and (min-height: 501px)
+  and (max-height: 1000px)
+  and (orientation: landscape) {
+
+  .hero {
+    position: relative !important;
+
+    --tablet-land-title:
+      clamp(56px, 8.0svh, 80px);
+
+    --tablet-land-cert-title:
+      clamp(24px, 3.8svh, 32px);
+
+    --tablet-land-cert-copy:
+      clamp(16px, 2.4svh, 20px);
+
+    --tablet-land-cert-icon:
+      clamp(56px, 7.6svh, 68px);
+
+    --tablet-land-scroll:
+      clamp(52px, 6.6svh, 62px);
+
+    --tablet-land-bubble-font:
+      16px;
+
+    --tablet-land-bubble-avatar:
+      clamp(50px, 7.0svh, 58px);
+
+    --tablet-land-contact:
+      clamp(104px, 20svh, 132px);
+  }
+
+  /* -------------------------
+     LEFT CONTENT
+     ------------------------- */
+  .heroTitle {
+    margin-top:
+      clamp(24px, 5.0svh, 44px) !important;
+
+    font-size:
+      var(--tablet-land-title) !important;
+
+    line-height: 1.04 !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .certifications {
+    width:
+      min(62%, 440px) !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .certifications h2 {
+    font-size:
+      var(--tablet-land-cert-title) !important;
+
+    line-height: 1.15 !important;
+  }
+
+  .certifications p {
+    /*
+     * V4: one small, even gap above and below the Credly line.
+     * This keeps the title -> paragraph -> icons rhythm balanced.
+     */
+    margin-block: 10px !important;
+    margin-inline: 0 !important;
+
+    font-size:
+      var(--tablet-land-cert-copy) !important;
+
+    line-height: 1.2 !important;
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(10px, 1.5svh, 14px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      var(--tablet-land-cert-icon) !important;
+
+    height:
+      var(--tablet-land-cert-icon) !important;
+
+    padding:
+      clamp(7px, 1.1svh, 9px) !important;
+  }
+
+  .scroll {
+    margin-bottom:
+      clamp(22px, 4.2svh, 40px) !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .scroll > svg {
+    width:
+      var(--tablet-land-scroll) !important;
+
+    height:
+      var(--tablet-land-scroll) !important;
+
+    transform: none !important;
+  }
+
+  /* -------------------------
+     CENTRAL PORTRAIT / SHAPE
+
+     Baseline tablets inherited the desktop 75%-height portrait.
+     That put visible head/shoulder pixels into title and bubble regions.
+     Lower the top edge by shrinking the portrait while keeping it
+     centered and bottom-anchored.
+     ------------------------- */
+  .bg {
+    z-index: 0 !important;
+  }
+
+  /*
+   * V5 — THREE.JS SHAPE SIZE FIX
+   *
+   * React Three Fiber's <Canvas> nests the real <canvas> inside its own
+   * wrapper. Therefore `.bg > canvas` never matched the rendered canvas.
+   *
+   * Target the descendant canvas directly. Scale around the center so this
+   * changes the blue Shape's visual size without shifting it up/down.
+   */
+  .bg canvas {
+    transform: scale(0.70) !important;
+    transform-origin: center center !important;
+  }
+
+  .hImg {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    margin: auto !important;
+
+    /*
+     * V2: V1 over-shrank the portrait. Restore more of the available
+     * landscape height while keeping it below the original desktop 75%.
+     */
+    height:
+      clamp(62%, 64svh, 70%) !important;
+
+    width: max-content !important;
+
+    max-width:
+      min(50vw, 760px) !important;
+
+    z-index: 1 !important;
+  }
+
+  .hImg img {
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+
+  /* -------------------------
+     RIGHT CONTENT
+     ------------------------- */
+  .heroSection.right {
+    gap:
+      clamp(8px, 1.8svh, 16px) !important;
+  }
+
+  .bubbleContainer {
+    width:
+      min(76%, 600px) !important;
+
+    align-items: center !important;
+
+    transform: none !important;
+
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .bubble {
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+
+    flex: 1 1 auto !important;
+    align-self: center !important;
+
+    white-space: nowrap !important;
+
+    font-size:
+      var(--tablet-land-bubble-font) !important;
+
+    line-height: 1.2 !important;
+
+    /*
+     * V3: equal tablet-landscape breathing room above/below the text.
+     * Keep natural height; let symmetric padding create the visual height.
+     */
+    padding-block: 12px !important;
+
+    padding-inline:
+      clamp(16px, 1.8vw, 22px) !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .bubbleContainer img {
+    flex:
+      0 0
+      var(--tablet-land-bubble-avatar) !important;
+
+    width:
+      var(--tablet-land-bubble-avatar) !important;
+
+    height:
+      var(--tablet-land-bubble-avatar) !important;
+
+    align-self: center !important;
+  }
+
+  .bubble > span {
+    display: block !important;
+    line-height: inherit !important;
+  }
+
+  /*
+   * V4: tablet landscape uses the approved desktop social rail values.
+   * No tablet-specific scaling here.
+   */
+  .socials {
+    display: flex !important;
+    flex-direction: column !important;
+
+    gap: 12px !important;
+    padding: 12px !important;
+
+    background-color: #010134 !important;
+    border-bottom-right-radius: 10px !important;
+
+    position: static !important;
+    isolation: auto !important;
+
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+
+  .socials > a {
+    display: block !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    line-height: normal !important;
+  }
+
+  .socials img {
+    display: block !important;
+
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .socialsTextContainer {
+    width: 32px !important;
+    height: 32px !important;
+    min-height: 0 !important;
+
+    flex: 0 0 32px !important;
+
+    position: static !important;
+
+    display: block !important;
+    overflow: visible !important;
+  }
+
+  .socialsText {
+    background-color: #62acf7 !important;
+
+    font-size: 16px !important;
+
+    rotate: 90deg !important;
+
+    width: max-content !important;
+    height: 100% !important;
+
+    transform-origin: left top !important;
+    transform: translateY(-32px) !important;
+
+    padding: 0 8px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    position: static !important;
+
+    left: auto !important;
+    top: auto !important;
+
+    line-height: normal !important;
+
+    border-bottom-right-radius: 10px !important;
+    border-top-left-radius: 10px !important;
+  }
+
+  .contactButtonLink {
+    margin-bottom:
+      clamp(14px, 3.2svh, 30px) !important;
+
+    margin-right:
+      clamp(8px, 1.2vw, 18px) !important;
+  }
+
+  .contactButton > svg {
+    width:
+      var(--tablet-land-contact) !important;
+
+    height:
+      var(--tablet-land-contact) !important;
+  }
+
+  .arrow {
+    width:
+      var(--tablet-land-contact) !important;
+
+    height:
+      var(--tablet-land-contact) !important;
+  }
+
+  .arrow svg {
+    width:
+      clamp(32px, 6.2svh, 44px) !important;
+
+    height:
+      clamp(32px, 6.2svh, 44px) !important;
+
+    transform: none !important;
+  }
+}
+
+
+/* =========================================================
+   SHORT TABLET LANDSCAPE PRESSURE
+   Behavior-based height pressure state for ~579–650px browser heights.
+   ========================================================= */
+
+@media
+  (min-width: 1000px)
+  and (max-width: 1700px)
+  and (min-height: 501px)
+  and (max-height: 650px)
+  and (orientation: landscape) {
+
+  .hero {
+    --tablet-land-title:
+      clamp(52px, 7.8svh, 58px);
+
+    --tablet-land-cert-title:
+      clamp(24px, 3.6svh, 26px);
+
+    --tablet-land-cert-copy:
+      clamp(16px, 2.4svh, 17px);
+
+    --tablet-land-cert-icon:
+      clamp(54px, 7.5svh, 58px);
+
+    --tablet-land-scroll:
+      clamp(52px, 6.6svh, 62px);
+
+    --tablet-land-bubble-font:
+      16px;
+
+    --tablet-land-bubble-avatar:
+      clamp(48px, 7.0svh, 54px);
+
+    --tablet-land-contact:
+      clamp(92px, 18svh, 108px);
+  }
+
+  .heroTitle {
+    margin-top:
+      clamp(18px, 3.8svh, 26px) !important;
+  }
+
+  .certifications {
+    width:
+      min(66%, 410px) !important;
+  }
+
+  .hImg {
+    height:
+      clamp(60%, 64svh, 67%) !important;
+
+    max-width:
+      min(50vw, 640px) !important;
+  }
+
+  .bubbleContainer {
+    width:
+      min(76%, 540px) !important;
+  }
+
+  .bubble {
+    padding-block: 12px !important;
+
+    padding-inline:
+      clamp(15px, 1.6vw, 19px) !important;
+  }
+
+  .bg canvas {
+    transform: scale(0.70) !important;
+  }
+
+  .contactButtonLink {
+    margin-bottom:
+      clamp(10px, 2.4svh, 16px) !important;
+  }
+}

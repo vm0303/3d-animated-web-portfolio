@@ -1,0 +1,299 @@
+/* =========================================================
+   HERO — WIDE DESKTOP CANDIDATE V2
+
+   Purpose:
+   - keep the approved <= 1920px desktop composition unchanged
+   - leave every phone / tablet / foldable rule untouched
+   - scale the ENTIRE desktop Hero component system after 1920px
+   - reduce the large empty side void seen in V1 at 3440px+
+   - keep short ultrawides height-limited so width alone cannot explode UI
+
+   Calibration model:
+   - 1920x1080 is the standard-desktop visual anchor (1.0x)
+   - 2560x1440 is ~1.33x
+   - 3440x1440 is ~1.62x (height-limited)
+   - tall 4K / 5K-class viewports cap at ~1.8x
+
+   IMPORTANT:
+   This file is candidate-only. It does not edit production hero.css.
+   ========================================================= */
+
+@media (min-width: 1921px) and (orientation: landscape) {
+  :root {
+    /*
+     * Hero-only edge clearance. This does NOT change the global .container
+     * gutter, so About / Projects / Contact and every <=1920px layout keep
+     * their existing geometry.
+     */
+    --wide-hero-edge-gutter:
+      clamp(32px, 1.5vw, 64px);
+
+    /*
+     * V1 stopped at ~2400px on 1440px-high ultrawides, producing a large
+     * 520px void on each side at 3440x1440. V2 lets the composition use more
+     * width while still capping by HEIGHT on very short 32:9 viewports.
+     *
+     * 3440x1440 -> 3024px shell (~208px outer space each side)
+     * 3840x1600 -> 3360px shell (~240px each side)
+     * 3840x2160 -> 3600px cap (~120px each side)
+     * 5120x1440 -> 3024px shell (short-ultrawide cohesion preserved)
+     */
+    --wide-hero-shell-max:
+      clamp(2400px, 210svh, 3600px);
+  }
+
+  /* ---------------------------------------------------------
+     HERO-ONLY BREAKOUT
+     Global .container remains capped at 2000px for later sections.
+     --------------------------------------------------------- */
+  .container > section:first-child {
+    position: relative;
+    left: 50%;
+
+    width:
+      min(
+        calc(100vw - (2 * var(--wide-hero-edge-gutter))),
+        var(--wide-hero-shell-max)
+      );
+
+    transform: translateX(-50%);
+  }
+
+  .hero {
+    /*
+     * Every major component below uses the same visual scale philosophy.
+     * The width term grows from the 1920px anchor; the svh term allows about
+     * 1.62x scale on a 1440px-high ultrawide; hard maxima stop 4K+ growth.
+     */
+    --wide-title-size:
+      clamp(80px, min(4.167vw, 9svh), 144px);
+
+    --wide-cert-title-size:
+      clamp(24px, min(1.25vw, 2.7svh), 43.2px);
+
+    --wide-cert-copy-size:
+      clamp(16px, min(0.833vw, 1.8svh), 28.8px);
+
+    --wide-cert-icon-size:
+      clamp(56px, min(2.917vw, 6.3svh), 100.8px);
+
+    --wide-scroll-size:
+      clamp(50px, min(2.604vw, 5.625svh), 90px);
+
+    --wide-bubble-font-size:
+      clamp(16px, min(0.833vw, 1.8svh), 28.8px);
+
+    --wide-bubble-avatar-size:
+      clamp(50px, min(2.604vw, 5.625svh), 90px);
+
+    --wide-social-icon-size:
+      clamp(28px, min(1.458vw, 3.15svh), 50.4px);
+
+    --wide-social-font-size:
+      clamp(16px, min(0.833vw, 1.8svh), 28.8px);
+
+    --wide-social-space:
+      clamp(12px, min(0.625vw, 1.35svh), 21.6px);
+
+    --wide-contact-size:
+      clamp(150px, min(7.813vw, 16.875svh), 270px);
+
+    --wide-contact-arrow-size:
+      clamp(80px, min(4.167vw, 9svh), 144px);
+
+    --wide-contact-text-size:
+      clamp(20px, min(1.042vw, 2.25svh), 36px);
+  }
+
+  /* ---------------------------------------------------------
+     CENTRAL ART
+     --------------------------------------------------------- */
+  .bg canvas {
+    /* Slightly strengthen the Three.js shape on large desktops. */
+    transform: scale(1.10);
+    transform-origin: center center;
+  }
+
+  .hImg {
+    /*
+     * Preserve the 75% laptop baseline at the handoff, then let width add
+     * visual weight until an 86% safety cap. The parent is 100dvh high.
+     */
+    height:
+      clamp(
+        75%,
+        calc(62% + 8vw),
+        86%
+      );
+  }
+
+  /* ---------------------------------------------------------
+     LEFT LANE
+     --------------------------------------------------------- */
+  .heroTitle {
+    margin-top:
+      clamp(50px, min(2.604vw, 5.625svh), 90px);
+
+    font-size:
+      var(--wide-title-size);
+  }
+
+  .certifications {
+    width:
+      min(45%, 800px);
+  }
+
+  .certifications h2 {
+    font-size:
+      var(--wide-cert-title-size);
+  }
+
+  .certifications p {
+    margin-block:
+      clamp(16px, min(0.833vw, 1.8svh), 28.8px);
+
+    font-size:
+      var(--wide-cert-copy-size);
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(10px, min(0.521vw, 1.125svh), 18px);
+  }
+
+  .certificationsImages img {
+    width:
+      var(--wide-cert-icon-size);
+
+    height:
+      var(--wide-cert-icon-size);
+
+    padding:
+      clamp(8px, min(0.417vw, 0.9svh), 14.4px);
+  }
+
+  .scroll {
+    margin-bottom:
+      clamp(50px, min(2.604vw, 5.625svh), 90px);
+  }
+
+  .scroll > svg {
+    width:
+      var(--wide-scroll-size);
+
+    height:
+      var(--wide-scroll-size);
+  }
+
+  /* ---------------------------------------------------------
+     RIGHT LANE — SOCIAL RAIL
+     --------------------------------------------------------- */
+  .socials {
+    gap:
+      var(--wide-social-space);
+
+    padding:
+      var(--wide-social-space);
+  }
+
+  .socials img {
+    width:
+      var(--wide-social-icon-size);
+
+    height:
+      var(--wide-social-icon-size);
+  }
+
+  .socialsTextContainer {
+    width:
+      var(--wide-social-icon-size);
+
+    height:
+      var(--wide-social-icon-size);
+  }
+
+  .socialsText {
+    height:
+      var(--wide-social-icon-size);
+
+    font-size:
+      var(--wide-social-font-size);
+
+    transform:
+      translateY(calc(0px - var(--wide-social-icon-size)));
+
+    padding-inline:
+      clamp(8px, min(0.417vw, 0.9svh), 14.4px);
+  }
+
+  /* ---------------------------------------------------------
+     RIGHT LANE — SPEECH
+     V1 capped this at 760px, which made it read as a tiny UI chip on 3440px.
+     --------------------------------------------------------- */
+  .bubbleContainer {
+    width:
+      min(72%, 1160px);
+
+    gap:
+      clamp(8px, min(0.417vw, 0.9svh), 14.4px);
+  }
+
+  .bubble {
+    padding:
+      clamp(20px, min(1.042vw, 2.25svh), 36px);
+
+    font-size:
+      var(--wide-bubble-font-size);
+
+    border-radius:
+      clamp(20px, min(1.042vw, 2.25svh), 36px)
+      clamp(20px, min(1.042vw, 2.25svh), 36px)
+      0
+      clamp(20px, min(1.042vw, 2.25svh), 36px);
+  }
+
+  .bubbleContainer img {
+    width:
+      var(--wide-bubble-avatar-size);
+
+    height:
+      var(--wide-bubble-avatar-size);
+  }
+
+  /* ---------------------------------------------------------
+     RIGHT LANE — CONTACT
+     --------------------------------------------------------- */
+  .contactButtonLink {
+    margin-bottom:
+      clamp(50px, min(2.604vw, 5.625svh), 90px);
+  }
+
+  .contactButton > svg {
+    width:
+      var(--wide-contact-size);
+
+    height:
+      var(--wide-contact-size);
+  }
+
+  .circleText {
+    font-size:
+      var(--wide-contact-text-size);
+  }
+
+  .arrow {
+    width:
+      var(--wide-contact-size);
+
+    height:
+      var(--wide-contact-size);
+  }
+
+  .arrow svg {
+    width:
+      var(--wide-contact-arrow-size);
+
+    height:
+      var(--wide-contact-arrow-size);
+  }
+}

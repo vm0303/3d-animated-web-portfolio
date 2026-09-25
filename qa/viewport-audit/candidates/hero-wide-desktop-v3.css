@@ -1,0 +1,194 @@
+/* =========================================================
+   HERO — WIDE DESKTOP CANDIDATE V3
+
+   Goals:
+   - preserve every <=1920px production geometry unchanged
+   - preserve phone / tablet / foldable CSS unchanged
+   - keep the V2 Hero-only breakout (do not widen global .container)
+   - increase small/readable UI text more deliberately on wide desktops
+   - prevent the Contact Me SVG text and inner arrow from double-scaling
+   - keep ultra-wide growth height-aware and bounded
+
+   1920x1080 remains the frozen standard-desktop anchor.
+   ========================================================= */
+
+@media (min-width: 1921px) and (orientation: landscape) {
+  :root {
+    --wide-hero-edge-gutter: clamp(32px, 1.5vw, 64px);
+    --wide-hero-shell-max: clamp(2400px, 210svh, 3600px);
+  }
+
+  /* Hero-only breakout. Later sections keep the global 2000px container. */
+  .container > section:first-child {
+    position: relative;
+    left: 50%;
+    width: min(
+      calc(100vw - (2 * var(--wide-hero-edge-gutter))),
+      var(--wide-hero-shell-max)
+    );
+    transform: translateX(-50%);
+  }
+
+  .hero {
+    /*
+     * Three separate scale tracks:
+     * 1) display type grows moderately (title)
+     * 2) reading type grows more aggressively (cert copy / bubble)
+     * 3) SVG-internal contact text does NOT receive another viewport scale
+     */
+    --wide-title-size: clamp(84px, min(4.1vw, 8.85svh), 160px);
+
+    --wide-cert-title-size: clamp(28px, min(1.25vw, 3.25svh), 48px);
+    --wide-reading-size: clamp(18px, min(0.9vw, 2.15svh), 34px);
+
+    --wide-cert-icon-size: clamp(60px, min(2.85vw, 6.5svh), 104px);
+    --wide-scroll-size: clamp(54px, min(2.55vw, 5.8svh), 92px);
+
+    --wide-bubble-avatar-size: clamp(54px, min(2.55vw, 5.8svh), 92px);
+
+    --wide-social-icon-size: clamp(30px, min(1.43vw, 3.2svh), 52px);
+    --wide-social-font-size: clamp(18px, min(0.82vw, 1.9svh), 30px);
+    --wide-social-space: clamp(12px, min(0.55vw, 1.25svh), 20px);
+
+    /* The ring can grow independently of its SVG-internal text. */
+    --wide-contact-size: clamp(160px, min(7.65vw, 17svh), 270px);
+    --wide-contact-arrow-size: clamp(55px, min(2.5vw, 5.8svh), 90px);
+  }
+
+  /* ---------------------------------------------------------
+     CENTRAL ART
+     Keep V2's validated central-art treatment. The current issue is
+     typography/control balance, not portrait containment.
+     --------------------------------------------------------- */
+  .bg canvas {
+    transform: scale(1.10);
+    transform-origin: center center;
+  }
+
+  .hImg {
+    height: clamp(75%, calc(62% + 8vw), 86%);
+  }
+
+  /* ---------------------------------------------------------
+     LEFT LANE
+     --------------------------------------------------------- */
+  .heroTitle {
+    margin-top: clamp(50px, min(2.4vw, 5.2svh), 84px);
+    font-size: var(--wide-title-size);
+  }
+
+  .certifications {
+    width: min(48%, 900px);
+  }
+
+  .certifications h2 {
+    font-size: var(--wide-cert-title-size);
+  }
+
+  .certifications p {
+    margin-block: clamp(16px, min(0.75vw, 1.7svh), 26px);
+    font-size: var(--wide-reading-size);
+  }
+
+  .certificationsImages {
+    gap: clamp(10px, min(0.48vw, 1.05svh), 17px);
+  }
+
+  .certificationsImages img {
+    width: var(--wide-cert-icon-size);
+    height: var(--wide-cert-icon-size);
+    padding: clamp(8px, min(0.38vw, 0.85svh), 13px);
+  }
+
+  .scroll {
+    margin-bottom: clamp(50px, min(2.4vw, 5.2svh), 84px);
+  }
+
+  .scroll > svg {
+    width: var(--wide-scroll-size);
+    height: var(--wide-scroll-size);
+  }
+
+  /* ---------------------------------------------------------
+     RIGHT LANE — SOCIAL RAIL
+     --------------------------------------------------------- */
+  .socials {
+    gap: var(--wide-social-space);
+    padding: var(--wide-social-space);
+  }
+
+  .socials img {
+    width: var(--wide-social-icon-size);
+    height: var(--wide-social-icon-size);
+  }
+
+  .socialsTextContainer {
+    width: var(--wide-social-icon-size);
+    height: var(--wide-social-icon-size);
+  }
+
+  .socialsText {
+    height: var(--wide-social-icon-size);
+    font-size: var(--wide-social-font-size);
+    transform: translateY(calc(0px - var(--wide-social-icon-size)));
+    padding-inline: clamp(8px, min(0.36vw, 0.8svh), 13px);
+  }
+
+  /* ---------------------------------------------------------
+     RIGHT LANE — SPEECH
+     --------------------------------------------------------- */
+  .bubbleContainer {
+    width: min(72%, 1320px);
+    gap: clamp(8px, min(0.38vw, 0.85svh), 13px);
+  }
+
+  .bubble {
+    padding: clamp(20px, min(0.9vw, 2svh), 34px);
+    font-size: var(--wide-reading-size);
+    border-radius:
+      clamp(20px, min(0.9vw, 2svh), 34px)
+      clamp(20px, min(0.9vw, 2svh), 34px)
+      0
+      clamp(20px, min(0.9vw, 2svh), 34px);
+  }
+
+  .bubbleContainer img {
+    width: var(--wide-bubble-avatar-size);
+    height: var(--wide-bubble-avatar-size);
+  }
+
+  /* ---------------------------------------------------------
+     RIGHT LANE — CONTACT
+
+     IMPORTANT SVG DETAIL:
+     The outer SVG has viewBox="0 0 200 200" and is already resized by
+     --wide-contact-size. Keeping .circleText at 20 viewBox/CSS units means
+     its visible size grows ONCE with the SVG. Scaling font-size again here
+     produces squared/double growth and is what made V2 look oversized.
+     --------------------------------------------------------- */
+  .contactButtonLink {
+    margin-bottom: clamp(50px, min(2.4vw, 5.2svh), 84px);
+  }
+
+  .contactButton > svg {
+    width: var(--wide-contact-size);
+    height: var(--wide-contact-size);
+  }
+
+  .circleText {
+    /* Deliberately constant inside the 200x200 SVG viewBox. */
+    font-size: 20px;
+    letter-spacing: 3px;
+  }
+
+  .arrow {
+    width: var(--wide-contact-size);
+    height: var(--wide-contact-size);
+  }
+
+  .arrow svg {
+    /* Base JSX arrow is 50x50. Grow it once, not from the 80px wrapper. */
+    width: var(--wide-contact-arrow-size);
+    height: var(--wide-contact-arrow-size);
+  }
+}

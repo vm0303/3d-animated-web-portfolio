@@ -1,0 +1,225 @@
+{
+  "version": 2,
+  "scope": {
+    "selectionBasis": "TestMU candidate deviceType + measured CSS viewport geometry",
+    "deviceType": "tablet",
+    "notes": "Measured tablet captures are selected only from current TestMU candidates classified as tablet. Foldables are excluded even when their open viewport is tablet-like. Portrait V5 intentionally uses a roomier scroll-to-image gap; the approved measured/synthetic range is approximately 50\u201375px."
+  },
+  "portrait": {
+    "pressureBands": [
+      {
+        "id": "COMPACT",
+        "maxHeight": 1050
+      },
+      {
+        "id": "NORMAL",
+        "minHeight": 1051,
+        "maxHeight": 1200
+      },
+      {
+        "id": "TALL",
+        "minHeight": 1201
+      }
+    ],
+    "bubbleHiddenBands": [],
+    "gaps": {
+      "titleToCertifications": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 48,
+        "reviewMax": 72
+      },
+      "certificationsToBubble": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 48,
+        "reviewMax": 72
+      },
+      "bubbleToScroll": {
+        "hardMin": 0,
+        "idealMin": 8,
+        "idealMax": 40,
+        "reviewMax": 64
+      },
+      "scrollToImage": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 80,
+        "reviewMax": 104
+      }
+    }
+  },
+  "landscape": {
+    "pressureBands": [
+      {
+        "id": "SHORT_TABLET",
+        "maxHeight": 650
+      },
+      {
+        "id": "NORMAL",
+        "minHeight": 651,
+        "maxHeight": 820
+      },
+      {
+        "id": "TALL",
+        "minHeight": 821
+      }
+    ],
+    "zones": {
+      "leftMaxRatio": 0.5,
+      "rightMinRatio": 0.5,
+      "upperMaxRatio": 0.5,
+      "lowerMinRatio": 0.5
+    },
+    "bubbleHiddenBands": [],
+    "imageBackgroundAlignment": {
+      "reviewAboveHeroWidthRatio": 0.025,
+      "failAboveHeroWidthRatio": 0.05
+    },
+    "certificationInternalGaps": {
+      "titleToTextHardMin": 3,
+      "textToBadgesHardMin": 4
+    },
+    "bubbleMinViewportWidth": 0,
+    "bubbleMinViewportHeight": 0,
+    "titleMaxApproxLines": 2.2
+  },
+  "socials": {
+    "topReviewMax": 40,
+    "rightReviewMax": 72,
+    "centerXSpreadMax": 8,
+    "viewportRightReviewMax": 40,
+    "heroRightReviewMax": 6,
+    "viewportRightIdealMin": 10,
+    "viewportRightIdealMax": 40
+  },
+  "contact": {
+    "bottomReviewMax": 56,
+    "rightReviewMax": 56,
+    "rotationSafetyPx": 1,
+    "viewportRightIdealMax": 40,
+    "viewportBottomIdealMax": 48,
+    "heroRightIdealMin": 0,
+    "heroRightIdealMax": 28,
+    "heroBottomIdealMin": 0,
+    "heroBottomIdealMax": 56
+  },
+  "bubble": {
+    "requireSingleLine": true,
+    "horizontalTolerancePx": 1
+  },
+  "synthetic": {
+    "portraitWidths": [
+      744,
+      834,
+      1024,
+      1032
+    ],
+    "portraitBoundaries": [
+      1047,
+      1120,
+      1292
+    ],
+    "landscapeWidths": [
+      1080,
+      1204,
+      1366,
+      1578
+    ],
+    "landscapeBoundaries": [
+      579,
+      740,
+      958
+    ],
+    "fuzzOffsets": [
+      -1,
+      0,
+      1
+    ],
+    "sentinels": [
+      {
+        "width": 768,
+        "height": 1024,
+        "orientation": "portrait",
+        "label": "tablet portrait classic 768x1024"
+      },
+      {
+        "width": 820,
+        "height": 1180,
+        "orientation": "portrait",
+        "label": "tablet portrait 820x1180"
+      },
+      {
+        "width": 1023,
+        "height": 1366,
+        "orientation": "portrait",
+        "label": "tablet portrait 1024 boundary -1"
+      },
+      {
+        "width": 1024,
+        "height": 1366,
+        "orientation": "portrait",
+        "label": "tablet portrait 1024 boundary"
+      },
+      {
+        "width": 1025,
+        "height": 1366,
+        "orientation": "portrait",
+        "label": "tablet portrait 1024 boundary +1"
+      },
+      {
+        "width": 1024,
+        "height": 768,
+        "orientation": "landscape",
+        "label": "tablet landscape 1024 edge"
+      },
+      {
+        "width": 1025,
+        "height": 768,
+        "orientation": "landscape",
+        "label": "tablet landscape 1025 edge"
+      },
+      {
+        "width": 1133,
+        "height": 658,
+        "orientation": "landscape",
+        "label": "tablet landscape compact measured-like"
+      },
+      {
+        "width": 1204,
+        "height": 600,
+        "orientation": "landscape",
+        "label": "tablet landscape short stress"
+      },
+      {
+        "width": 1280,
+        "height": 720,
+        "orientation": "landscape",
+        "label": "tablet landscape 1280x720"
+      },
+      {
+        "width": 1366,
+        "height": 768,
+        "orientation": "landscape",
+        "label": "tablet landscape 1366x768"
+      },
+      {
+        "width": 1600,
+        "height": 900,
+        "orientation": "landscape",
+        "label": "future wide tablet landscape"
+      }
+    ]
+  },
+  "image": {
+    "cropReviewAboveFraction": 0.02,
+    "cropFailAboveFraction": 0.05
+  },
+  "visualViewport": {
+    "heroStartTolerancePx": 2,
+    "contactBelowReviewPx": 1,
+    "contactBelowFailPx": 8,
+    "nextSectionVisibleReviewPx": 1,
+    "nextSectionVisibleFailPx": 8
+  }
+}

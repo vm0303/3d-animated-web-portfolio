@@ -1,0 +1,44 @@
+{
+  "artifactType": "hero-final-closure-manifest",
+  "duoOuterLandscapePromotion": {
+    "geometryEnvelope": {
+      "minWidth": 667,
+      "maxWidth": 700,
+      "minHeight": 430,
+      "maxHeight": 500,
+      "maxAspectRatio": "3/2",
+      "orientation": "landscape"
+    },
+    "sourceEvidence": {
+      "apple2026CandidateRuns": 24,
+      "pass": 24,
+      "review": 0,
+      "fail": 0,
+      "targetGeometry": "678x466"
+    },
+    "heroCssSha256": "eb791a05b59a26aa6d902d6a7d0be178ebffb084dc0645f9613b7ae38ee61ce4"
+  },
+  "familyCaseCounts": {
+    "phonePortrait": 162,
+    "phoneLandscape": 105,
+    "tabletPortrait": 50,
+    "tabletLandscape": 52,
+    "foldable": 37,
+    "desktop": 16
+  },
+  "exhaustiveCrossBrowser": {
+    "caseEntries": 422,
+    "browsers": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "browserViewportRuns": 1266,
+    "contract": "qa/viewport-audit/hero-cross-browser-exhaustive-contract.json"
+  },
+  "runnerFixes": [
+    "intentional bubble visibility derives orientation from width/height when contract case lacks orientation",
+    "cross-browser runner supports --contract for final exhaustive closure",
+    "family runners support --dump-cases and --output-dir for isolated final results"
+  ]
+}

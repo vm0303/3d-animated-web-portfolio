@@ -1,0 +1,327 @@
+{
+  "version": 3,
+  "artifactType": "hero-cross-browser-certification-contract",
+  "purpose": "Final Hero closure sweep across Chromium, Firefox, and WebKit, with a visual-scale contract for wide desktops and explicit 2026 Apple geometry probes. Frozen phone/tablet/foldable production CSS remains outside the wide-desktop candidate scope.",
+  "browsers": [
+    "chromium",
+    "firefox",
+    "webkit"
+  ],
+  "baselineBrowser": "chromium",
+  "thresholds": {
+    "viewportContainmentTolerancePx": 2,
+    "horizontalOverflowTolerancePx": 2,
+    "imageBottomAnchorTolerancePx": 3,
+    "crossBrowserGeometryReviewPx": 5,
+    "crossBrowserGeometryFailPx": 14,
+    "crossBrowserGeometryReviewRatio": 0.008,
+    "crossBrowserGeometryFailRatio": 0.02,
+    "computedFontSizeTolerancePx": 0.25,
+    "desktopInsetSymmetryTolerancePx": 2,
+    "minimumDesktopHeroInsetPx": 16,
+    "wideDesktopScaleToleranceRatio": 0.035
+  },
+  "groups": {
+    "desktop-standard": [
+      {
+        "id": "desktop-1024x768",
+        "width": 1024,
+        "height": 768,
+        "label": "small laptop / tablet-desktop overlap"
+      },
+      {
+        "id": "desktop-1280x720",
+        "width": 1280,
+        "height": 720,
+        "label": "HD laptop"
+      },
+      {
+        "id": "desktop-1366x768",
+        "width": 1366,
+        "height": 768,
+        "label": "common laptop"
+      },
+      {
+        "id": "desktop-1440x900",
+        "width": 1440,
+        "height": 900,
+        "label": "16:10 desktop"
+      },
+      {
+        "id": "desktop-1536x864",
+        "width": 1536,
+        "height": 864,
+        "label": "scaled 1080p desktop"
+      },
+      {
+        "id": "desktop-1600x900",
+        "width": 1600,
+        "height": 900,
+        "label": "wide laptop / desktop"
+      },
+      {
+        "id": "desktop-1920x1080",
+        "width": 1920,
+        "height": 1080,
+        "label": "Full HD standard-desktop anchor"
+      }
+    ],
+    "desktop-wide": [
+      {
+        "id": "desktop-1921x1080",
+        "width": 1921,
+        "height": 1080,
+        "label": "first wide-desktop CSS pixel / post-1920 handoff"
+      },
+      {
+        "id": "desktop-2000x1200",
+        "width": 2000,
+        "height": 1200,
+        "label": "early wide-desktop calibration"
+      },
+      {
+        "id": "desktop-2560x1440",
+        "width": 2560,
+        "height": 1440,
+        "label": "QHD wide-desktop calibration"
+      },
+      {
+        "id": "desktop-3440x1440",
+        "width": 3440,
+        "height": 1440,
+        "label": "21:9 ultrawide calibration"
+      },
+      {
+        "id": "desktop-3840x1600",
+        "width": 3840,
+        "height": 1600,
+        "label": "high-width ultrawide pressure"
+      },
+      {
+        "id": "desktop-3840x2160",
+        "width": 3840,
+        "height": 2160,
+        "label": "4K-class large desktop"
+      },
+      {
+        "id": "desktop-5120x1440",
+        "width": 5120,
+        "height": 1440,
+        "label": "32:9 super-ultrawide short-height pressure"
+      },
+      {
+        "id": "desktop-5120x2160",
+        "width": 5120,
+        "height": 2160,
+        "label": "5K-class wide high-resolution stress"
+      },
+      {
+        "id": "desktop-7680x2160",
+        "width": 7680,
+        "height": 2160,
+        "label": "extreme dual-4K-width CSS viewport stress"
+      }
+    ],
+    "responsive-smoke": [
+      {
+        "id": "phone-390x844",
+        "width": 390,
+        "height": 844,
+        "family": "phone",
+        "label": "phone portrait smoke"
+      },
+      {
+        "id": "phone-844x390",
+        "width": 844,
+        "height": 390,
+        "family": "phone",
+        "label": "phone landscape smoke"
+      },
+      {
+        "id": "tablet-820x1106",
+        "width": 820,
+        "height": 1106,
+        "family": "tablet",
+        "label": "tablet portrait smoke"
+      },
+      {
+        "id": "tablet-1204x620",
+        "width": 1204,
+        "height": 620,
+        "family": "tablet",
+        "label": "short tablet landscape smoke"
+      },
+      {
+        "id": "fold-475x605",
+        "width": 475,
+        "height": 605,
+        "family": "foldable",
+        "label": "book fold outer portrait"
+      },
+      {
+        "id": "fold-663x389",
+        "width": 663,
+        "height": 389,
+        "family": "foldable",
+        "label": "book fold outer landscape"
+      },
+      {
+        "id": "fold-704x749",
+        "width": 704,
+        "height": 749,
+        "family": "foldable",
+        "label": "book fold inner portrait"
+      },
+      {
+        "id": "fold-932x520",
+        "width": 932,
+        "height": 520,
+        "family": "foldable",
+        "label": "book fold inner landscape"
+      },
+      {
+        "id": "fold-715x645",
+        "width": 715,
+        "height": 645,
+        "family": "foldable",
+        "label": "compact inner landscape"
+      },
+      {
+        "id": "fold-896x782",
+        "width": 896,
+        "height": 782,
+        "family": "foldable",
+        "label": "tall inner landscape"
+      }
+    ],
+    "apple-2026-geometry": [
+      {
+        "id": "iphone18pro-402x874",
+        "width": 402,
+        "height": 874,
+        "family": "phone",
+        "label": "iPhone 18 Pro portrait synthetic 3x CSS probe (1206x2622 physical / 3)"
+      },
+      {
+        "id": "iphone18pro-874x402",
+        "width": 874,
+        "height": 402,
+        "family": "phone",
+        "label": "iPhone 18 Pro landscape synthetic 3x CSS probe"
+      },
+      {
+        "id": "iphone18promax-440x956",
+        "width": 440,
+        "height": 956,
+        "family": "phone",
+        "label": "iPhone 18 Pro Max portrait synthetic 3x CSS probe (1320x2868 physical / 3)"
+      },
+      {
+        "id": "iphone18promax-956x440",
+        "width": 956,
+        "height": 440,
+        "family": "phone",
+        "label": "iPhone 18 Pro Max landscape synthetic 3x CSS probe"
+      },
+      {
+        "id": "iphoneduo-outer-466x678",
+        "width": 466,
+        "height": 678,
+        "family": "foldable",
+        "label": "iPhone Duo outer portrait synthetic CSS geometry (1398x2034 / inferred 3x)"
+      },
+      {
+        "id": "iphoneduo-outer-678x466",
+        "width": 678,
+        "height": 466,
+        "family": "foldable",
+        "label": "iPhone Duo outer landscape synthetic CSS geometry"
+      },
+      {
+        "id": "iphoneduo-inner-626x890",
+        "width": 626,
+        "height": 890,
+        "family": "foldable",
+        "label": "iPhone Duo inner portrait synthetic CSS geometry (1878x2670 / inferred 3x)"
+      },
+      {
+        "id": "iphoneduo-inner-890x626",
+        "width": 890,
+        "height": 626,
+        "family": "foldable",
+        "label": "iPhone Duo inner landscape synthetic CSS geometry"
+      }
+    ]
+  },
+  "notes": [
+    "Closed clamshell widget/cover displays remain intentionally outside Hero scope.",
+    "Responsive smoke cases are geometry checks only; they do not emulate hardware posture APIs.",
+    "Chromium is the geometry baseline. Firefox and WebKit are compared against Chromium after absolute containment checks.",
+    "The desktop alias selects every desktop-* group, so --group=desktop runs both standard and wide desktop matrices.",
+    "Desktop Hero insets are checked for left/right symmetry and a minimum safe edge clearance.",
+    "The Hero is intentionally inset; width certification compares .hero with its containing first section while horizontal document overflow is checked independently.",
+    "Each browser/viewport run starts in a fresh context at the target geometry so WebKit/WebGL canvas state is not inherited across viewport resizes.",
+    "The 7680x2160 case is an extreme CSS-viewport stress probe, not a claim that physical display resolution maps 1:1 to CSS pixels.",
+    "1920x1080 is the frozen standard-desktop visual anchor; the wide candidate begins at 1921px so phone/tablet/foldable and <=1920px desktop geometry cannot be affected by the candidate.",
+    "Wide-desktop certification now includes minimum visual-scale checks. A run can no longer pass merely because tiny components avoid collisions.",
+    "The 2026 Apple geometry group is CSS-geometry validation, not hardware/browser-chrome emulation. iPhone Duo point sizes are inferred from Apple pixel specifications at 3x until measured Safari/TestMU evidence is available."
+  ],
+  "wideDesktopScale": {
+    "anchorWidth": 1920,
+    "anchorHeight": 1080,
+    "heightScaleMultiplier": 1.215,
+    "maxScale": 1.8,
+    "references": {
+      "heroTitleFont": 80,
+      "certificationTitleFont": 24,
+      "certificationCopyFont": 16,
+      "certificationIcon": 56,
+      "scroll": 50,
+      "bubbleFont": 16,
+      "bubbleAvatar": 50,
+      "socialIcon": 28,
+      "socialsTextFont": 16,
+      "contactGraphic": 150
+    },
+    "portraitHeightRatioMin": 0.75,
+    "shortUltrawide": {
+      "minWidth": 3200,
+      "maxHeight": 1600,
+      "portraitHeightRatioMin": 0.8
+    },
+    "superUltrawide": {
+      "minWidth": 5000,
+      "maxHeight": 1600,
+      "portraitHeightRatioMin": 0.84
+    },
+    "note": "Required scale = min(maxScale, width/1920, (height/1080)*1.215), with a small tolerance. This intentionally catches layouts that are collision-free but visually underscaled. V3 also enforces absolute wide-desktop floors so the first post-1920 cases cannot pass while remaining visually laptop-sized.",
+    "absoluteMinimums": {
+      "heroTitleFont": 84,
+      "certificationTitleFont": 28,
+      "certificationCopyFont": 18,
+      "certificationIcon": 60,
+      "scroll": 54,
+      "bubbleFont": 18,
+      "bubbleAvatar": 54,
+      "socialIcon": 30,
+      "socialsTextFont": 18,
+      "contactGraphic": 160
+    }
+  },
+  "wideDesktopShell": {
+    "edgeGutterMinPx": 32,
+    "edgeGutterViewportRatio": 0.015,
+    "edgeGutterMaxPx": 64,
+    "shellMinPx": 2400,
+    "shellHeightMultiplier": 2.1,
+    "shellMaxPx": 3600,
+    "widthTolerancePx": 4,
+    "note": "The Hero-only shell should use nearly all available width until the height-aware composition cap is reached. This catches the excessive side void that V1 allowed at 3440px+."
+  },
+  "wideDesktopContact": {
+    "circleTextUserFontMax": 22,
+    "circleTextEffectiveToGraphicRatioMax": 0.11,
+    "arrowToGraphicRatioMax": 0.4,
+    "note": "The contact SVG already scales from its 200x200 viewBox. Its internal text and arrow must not receive a second full viewport scale."
+  }
+}

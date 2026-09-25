@@ -1,0 +1,332 @@
+/*
+ * HERO V2 — SHORT PHONE LANDSCAPE SCALE CALIBRATOR V1
+ *
+ * Scope:
+ *   width  <= 1100px
+ *   height <= 355px
+ *   landscape only
+ *
+ * The user's approved 667×356 golden layout in production hero.css is NOT
+ * changed by this candidate.
+ *
+ * Goal:
+ * - proportionally reduce the existing golden component sizes as height falls;
+ * - keep bubble visible during calibration if it can still fit safely;
+ * - keep scroll and contact fully inside Hero / visual viewport;
+ * - preserve person + 3D shape center relationship;
+ * - force the Hero to the REAL dynamic viewport height below the global
+ *   section min-height: 320px floor.
+ *
+ * This is QA-only. Load with --override-css.
+ */
+
+@media (max-width: 1100px) and (max-height: 355px) and (orientation: landscape) {
+  /*
+   * Critical for 200–319px calibration.
+   * src/index.css has section { min-height: 320px; }.
+   * Without this override, a 264px or 200px browser would still lay out a
+   * 320px Hero and bottom controls could appear inside About.
+   */
+  .container > section:first-child {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    scroll-snap-align: start !important;
+  }
+
+  .container > section:first-child > .hero,
+  .hero {
+    height: 100dvh !important;
+    min-height: 0 !important;
+  }
+
+  .hero {
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .heroSection.left,
+  .heroSection.right {
+    position: relative !important;
+    height: 100% !important;
+  }
+
+  /* ---------------------------------------------------------
+     LEFT SIDE — scale from the 356px golden sizes downward
+     --------------------------------------------------------- */
+  .heroSection.left {
+    justify-content: flex-start !important;
+
+    gap:
+      clamp(8px, 4.8svh, 17px) !important;
+  }
+
+  .heroTitle {
+    margin-top:
+      clamp(24px, 14svh, 50px) !important;
+
+    font-size:
+      clamp(20px, 7.9svh, 28px) !important;
+
+    line-height: 1.14 !important;
+  }
+
+  .certifications {
+    width:
+      min(100%, 210px) !important;
+  }
+
+  .certifications h2 {
+    font-size:
+      clamp(10px, 3.66svh, 13px) !important;
+
+    line-height: 1.16 !important;
+  }
+
+  .certifications p {
+    margin:
+      clamp(7px, 4.5svh, 16px)
+      0 !important;
+
+    font-size:
+      clamp(8px, 2.82svh, 10px) !important;
+
+    line-height: 1.18 !important;
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(6px, 2.8svh, 10px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    height:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    padding:
+      clamp(3px, 1.7svh, 6px) !important;
+  }
+
+  /*
+   * Non-negotiable scroll placement.
+   * Do not use translateY here: it can move the painted SVG below Hero.
+   */
+  .scroll {
+    display: block !important;
+
+    position: absolute !important;
+
+    left: 0 !important;
+
+    bottom:
+      clamp(4px, 1.7svh, 7px) !important;
+
+    width: max-content !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+    z-index: 4 !important;
+  }
+
+  .scroll > svg {
+    display: block !important;
+
+    width:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    height:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    transform: none !important;
+  }
+
+  /* ---------------------------------------------------------
+     RIGHT SIDE
+     --------------------------------------------------------- */
+  .heroSection.right {
+    justify-content: flex-start !important;
+  }
+
+  .socials {
+    align-self: flex-end !important;
+
+    gap:
+      clamp(4px, 1.97svh, 7px) !important;
+
+    padding:
+      clamp(4px, 1.41svh, 5px) !important;
+  }
+
+  .socials img {
+    width:
+      clamp(16px, 5.92svh, 21px) !important;
+
+    height:
+      clamp(16px, 5.92svh, 21px) !important;
+  }
+
+  .socialsTextContainer {
+    width:
+      clamp(14px, 4.79svh, 17px) !important;
+
+    height:
+      clamp(14px, 4.79svh, 17px) !important;
+  }
+
+  .socialsText {
+    font-size:
+      clamp(8px, 2.82svh, 10px) !important;
+
+    transform:
+      translateY(
+        clamp(-19px, -5.35svh, -11px)
+      ) !important;
+  }
+
+  /*
+   * Bubble remains present during this first calibration pass.
+   * Its position and internals shrink continuously with height.
+   *
+   * If screenshots / collisions show that it becomes visually unreasonable,
+   * the NEXT iteration can introduce one generalized height cutoff instead of
+   * dozens of device-specific rules.
+   */
+  .bubbleContainer {
+    position: absolute !important;
+
+    right:
+      clamp(28px, 6vw, 56px) !important;
+
+    top:
+      clamp(105px, 55svh, 195px) !important;
+
+    width:
+      clamp(145px, 35vw, 235px) !important;
+
+    display: flex !important;
+
+    gap:
+      clamp(4px, 2.25svh, 8px) !important;
+
+    align-items: end !important;
+
+    transform: none !important;
+
+    z-index: 4 !important;
+  }
+
+  .bubbleContainer img {
+    width:
+      clamp(20px, 8.45svh, 30px) !important;
+
+    height:
+      clamp(20px, 8.45svh, 30px) !important;
+  }
+
+  .bubble {
+    font-size:
+      clamp(7.5px, 2.82svh, 10px) !important;
+
+    line-height: 1.12 !important;
+
+    padding:
+      clamp(4px, 2.25svh, 8px) !important;
+
+    white-space: nowrap !important;
+  }
+
+  /*
+   * Non-negotiable contact placement:
+   * anchor the click target itself to Hero bottom-right.
+   * No margin-top or translateY can push it into About.
+   */
+  .contactButtonLink {
+    position: absolute !important;
+
+    right: 0 !important;
+
+    bottom:
+      max(
+        clamp(4px, 1.4svh, 6px),
+        env(safe-area-inset-bottom, 0px)
+      ) !important;
+
+    width:
+      clamp(46px, 19.72svh, 70px) !important;
+
+    height:
+      clamp(46px, 19.72svh, 70px) !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: 5 !important;
+  }
+
+  .contactButton {
+    position: relative !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  .contactButton > svg {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow svg {
+    width:
+      clamp(18px, 7.04svh, 25px) !important;
+
+    height:
+      clamp(18px, 7.04svh, 25px) !important;
+
+    transform:
+      translate(
+        clamp(-6px, -1.69svh, -3px),
+        clamp(-2px, -0.56svh, -1px)
+      ) !important;
+  }
+
+  /* ---------------------------------------------------------
+     3D SHAPE + PORTRAIT
+     --------------------------------------------------------- */
+  .bg {
+    top: auto !important;
+    bottom: 0 !important;
+
+    /*
+     * 355px -> ~320px (~90% of Hero, matching the golden reference)
+     * 264px -> ~229px
+     * 200px -> ~165px
+     *
+     * So the visual system loses a little more relative height as the browser
+     * becomes extremely short instead of staying a fixed 90% forever.
+     */
+    height:
+      clamp(
+        150px,
+        calc(100svh - 35px),
+        320px
+      ) !important;
+  }
+
+  .hImg img {
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+}

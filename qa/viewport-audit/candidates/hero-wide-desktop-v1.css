@@ -1,0 +1,257 @@
+/* =========================================================
+   HERO — WIDE DESKTOP CANDIDATE V1
+
+   Scope:
+   - landscape CSS viewports wider than 2000px only
+   - leaves phone, tablet, foldable, and standard desktop CSS untouched
+   - breaks ONLY the first/Hero section out of the global 2000px container
+   - does not widen About / Projects / Contact
+
+   Geometry contract:
+   1) At the 2000px handoff, preserve the existing ~48px edge inset.
+   2) From 2001px upward, let the Hero shell use the newly available width.
+   3) Cap the Hero composition with a height-aware 2400–2880px shell so
+      short ultrawides stay cohesive while taller large desktops can grow.
+   4) Scale UI with min(vw, svh) so ultrawide-but-short viewports do not make
+      text/buttons enormous just because width is large.
+   ========================================================= */
+
+@media (min-width: 2001px) and (orientation: landscape) {
+  :root {
+    --wide-hero-edge-gutter:
+      clamp(48px, 1.8vw, 72px);
+
+    /*
+     * Keep 1440/1600-high ultrawides near a ~2400px composition, then let
+     * genuinely taller desktop viewports grow the shell toward 2880px.
+     * This prevents width alone from making a short ultrawide too sparse.
+     */
+    --wide-hero-shell-max:
+      clamp(2400px, 150svh, 2880px);
+  }
+
+  /*
+   * Hero-only breakout.
+   *
+   * The global .container remains capped at 2000px for the rest of the site.
+   * Its content box is centered in the viewport, so centering this wider first
+   * section on the same midpoint keeps the Hero mathematically symmetric.
+   */
+  .container > section:first-child {
+    position: relative;
+    left: 50%;
+
+    width:
+      min(
+        calc(100vw - var(--wide-hero-edge-gutter) - var(--wide-hero-edge-gutter)),
+        var(--wide-hero-shell-max)
+      );
+
+    transform: translateX(-50%);
+  }
+
+  .hero {
+    --wide-title-size:
+      clamp(80px, min(4vw, 7svh), 120px);
+
+    --wide-cert-title-size:
+      clamp(24px, min(1.2vw, 2.1svh), 36px);
+
+    --wide-cert-copy-size:
+      clamp(16px, min(0.8vw, 1.4svh), 24px);
+
+    --wide-cert-icon-size:
+      clamp(56px, min(2.8vw, 4.9svh), 84px);
+
+    --wide-scroll-size:
+      clamp(50px, min(2.5vw, 4.5svh), 76px);
+
+    --wide-bubble-font-size:
+      clamp(16px, min(0.8vw, 1.4svh), 23px);
+
+    --wide-bubble-avatar-size:
+      clamp(50px, min(2.5vw, 4.3svh), 76px);
+
+    --wide-social-icon-size:
+      clamp(28px, min(1.4vw, 2.4svh), 42px);
+
+    --wide-social-font-size:
+      clamp(16px, min(0.8vw, 1.4svh), 22px);
+
+    --wide-social-space:
+      clamp(12px, min(0.6vw, 1svh), 18px);
+
+    --wide-contact-size:
+      clamp(150px, min(7.5vw, 13svh), 220px);
+
+    --wide-contact-arrow-size:
+      clamp(80px, min(4vw, 7svh), 118px);
+
+    --wide-contact-text-size:
+      clamp(20px, min(1vw, 1.7svh), 29px);
+  }
+
+  /* -------------------------
+     LEFT LANE
+     ------------------------- */
+  .heroTitle {
+    margin-top:
+      clamp(50px, min(2.5vw, 4.2svh), 80px);
+
+    font-size:
+      var(--wide-title-size);
+  }
+
+  .certifications h2 {
+    font-size:
+      var(--wide-cert-title-size);
+  }
+
+  .certifications p {
+    margin-block:
+      clamp(16px, min(0.8vw, 1.4svh), 24px);
+
+    font-size:
+      var(--wide-cert-copy-size);
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(10px, min(0.55vw, 0.95svh), 16px);
+  }
+
+  .certificationsImages img {
+    width:
+      var(--wide-cert-icon-size);
+
+    height:
+      var(--wide-cert-icon-size);
+
+    padding:
+      clamp(8px, min(0.4vw, 0.7svh), 12px);
+  }
+
+  .scroll {
+    margin-bottom:
+      clamp(50px, min(2.5vw, 4.2svh), 80px);
+  }
+
+  .scroll > svg {
+    width:
+      var(--wide-scroll-size);
+
+    height:
+      var(--wide-scroll-size);
+  }
+
+  /* -------------------------
+     RIGHT LANE — SOCIALS
+     ------------------------- */
+  .socials {
+    gap:
+      var(--wide-social-space);
+
+    padding:
+      var(--wide-social-space);
+  }
+
+  .socials img {
+    width:
+      var(--wide-social-icon-size);
+
+    height:
+      var(--wide-social-icon-size);
+  }
+
+  .socialsTextContainer {
+    width:
+      var(--wide-social-icon-size);
+
+    height:
+      var(--wide-social-icon-size);
+  }
+
+  .socialsText {
+    height:
+      var(--wide-social-icon-size);
+
+    font-size:
+      var(--wide-social-font-size);
+
+    transform:
+      translateY(calc(0px - var(--wide-social-icon-size)));
+
+    padding-inline:
+      clamp(8px, min(0.4vw, 0.7svh), 12px);
+  }
+
+  /* -------------------------
+     RIGHT LANE — SPEECH
+     ------------------------- */
+  .bubbleContainer {
+    width:
+      min(60%, 760px);
+
+    gap:
+      clamp(8px, min(0.4vw, 0.7svh), 12px);
+  }
+
+  .bubble {
+    padding:
+      clamp(20px, min(1vw, 1.7svh), 30px);
+
+    font-size:
+      var(--wide-bubble-font-size);
+
+    border-radius:
+      clamp(20px, min(1vw, 1.7svh), 30px)
+      clamp(20px, min(1vw, 1.7svh), 30px)
+      0
+      clamp(20px, min(1vw, 1.7svh), 30px);
+  }
+
+  .bubbleContainer img {
+    width:
+      var(--wide-bubble-avatar-size);
+
+    height:
+      var(--wide-bubble-avatar-size);
+  }
+
+  /* -------------------------
+     RIGHT LANE — CONTACT
+     ------------------------- */
+  .contactButtonLink {
+    margin-bottom:
+      clamp(50px, min(2.5vw, 4.2svh), 80px);
+  }
+
+  .contactButton > svg {
+    width:
+      var(--wide-contact-size);
+
+    height:
+      var(--wide-contact-size);
+  }
+
+  .circleText {
+    font-size:
+      var(--wide-contact-text-size);
+  }
+
+  .arrow {
+    width:
+      var(--wide-contact-size);
+
+    height:
+      var(--wide-contact-size);
+  }
+
+  .arrow svg {
+    width:
+      var(--wide-contact-arrow-size);
+
+    height:
+      var(--wide-contact-arrow-size);
+  }
+}

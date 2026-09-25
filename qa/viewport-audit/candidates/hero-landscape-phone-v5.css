@@ -1,0 +1,598 @@
+/*
+ * HERO V2 — PHONE LANDSCAPE CANDIDATE V5
+ *
+ * USER-APPROVED STRUCTURAL RULES
+ * --------------------------------
+ * Phone-landscape geometry only:
+ *   width  <= 1100px
+ *   height <= 500px
+ *
+ * SHORT FAMILY:
+ *   height <= 355px
+ *   - smaller title / certification typography
+ *   - smaller certification icons
+ *   - smaller 3D background shape
+ *   - NO bubble
+ *   - NO scroll SVG
+ *   - contact control square, centered, bottom-right
+ *
+ * NORMAL FAMILY:
+ *   height >= 356px
+ *   - bubble MUST display
+ *   - scroll SVG MUST display
+ *   - no final visual golden approved yet; screenshots still require review
+ *
+ * The portrait PNG and 3D shape stay on the same horizontal center axis.
+ * No device names or release years are used.
+ *
+ * QA-only candidate. Load with --override-css.
+ */
+
+@media (max-width: 1100px) and (max-height: 500px) and (orientation: landscape) {
+  .container > section:first-child {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    scroll-snap-align: start !important;
+  }
+
+  .container > section:first-child > .hero {
+    height: 100dvh !important;
+    min-height: 0 !important;
+  }
+
+  .hero {
+    position: relative !important;
+    display: block !important;
+    overflow: hidden !important;
+
+    --landscape-corner-gap:
+      clamp(4px, 1.8svh, 8px);
+
+    --landscape-contact-size:
+      clamp(64px, 22svh, 84px);
+  }
+
+  /* ---------------------------------------------------------
+     LEFT CONTENT LANE
+     --------------------------------------------------------- */
+  .heroSection.left {
+    position: absolute !important;
+    inset: 0 auto 0 0 !important;
+
+    width:
+      clamp(180px, 29%, 285px) !important;
+
+    height: 100% !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+
+    padding:
+      clamp(10px, 3svh, 16px)
+      0
+      clamp(8px, 2.5svh, 14px) !important;
+
+    gap: 0 !important;
+
+    z-index: 2 !important;
+  }
+
+  .heroTitle {
+    position: relative !important;
+
+    align-self: flex-start !important;
+
+    width: max-content !important;
+    max-width: 100% !important;
+
+    margin: 0 !important;
+
+    font-size:
+      clamp(
+        32px,
+        min(9.6svh, 4.9vw),
+        46px
+      ) !important;
+
+    line-height: 1.12 !important;
+
+    white-space: nowrap !important;
+
+    z-index: 2 !important;
+  }
+
+  .certifications {
+    position: relative !important;
+
+    width: 100% !important;
+
+    margin:
+      clamp(18px, 5.8svh, 26px)
+      0
+      0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    gap:
+      clamp(8px, 2.2svh, 10px) !important;
+
+    z-index: 2 !important;
+  }
+
+  .certifications h2,
+  .certifications p,
+  .certificationsImages {
+    margin: 0 !important;
+  }
+
+  .certifications h2 {
+    width: 100% !important;
+
+    font-size:
+      clamp(15px, 4.4svh, 19px) !important;
+
+    line-height: 1.18 !important;
+  }
+
+  .certifications p {
+    font-size:
+      clamp(10.5px, 3.1svh, 13px) !important;
+
+    line-height: 1.22 !important;
+  }
+
+  .certificationsImages {
+    display: flex !important;
+
+    gap:
+      clamp(7px, 1vw, 10px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      clamp(32px, 10svh, 42px) !important;
+
+    height:
+      clamp(32px, 10svh, 42px) !important;
+
+    padding:
+      clamp(4px, 1.5svh, 7px) !important;
+  }
+
+  /* Normal family enables this. Short family explicitly hides it. */
+  .scroll {
+    position: relative !important;
+
+    width: max-content !important;
+
+    margin:
+      auto
+      0
+      0 !important;
+
+    transform: none !important;
+
+    z-index: 2 !important;
+  }
+
+  .scroll > svg {
+    transform: none !important;
+  }
+
+  /* ---------------------------------------------------------
+     RIGHT CONTROL LAYER
+     --------------------------------------------------------- */
+  .heroSection.right {
+    position: absolute !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    display: block !important;
+
+    z-index: 3 !important;
+  }
+
+  .socials {
+    position: absolute !important;
+
+    top: 0 !important;
+    right: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    gap:
+      clamp(5px, 1.8svh, 8px) !important;
+
+    padding:
+      clamp(5px, 1.7svh, 7px) !important;
+
+    z-index: 5 !important;
+  }
+
+  .socials img {
+    width:
+      clamp(20px, 7svh, 26px) !important;
+
+    height:
+      clamp(20px, 7svh, 26px) !important;
+  }
+
+  .socialsTextContainer {
+    width:
+      clamp(17px, 5.3svh, 20px) !important;
+
+    height:
+      clamp(17px, 5.3svh, 20px) !important;
+  }
+
+  .socialsText {
+    font-size:
+      clamp(10px, 3.3svh, 12px) !important;
+
+    transform:
+      translateY(
+        clamp(-22px, -6svh, -18px)
+      ) !important;
+  }
+
+  /* ---------------------------------------------------------
+     SHAPE + PORTRAIT
+     --------------------------------------------------------- */
+  .bg {
+    position: absolute !important;
+
+    top: 0 !important;
+    bottom: 0 !important;
+    left:
+      calc(-1 * var(--page-gutter)) !important;
+    right: auto !important;
+
+    width:
+      calc(
+        100% + (2 * var(--page-gutter))
+      ) !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+
+    z-index: 0 !important;
+  }
+
+  .bg > canvas {
+    transform-origin:
+      center center !important;
+  }
+
+  .hImg {
+    position: absolute !important;
+
+    left: 50% !important;
+    right: auto !important;
+    top: 0 !important;
+    bottom: 0 !important;
+
+    width:
+      clamp(280px, 42vw, 400px) !important;
+
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    transform:
+      translateX(-50%) !important;
+  }
+
+  .hImg img {
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: contain !important;
+    object-position:
+      center bottom !important;
+  }
+
+  /* ---------------------------------------------------------
+     CONTACT — true square control at Hero bottom-right
+     --------------------------------------------------------- */
+  .contactButtonLink {
+    position: absolute !important;
+
+    right: 0 !important;
+
+    bottom:
+      max(
+        var(--landscape-corner-gap),
+        env(safe-area-inset-bottom, 0px)
+      ) !important;
+
+    width:
+      var(--landscape-contact-size) !important;
+
+    height:
+      var(--landscape-contact-size) !important;
+
+    display: block !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    z-index: 5 !important;
+  }
+
+  .contactButton {
+    position: relative !important;
+
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .contactButton > svg {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  .arrow {
+    position: absolute !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    margin: 0 !important;
+  }
+
+  .arrow svg {
+    display: block !important;
+
+    width:
+      clamp(24px, 7.5svh, 32px) !important;
+
+    height:
+      clamp(24px, 7.5svh, 32px) !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+  }
+
+  /* Default hidden; normal family explicitly restores it. */
+  .bubbleContainer {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   FAMILY A — SHORT PHONE LANDSCAPE
+   height <= 355px
+
+   This is the current visual tuning target.
+   ========================================================= */
+@media (max-width: 1100px) and (max-height: 355px) and (orientation: landscape) {
+  .heroSection.left {
+    width:
+      clamp(155px, 27%, 220px) !important;
+
+    padding:
+      clamp(8px, 2.4svh, 11px)
+      0
+      clamp(7px, 2.1svh, 10px) !important;
+  }
+
+  .heroTitle {
+    font-size:
+      clamp(
+        26px,
+        min(8svh, 4.35vw),
+        34px
+      ) !important;
+
+    line-height: 1.12 !important;
+  }
+
+  .certifications {
+    margin:
+      clamp(14px, 4.5svh, 18px)
+      0
+      0 !important;
+
+    gap:
+      clamp(6px, 2svh, 8px) !important;
+  }
+
+  .certifications h2 {
+    font-size:
+      clamp(12.5px, 3.8svh, 15px) !important;
+
+    line-height: 1.18 !important;
+  }
+
+  .certifications p {
+    font-size:
+      clamp(9px, 2.7svh, 11px) !important;
+
+    line-height: 1.22 !important;
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(6px, 0.9vw, 8px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      clamp(25px, 8.5svh, 30px) !important;
+
+    height:
+      clamp(25px, 8.5svh, 30px) !important;
+
+    padding:
+      clamp(3px, 1.1svh, 4px) !important;
+  }
+
+  /*
+   * Short family:
+   * no bubble and no scroll SVG.
+   */
+  .scroll,
+  .scroll > svg,
+  .bubbleContainer {
+    display: none !important;
+  }
+
+  /*
+   * Make the 3D shape visually smaller.
+   * Portrait stays independently centered / bottom-aligned.
+   */
+  .bg > canvas {
+    transform:
+      scale(0.82) !important;
+  }
+
+  .hImg {
+    width:
+      clamp(225px, 39vw, 315px) !important;
+  }
+
+  .hero {
+    --landscape-contact-size:
+      clamp(54px, 17svh, 66px);
+  }
+
+  .arrow svg {
+    width:
+      clamp(20px, 6.8svh, 26px) !important;
+
+    height:
+      clamp(20px, 6.8svh, 26px) !important;
+  }
+
+  .socials {
+    gap:
+      clamp(4px, 1.4svh, 6px) !important;
+
+    padding:
+      clamp(4px, 1.3svh, 6px) !important;
+  }
+
+  .socials img {
+    width:
+      clamp(18px, 6.5svh, 22px) !important;
+
+    height:
+      clamp(18px, 6.5svh, 22px) !important;
+  }
+
+  .socialsTextContainer {
+    width:
+      clamp(16px, 5svh, 18px) !important;
+
+    height:
+      clamp(16px, 5svh, 18px) !important;
+  }
+
+  .socialsText {
+    font-size:
+      clamp(9px, 3svh, 10.5px) !important;
+  }
+}
+
+/* =========================================================
+   FAMILY B — NORMAL PHONE LANDSCAPE
+   height >= 356px
+
+   No final visual golden has been approved yet.
+   Required elements are restored for screenshot review.
+   ========================================================= */
+@media (max-width: 1100px) and (min-height: 356px) and (max-height: 500px) and (orientation: landscape) {
+  .scroll {
+    display: block !important;
+  }
+
+  .scroll > svg {
+    display: block !important;
+
+    width:
+      clamp(30px, 10svh, 42px) !important;
+
+    height:
+      clamp(30px, 10svh, 42px) !important;
+  }
+
+  .bubbleContainer {
+    position: absolute !important;
+
+    top:
+      clamp(18px, 6svh, 30px) !important;
+
+    right:
+      clamp(46px, 6vw, 70px) !important;
+
+    display: flex !important;
+    align-items: end !important;
+
+    width:
+      clamp(225px, 34vw, 260px) !important;
+
+    gap: 5px !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+    z-index: 5 !important;
+  }
+
+  .bubble {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+
+    padding: 6px 8px !important;
+
+    font-size:
+      clamp(8.5px, 2.6svh, 10px) !important;
+
+    line-height: 1.16 !important;
+
+    white-space: nowrap !important;
+  }
+
+  .bubbleContainer img {
+    flex:
+      0 0
+      clamp(22px, 6.5svh, 26px) !important;
+
+    width:
+      clamp(22px, 6.5svh, 26px) !important;
+
+    height:
+      clamp(22px, 6.5svh, 26px) !important;
+  }
+}

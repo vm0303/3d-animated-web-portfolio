@@ -1,0 +1,101 @@
+/* =========================================================
+   HERO — NARROW TALL LANDSCAPE BRIDGE (V1)
+
+   Purpose:
+   - Cover geometries like the synthetic iPhone Duo outer landscape
+     probe (678x466) without reopening the frozen normal phone-landscape
+     family.
+   - Keep the existing <=666px folded-outer finish untouched.
+   - Geometry only: no device-name selector.
+
+   Why this envelope is narrow:
+   - width 667–700px sits immediately above the approved folded-outer
+     rule that ends at 666px;
+   - height 430–500px excludes ordinary short phone landscapes;
+   - max aspect ratio 3/2 selects unusually tall/narrow landscape
+     canvases rather than conventional slab-phone landscape geometry.
+   ========================================================= */
+@media
+  (min-width: 667px)
+  and (max-width: 700px)
+  and (min-height: 430px)
+  and (max-height: 500px)
+  and (max-aspect-ratio: 3 / 2)
+  and (orientation: landscape) {
+
+  /* Give the certification copy enough horizontal measure to remain
+     visually aligned instead of inheriting the generic 35% lane width. */
+  .certifications {
+    width: min(52%, 165px) !important;
+    max-width: 165px !important;
+  }
+
+  .certifications h2 {
+    font-size: 18px !important;
+    line-height: 1.16 !important;
+    white-space: nowrap !important;
+  }
+
+  .certifications p {
+    margin: 12px 0 !important;
+    font-size: 14px !important;
+    line-height: 1.18 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Slightly reduce badge weight so the wider copy lane and central art
+     retain separation at this unusually compact landscape width. */
+  .certificationsImages {
+    gap: 8px !important;
+  }
+
+  .certificationsImages img {
+    width: 42px !important;
+    height: 42px !important;
+    padding: 7px !important;
+  }
+
+  /* Increase speech-bubble measure rather than shrinking its type to fit. */
+  .bubbleContainer {
+    width: 80% !important;
+    gap: 7px !important;
+    transform: none !important;
+  }
+
+  .bubble {
+    height: auto !important;
+    font-size: 11px !important;
+    line-height: 1.06 !important;
+    padding-block: 10px !important;
+    padding-inline: 10px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Keep the avatar subordinate to the newly widened text bubble. */
+  .bubbleContainer img {
+    width: 36px !important;
+    height: 36px !important;
+    flex: 0 0 36px !important;
+  }
+
+  /* Reduce the central visual just enough to return horizontal breathing
+     room to both text lanes. The generic 678x466 state is ~430px bg and
+     ~322.5px portrait height; this targets ~410px / ~287px. */
+  .bg {
+    top: auto !important;
+    bottom: 0 !important;
+    height: clamp(395px, calc(100svh - 56px), 410px) !important;
+  }
+
+  .hImg {
+    height: 68% !important;
+  }
+
+  .hImg img {
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+}

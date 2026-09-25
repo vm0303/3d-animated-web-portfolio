@@ -1,0 +1,344 @@
+{
+  "version": 2,
+  "scope": {
+    "selectionBasis": "css-viewport-geometry",
+    "phoneShortEdgeMax": 500,
+    "notes": "No release-year ceiling and no device-name filtering. A capture is eligible for the phone composition phase when its measured CSS viewport short edge is <= 500px. Current TestMU slab-phone evidence tops out at 448px; the next observed non-phone/open-device cluster starts at 520px, leaving a geometry-based safety gap. 2026 iPhone 18 Pro / Pro Max CSS geometries are included as explicit synthetic sentinels; production selection remains geometry-based rather than device-named."
+  },
+  "portrait": {
+    "pressureBands": [
+      {
+        "id": "EXTREME_SHORT",
+        "maxHeight": 600
+      },
+      {
+        "id": "SEVERE_SHORT",
+        "minHeight": 601,
+        "maxHeight": 680
+      },
+      {
+        "id": "COMPACT",
+        "minHeight": 681,
+        "maxHeight": 730
+      },
+      {
+        "id": "NORMAL",
+        "minHeight": 731,
+        "maxHeight": 800
+      },
+      {
+        "id": "TALL",
+        "minHeight": 801
+      }
+    ],
+    "bubbleHiddenBands": [
+      "EXTREME_SHORT",
+      "SEVERE_SHORT"
+    ],
+    "gaps": {
+      "titleToCertifications": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 28,
+        "reviewMax": 42
+      },
+      "certificationsToBubble": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 30,
+        "reviewMax": 48
+      },
+      "bubbleToScroll": {
+        "hardMin": 0,
+        "idealMin": 8,
+        "idealMax": 24,
+        "reviewMax": 36
+      },
+      "scrollToImage": {
+        "hardMin": 0,
+        "idealMin": 12,
+        "idealMax": 44,
+        "reviewMax": 64
+      }
+    }
+  },
+  "landscape": {
+    "pressureBands": [
+      {
+        "id": "EXTREME_SHORT",
+        "maxHeight": 285
+      },
+      {
+        "id": "SEVERE_SHORT",
+        "minHeight": 286,
+        "maxHeight": 320
+      },
+      {
+        "id": "COMPACT",
+        "minHeight": 321,
+        "maxHeight": 352
+      },
+      {
+        "id": "NORMAL",
+        "minHeight": 353
+      }
+    ],
+    "zones": {
+      "leftMaxRatio": 0.5,
+      "rightMinRatio": 0.5,
+      "upperMaxRatio": 0.48,
+      "lowerMinRatio": 0.52
+    },
+    "bubbleHiddenBands": [],
+    "imageBackgroundAlignment": {
+      "reviewAboveHeroWidthRatio": 0.025,
+      "failAboveHeroWidthRatio": 0.05
+    },
+    "certificationInternalGaps": {
+      "titleToTextHardMin": 3,
+      "textToBadgesHardMin": 4
+    },
+    "bubbleMinViewportWidth": 0,
+    "titleMaxApproxLines": 2.2,
+    "phoneViewportScope": {
+      "maxWidth": 1100,
+      "maxHeight": 500,
+      "basis": "CSS viewport geometry only",
+      "note": "Current measured phone-landscape evidence ends at 980px wide; 1100px preserves future headroom while remaining below the current tablet-landscape cluster around 1204px+."
+    },
+    "goldenFamilies": {
+      "short": {
+        "maxHeight": 355,
+        "reference": "667x350",
+        "bubble": "hidden at <=240px; visible above 240px when content fits"
+      },
+      "normal": {
+        "minHeight": 356,
+        "bubble": "visible when content fits"
+      }
+    },
+    "bubbleMinViewportHeight": 241
+  },
+  "socials": {
+    "topReviewMax": 28,
+    "rightReviewMax": 64,
+    "centerXSpreadMax": 8,
+    "viewportRightReviewMax": 18,
+    "heroRightReviewMax": 4,
+    "viewportRightIdealMin": 10,
+    "viewportRightIdealMax": 28
+  },
+  "contact": {
+    "bottomReviewMax": 36,
+    "rightReviewMax": 36,
+    "rotationSafetyPx": 1,
+    "viewportRightIdealMax": 24,
+    "viewportBottomIdealMax": 30,
+    "heroRightIdealMin": 0,
+    "heroRightIdealMax": 18,
+    "heroBottomIdealMin": 0,
+    "heroBottomIdealMax": 36
+  },
+  "bubble": {
+    "requireSingleLine": true,
+    "horizontalTolerancePx": 1
+  },
+  "synthetic": {
+    "portraitWidths": [
+      360,
+      390,
+      430,
+      448,
+      500
+    ],
+    "portraitBoundaries": [
+      600,
+      680,
+      730,
+      800
+    ],
+    "landscapeWidths": [
+      667,
+      844,
+      956
+    ],
+    "landscapeBoundaries": [
+      285,
+      320,
+      352
+    ],
+    "fuzzOffsets": [
+      -2,
+      -1,
+      0,
+      1,
+      2
+    ],
+    "sentinels": [
+      {
+        "width": 360,
+        "height": 624,
+        "orientation": "portrait",
+        "label": "360 severe low"
+      },
+      {
+        "width": 360,
+        "height": 664,
+        "orientation": "portrait",
+        "label": "360 severe measured"
+      },
+      {
+        "width": 360,
+        "height": 672,
+        "orientation": "portrait",
+        "label": "360 severe high"
+      },
+      {
+        "width": 360,
+        "height": 681,
+        "orientation": "portrait",
+        "label": "360 compact boundary"
+      },
+      {
+        "width": 360,
+        "height": 700,
+        "orientation": "portrait",
+        "label": "360 compact interpolation"
+      },
+      {
+        "width": 360,
+        "height": 780,
+        "orientation": "portrait",
+        "label": "360 normal stress"
+      },
+      {
+        "width": 667,
+        "height": 280,
+        "orientation": "landscape",
+        "label": "landscape extreme sentinel"
+      },
+      {
+        "width": 728,
+        "height": 272,
+        "orientation": "landscape",
+        "label": "landscape extreme measured-like"
+      },
+      {
+        "width": 750,
+        "height": 334,
+        "orientation": "landscape",
+        "label": "landscape compact sentinel"
+      },
+      {
+        "width": 844,
+        "height": 340,
+        "orientation": "landscape",
+        "label": "landscape compact wide"
+      },
+      {
+        "width": 956,
+        "height": 376,
+        "orientation": "landscape",
+        "label": "landscape normal wide"
+      },
+      {
+        "width": 500,
+        "height": 960,
+        "orientation": "portrait",
+        "label": "future wide-phone portrait sentinel"
+      },
+      {
+        "width": 667,
+        "height": 350,
+        "orientation": "landscape",
+        "label": "landscape short golden 667x350"
+      },
+      {
+        "width": 402,
+        "height": 874,
+        "orientation": "portrait",
+        "label": "2026 iPhone 18 Pro portrait synthetic 3x CSS probe (1206x2622 physical / 3)"
+      },
+      {
+        "width": 874,
+        "height": 402,
+        "orientation": "landscape",
+        "label": "2026 iPhone 18 Pro landscape synthetic 3x CSS probe"
+      },
+      {
+        "width": 440,
+        "height": 956,
+        "orientation": "portrait",
+        "label": "2026 iPhone 18 Pro Max portrait synthetic 3x CSS probe (1320x2868 physical / 3)"
+      },
+      {
+        "width": 956,
+        "height": 440,
+        "orientation": "landscape",
+        "label": "2026 iPhone 18 Pro Max landscape synthetic 3x CSS probe"
+      }
+    ]
+  },
+  "image": {
+    "cropReviewAboveFraction": 0.02,
+    "cropFailAboveFraction": 0.05
+  },
+  "visualViewport": {
+    "heroStartTolerancePx": 2,
+    "contactBelowReviewPx": 1,
+    "contactBelowFailPx": 8,
+    "nextSectionVisibleReviewPx": 1,
+    "nextSectionVisibleFailPx": 8
+  },
+  "landscapeShortSweep": {
+    "widths": [
+      667,
+      720,
+      844,
+      956,
+      980
+    ],
+    "heights": [
+      200,
+      220,
+      240,
+      260,
+      280,
+      300,
+      320,
+      340,
+      350,
+      355
+    ],
+    "includeMeasuredThroughHeight": 355,
+    "bubblePolicy": "hide-at-or-below-240-show-above-240",
+    "requiredElements": [
+      "scroll",
+      "contact"
+    ],
+    "note": "Focused calibration mode for phone landscape heights 200\u2013355px. Measured TestMU cases through 355px are included alongside synthetic stress probes. The approved V7 policy hides Bubble only at <=240px; above 240px Bubble is expected to remain visible when it fits without collision/overflow.",
+    "visualContract": {
+      "leftJustifyContent": "space-between",
+      "bubbleMaxRightSectionWidthRatio": 0.75,
+      "certTitleToTextMin": 5,
+      "certTextToBadgesMin": 5,
+      "contactArrowContainmentTolerancePx": 1.5,
+      "note": "The approved V7 short-family override keeps the current Hero.jsx DOM unchanged and scales the social rail, icons, FOLLOW ME container/text, Bubble, Scroll, and Contact as one generalized short-height composition.",
+      "socialsTextCenterTolerancePx": 1.5,
+      "socialRailRule": "Scale outer rail, three social icons, text container and FOLLOW ME text proportionally with height. FOLLOW ME must remain vertically oriented and centered on its socialsTextContainer.",
+      "socialLabelContainmentTolerancePx": 1.5,
+      "socialSequenceMinGapPx": 1.0,
+      "contactArrowCenterTolerancePx": 1.0,
+      "rules": [
+        "The three social icons and FOLLOW ME must remain one vertical non-overlapping sequence.",
+        "The painted FOLLOW ME label must be contained by socialsTextContainer.",
+        "The painted FOLLOW ME label and the full Socials rail must not overlap Bubble or Contact.",
+        "Contact arrow must be centered on the contact circle using the portrait-style structural centering pattern."
+      ]
+    },
+    "bubbleCalibration": {
+      "hideAtOrBelow": 240,
+      "policy": "Approved V7 policy: hide Bubble at <=240px; show above 240px when it fits. No width-based hide rule applies inside the approved phone-landscape envelope."
+    }
+  }
+}

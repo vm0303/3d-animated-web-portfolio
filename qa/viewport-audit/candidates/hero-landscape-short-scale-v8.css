@@ -1,0 +1,567 @@
+/*
+ * HERO V2 — SHORT PHONE LANDSCAPE SCALE CALIBRATOR V6
+ *
+ * Scope:
+ *   width  <= 1100px
+ *   height <= 355px
+ *   landscape only
+ *
+ * This candidate is deliberately layered on top of the current production
+ * hero.css. V7 keeps the CURRENT Hero.jsx DOM unchanged: the three social
+ * links and .socialsTextContainer are children of .socials. The reference
+ * appearance is produced with CSS paint/layout only while QA calibration is
+ * still candidate-first.
+ *
+ * Visual rules:
+ * - .heroSection.left keeps justify-content: space-between.
+ * - title / certifications / scroll scale down with height.
+ * - bubble keeps its EXISTING production width (71% in the <=780 golden rule,
+ *   60% from base styles above that). V2 never overrides bubble width.
+ * - only the most extreme synthetic heights (<=240px) hide the bubble.
+ * - contact circle + arrow scale from one shared size variable so the artwork
+ *   remains together.
+ * - socials preserve the reference format: dark icon rail first, blue FOLLOW ME
+ *   tab below it with a small overlap.
+ * - scroll and contact remain inside the actual 100dvh Hero.
+ *
+ * QA-only. Load with --override-css.
+ */
+
+@media (max-width: 1100px) and (max-height: 355px) and (orientation: landscape) {
+  /*
+   * Critical below 320px: the global section min-height must not make the Hero
+   * taller than the browser-visible landscape viewport.
+   */
+  .container > section:first-child {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    scroll-snap-align: start !important;
+  }
+
+  .container > section:first-child > .hero,
+  .hero {
+    height: 100dvh !important;
+    min-height: 0 !important;
+  }
+
+  .hero {
+    position: relative !important;
+    overflow: hidden !important;
+
+    /*
+     * 355px -> 70px (matches the approved 356px contact scale)
+     * 264px -> ~52px
+     * 200px -> 46px floor
+     */
+    --short-contact-size:
+      clamp(46px, 19.72svh, 70px);
+
+    --short-social-icon:
+      clamp(13px, 5.92svh, 21px);
+
+    --short-social-gap:
+      clamp(3px, 1.97svh, 7px);
+
+    --short-social-pad:
+      clamp(3px, 1.41svh, 5px);
+
+    --short-social-font:
+      clamp(8px, 2.82svh, 10px);
+
+    --short-social-text-pad:
+      clamp(5px, 2.25svh, 8px);
+
+    /*
+     * Real vertical breathing room after Instagram. This is IN ADDITION to the
+     * normal flex gap and is intentionally positive; V5 used a negative margin
+     * here and every one of the 92 short-sweep cases overlapped Instagram.
+     */
+    --short-social-label-extra-gap:
+      clamp(4px, 1.8svh, 7px);
+
+    /*
+     * The navy icon rail visually continues a short distance behind the top of
+     * the blue FOLLOW ME tab, matching the supplied reference screenshot. This
+     * is paint-only overlap; the Instagram-to-label layout gap stays positive.
+     */
+    --short-social-navy-tab-overlap:
+      clamp(10px, 5svh, 18px);
+
+    /*
+     * At 200-260px heights the 8px FOLLOW ME text + horizontal padding paints
+     * about 54px tall after rotation. V5's 50px floor caused the remaining 21
+     * containment failures. Reserve a little real room around that painted box.
+     */
+    --short-social-label-height:
+      clamp(56px, 20svh, 71px);
+  }
+
+  /* =========================================================
+     LEFT LANE — preserve the original even flex distribution
+     ========================================================= */
+  .heroSection.left {
+    height: 100% !important;
+
+    justify-content:
+      space-between !important;
+
+    /*
+     * This remains only a minimum separation. space-between distributes the
+     * remaining vertical room evenly between title / certifications / scroll.
+     */
+    gap:
+      clamp(8px, 4.8svh, 17px) !important;
+  }
+
+  .heroTitle {
+    margin-top:
+      clamp(22px, 14svh, 50px) !important;
+
+    font-size:
+      clamp(20px, 7.9svh, 28px) !important;
+
+    line-height: 1.14 !important;
+  }
+
+  /*
+   * Do NOT change .certifications width. Keep the production composition and
+   * only scale the text/icons vertically.
+   */
+  .certifications h2 {
+    font-size:
+      clamp(10px, 3.66svh, 13px) !important;
+
+    line-height: 1.16 !important;
+  }
+
+  .certifications p {
+    margin:
+      clamp(5px, 4.5svh, 16px)
+      0 !important;
+
+    font-size:
+      clamp(8px, 2.82svh, 10px) !important;
+
+    line-height: 1.18 !important;
+  }
+
+  .certificationsImages {
+    gap:
+      clamp(6px, 2.8svh, 10px) !important;
+  }
+
+  .certificationsImages img {
+    width:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    height:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    /*
+     * Preserve the original white-circle visual while allowing the icon shell
+     * to shrink with height.
+     */
+    padding:
+      clamp(3px, 1.69svh, 6px) !important;
+  }
+
+  /*
+   * Keep scroll as the third flex child. No absolute positioning: the left
+   * lane's space-between distribution places it naturally at the bottom.
+   */
+  .scroll {
+    display: block !important;
+
+    margin-bottom:
+      clamp(16px, 14svh, 50px) !important;
+
+    width: max-content !important;
+  }
+
+  .scroll > svg {
+    display: block !important;
+
+    width:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    height:
+      clamp(24px, 9.86svh, 35px) !important;
+
+    /*
+     * Scale the approved +25px golden offset down instead of replacing the
+     * scroll with a completely different positioning model.
+     */
+    transform:
+      translateY(
+        clamp(8px, 7.04svh, 25px)
+      ) !important;
+  }
+
+  /* =========================================================
+     SOCIAL RAIL — current DOM, reference visual
+
+     CURRENT Hero.jsx (do not change during candidate calibration):
+
+       .socials
+         GitHub
+         LinkedIn
+         Instagram
+         .socialsTextContainer
+           .socialsText  (FOLLOW ME)
+
+     V7 keeps the V6 structure without inventing a .socialsContainer wrapper:
+     - .socials stays the real flex/layout container.
+     - its production navy background becomes transparent.
+     - ::before paints ONLY the navy icon rail, plus a short decorative tail
+       behind the top of the blue tab.
+     - FOLLOW ME remains a real fourth flex child with positive separation from
+       Instagram and a container tall enough to hold the rotated painted label.
+     ========================================================= */
+
+  .socials {
+    position: relative !important;
+    isolation: isolate !important;
+
+    flex: 0 0 auto !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    gap:
+      var(--short-social-gap) !important;
+
+    padding:
+      var(--short-social-pad) !important;
+
+    margin: 0 !important;
+
+    /* Paint the icon rail separately so navy does not fill the full label box. */
+    background-color: transparent !important;
+
+    z-index: 6 !important;
+  }
+
+  .socials::before {
+    content: "" !important;
+    position: absolute !important;
+    z-index: 0 !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    /*
+     * top padding
+     * + 3 exact icon rows
+     * + 3 normal flex gaps (including the Instagram -> label-container gap)
+     * + the label's extra breathing room
+     * + a short navy tail behind the top of the blue tab.
+     */
+    height: calc(
+      var(--short-social-pad)
+      + var(--short-social-icon)
+      + var(--short-social-icon)
+      + var(--short-social-icon)
+      + var(--short-social-gap)
+      + var(--short-social-gap)
+      + var(--short-social-gap)
+      + var(--short-social-label-extra-gap)
+      + var(--short-social-navy-tab-overlap)
+    ) !important;
+
+    background-color: #010134 !important;
+    border-bottom-right-radius: 10px !important;
+
+    pointer-events: none !important;
+  }
+
+  .socials > a,
+  .socialsTextContainer {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  /* Remove inline-anchor line-box height so the rail geometry equals the icons. */
+  .socials > a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width:
+      var(--short-social-icon) !important;
+
+    height:
+      var(--short-social-icon) !important;
+
+    line-height: 0 !important;
+  }
+
+  .socials img {
+    display: block !important;
+
+    width:
+      var(--short-social-icon) !important;
+
+    height:
+      var(--short-social-icon) !important;
+  }
+
+  .socialsTextContainer {
+    /*
+     * V7 visual micro-calibration: the blue FOLLOW ME tab reads about 1px left
+     * of the navy icon rail in the rendered landscape screenshots. Shift the
+     * real label container (and therefore its text) together by exactly 1px.
+     * This preserves V6's vertical gap and containment geometry.
+     */
+    transform: translateX(1px) !important;
+
+    width:
+      var(--short-social-icon) !important;
+
+    height:
+      var(--short-social-label-height) !important;
+
+    flex:
+      0 0
+      var(--short-social-label-height) !important;
+
+    /* V5 had a NEGATIVE margin here. V6 deliberately creates real space. */
+    margin-top:
+      var(--short-social-label-extra-gap) !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    overflow: visible !important;
+  }
+
+  .socialsText {
+    position: absolute !important;
+
+    left: 50% !important;
+    top: 50% !important;
+
+    rotate: none !important;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(90deg) !important;
+
+    transform-origin:
+      center center !important;
+
+    width: max-content !important;
+
+    height:
+      var(--short-social-icon) !important;
+
+    padding:
+      0
+      var(--short-social-text-pad) !important;
+
+    font-size:
+      var(--short-social-font) !important;
+
+    line-height: 1 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* =========================================================
+     BUBBLE — preserve its production width
+     ========================================================= */
+
+  /*
+   * No `width` declaration on .bubbleContainer by design.
+   * <=780px therefore keeps the user's 71% golden width.
+   * >780px keeps the base 60% width.
+   */
+  .bubbleContainer {
+    /*
+     * Keep production width unchanged.
+     *
+     * In short landscape, let the right column's existing
+     * justify-content: space-between position Bubble naturally. A positive
+     * translateY was pushing it below Hero even when the screenshot otherwise
+     * looked acceptable.
+     */
+    transform: none !important;
+  }
+
+  .bubbleContainer img {
+    width:
+      clamp(20px, 8.45svh, 30px) !important;
+
+    height:
+      clamp(20px, 8.45svh, 30px) !important;
+  }
+
+  .bubble {
+    font-size:
+      clamp(8px, 2.82svh, 10px) !important;
+
+    line-height: 1.14 !important;
+
+    padding:
+      clamp(4px, 2.25svh, 8px) !important;
+  }
+
+  /* =========================================================
+     CONTACT — use the validated portrait centering pattern
+
+     Portrait's stable pattern is:
+       link box
+         -> contactButton fills box
+         -> circle SVG fills box
+         -> .arrow fills box and centers its child
+         -> arrow SVG has NO positional translation
+
+     Keep Contact as the final RIGHT-column flex child. This allows
+     justify-content: space-between to reserve real layout room for
+     Socials -> Bubble -> Contact and prevents one control from visually
+     sitting on top of another.
+     ========================================================= */
+
+  .contactButtonLink {
+    position: relative !important;
+
+    flex: 0 0 auto !important;
+
+    width:
+      var(--short-contact-size) !important;
+
+    height:
+      var(--short-contact-size) !important;
+
+    margin:
+      0
+      0
+      clamp(4px, 1.4svh, 6px)
+      0 !important;
+
+    padding: 0 !important;
+
+    z-index: 5 !important;
+  }
+
+  .contactButton {
+    position: relative !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  .contactButton > svg {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .arrow {
+    position: absolute !important;
+
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: auto !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .arrow svg {
+    width:
+      clamp(
+        17px,
+        calc(
+          var(--short-contact-size) *
+          0.357143
+        ),
+        25px
+      ) !important;
+
+    height:
+      clamp(
+        17px,
+        calc(
+          var(--short-contact-size) *
+          0.357143
+        ),
+        25px
+      ) !important;
+
+    /*
+     * Critical difference from the old landscape rule:
+     * portrait centers the arrow structurally. Do not translate it.
+     */
+    transform: none !important;
+  }
+
+  /* =========================================================
+     MIDDLE VISUAL — same relationship, smaller short-height canvas
+     ========================================================= */
+  .bg {
+    top: auto !important;
+    bottom: 0 !important;
+
+    height:
+      clamp(
+        150px,
+        calc(100svh - 35px),
+        320px
+      ) !important;
+  }
+
+  /*
+   * Keep the portrait's existing production positioning and let its percentage
+   * height naturally shrink with the actual Hero height.
+   */
+  .hImg img {
+    object-fit: contain !important;
+    object-position:
+      center bottom !important;
+  }
+}
+
+/*
+ * The 200/220/240 synthetic probes demonstrate an environment with too little
+ * vertical room for all right-column content while the social rail remains
+ * untouched. Remove only the optional bubble there.
+ */
+@media (max-width: 1100px) and (max-height: 240px) and (orientation: landscape) {
+  .bubbleContainer {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   V8 — SHORT-LANDSCAPE BUBBLE TEXT CENTERING
+   Visual-only follow-up to approved V7.
+
+   The normal-landscape V2 layer already centers the speech
+   line structurally. Apply the same treatment to the <=355px
+   short-landscape composition. This does not alter the bubble
+   container position, width, padding, avatar, or visibility policy.
+   ========================================================= */
+
+@media (max-width: 1100px) and (max-height: 355px) and (orientation: landscape) {
+  .bubble {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .bubble > span {
+    display: block !important;
+    line-height: inherit !important;
+  }
+}
