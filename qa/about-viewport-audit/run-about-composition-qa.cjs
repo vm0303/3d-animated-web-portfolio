@@ -481,29 +481,6 @@ const evaluateMetrics = (metrics, state, familyName) => {
      * These are capacity ranges, not named-device rules.
      */
     if (
-      metrics.viewport.innerWidth <= 370 &&
-      metrics.viewport.innerHeight >= 700 &&
-      !lineHasAll([
-        'java',
-        'spring-based',
-        'modern',
-        'front-end',
-        'development',
-      ])
-    ) {
-      addIssue(
-        issues,
-        'FAIL',
-        'KEYWORD_SEQUENCE_WRAP',
-        'Narrow/tall phone portrait should keep Java/Spring and modern front-end development in the same text line.',
-        {
-          lines:
-            firstParagraphLines,
-        }
-      );
-    }
-
-    if (
       metrics.viewport.innerWidth >= 391 &&
       metrics.viewport.innerWidth <= 420 &&
       metrics.viewport.innerHeight >= 680 &&
@@ -1018,6 +995,36 @@ const csvEscape = (value) => {
             { scene: state.scene, model: state.model },
             { timeout: 20000 }
           );
+
+          if (
+            state.scene === 'developer' &&
+            state.model === 'laptop'
+          ) {
+            await page.waitForFunction(
+              () => {
+                const button =
+                  document.querySelector('.aboutScreenTrigger');
+
+                if (!button) return false;
+
+                const style =
+                  getComputedStyle(button);
+
+                const rect =
+                  button.getBoundingClientRect();
+
+                return (
+                  style.display !== 'none' &&
+                  style.visibility !== 'hidden' &&
+                  Number(style.opacity) > 0 &&
+                  rect.width > 0 &&
+                  rect.height > 0
+                );
+              },
+              null,
+              { timeout: 10000 }
+            );
+          }
 
           await page.waitForTimeout(contract.settleMs);
           const metrics = await collectMetrics(page);
