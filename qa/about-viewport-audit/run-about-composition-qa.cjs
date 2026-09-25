@@ -84,8 +84,35 @@ for (const familyName of families) {
   const groupName = FAMILY_TO_GROUP[familyName];
   const cases = viewportSource.groups[groupName] || [];
   const selected = quick ? quickCases(cases) : cases;
-  viewportCases.push(...selected.map((item) => ({ ...item, aboutFamily: familyName })));
+
+  viewportCases.push(
+    ...selected.map(
+      (item) => ({
+        ...item,
+        aboutFamily: familyName,
+      })
+    )
+  );
+
+  const supplemental =
+    (contract.supplementalViewports || [])
+      .filter(
+        (item) =>
+          item.family === familyName
+      );
+
+  viewportCases.push(
+    ...supplemental.map(
+      (item) => ({
+        ...item,
+        aboutFamily: familyName,
+      })
+    )
+  );
 }
+
+viewportCases =
+  uniqueById(viewportCases);
 
 let modelStates = contract.modelStates;
 if (modelFilter !== 'all') {
@@ -404,6 +431,113 @@ const evaluateMetrics = (metrics, state, familyName) => {
         lines: p.lineTokens,
       });
       break;
+    }
+  }
+
+  if (
+    familyName === 'phone-portrait' &&
+    visibleParagraphs.length === 3
+  ) {
+    const firstParagraphLines =
+      visibleParagraphs[0].lineTokens ||
+      [];
+
+    const lineHasAll = (
+      requiredTokens
+    ) =>
+      firstParagraphLines.some(
+        (line) =>
+          requiredTokens.every(
+            (required) =>
+              line.some(
+                (token) =>
+                  token
+                    .toLowerCase()
+                    .includes(
+                      required
+                        .toLowerCase()
+                    )
+              )
+          )
+      );
+
+    /*
+     * Explicit wrap contracts based on the user's observed geometry.
+     * These are capacity ranges, not named-device rules.
+     */
+    if (
+      metrics.viewport.innerWidth <= 370 &&
+      metrics.viewport.innerHeight >= 700 &&
+      !lineHasAll([
+        'java',
+        'spring-based',
+        'modern',
+        'front-end',
+        'development',
+      ])
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'KEYWORD_SEQUENCE_WRAP',
+        'Narrow/tall phone portrait should keep Java/Spring and modern front-end development in the same text line.',
+        {
+          lines:
+            firstParagraphLines,
+        }
+      );
+    }
+
+    if (
+      metrics.viewport.innerWidth >= 391 &&
+      metrics.viewport.innerWidth <= 420 &&
+      metrics.viewport.innerHeight >= 680 &&
+      !lineHasAll([
+        'modern',
+        'front-end',
+        'development',
+        'cloud',
+        'automation',
+      ])
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'KEYWORD_SEQUENCE_WRAP',
+        'Mid-width phone portrait should keep modern front-end development and cloud & automation in the same text line.',
+        {
+          lines:
+            firstParagraphLines,
+        }
+      );
+    }
+
+    const finalParagraph =
+      visibleParagraphs[2];
+
+    const bottomSlack =
+      r.about.bottom -
+      finalParagraph.rect.bottom;
+
+    const maxBottomSlack =
+      t.phonePortraitMaxBottomSlackPx ??
+      50;
+
+    if (
+      bottomSlack >
+      maxBottomSlack +
+      tol
+    ) {
+      addIssue(
+        issues,
+        'REVIEW',
+        'ABOUT_BOTTOM_SLACK',
+        'Phone portrait leaves excessive unused space after paragraph 3.',
+        {
+          bottomSlack,
+          maxBottomSlack,
+        }
+      );
     }
   }
 
