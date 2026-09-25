@@ -622,16 +622,67 @@ const evaluateMetrics = (metrics, state, familyName) => {
   if (state.model === 'laptop') {
     if (!metrics.screenTriggerVisible || !r.screenTrigger) {
       addIssue(issues, 'FAIL', 'VIEW_SCREEN_BUTTON_MISSING', 'Laptop is ready but the View screen button is not visible.');
-    } else if (r.right && (
-      r.screenTrigger.left < r.right.left - tol ||
-      r.screenTrigger.right > r.right.right + tol ||
-      r.screenTrigger.top < r.right.top - tol ||
-      r.screenTrigger.bottom > r.right.bottom + tol
-    )) {
-      addIssue(issues, 'FAIL', 'VIEW_SCREEN_BUTTON_ESCAPE', 'View screen button is outside the model region.', {
-        button: r.screenTrigger,
-        right: r.right,
-      });
+    } else {
+      if (r.right && (
+        r.screenTrigger.left < r.right.left - tol ||
+        r.screenTrigger.right > r.right.right + tol ||
+        r.screenTrigger.top < r.right.top - tol ||
+        r.screenTrigger.bottom > r.right.bottom + tol
+      )) {
+        addIssue(issues, 'FAIL', 'VIEW_SCREEN_BUTTON_ESCAPE', 'View screen button is outside the model region.', {
+          button: r.screenTrigger,
+          right: r.right,
+        });
+      }
+
+      if (
+        familyName === 'phone-portrait' &&
+        r.model
+      ) {
+        const modelToButtonGap =
+          r.screenTrigger.top -
+          r.model.bottom;
+
+        const minLaptopButtonGap =
+          t.phonePortraitLaptopButtonMinGapPx ??
+          4;
+
+        const maxLaptopButtonGap =
+          t.phonePortraitLaptopButtonMaxGapPx ??
+          6.5;
+
+        if (
+          modelToButtonGap <
+          minLaptopButtonGap -
+          tol
+        ) {
+          addIssue(
+            issues,
+            'FAIL',
+            'VIEW_SCREEN_BUTTON_TOO_TIGHT',
+            'Laptop and View screen button are too tightly packed.',
+            {
+              modelToButtonGap,
+              minLaptopButtonGap,
+            }
+          );
+        } else if (
+          modelToButtonGap >
+          maxLaptopButtonGap +
+          tol
+        ) {
+          addIssue(
+            issues,
+            'REVIEW',
+            'VIEW_SCREEN_BUTTON_TOO_LOOSE',
+            'Laptop and View screen button have more separation than the intended compact internal rhythm.',
+            {
+              modelToButtonGap,
+              maxLaptopButtonGap,
+            }
+          );
+        }
+      }
     }
   }
 
