@@ -332,6 +332,9 @@ const About = () => {
                 className=
                   "aboutKeyword"
 
+                aria-label=
+                  "Java and Spring-based systems"
+
                 data-active={
                   activeScene ===
                   "backend"
@@ -350,10 +353,19 @@ const About = () => {
               >
                 <span
                   className=
-                    "aboutKeywordText"
+                    "aboutKeywordText aboutBackendLabelFull"
                 >
                   Java and Spring-based
                   systems,
+                </span>
+
+                <span
+                  aria-hidden="true"
+
+                  className=
+                    "aboutKeywordText aboutBackendLabelCompact"
+                >
+                  Java/Spring systems,
                 </span>
               </button>{" "}
 
