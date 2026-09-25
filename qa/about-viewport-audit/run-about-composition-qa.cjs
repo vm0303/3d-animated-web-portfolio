@@ -485,8 +485,7 @@ const evaluateMetrics = (metrics, state, familyName) => {
       metrics.viewport.innerHeight >= 700 &&
       metrics.viewport.innerHeight <= 760 &&
       !lineHasAll([
-        'java',
-        'spring-based',
+        'java/spring',
         'modern',
         'front-end',
         'development',
@@ -496,7 +495,7 @@ const evaluateMetrics = (metrics, state, familyName) => {
         issues,
         'FAIL',
         'KEYWORD_SEQUENCE_WRAP',
-        'Narrow/tall phone portrait should keep Java/Spring and modern front-end development together on one balanced line.',
+        'Narrow/tall phone portrait should keep the compact Java/Spring and modern front-end development sequence together on one balanced line.',
         {
           lines:
             firstParagraphLines,
