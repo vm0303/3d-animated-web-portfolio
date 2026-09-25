@@ -84,7 +84,9 @@
     "phonePortraitWideTallMinHeightPx": 900,
     "phonePortraitWideTallMinTitleFontPx": 40,
     "phonePortraitWideTallMinBodyFontPx": 15.5,
-    "phonePortraitAllGapEqualityTolerancePx": 2.5
+    "phonePortraitAllGapEqualityTolerancePx": 2.5,
+    "phonePortraitLaptopButtonMinGapPx": 4,
+    "phonePortraitLaptopButtonMaxGapPx": 6.5
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
