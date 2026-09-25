@@ -82,11 +82,12 @@
     "phonePortraitGapEqualityTolerancePx": 2.5,
     "phonePortraitWideTallMinWidthPx": 480,
     "phonePortraitWideTallMinHeightPx": 900,
-    "phonePortraitWideTallMinTitleFontPx": 40,
-    "phonePortraitWideTallMinBodyFontPx": 15.5,
+    "phonePortraitWideTallMinTitleFontPx": 42,
+    "phonePortraitWideTallMinBodyFontPx": 16.5,
     "phonePortraitAllGapEqualityTolerancePx": 2.5,
-    "phonePortraitLaptopButtonMinGapPx": 4,
-    "phonePortraitLaptopButtonMaxGapPx": 6.5
+    "phonePortraitLaptopButtonMinGapPx": -6,
+    "phonePortraitLaptopButtonMaxGapPx": 1,
+    "phonePortraitMaxBottomSlackPx": 50
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
@@ -94,5 +95,16 @@
     "doNotShrinkBelowReadabilityFloor": true,
     "preferBalancedCompositionOverForcingAllCopy": true,
     "phonePortraitKeepAllParagraphs": true
-  }
+  },
+  "supplementalViewports": [
+    {
+      "id": "about-phone-portrait__observed-500x690",
+      "width": 500,
+      "height": 690,
+      "label": "Observed About wide-phone portrait sentinel",
+      "family": "phone-portrait",
+      "source": "OBSERVED",
+      "orientation": "portrait"
+    }
+  ]
 }
