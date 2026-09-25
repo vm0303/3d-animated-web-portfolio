@@ -454,7 +454,8 @@ const evaluateMetrics = (metrics, state, familyName) => {
     familyName === 'phone-portrait' &&
     r.right &&
     r.title &&
-    r.list
+    r.list &&
+    visibleParagraphs.length === 3
   ) {
     const modelToTitleGap =
       r.title.top -
@@ -464,56 +465,139 @@ const evaluateMetrics = (metrics, state, familyName) => {
       r.list.top -
       r.title.bottom;
 
+    const paragraphOneToTwoGap =
+      visibleParagraphs[1].rect.top -
+      visibleParagraphs[0].rect.bottom;
+
+    const paragraphTwoToThreeGap =
+      visibleParagraphs[2].rect.top -
+      visibleParagraphs[1].rect.bottom;
+
+    const measuredGaps = [
+      modelToTitleGap,
+      titleToCopyGap,
+      paragraphOneToTwoGap,
+      paragraphTwoToThreeGap,
+    ];
+
     const minComponentGap =
       t.phonePortraitMinComponentGapPx ??
       14;
 
     const gapEqualityTolerance =
+      t.phonePortraitAllGapEqualityTolerancePx ??
       t.phonePortraitGapEqualityTolerancePx ??
       2.5;
 
     if (
-      modelToTitleGap <
-        minComponentGap -
-        tol ||
-      titleToCopyGap <
-        minComponentGap -
-        tol
+      measuredGaps.some(
+        (gap) =>
+          gap <
+          minComponentGap -
+          tol
+      )
     ) {
       addIssue(
         issues,
         'FAIL',
         'ABOUT_COMPONENT_GAP_TIGHT',
-        'Phone portrait needs deliberate breathing room between model, title, and copy.',
+        'Phone portrait needs deliberate breathing room between the model, title, and every paragraph.',
         {
           modelToTitleGap,
           titleToCopyGap,
+          paragraphOneToTwoGap,
+          paragraphTwoToThreeGap,
           minComponentGap,
         }
       );
     }
 
+    const smallestGap =
+      Math.min(...measuredGaps);
+
+    const largestGap =
+      Math.max(...measuredGaps);
+
     if (
-      Math.abs(
-        modelToTitleGap -
-        titleToCopyGap
-      ) >
+      largestGap -
+      smallestGap >
       gapEqualityTolerance
     ) {
       addIssue(
         issues,
         'FAIL',
         'ABOUT_COMPONENT_GAP_UNEVEN',
-        'Phone portrait model-to-title and title-to-copy gaps should be visually equal.',
+        'Phone portrait vertical rhythm should be visually equal from model through all three paragraphs.',
         {
           modelToTitleGap,
           titleToCopyGap,
+          paragraphOneToTwoGap,
+          paragraphTwoToThreeGap,
+          smallestGap,
+          largestGap,
           difference:
-            Math.abs(
-              modelToTitleGap -
-              titleToCopyGap
-            ),
+            largestGap -
+            smallestGap,
           gapEqualityTolerance,
+        }
+      );
+    }
+  }
+
+
+  if (
+    familyName === 'phone-portrait' &&
+    metrics.viewport.innerWidth >=
+      (t.phonePortraitWideTallMinWidthPx ?? 480) &&
+    metrics.viewport.innerHeight >=
+      (t.phonePortraitWideTallMinHeightPx ?? 900)
+  ) {
+    const wideTallTitleMin =
+      t.phonePortraitWideTallMinTitleFontPx ??
+      40;
+
+    const wideTallBodyMin =
+      t.phonePortraitWideTallMinBodyFontPx ??
+      15.5;
+
+    if (
+      metrics.title?.fontSize <
+      wideTallTitleMin
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'WIDE_PHONE_TITLE_TOO_SMALL',
+        'Wide/tall phone portrait should use the larger About title tier.',
+        {
+          fontSize:
+            metrics.title?.fontSize,
+          required:
+            wideTallTitleMin,
+        }
+      );
+    }
+
+    if (
+      visibleParagraphs.some(
+        (paragraph) =>
+          paragraph.fontSize <
+          wideTallBodyMin
+      )
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'WIDE_PHONE_BODY_TOO_SMALL',
+        'Wide/tall phone portrait should use the larger About body-text tier.',
+        {
+          fontSizes:
+            visibleParagraphs.map(
+              (paragraph) =>
+                paragraph.fontSize
+            ),
+          required:
+            wideTallBodyMin,
         }
       );
     }
