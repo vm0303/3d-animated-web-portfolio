@@ -322,68 +322,73 @@ const About = () => {
             Over the years, I’ve
             worked across{" "}
 
-            <button
-              type="button"
-
+            <span
               className=
-                "aboutKeyword"
+                "aboutKeywordRun aboutKeywordRunBackendFrontend"
+            >
+              <button
+                type="button"
 
-              data-active={
-                activeScene ===
-                "backend"
-              }
+                className=
+                  "aboutKeyword"
 
-              aria-pressed={
-                activeScene ===
-                "backend"
-              }
-
-              onClick={() =>
-                setActiveScene(
+                data-active={
+                  activeScene ===
                   "backend"
-                )
-              }
-            >
-              <span
-                className=
-                  "aboutKeywordText"
+                }
+
+                aria-pressed={
+                  activeScene ===
+                  "backend"
+                }
+
+                onClick={() =>
+                  setActiveScene(
+                    "backend"
+                  )
+                }
               >
-                Java and Spring-based
-                systems,
-              </span>
-            </button>{" "}
+                <span
+                  className=
+                    "aboutKeywordText"
+                >
+                  Java and Spring-based
+                  systems,
+                </span>
+              </button>{" "}
 
-            <button
-              type="button"
+              <button
+                type="button"
 
-              className=
-                "aboutKeyword"
+                className=
+                  "aboutKeyword"
 
-              data-active={
-                activeScene ===
-                "frontend"
-              }
-
-              aria-pressed={
-                activeScene ===
-                "frontend"
-              }
-
-              onClick={() =>
-                setActiveScene(
+                data-active={
+                  activeScene ===
                   "frontend"
-                )
-              }
-            >
-              <span
-                className=
-                  "aboutKeywordText"
+                }
+
+                aria-pressed={
+                  activeScene ===
+                  "frontend"
+                }
+
+                onClick={() =>
+                  setActiveScene(
+                    "frontend"
+                  )
+                }
               >
-                modern front-end
-                development,
-              </span>
-            </button>{" "}
-            and{" "}
+                <span
+                  className=
+                    "aboutKeywordText"
+                >
+                  modern front-end
+                  development,
+                </span>
+              </button>{" "}
+              and{" "}
+            </span>
 
             <button
               type="button"

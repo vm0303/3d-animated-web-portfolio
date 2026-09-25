@@ -87,7 +87,8 @@
     "phonePortraitAllGapEqualityTolerancePx": 2.5,
     "phonePortraitLaptopButtonMinGapPx": -6,
     "phonePortraitLaptopButtonMaxGapPx": 1,
-    "phonePortraitMaxBottomSlackPx": 50
+    "phonePortraitMaxBottomSlackPx": 50,
+    "phonePortraitNarrowTallMinBodyFontPx": 10
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
