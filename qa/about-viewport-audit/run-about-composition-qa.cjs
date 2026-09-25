@@ -485,6 +485,7 @@ const evaluateMetrics = (metrics, state, familyName) => {
       metrics.viewport.innerHeight >= 700 &&
       metrics.viewport.innerHeight <= 760 &&
       !lineHasAll([
+        'worked',
         'java/spring',
         'modern',
         'front-end',
@@ -495,12 +496,51 @@ const evaluateMetrics = (metrics, state, familyName) => {
         issues,
         'FAIL',
         'KEYWORD_SEQUENCE_WRAP',
-        'Narrow/tall phone portrait should keep the compact Java/Spring and modern front-end development sequence together on one balanced line.',
+        'Narrow/tall phone portrait should keep "worked across Java/Spring systems, modern front-end development" on one composed line.',
         {
           lines:
             firstParagraphLines,
         }
       );
+    }
+
+    if (
+      metrics.viewport.innerWidth >= 480 &&
+      metrics.viewport.innerWidth <= 500 &&
+      metrics.viewport.innerHeight >= 650 &&
+      metrics.viewport.innerHeight <= 710
+    ) {
+      const hasModernLine =
+        lineHasAll([
+          'worked',
+          'java/spring',
+          'modern',
+        ]);
+
+      const hasFrontendLine =
+        lineHasAll([
+          'front-end',
+          'development',
+          'cloud',
+          'automation',
+          'building',
+        ]);
+
+      if (
+        !hasModernLine ||
+        !hasFrontendLine
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'WIDE_COMPACT_EDITORIAL_WRAP',
+          'Wide/compact phone portrait should split after "modern" and keep the next frontend/cloud/building sequence together.',
+          {
+            lines:
+              firstParagraphLines,
+          }
+        );
+      }
     }
 
     if (
