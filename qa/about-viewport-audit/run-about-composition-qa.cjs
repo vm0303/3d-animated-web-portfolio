@@ -348,10 +348,25 @@ const evaluateMetrics = (metrics, state, familyName) => {
       ? (t.phonePortraitMinTitleFontPx ?? t.minTitleFontPx)
       : t.minTitleFontPx;
 
+  const isPhonePortraitNarrowTall =
+    familyName === 'phone-portrait' &&
+    metrics.viewport.innerWidth <= 370 &&
+    metrics.viewport.innerHeight >= 700 &&
+    metrics.viewport.innerHeight <= 760;
+
   const minBodyFontPx =
-    familyName === 'phone-portrait'
-      ? (t.phonePortraitMinBodyFontPx ?? t.minBodyFontPx)
-      : t.minBodyFontPx;
+    isPhonePortraitNarrowTall
+      ? (
+          t.phonePortraitNarrowTallMinBodyFontPx ??
+          t.phonePortraitMinBodyFontPx ??
+          t.minBodyFontPx
+        )
+      : familyName === 'phone-portrait'
+        ? (
+            t.phonePortraitMinBodyFontPx ??
+            t.minBodyFontPx
+          )
+        : t.minBodyFontPx;
 
   if (metrics.document.scrollWidth > metrics.viewport.innerWidth + t.horizontalOverflowTolerancePx) {
     addIssue(issues, 'FAIL', 'HORIZONTAL_OVERFLOW', 'Document is wider than the viewport.', {
