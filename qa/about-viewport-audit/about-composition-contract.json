@@ -79,7 +79,12 @@
     "phonePortraitMinBodyFontPx": 10.5,
     "requiredVisibleParagraphs": 3,
     "phonePortraitMinComponentGapPx": 14,
-    "phonePortraitGapEqualityTolerancePx": 2.5
+    "phonePortraitGapEqualityTolerancePx": 2.5,
+    "phonePortraitWideTallMinWidthPx": 480,
+    "phonePortraitWideTallMinHeightPx": 900,
+    "phonePortraitWideTallMinTitleFontPx": 40,
+    "phonePortraitWideTallMinBodyFontPx": 15.5,
+    "phonePortraitAllGapEqualityTolerancePx": 2.5
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
