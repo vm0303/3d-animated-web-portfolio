@@ -87,7 +87,9 @@
     "qa:about:phone:portrait:v8": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v8.css --output-dir=qa-results/about/phone-portrait-v8",
     "qa:about:phone:portrait:v9": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v9.css --output-dir=qa-results/about/phone-portrait-v9",
     "qa:about:phone:portrait:v10": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v10.css --output-dir=qa-results/about/phone-portrait-v10",
-    "qa:about:phone:portrait:v10:full": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --modal --screenshots=bad --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v10.css --output-dir=qa-results/about/phone-portrait-v10-full"
+    "qa:about:phone:portrait:v10:full": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --modal --screenshots=bad --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v10.css --output-dir=qa-results/about/phone-portrait-v10-full",
+    "qa:about:phone:portrait:v11": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v11.css --output-dir=qa-results/about/phone-portrait-v11",
+    "qa:about:phone:portrait:v11:full": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --modal --screenshots=bad --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v11.css --output-dir=qa-results/about/phone-portrait-v11-full"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
