@@ -1,0 +1,455 @@
+/*
+ * ABOUT PHONE PORTRAIT — V5
+ *
+ * Locked mobile order:
+ *   1. centered 3D model
+ *      + centered View screen button for Laptop
+ *   2. centered About Me title
+ *   3. all three About paragraphs, left aligned
+ *
+ * V5 keeps the proven V4 equal vertical rhythm and typography.
+ *
+ * Refinements:
+ * - give the 3D row a small amount of additional height so every model
+ *   reads larger without changing the approved per-model visualScale values;
+ * - tighten only the INTERNAL Laptop -> View screen gap;
+ * - keep the major model-group -> title -> paragraph rhythm untouched.
+ *
+ * Wide/tall phone portrait keeps the larger V4 typography tier.
+ */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .about {
+    --about-phone-rhythm-gap:
+      clamp(
+        14px,
+        2.3svh,
+        20px
+      );
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+
+    grid-template-rows:
+      clamp(
+        225px,
+        43svh,
+        380px
+      )
+      minmax(0, 1fr) !important;
+
+    row-gap:
+      var(
+        --about-phone-rhythm-gap
+      ) !important;
+
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+
+  .aSection {
+    width: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+
+
+  /* ======================================================
+     1. MODEL GROUP
+     ====================================================== */
+
+  .aSection.right {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    position: relative !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    /*
+     * Internal Laptop-model -> View screen spacing.
+     * This is intentionally tighter than the major page rhythm.
+     */
+    gap:
+      clamp(
+        4px,
+        0.7svh,
+        6px
+      ) !important;
+
+    padding:
+      clamp(
+        2px,
+        0.7svh,
+        6px
+      )
+      0
+      0 !important;
+  }
+
+
+  .aboutModelContainer {
+    flex: 1 1 0 !important;
+
+    width: 100% !important;
+    height: auto !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+
+
+  .aboutCanvasShell {
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+
+
+  .aboutCanvasShell canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+
+  /*
+   * Laptop button remains part of the model group.
+   * It stays centered and in normal flow.
+   */
+  .aboutScreenTrigger {
+    position: relative !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    flex: 0 0 auto !important;
+    align-self: center !important;
+
+    transform: none !important;
+
+    margin:
+      0
+      auto !important;
+
+    gap: 5px !important;
+
+    padding:
+      clamp(
+        6px,
+        1.15svh,
+        8px
+      )
+      clamp(
+        10px,
+        3vw,
+        13px
+      ) !important;
+
+    font-size:
+      clamp(
+        11px,
+        3.25vw,
+        13px
+      ) !important;
+
+    line-height: 1 !important;
+  }
+
+
+  .aboutScreenTrigger:hover {
+    transform:
+      translateY(-2px) !important;
+  }
+
+
+  /* ======================================================
+     2. TITLE + 3. COMPLETE COPY
+     ====================================================== */
+
+  .aSection.left {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+
+    /*
+     * Same rhythm value as model -> title.
+     * This creates title -> paragraph 1 spacing.
+     */
+    gap:
+      var(
+        --about-phone-rhythm-gap
+      ) !important;
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding:
+      0
+      0
+      clamp(
+        4px,
+        0.8svh,
+        8px
+      ) !important;
+
+    overflow: hidden !important;
+  }
+
+
+  .aTitle {
+    flex: 0 0 auto !important;
+
+    align-self: center !important;
+
+    margin: 0 !important;
+
+    font-size:
+      clamp(
+        28px,
+        min(
+          8.3vw,
+          5.2svh
+        ),
+        36px
+      ) !important;
+
+    line-height: 1 !important;
+
+    text-align: center !important;
+  }
+
+
+  .aboutList {
+    width: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    /*
+     * V5 preserves the V4 rule: paragraph 1 -> 2 and paragraph 2 -> 3 use
+     * the EXACT SAME rhythm as model -> title and title -> copy.
+     */
+    gap:
+      var(
+        --about-phone-rhythm-gap
+      ) !important;
+  }
+
+
+  .aboutList p {
+    margin: 0 !important;
+
+    font-size:
+      clamp(
+        10.5px,
+        min(
+          3.35vw,
+          2.05svh
+        ),
+        13.5px
+      ) !important;
+
+    line-height: 1.4 !important;
+
+    text-align: left !important;
+
+    text-wrap: pretty;
+
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+  }
+
+
+  .aboutKeywordText {
+    padding:
+      0.01em
+      0.08em !important;
+  }
+
+
+  /* ======================================================
+     PHONE LAPTOP SCREEN MODAL
+     Proven behavior — unchanged.
+     ====================================================== */
+
+  .laptopScreenModal {
+    padding:
+      max(
+        6px,
+        env(safe-area-inset-top)
+      )
+      max(
+        6px,
+        env(safe-area-inset-right)
+      )
+      max(
+        6px,
+        env(safe-area-inset-bottom)
+      )
+      max(
+        6px,
+        env(safe-area-inset-left)
+      ) !important;
+  }
+
+
+  .laptopScreenDialog {
+    width: 100% !important;
+    height: auto !important;
+
+    max-height:
+      calc(
+        100dvh - 12px
+      ) !important;
+
+    border:
+      1px solid
+      rgba(
+        28,
+        181,
+        224,
+        0.52
+      ) !important;
+
+    border-radius:
+      clamp(
+        10px,
+        3vw,
+        16px
+      ) !important;
+  }
+
+
+  .laptopScreenToolbar {
+    min-height: 40px !important;
+
+    padding:
+      5px
+      6px
+      5px
+      11px !important;
+  }
+
+
+  .laptopScreenTitle {
+    font-size:
+      clamp(
+        12px,
+        3.45vw,
+        14px
+      ) !important;
+  }
+
+
+  .laptopScreenClose {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+
+  .laptopScreenCloseIcon {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+
+  .laptopScreenCloseIcon::before,
+  .laptopScreenCloseIcon::after {
+    width: 15px !important;
+  }
+
+
+  .laptopScreenViewport {
+    flex: 0 0 auto !important;
+
+    padding:
+      clamp(
+        4px,
+        1.25vw,
+        7px
+      ) !important;
+  }
+
+
+  .laptopScreenImage {
+    width: 100% !important;
+    height: auto !important;
+
+    max-width: 100% !important;
+    max-height:
+      calc(
+        100dvh - 58px
+      ) !important;
+
+    object-fit: contain !important;
+
+    border-radius:
+      clamp(
+        5px,
+        1.5vw,
+        7px
+      ) !important;
+  }
+}
+
+
+/*
+ * WIDE + TALL PHONE PORTRAIT
+ *
+ * The 500×960-class geometry has enough room to use a visibly larger
+ * text tier. Do not leave it looking like an enlarged small phone.
+ */
+@media
+  (min-width: 480px)
+  and (max-width: 500px)
+  and (min-height: 900px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap: 22px;
+  }
+
+
+  .aTitle {
+    font-size: 40px !important;
+  }
+
+
+  .aboutList p {
+    font-size: 15.5px !important;
+    line-height: 1.45 !important;
+  }
+
+
+  .aboutScreenTrigger {
+    font-size: 14px !important;
+
+    padding:
+      8px
+      14px !important;
+  }
+}
