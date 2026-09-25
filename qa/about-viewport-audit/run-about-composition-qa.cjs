@@ -450,6 +450,75 @@ const evaluateMetrics = (metrics, state, familyName) => {
     }
   }
 
+  if (
+    familyName === 'phone-portrait' &&
+    r.right &&
+    r.title &&
+    r.list
+  ) {
+    const modelToTitleGap =
+      r.title.top -
+      r.right.bottom;
+
+    const titleToCopyGap =
+      r.list.top -
+      r.title.bottom;
+
+    const minComponentGap =
+      t.phonePortraitMinComponentGapPx ??
+      14;
+
+    const gapEqualityTolerance =
+      t.phonePortraitGapEqualityTolerancePx ??
+      2.5;
+
+    if (
+      modelToTitleGap <
+        minComponentGap -
+        tol ||
+      titleToCopyGap <
+        minComponentGap -
+        tol
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'ABOUT_COMPONENT_GAP_TIGHT',
+        'Phone portrait needs deliberate breathing room between model, title, and copy.',
+        {
+          modelToTitleGap,
+          titleToCopyGap,
+          minComponentGap,
+        }
+      );
+    }
+
+    if (
+      Math.abs(
+        modelToTitleGap -
+        titleToCopyGap
+      ) >
+      gapEqualityTolerance
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'ABOUT_COMPONENT_GAP_UNEVEN',
+        'Phone portrait model-to-title and title-to-copy gaps should be visually equal.',
+        {
+          modelToTitleGap,
+          titleToCopyGap,
+          difference:
+            Math.abs(
+              modelToTitleGap -
+              titleToCopyGap
+            ),
+          gapEqualityTolerance,
+        }
+      );
+    }
+  }
+
   const visibleContentRects = [r.title, r.list, r.model, r.screenTrigger].filter(Boolean);
   for (const item of visibleContentRects) {
     if (
