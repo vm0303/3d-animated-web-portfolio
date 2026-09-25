@@ -79,7 +79,8 @@
     "qa:about:phone:portrait:v1": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v1.css --output-dir=qa-results/about/phone-portrait-v1",
     "qa:about:phone:portrait:modal": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=laptop --quick --modal --screenshots=all",
     "qa:about:phone:portrait:v2": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v2.css --output-dir=qa-results/about/phone-portrait-v2",
-    "qa:about:phone:portrait:v3": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v3.css --output-dir=qa-results/about/phone-portrait-v3"
+    "qa:about:phone:portrait:v3": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v3.css --output-dir=qa-results/about/phone-portrait-v3",
+    "qa:about:phone:portrait:v4": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=all --quick --modal --screenshots=all --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v4.css --output-dir=qa-results/about/phone-portrait-v4"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
