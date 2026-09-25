@@ -150,12 +150,6 @@ const AboutModelContainer = ({
     ] = useState(null);
 
 
-    const [
-        isInteracting,
-        setIsInteracting,
-    ] = useState(false);
-
-
     /*
      * Incrementing this remounts the camera + Stage +
      * OrbitControls, which recreates Lama's container
@@ -192,8 +186,17 @@ const AboutModelContainer = ({
         useRef(null);
 
 
+    const carouselTimerRef =
+        useRef(null);
+
+    const scheduleCarouselTimerRef =
+        useRef(null);
+
     const resumeTimerRef =
         useRef(null);
+
+    const isInteractingRef =
+        useRef(false);
 
     const sceneZoomTimerRef =
         useRef(null);
@@ -721,90 +724,167 @@ const AboutModelContainer = ({
         );
     }, [activeScene]);
 
+    /*
+ * -----------------------------------------
+ * CAROUSEL TIMER
+ * -----------------------------------------
+ *
+ * Dragging should never require a React
+ * render just to pause or restart the
+ * carousel countdown.
+ *
+ * The timer therefore lives entirely in
+ * refs and is restarted imperatively after
+ * the post-drag grace period.
+ */
+
+    const cancelCarouselTimer =
+        useCallback(() => {
+            if (
+                carouselTimerRef
+                    .current !== null
+            ) {
+                window.clearTimeout(
+                    carouselTimerRef
+                        .current
+                );
+
+
+                carouselTimerRef.current =
+                    null;
+            }
+        }, []);
+
+
+    const scheduleCarouselTimer =
+        useCallback(() => {
+            /*
+             * Always begin from a clean timer.
+             */
+            cancelCarouselTimer();
+
+
+            const canRunCarousel =
+                !qaMode &&
+
+                !isInteractingRef.current &&
+
+                activeScene ===
+                renderSceneId &&
+
+                !transition &&
+
+                !sceneZoomActive &&
+
+                scene.items.length > 1 &&
+
+                Boolean(scene.interval);
+
+
+            if (!canRunCarousel) {
+                return;
+            }
+
+
+            carouselTimerRef.current =
+                window.setTimeout(
+                    () => {
+                        carouselTimerRef.current =
+                            null;
+
+
+                        const nextIndex =
+                            (
+                                activeIndex +
+                                1
+                            ) %
+                            scene.items.length;
+
+
+                        beginTransition(
+                            renderSceneId,
+                            nextIndex,
+                            "carousel"
+                        );
+                    },
+                    scene.interval
+                );
+        }, [
+            activeScene,
+            renderSceneId,
+            activeIndex,
+            scene.items.length,
+            scene.interval,
+            transition,
+            sceneZoomActive,
+            beginTransition,
+            qaMode,
+            cancelCarouselTimer,
+        ]);
+
 
     /*
-     * -----------------------------------------
-     * CAROUSEL TIMER
-     * -----------------------------------------
+     * Keep the ref pointed at the newest
+     * scheduler.
      *
-     * Every stable model gets the FULL interval.
-     *
-     * If the user starts dragging:
-     *   -> effect cleanup cancels the timer.
-     *
-     * When the post-drag grace period ends:
-     *   -> isInteracting becomes false.
-     *   -> this effect starts a brand-new FULL 6500ms
-     *      timer (or whatever scene.interval is).
+     * The delayed pointer-release callback can
+     * therefore use current scene/model values
+     * without causing a React state update.
      */
-
     useEffect(() => {
-        const canRunCarousel =
-            !qaMode &&
-
-            activeScene ===
-            renderSceneId &&
-
-            !transition &&
-
-            !sceneZoomActive &&
-
-            !isInteracting &&
-
-            scene.items.length > 1 &&
-
-            Boolean(scene.interval);
-
-
-        if (!canRunCarousel) {
-            return undefined;
-        }
-
-
-        const carouselTimer =
-            window.setTimeout(
-                () => {
-                    const nextIndex =
-                        (
-                            activeIndex +
-                            1
-                        ) %
-                        scene.items.length;
-
-
-                    beginTransition(
-                        renderSceneId,
-                        nextIndex,
-                        "carousel"
-                    );
-                },
-                scene.interval
-            );
+        scheduleCarouselTimerRef.current =
+            scheduleCarouselTimer;
 
 
         return () => {
-            window.clearTimeout(
-                carouselTimer
-            );
+            if (
+                scheduleCarouselTimerRef
+                    .current ===
+                scheduleCarouselTimer
+            ) {
+                scheduleCarouselTimerRef
+                    .current =
+                    null;
+            }
         };
     }, [
-        activeScene,
-        renderSceneId,
-        activeIndex,
-        scene.items.length,
-        scene.interval,
-        transition,
-        sceneZoomActive,
-        isInteracting,
-        beginTransition,
-        qaMode,
+        scheduleCarouselTimer,
     ]);
+
+
+    /*
+     * Normal React-driven changes such as:
+     *
+     * - switching scenes
+     * - completing a carousel transition
+     * - completing the Stage zoom
+     *
+     * still recalculate the normal automatic
+     * carousel timer.
+     */
+    useEffect(() => {
+        scheduleCarouselTimer();
+
+
+        return () => {
+            cancelCarouselTimer();
+        };
+    }, [
+        scheduleCarouselTimer,
+        cancelCarouselTimer,
+    ]);
+
+
+
 
 
     /*
      * -----------------------------------------
      * USER INTERACTION
      * -----------------------------------------
+     *
+     * OrbitControls owns the camera interaction directly.
+     * React state is intentionally kept out of the pointer-down path.
      */
 
     const handleInteractionStart =
@@ -823,9 +903,16 @@ const AboutModelContainer = ({
             resumeTimerRef.current =
                 null;
 
+            isInteractingRef.current =
+                true;
 
-            setIsInteracting(true);
-        }, []);
+
+            /*
+             * Pause the carousel immediately without triggering
+             * a React render while the user begins dragging.
+             */
+            cancelCarouselTimer();
+        }, [cancelCarouselTimer]);
 
 
     const handleInteractionEnd =
@@ -841,6 +928,14 @@ const AboutModelContainer = ({
             }
 
 
+            /*
+             * OrbitControls resumes autoRotate
+             * immediately after pointer release.
+             *
+             * This timeout controls ONLY when the
+             * carousel countdown is allowed to
+             * restart.
+             */
             resumeTimerRef.current =
                 window.setTimeout(
                     () => {
@@ -849,14 +944,22 @@ const AboutModelContainer = ({
                             null;
 
 
+                        isInteractingRef.current =
+                            false;
+
+
                         /*
-                         * Setting false restarts the
-                         * carousel effect with a full
-                         * scene.interval countdown.
+                         * Start a fresh full carousel
+                         * interval without touching
+                         * React state.
+                         *
+                         * This avoids reconciling the
+                         * R3F tree 1200ms after release,
+                         * which was producing the
+                         * rotation hitch.
                          */
-                        setIsInteracting(
-                            false
-                        );
+                        scheduleCarouselTimerRef
+                            .current?.();
                     },
                     INTERACTION_RESUME_DELAY
                 );
@@ -869,6 +972,10 @@ const AboutModelContainer = ({
     useEffect(() => {
         return () => {
             cancelWarmupFrames();
+            cancelCarouselTimer();
+
+            isInteractingRef.current =
+                false;
 
 
             if (
@@ -892,7 +999,10 @@ const AboutModelContainer = ({
                 );
             }
         };
-    }, [cancelWarmupFrames]);
+    }, [
+        cancelWarmupFrames,
+        cancelCarouselTimer,
+    ]);
 
 
     /*
@@ -1246,7 +1356,7 @@ const AboutModelContainer = ({
                 style={{
                     pointerEvents:
                         qaMode ||
-                        isCarouselTransition
+                            isCarouselTransition
                             ? "none"
                             : "auto",
                 }}
@@ -1320,8 +1430,14 @@ const AboutModelContainer = ({
 
                             autoRotateSpeed={2.5}
 
-                            enableDamping
-                            dampingFactor={0.06}
+                            /*
+                             * Direct manipulation must track the pointer
+                             * immediately. Damping intentionally stays off:
+                             * retained damping deltas caused both the
+                             * press/drag latency and the release hitch where
+                             * drag inertia briefly opposed autoRotate.
+                             */
+                            enableDamping={false}
 
                             rotateSpeed={0.65}
 
