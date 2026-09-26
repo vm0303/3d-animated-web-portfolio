@@ -320,6 +320,8 @@ const collectMetrics = async (page) => page.evaluate(() => {
       visible: isVisible(el),
       rect: rect(el),
       text: el.textContent.trim(),
+      tagName: el.tagName,
+      fragmentCount: el.getClientRects().length,
     })),
     visibleParagraphCount: paragraphMetrics.filter((item) => item.visible).length,
     visibleKeywordCount: keywords.filter(isVisible).length,
@@ -411,6 +413,33 @@ const evaluateMetrics = (metrics, state, familyName) => {
       break;
     }
   }
+
+  if (
+    familyName === 'phone-portrait' &&
+    metrics.keywords.some(
+      (keyword) =>
+        keyword.tagName === 'BUTTON'
+    )
+  ) {
+    addIssue(
+      issues,
+      'FAIL',
+      'ATOMIC_KEYWORD_CONTROL',
+      'Phone portrait About keywords must use fragmentable inline controls, not native button formatting boxes.',
+      {
+        keywords:
+          metrics.keywords.map(
+            (keyword) => ({
+              text: keyword.text,
+              tagName: keyword.tagName,
+              fragmentCount:
+                keyword.fragmentCount,
+            })
+          ),
+      }
+    );
+  }
+
 
   if (
     familyName === 'phone-portrait' &&
