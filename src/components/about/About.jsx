@@ -320,115 +320,74 @@ const About = () => {
             </button>{" "}
 
             who enjoys turning complex
-            <br
-              className=
-                "aboutResponsiveBreak aboutBreakTargetAfterComplex"
-            />
             problems into reliable,
             intuitive experiences.
 
             Over the years, I’ve
-            <br
-              className=
-                "aboutResponsiveBreak aboutBreakTargetAfterYears"
-            />
             worked across{" "}
 
-            <span
+            <button
+              type="button"
+
               className=
-                "aboutKeywordRun aboutKeywordRunBackendFrontend"
+                "aboutKeyword"
+
+              data-active={
+                activeScene ===
+                "backend"
+              }
+
+              aria-pressed={
+                activeScene ===
+                "backend"
+              }
+
+              onClick={() =>
+                setActiveScene(
+                  "backend"
+                )
+              }
             >
-              <button
-                type="button"
-
+              <span
                 className=
-                  "aboutKeyword"
-
-                aria-label=
-                  "Java and Spring-based systems"
-
-                data-active={
-                  activeScene ===
-                  "backend"
-                }
-
-                aria-pressed={
-                  activeScene ===
-                  "backend"
-                }
-
-                onClick={() =>
-                  setActiveScene(
-                    "backend"
-                  )
-                }
+                  "aboutKeywordText"
               >
-                <span
-                  className=
-                    "aboutKeywordText aboutBackendLabelFull"
-                >
-                  Java and Spring-based
-                  systems,
-                </span>
+                Java and Spring-based
+                systems,
+              </span>
+            </button>{" "}
 
-                <span
-                  aria-hidden="true"
+            <button
+              type="button"
 
-                  className=
-                    "aboutKeywordText aboutBackendLabelCompact"
-                >
-                  Java/Spring systems,
-                </span>
-              </button>{" "}
-
-              <button
-                type="button"
-
-                className=
-                  "aboutKeyword"
-
-                data-active={
-                  activeScene ===
-                  "frontend"
-                }
-
-                aria-pressed={
-                  activeScene ===
-                  "frontend"
-                }
-
-                onClick={() =>
-                  setActiveScene(
-                    "frontend"
-                  )
-                }
-              >
-                <span
-                  className=
-                    "aboutKeywordText"
-                >
-                  <span>
-                    modern
-                  </span>{" "}
-
-                  <br
-                    className=
-                      "aboutResponsiveBreak aboutBreak500Frontend"
-                  />
-
-                  <span>
-                    front-end development,
-                  </span>
-                </span>
-              </button>
-            </span>
-
-            <br
               className=
-                "aboutResponsiveBreak aboutBreak360AfterFrontend"
-            />
+                "aboutKeyword"
 
-            {" "}and{" "}
+              data-active={
+                activeScene ===
+                "frontend"
+              }
+
+              aria-pressed={
+                activeScene ===
+                "frontend"
+              }
+
+              onClick={() =>
+                setActiveScene(
+                  "frontend"
+                )
+              }
+            >
+              <span
+                className=
+                  "aboutKeywordText"
+              >
+                modern front-end
+                development,
+              </span>
+            </button>{" "}
+            and{" "}
 
             <button
               type="button"
@@ -459,29 +418,9 @@ const About = () => {
                 cloud &amp; automation,
               </span>
             </button>{" "}
-            building
-
-            <br
-              className=
-                "aboutResponsiveBreak aboutBreak500AfterBuilding"
-            />
-
-            {" "}applications
-            and tools that are
-
-            <br
-              className=
-                "aboutResponsiveBreak aboutBreak360AfterAre"
-            />
-
-            {" "}designed to
-
-            <br
-              className=
-                "aboutResponsiveBreak aboutBreak500BeforeScale"
-            />
-
-            {" "}scale and stay dependable.
+            building applications
+            and tools that are designed
+            to scale and stay dependable.
             </span>
           </motion.p>
 
