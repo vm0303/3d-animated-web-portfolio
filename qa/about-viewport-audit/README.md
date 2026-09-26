@@ -65,3 +65,65 @@ node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrai
 ```
 
 Use `--strict` only when you want failures to return a non-zero exit code.
+
+## Current tier state
+
+### Phone portrait — promoted / frozen
+
+Production source:
+
+```text
+src/components/about/about.css
+```
+
+Promoted candidate:
+
+```text
+qa/about-viewport-audit/candidates/about-phone-portrait-v17.css
+```
+
+Phone portrait now follows the same freeze rule used during Hero work: later family work must not change the validated phone-portrait composition unless a regression is demonstrated against the phone-portrait contract.
+
+V17 includes the approved V16 composition plus the iOS Safari Liquid Glass About-section guard compensation. The compensation is gated by browser/viewport geometry and does not apply to Android/Chrome.
+
+Production verification:
+
+```powershell
+npm run qa:about:closure:phone:portrait
+npm run qa:about:phone:portrait:production:visual-smoke
+```
+
+## Family order after phone portrait
+
+Continue in this exact order:
+
+1. Phone landscape
+2. Foldables
+   - portrait
+   - landscape
+3. Tablets
+   - portrait
+   - landscape
+4. Laptops / desktop geometry
+5. Final About cross-browser / geometry closure
+
+For every family, keep the Hero methodology:
+
+1. establish the production baseline;
+2. inspect metrics + screenshots;
+3. create a family-scoped candidate;
+4. run focused failing / boundary / neighboring geometry first;
+5. run representative visual smoke;
+6. expand to the full family;
+7. perform cross-browser checks where appropriate;
+8. promote the smallest generalized geometry rule;
+9. freeze that family before moving to the next one.
+
+Phone-landscape baseline commands:
+
+```powershell
+npm run qa:about:phone:landscape:quick
+npm run qa:about:phone:landscape:visual-smoke
+npm run qa:about:phone:landscape
+```
+
