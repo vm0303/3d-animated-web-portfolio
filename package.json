@@ -107,7 +107,8 @@
     "qa:about:phone:portrait:v16:browser-smoke:webkit": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=laptop --quick --modal --screenshots=all --browser=webkit --static-candidate --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v16.css --output-dir=qa-results/about/phone-portrait-v16-browser-smoke/webkit",
     "qa:about:phone:portrait:v16:browser-smoke": "npm run qa:about:phone:portrait:v16:browser-smoke:chromium && npm run qa:about:phone:portrait:v16:browser-smoke:firefox && npm run qa:about:phone:portrait:v16:browser-smoke:webkit",
     "qa:about:phone:portrait:v16:geometry-full": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=laptop --browser=chromium --screenshots=bad --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v16.css --output-dir=qa-results/about/phone-portrait-v16-geometry-full",
-    "qa:about:phone:portrait:v16:certify-fast": "npm run qa:about:phone:portrait:v16 && npm run qa:about:phone:portrait:v16:visual-smoke && npm run qa:about:phone:portrait:v16:geometry-full && npm run qa:about:phone:portrait:v16:browser-smoke"
+    "qa:about:phone:portrait:v16:certify-fast": "npm run qa:about:phone:portrait:v16 && npm run qa:about:phone:portrait:v16:visual-smoke && npm run qa:about:phone:portrait:v16:geometry-full && npm run qa:about:phone:portrait:v16:browser-smoke",
+    "qa:about:diagnose:webkit-webgl": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-portrait --model=laptop --quick --screenshots=all --browser=webkit --static-candidate --webgl-probe --override-css=qa/about-viewport-audit/candidates/about-phone-portrait-v16.css --output-dir=qa-results/about/diagnostics/webkit-webgl"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
