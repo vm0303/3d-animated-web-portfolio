@@ -88,7 +88,8 @@
     "phonePortraitLaptopButtonMinGapPx": -6,
     "phonePortraitLaptopButtonMaxGapPx": 1,
     "phonePortraitMaxBottomSlackPx": 50,
-    "phonePortraitNarrowTallMinBodyFontPx": 10.5
+    "phonePortraitNarrowTallMinBodyFontPx": 10.5,
+    "phonePortraitMinBottomBufferPx": 14
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
@@ -99,7 +100,8 @@
     "phonePortraitPreserveThreeParagraphCopyExactly": true,
     "phonePortraitCssOnlyTextLayout": true,
     "phonePortraitNoResponsiveHardBreaks": true,
-    "phonePortraitNoCompactCopySubstitutions": true
+    "phonePortraitNoCompactCopySubstitutions": true,
+    "phonePortraitAllowSingleWordLine": true
   },
   "supplementalViewports": [
     {
