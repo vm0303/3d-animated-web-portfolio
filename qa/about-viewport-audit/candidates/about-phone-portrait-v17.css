@@ -3,12 +3,22 @@
  *
  * TEST CANDIDATE ONLY.
  *
- * V17 keeps the approved V16 text/layout/bottom-buffer composition and
- * adds one isolated 3D-size refinement for the measured wide-phone,
- * medium-height portrait geometry family.
+ * V17 keeps the approved V16 phone-portrait composition unchanged and
+ * adds one browser-geometry correction for iOS Safari Liquid Glass.
  *
- * The per-model visualScale values remain untouched. CSS declares a
- * responsive multiplier and the Three.js normalization layer applies it.
+ * The existing global Liquid Glass guard grows as lvh - dvh grows. About
+ * gives its text intrinsic height and gives the remaining height to the
+ * 3D row, so an expanded Safari toolbar can otherwise squeeze the model.
+ *
+ * V17 compensates only the About section's Liquid Glass guard:
+ * - collapsed UI: keep the existing 88px floor;
+ * - expanded UI: reduce the guard by exactly (lvh - dvh);
+ * - clamp the result to 48px..88px.
+ *
+ * This keeps usable About composition height approximately stable while
+ * Safari chrome expands/collapses. Android/Chrome and non-Liquid Safari
+ * remain unchanged. No model scaling, camera scaling, or visualScale
+ * changes are used.
  *
  * Locked text contract:
  * - keep the existing three paragraph elements;
@@ -131,12 +141,6 @@
 
 
   .aboutModelContainer {
-    /*
-     * Responsive 3D multiplier consumed by AboutModelContainer.jsx.
-     * 1 keeps the approved V16 scale everywhere by default.
-     */
-    --about-model-scale: 1;
-
     flex: 1 1 0 !important;
 
     width: 100% !important;
@@ -600,29 +604,56 @@
 
 
 /* =========================================================
-   V17 — WIDE / MEDIUM-HEIGHT PHONE 3D SCALE
+   V17 — iOS SAFARI LIQUID GLASS ABOUT COMPENSATION
    =========================================================
-   Geometry evidence from the Hero measured registry includes:
-   - 430×739 / 430×740
-   - 440×755 / 440×760
-   - 430×775
+   Global index.css reserves:
+     clamp(88px, 300lvh - 300dvh, 128px)
 
-   The approved 448×827 / 448×843 family is intentionally excluded.
+   for every post-Hero section while the iOS Liquid Glass class is active.
 
-   This is a viewport-geometry rule, not a named-device rule.
-   Only the Three.js model grows; text, spacing, modal, canvas size,
-   View Screen placement, and per-model visualScale values stay frozen.
+   About is different from the other sections because its phone layout is:
+     row 1 = minmax(180px, 1fr)  -> 3D/model region
+     row 2 = auto                -> title + all three paragraphs
+
+   When dvh shrinks, row 2 keeps its natural height and row 1 absorbs the
+   loss. The global guard then grows at the same time, squeezing the 3D row
+   twice.
+
+   For About only, keep the collapsed-state 88px guard but subtract the
+   live lvh-dvh delta as Safari UI expands:
+
+     collapsed: lvh ≈ dvh
+       88px - 0px = 88px
+
+     expanded example: lvh - dvh = 40px
+       88px - 40px = 48px
+
+   Therefore:
+     (lvh - 0) - 88  ==  (lvh - 40) - 48
+
+   Usable About composition height remains approximately stable.
+
+   This is browser/viewport geometry, not a named-device patch.
+   Samsung/Chrome never receives this rule.
    ========================================================= */
 
-@media
-  (min-width: 430px)
-  and (max-width: 447px)
-  and (min-height: 730px)
-  and (max-height: 779px)
-  and (orientation: portrait) {
+@supports (height: 100lvh) and (height: 100dvh) {
+  @media
+    (max-width: 440px)
+    and (orientation: portrait) {
 
-  .aboutModelContainer {
-    --about-model-scale:
-      1.07;
+    html.ios-safari-liquid-ui
+    .container > section:has(> .about) {
+      --ios-liquid-content-guard:
+        clamp(
+          48px,
+          calc(
+            88px
+            - 100lvh
+            + 100dvh
+          ),
+          88px
+        );
+    }
   }
 }
