@@ -95,7 +95,11 @@
     "allowIntentionalSecondaryContentOmission": true,
     "doNotShrinkBelowReadabilityFloor": true,
     "preferBalancedCompositionOverForcingAllCopy": true,
-    "phonePortraitKeepAllParagraphs": true
+    "phonePortraitKeepAllParagraphs": true,
+    "phonePortraitPreserveThreeParagraphCopyExactly": true,
+    "phonePortraitCssOnlyTextLayout": true,
+    "phonePortraitNoResponsiveHardBreaks": true,
+    "phonePortraitNoCompactCopySubstitutions": true
   },
   "supplementalViewports": [
     {
