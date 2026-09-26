@@ -92,7 +92,8 @@
     "phonePortraitMinBottomBufferPx": 14,
     "phoneLandscapeShortMinTitleFontPx": 20,
     "phoneLandscapeShortMinBodyFontPx": 9.5,
-    "phoneLandscapeRequiredVisibleParagraphs": 3
+    "phoneLandscapeRequiredVisibleParagraphs": 3,
+    "modalImageAspectRatioTolerance": 0.03
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
