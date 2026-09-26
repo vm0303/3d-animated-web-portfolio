@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const { spawn } = require('child_process');
-const { chromium } = require('playwright');
+const { chromium, firefox, webkit } = require('playwright');
 
 const root = path.resolve(__dirname, '..', '..');
 const contractPath = path.join(root, 'qa', 'about-viewport-audit', 'about-composition-contract.json');
@@ -21,6 +21,8 @@ const argValue = (name) => {
 const family = argValue('family') || 'phone-portrait';
 const modelFilter = argValue('model') || 'all';
 const sceneFilter = argValue('scene') || null;
+const browserName = (argValue('browser') || 'chromium').toLowerCase();
+const onePerWidth = hasFlag('one-per-width');
 const quick = hasFlag('quick');
 const strict = hasFlag('strict');
 const includeModal = hasFlag('modal');
@@ -42,6 +44,18 @@ const overrideCss = overrideCssPath ? fs.readFileSync(overrideCssPath, 'utf8') :
 const FAMILY_TO_GROUP = contract.familyGroups;
 if (family !== 'all' && !FAMILY_TO_GROUP[family]) {
   throw new Error(`Unknown family: ${family}`);
+}
+
+const BROWSERS = {
+  chromium,
+  firefox,
+  webkit,
+};
+
+if (!BROWSERS[browserName]) {
+  throw new Error(
+    `Unknown browser: ${browserName}. Use chromium, firefox, or webkit.`
+  );
 }
 
 const sanitize = (value) => String(value)
@@ -76,6 +90,48 @@ const quickCases = (cases) => {
     );
   }
   return uniqueById(picks);
+};
+
+const oneRepresentativePerWidth = (cases) => {
+  const byWidth = new Map();
+
+  for (const item of cases) {
+    if (!byWidth.has(item.width)) {
+      byWidth.set(item.width, []);
+    }
+
+    byWidth.get(item.width).push(item);
+  }
+
+  const picks = [];
+
+  for (const width of [...byWidth.keys()].sort((a, b) => a - b)) {
+    const widthCases =
+      byWidth.get(width)
+        .slice()
+        .sort((a, b) => a.height - b.height);
+
+    const measured =
+      widthCases.filter(
+        (item) =>
+          item.source === 'MEASURED'
+      );
+
+    const pool =
+      measured.length
+        ? measured
+        : widthCases;
+
+    picks.push(
+      pool[
+        Math.floor(
+          pool.length / 2
+        )
+      ]
+    );
+  }
+
+  return picks;
 };
 
 const families = family === 'all' ? Object.keys(FAMILY_TO_GROUP) : [family];
@@ -113,6 +169,46 @@ for (const familyName of families) {
 
 viewportCases =
   uniqueById(viewportCases);
+
+if (onePerWidth) {
+  const supplementalIds =
+    new Set(
+      (contract.supplementalViewports || [])
+        .filter(
+          (item) =>
+            family === 'all' ||
+            item.family === family
+        )
+        .map(
+          (item) =>
+            item.id
+        )
+    );
+
+  const baseCases =
+    viewportCases.filter(
+      (item) =>
+        !supplementalIds.has(
+          item.id
+        )
+    );
+
+  const supplementalCases =
+    viewportCases.filter(
+      (item) =>
+        supplementalIds.has(
+          item.id
+        )
+    );
+
+  viewportCases =
+    uniqueById([
+      ...oneRepresentativePerWidth(
+        baseCases
+      ),
+      ...supplementalCases,
+    ]);
+}
 
 let modelStates = contract.modelStates;
 if (modelFilter !== 'all') {
@@ -470,10 +566,25 @@ const evaluateMetrics = (metrics, state, familyName) => {
         break;
       }
 
-      addIssue(issues, 'FAIL', 'SINGLE_WORD_LINE', 'A paragraph contains a line with only one word/token.', {
-        token: onlyToken,
-        lines: p.lineTokens,
-      });
+      if (
+        !(
+          familyName === 'phone-portrait' &&
+          contract.designPolicy
+            ?.phonePortraitAllowSingleWordLine
+        )
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'SINGLE_WORD_LINE',
+          'A paragraph contains a line with only one word/token.',
+          {
+            token: onlyToken,
+            lines: p.lineTokens,
+          }
+        );
+      }
+
       break;
     }
   }
@@ -543,6 +654,28 @@ const evaluateMetrics = (metrics, state, familyName) => {
     const bottomSlack =
       r.about.bottom -
       finalParagraph.rect.bottom;
+
+    const minBottomBuffer =
+      t.phonePortraitMinBottomBufferPx ??
+      0;
+
+    if (
+      bottomSlack <
+      minBottomBuffer -
+      tol
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'ABOUT_BOTTOM_BUFFER_TIGHT',
+        'Phone portrait needs more breathing room between paragraph 3 and the next section.',
+        {
+          bottomSlack,
+          minBottomBuffer,
+        }
+      );
+    }
+
 
     const maxBottomSlack =
       t.phonePortraitMaxBottomSlackPx ??
@@ -980,12 +1113,13 @@ const csvEscape = (value) => {
   ensureDir(badDir);
 
   const { baseUrl, child } = await startVite();
-  const browser = await chromium.launch({ headless: true });
+  const browser = await BROWSERS[browserName].launch({ headless: true });
   const results = [];
 
   try {
     console.log(`About composition QA: ${viewportCases.length} viewport cases × ${modelStates.length} model states${includeModal ? ' + laptop modal sentinel' : ''}.`);
-    console.log(`Family: ${family}${quick ? ' (quick)' : ''}`);
+    console.log(`Family: ${family}${quick ? ' (quick)' : ''}${onePerWidth ? ' (one-per-width)' : ''}`);
+    console.log(`Browser: ${browserName}`);
     console.log(`Base URL: ${baseUrl}`);
     if (overrideCssPath) console.log(`Override CSS: ${path.relative(root, overrideCssPath)} (pre-mount)`);
 
@@ -1072,6 +1206,8 @@ const csvEscape = (value) => {
           const status = statusForIssues(issues);
           const item = {
             id: `${testCase.id}__${state.scene}-${state.model}`,
+            browser: browserName,
+            browser: browserName,
             family: testCase.aboutFamily,
             viewportId: testCase.id,
             width: testCase.width,
@@ -1119,6 +1255,7 @@ const csvEscape = (value) => {
 
             results.push({
               id: `${testCase.id}__developer-laptop-modal`,
+              browser: browserName,
               family: testCase.aboutFamily,
               viewportId: testCase.id,
               width: testCase.width,
@@ -1185,8 +1322,10 @@ const csvEscape = (value) => {
   for (const item of results) counts[item.status] += 1;
   const summary = {
     generatedAt: new Date().toISOString(),
+    browser: browserName,
     family,
     quick,
+    onePerWidth,
     viewportCases: viewportCases.length,
     modelStates: modelStates.length,
     total: results.length,
@@ -1201,7 +1340,8 @@ const csvEscape = (value) => {
   const md = [
     '# About Composition QA',
     '',
-    `- Family: **${family}**${quick ? ' (quick)' : ''}`,
+    `- Browser: **${browserName}**`,
+    `- Family: **${family}**${quick ? ' (quick)' : ''}${onePerWidth ? ' (one-per-width)' : ''}`,
     `- Viewport cases: **${summary.viewportCases}**`,
     `- Model states per viewport: **${summary.modelStates}**`,
     `- Total: **${summary.total}**`,
