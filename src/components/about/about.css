@@ -103,16 +103,6 @@
     cursor: pointer;
 }
 
-.aboutBackendLabelCompact {
-    display: none;
-}
-
-
-.aboutResponsiveBreak {
-    display: none;
-}
-
-
 .aboutKeywordText {
     padding:
         0.02em
