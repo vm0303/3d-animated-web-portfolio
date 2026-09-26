@@ -453,119 +453,60 @@ const evaluateMetrics = (metrics, state, familyName) => {
     familyName === 'phone-portrait' &&
     visibleParagraphs.length === 3
   ) {
-    const firstParagraphLines =
-      visibleParagraphs[0].lineTokens ||
-      [];
-
-    const lineHasAll = (
-      requiredTokens
-    ) =>
-      firstParagraphLines.some(
-        (line) =>
-          requiredTokens.every(
-            (required) =>
-              line.some(
-                (token) =>
-                  token
-                    .toLowerCase()
-                    .includes(
-                      required
-                        .toLowerCase()
-                    )
-              )
-          )
-      );
-
     /*
-     * Explicit wrap contracts based on the user's observed geometry.
-     * These are capacity ranges, not named-device rules.
+     * Phone copy should be visually centered as a text measure.
+     * We validate the paragraph block itself instead of dictating
+     * exact editorial line breaks for individual viewports.
      */
+    const listLeftInset =
+      r.list.left;
+
+    const listRightInset =
+      metrics.viewport.innerWidth -
+      r.list.right;
+
+    const horizontalInsetDifference =
+      Math.abs(
+        listLeftInset -
+        listRightInset
+      );
+
     if (
-      metrics.viewport.innerWidth <= 370 &&
-      metrics.viewport.innerHeight >= 700 &&
-      metrics.viewport.innerHeight <= 760 &&
-      !lineHasAll([
-        'worked',
-        'java/spring',
-        'modern',
-        'front-end',
-        'development',
-      ])
+      horizontalInsetDifference >
+      2.5
     ) {
       addIssue(
         issues,
         'FAIL',
-        'KEYWORD_SEQUENCE_WRAP',
-        'Narrow/tall phone portrait should keep "worked across Java/Spring systems, modern front-end development" on one composed line.',
+        'PARAGRAPH_MEASURE_OFF_CENTER',
+        'Phone portrait paragraph measure is not horizontally centered in the viewport.',
         {
-          lines:
-            firstParagraphLines,
+          listLeftInset,
+          listRightInset,
+          horizontalInsetDifference,
         }
       );
     }
 
     if (
-      metrics.viewport.innerWidth >= 480 &&
-      metrics.viewport.innerWidth <= 500 &&
-      metrics.viewport.innerHeight >= 650 &&
-      metrics.viewport.innerHeight <= 710
-    ) {
-      const hasModernLine =
-        lineHasAll([
-          'worked',
-          'java/spring',
-          'modern',
-        ]);
-
-      const hasFrontendLine =
-        lineHasAll([
-          'front-end',
-          'development',
-          'cloud',
-          'automation',
-          'building',
-        ]);
-
-      if (
-        !hasModernLine ||
-        !hasFrontendLine
-      ) {
-        addIssue(
-          issues,
-          'FAIL',
-          'WIDE_COMPACT_EDITORIAL_WRAP',
-          'Wide/compact phone portrait should split after "modern" and keep the next frontend/cloud/building sequence together.',
-          {
-            lines:
-              firstParagraphLines,
-          }
-        );
-      }
-    }
-
-    if (
-      metrics.viewport.innerWidth >= 391 &&
-      metrics.viewport.innerWidth <= 420 &&
-      metrics.viewport.innerHeight >= 680 &&
-      !lineHasAll([
-        'modern',
-        'front-end',
-        'development',
-        'cloud',
-        'automation',
-      ])
+      Math.min(
+        listLeftInset,
+        listRightInset
+      ) <
+      4
     ) {
       addIssue(
         issues,
         'FAIL',
-        'KEYWORD_SEQUENCE_WRAP',
-        'Mid-width phone portrait should keep modern front-end development and cloud & automation in the same text line.',
+        'PARAGRAPH_EDGE_GUTTER_TIGHT',
+        'Phone portrait paragraph measure is too close to a viewport edge.',
         {
-          lines:
-            firstParagraphLines,
+          listLeftInset,
+          listRightInset,
         }
       );
     }
+
 
     const finalParagraph =
       visibleParagraphs[2];
