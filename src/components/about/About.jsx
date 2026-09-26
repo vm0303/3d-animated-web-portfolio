@@ -103,6 +103,79 @@ const buttonVariants = {
 };
 
 
+const AboutKeyword = ({
+  scene,
+  activeScene,
+  setActiveScene,
+  children,
+}) => {
+  const isActive =
+    activeScene === scene;
+
+
+  const activate =
+    useCallback(() => {
+      setActiveScene(scene);
+    }, [
+      scene,
+      setActiveScene,
+    ]);
+
+
+  const handleKeyDown =
+    useCallback(
+      (event) => {
+        if (
+          event.key !== "Enter" &&
+          event.key !== " "
+        ) {
+          return;
+        }
+
+
+        event.preventDefault();
+
+        activate();
+      },
+      [activate]
+    );
+
+
+  return (
+    <span
+      className="aboutKeyword"
+
+      role="button"
+
+      tabIndex={0}
+
+      data-active={
+        isActive
+      }
+
+      aria-pressed={
+        isActive
+      }
+
+      onClick={
+        activate
+      }
+
+      onKeyDown={
+        handleKeyDown
+      }
+    >
+      <span
+        className=
+          "aboutKeywordText"
+      >
+        {children}
+      </span>
+    </span>
+  );
+};
+
+
 const About = () => {
   /*
    * QA-only deterministic scene/model selection.
@@ -289,6 +362,7 @@ const About = () => {
             >
               I’m a{" "}
 
+<<<<<<< HEAD
               <button
                 type="button"
 
@@ -318,6 +392,21 @@ const About = () => {
                   full-stack software engineer
                 </span>
               </button>{" "}
+=======
+            <AboutKeyword
+              scene="developer"
+
+              activeScene={
+                activeScene
+              }
+
+              setActiveScene={
+                setActiveScene
+              }
+            >
+              full-stack software engineer
+            </AboutKeyword>{" "}
+>>>>>>> c5a72d3ce155299a32ae1345b91b784ed570f28d
 
               who enjoys turning complex
               problems into reliable,
@@ -326,6 +415,7 @@ const About = () => {
               Over the years, I’ve
               worked across{" "}
 
+<<<<<<< HEAD
               <button
                 type="button"
 
@@ -421,6 +511,55 @@ const About = () => {
               building applications
               and tools that are designed
               to scale and stay dependable.
+=======
+            <AboutKeyword
+              scene="backend"
+
+              activeScene={
+                activeScene
+              }
+
+              setActiveScene={
+                setActiveScene
+              }
+            >
+              Java and Spring-based
+              systems,
+            </AboutKeyword>{" "}
+
+            <AboutKeyword
+              scene="frontend"
+
+              activeScene={
+                activeScene
+              }
+
+              setActiveScene={
+                setActiveScene
+              }
+            >
+              modern front-end
+              development,
+            </AboutKeyword>{" "}
+            and{" "}
+
+            <AboutKeyword
+              scene="cloud"
+
+              activeScene={
+                activeScene
+              }
+
+              setActiveScene={
+                setActiveScene
+              }
+            >
+              cloud &amp; automation,
+            </AboutKeyword>{" "}
+            building applications
+            and tools that are designed
+            to scale and stay dependable.
+>>>>>>> c5a72d3ce155299a32ae1345b91b784ed570f28d
             </span>
           </motion.p>
 
@@ -464,6 +603,7 @@ const About = () => {
               Outside of development,
               you’ll usually find me{" "}
 
+<<<<<<< HEAD
               <button
                 type="button"
 
@@ -496,6 +636,24 @@ const About = () => {
                   series.
                 </span>
               </button>
+=======
+            <AboutKeyword
+              scene="hobbies"
+
+              activeScene={
+                activeScene
+              }
+
+              setActiveScene={
+                setActiveScene
+              }
+            >
+              working out, gaming,
+              cycling, or getting lost
+              in a good movie or TV
+              series.
+            </AboutKeyword>
+>>>>>>> c5a72d3ce155299a32ae1345b91b784ed570f28d
             </span>
           </motion.p>
         </motion.div>
