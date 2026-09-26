@@ -15,7 +15,6 @@ import {
     Suspense,
     useCallback,
     useEffect,
-    useLayoutEffect,
     useRef,
     useState,
 } from "react";
@@ -269,128 +268,6 @@ const AboutModelContainer = ({
         qaModelReady,
         setQaModelReady,
     ] = useState(false);
-
-
-    /*
-     * Responsive 3D scale is declared by CSS geometry rules through
-     * --about-model-scale on .aboutModelContainer.
-     *
-     * This keeps responsibilities separated:
-     * - aboutScenes.js visualScale = per-model optical baseline
-     * - CSS custom property = responsive viewport adjustment
-     * - NormalizedModel = actual Three.js scaling
-     */
-    const aboutModelContainerRef =
-        useRef(null);
-
-
-    const [
-        responsiveModelScale,
-        setResponsiveModelScale,
-    ] = useState(1);
-
-
-    const readResponsiveModelScale =
-        useCallback(() => {
-            const node =
-                aboutModelContainerRef
-                    .current;
-
-
-            if (
-                !node ||
-                typeof window ===
-                    "undefined"
-            ) {
-                return;
-            }
-
-
-            const rawValue =
-                window
-                    .getComputedStyle(
-                        node
-                    )
-                    .getPropertyValue(
-                        "--about-model-scale"
-                    );
-
-
-            const parsedValue =
-                Number.parseFloat(
-                    rawValue
-                );
-
-
-            const nextScale =
-                Number.isFinite(
-                    parsedValue
-                ) &&
-                parsedValue > 0
-                    ? parsedValue
-                    : 1;
-
-
-            setResponsiveModelScale(
-                (currentScale) =>
-                    Math.abs(
-                        currentScale -
-                        nextScale
-                    ) < 0.001
-                        ? currentScale
-                        : nextScale
-            );
-        }, []);
-
-
-    useLayoutEffect(() => {
-        const node =
-            aboutModelContainerRef
-                .current;
-
-
-        if (!node) {
-            return undefined;
-        }
-
-
-        /*
-         * Read before paint, then keep the value synchronized if viewport
-         * geometry/orientation changes while About remains mounted.
-         */
-        readResponsiveModelScale();
-
-
-        const observer =
-            typeof ResizeObserver !==
-                "undefined"
-                ? new ResizeObserver(
-                    readResponsiveModelScale
-                )
-                : null;
-
-
-        observer?.observe(node);
-
-
-        window.addEventListener(
-            "resize",
-            readResponsiveModelScale
-        );
-
-
-        return () => {
-            observer?.disconnect();
-
-
-            window.removeEventListener(
-                "resize",
-                readResponsiveModelScale
-            );
-        };
-    }, [
-        readResponsiveModelScale,
-    ]);
 
 
     const transitionSequenceRef =
@@ -1525,18 +1402,8 @@ const AboutModelContainer = ({
 
     return (
         <div
-            ref={
-                aboutModelContainerRef
-            }
-
             className=
             "aboutModelContainer"
-
-            data-about-model-scale={
-                qaMode
-                    ? responsiveModelScale
-                    : undefined
-            }
 
             data-about-qa={
                 qaMode
@@ -1737,10 +1604,6 @@ const AboutModelContainer = ({
                                     <CarouselModelSlot
                                         item={
                                             slot.item
-                                        }
-
-                                        responsiveScale={
-                                            responsiveModelScale
                                         }
 
                                         animationId={
