@@ -160,3 +160,31 @@ npm run qa:about:phone:landscape:short:v1:full
 Do not promote this candidate until the focused/boundary/visual/full short
 landscape evidence is green and manually accepted.
 
+### Phone landscape — active: short-height V2
+
+V1 proved the compact typography/lane sizing removes the original clipping,
+but visual review showed the left lane was pushed too far toward top alignment.
+V2 restores vertical centering while keeping all copy left-aligned.
+
+V2 also adds a phone-landscape modal containment rule. The modal image now
+keeps its intrinsic aspect ratio instead of filling a forced 100% × 100%
+image box, and modal QA now checks image containment + source/rendered aspect
+ratio.
+
+Portrait animation note:
+
+- About now mirrors Hero.jsx's portrait mobile/tablet media-query state.
+- Portrait phone/tablet uses fade-only entry variants for title, copy, and
+  model lane.
+- Landscape keeps the existing directional About motion.
+- The fade is opacity-only and does not change geometry.
+
+Validation order:
+
+```powershell
+npm run qa:about:phone:landscape:short:v2
+npm run qa:about:phone:landscape:short:v2:boundary
+npm run qa:about:phone:landscape:short:v2:visual-smoke
+npm run qa:about:phone:landscape:short:v2:full
+```
+
