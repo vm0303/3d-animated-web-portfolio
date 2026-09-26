@@ -1207,7 +1207,6 @@ const csvEscape = (value) => {
           const item = {
             id: `${testCase.id}__${state.scene}-${state.model}`,
             browser: browserName,
-            browser: browserName,
             family: testCase.aboutFamily,
             viewportId: testCase.id,
             width: testCase.width,
@@ -1291,6 +1290,7 @@ const csvEscape = (value) => {
         } catch (error) {
           results.push({
             id: `${testCase.id}__${state.scene}-${state.model}`,
+            browser: browserName,
             family: testCase.aboutFamily,
             viewportId: testCase.id,
             width: testCase.width,
