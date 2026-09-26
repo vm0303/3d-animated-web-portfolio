@@ -677,6 +677,15 @@ const collectMetrics = async (page) => page.evaluate(() => {
       scene: model.dataset.aboutScene ?? null,
       model: model.dataset.aboutModel ?? null,
       ready: model.dataset.aboutReady ?? null,
+      responsiveScale:
+        Number.parseFloat(
+          model.dataset.aboutModelScale ||
+          getComputedStyle(model)
+            .getPropertyValue(
+              '--about-model-scale'
+            ) ||
+          '1'
+        ),
     } : null,
     screenTriggerVisible: isVisible(screenTrigger),
   };
@@ -716,6 +725,53 @@ const evaluateMetrics = (metrics, state, familyName) => {
             t.minBodyFontPx
           )
         : t.minBodyFontPx;
+
+  if (
+    familyName === 'phone-portrait' &&
+    metrics.modelState
+  ) {
+    const isWideMediumPhone =
+      metrics.viewport.innerWidth >= 430 &&
+      metrics.viewport.innerWidth <= 447 &&
+      metrics.viewport.innerHeight >= 730 &&
+      metrics.viewport.innerHeight <= 779;
+
+    const expectedResponsiveScale =
+      isWideMediumPhone
+        ? 1.07
+        : 1;
+
+    const actualResponsiveScale =
+      Number.isFinite(
+        metrics.modelState
+          .responsiveScale
+      )
+        ? metrics.modelState
+            .responsiveScale
+        : 1;
+
+    if (
+      Math.abs(
+        actualResponsiveScale -
+        expectedResponsiveScale
+      ) >
+      0.005
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'ABOUT_MODEL_RESPONSIVE_SCALE_MISMATCH',
+        'About model responsive scale does not match the approved phone-portrait geometry rule.',
+        {
+          expectedResponsiveScale,
+          actualResponsiveScale,
+          viewport:
+            metrics.viewport,
+        }
+      );
+    }
+  }
+
 
   if (metrics.document.scrollWidth > metrics.viewport.innerWidth + t.horizontalOverflowTolerancePx) {
     addIssue(issues, 'FAIL', 'HORIZONTAL_OVERFLOW', 'Document is wider than the viewport.', {
