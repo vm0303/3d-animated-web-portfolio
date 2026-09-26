@@ -78,6 +78,73 @@ const paragraphVariants = {
 };
 
 
+const titleMobileVariants = {
+  initial: {
+    opacity: 0,
+  },
+
+  animate: {
+    opacity: 1,
+
+    transition: {
+      duration: 0.8,
+    },
+  },
+};
+
+
+const listMobileVariants = {
+  initial: {
+    opacity: 0,
+  },
+
+  animate: {
+    opacity: 1,
+
+    transition: {
+      duration: 0.7,
+      staggerChildren: 0.18,
+    },
+  },
+};
+
+
+const paragraphMobileVariants = {
+  initial: {
+    opacity: 0,
+  },
+
+  animate: {
+    opacity: 1,
+
+    transition: {
+      duration: 0.6,
+    },
+  },
+};
+
+
+const modelMobileVariants = {
+  initial: {
+    opacity: 0,
+  },
+
+  animate: {
+    opacity: 1,
+
+    transition: {
+      duration: 1,
+      delay: 0.15,
+    },
+  },
+};
+
+
+const mobileMediaQuery =
+  "(max-width: 1024px) and (orientation: portrait), " +
+  "(max-height: 1376px) and (orientation: portrait)";
+
+
 const buttonVariants = {
   initial: {
     opacity: 0,
@@ -188,6 +255,64 @@ const About = () => {
 
   const aboutQa =
     aboutQaRef.current;
+
+
+  /*
+   * Match Hero.jsx: portrait phones/tablets use fade-only entry motion.
+   * Landscape intentionally keeps the existing directional About motion.
+   */
+  const [
+    isMobile,
+    setIsMobile,
+  ] = useState(
+    () =>
+      window
+        .matchMedia(
+          mobileMediaQuery
+        )
+        .matches
+  );
+
+
+  useEffect(() => {
+    const mq =
+      window.matchMedia(
+        mobileMediaQuery
+      );
+
+    const handler =
+      (event) =>
+        setIsMobile(
+          event.matches
+        );
+
+    mq.addEventListener(
+      "change",
+      handler
+    );
+
+    return () =>
+      mq.removeEventListener(
+        "change",
+        handler
+      );
+  }, []);
+
+
+  const activeTitleVariants =
+    isMobile
+      ? titleMobileVariants
+      : titleVariants;
+
+  const activeListVariants =
+    isMobile
+      ? listMobileVariants
+      : listVariants;
+
+  const activeParagraphVariants =
+    isMobile
+      ? paragraphMobileVariants
+      : paragraphVariants;
 
 
   const [
@@ -324,7 +449,7 @@ const About = () => {
           className="aTitle"
 
           variants={
-            titleVariants
+            activeTitleVariants
           }
 
           animate={
@@ -341,7 +466,7 @@ const About = () => {
           className="aboutList"
 
           variants={
-            listVariants
+            activeListVariants
           }
 
           animate={
@@ -352,7 +477,7 @@ const About = () => {
         >
           <motion.p
             variants={
-              paragraphVariants
+              activeParagraphVariants
             }
           >
             <span
@@ -436,7 +561,7 @@ const About = () => {
 
           <motion.p
             variants={
-              paragraphVariants
+              activeParagraphVariants
             }
           >
             <span
@@ -463,7 +588,7 @@ const About = () => {
 
           <motion.p
             variants={
-              paragraphVariants
+              activeParagraphVariants
             }
           >
             <span
@@ -495,7 +620,31 @@ const About = () => {
       </div>
 
 
-      <div className="aSection right">
+      <motion.div
+        className="aSection right"
+
+        variants={
+          isMobile
+            ? modelMobileVariants
+            : undefined
+        }
+
+        initial={
+          isMobile
+            ? "initial"
+            : false
+        }
+
+        animate={
+          isMobile
+            ? (
+                isInView
+                  ? "animate"
+                  : "initial"
+              )
+            : undefined
+        }
+      >
         {isInView && (
           <>
             <AboutModelContainer
@@ -569,7 +718,7 @@ const About = () => {
             </AnimatePresence>
           </>
         )}
-      </div>
+      </motion.div>
 
 
       <LaptopScreenModal
