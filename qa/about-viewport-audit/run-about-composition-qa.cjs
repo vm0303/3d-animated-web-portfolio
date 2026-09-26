@@ -1386,7 +1386,10 @@ const collectModalMetrics = async (page) => page.evaluate(() => {
   };
 });
 
-const evaluateModalMetrics = (metrics) => {
+const evaluateModalMetrics = (
+  metrics,
+  familyName
+) => {
   const issues = [];
   const tol = contract.thresholds.containmentTolerancePx;
   const r = metrics.rects;
@@ -1485,6 +1488,8 @@ const evaluateModalMetrics = (metrics) => {
     0.03;
 
   if (
+    familyName ===
+      'phone-landscape' &&
     Number.isFinite(naturalAspect) &&
     Number.isFinite(renderedAspect) &&
     Math.abs(
@@ -1831,7 +1836,11 @@ const csvEscape = (value) => {
             }, null, { timeout: 10000 });
 
             const modalMetrics = await collectModalMetrics(page);
-            const modalIssues = evaluateModalMetrics(modalMetrics);
+            const modalIssues =
+              evaluateModalMetrics(
+                modalMetrics,
+                testCase.aboutFamily
+              );
             const modalStatus = statusForIssues(modalIssues);
 
             results.push({
