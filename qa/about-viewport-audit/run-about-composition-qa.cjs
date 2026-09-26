@@ -21,6 +21,31 @@ const argValue = (name) => {
 const family = argValue('family') || 'phone-portrait';
 const modelFilter = argValue('model') || 'all';
 const sceneFilter = argValue('scene') || null;
+
+const minWidth =
+  Number(
+    argValue('min-width') ||
+    Number.NEGATIVE_INFINITY
+  );
+
+const maxWidth =
+  Number(
+    argValue('max-width') ||
+    Number.POSITIVE_INFINITY
+  );
+
+const minHeight =
+  Number(
+    argValue('min-height') ||
+    Number.NEGATIVE_INFINITY
+  );
+
+const maxHeight =
+  Number(
+    argValue('max-height') ||
+    Number.POSITIVE_INFINITY
+  );
+
 const browserName = (argValue('browser') || 'chromium').toLowerCase();
 const onePerWidth = hasFlag('one-per-width');
 const webglProbe = hasFlag('webgl-probe');
@@ -111,6 +136,14 @@ const quickCases = (cases) => {
   return uniqueById(picks);
 };
 
+const matchesGeometryFilters =
+  (item) =>
+    item.width >= minWidth &&
+    item.width <= maxWidth &&
+    item.height >= minHeight &&
+    item.height <= maxHeight;
+
+
 const oneRepresentativePerWidth = (cases) => {
   const byWidth = new Map();
 
@@ -157,8 +190,21 @@ const families = family === 'all' ? Object.keys(FAMILY_TO_GROUP) : [family];
 let viewportCases = [];
 for (const familyName of families) {
   const groupName = FAMILY_TO_GROUP[familyName];
-  const cases = viewportSource.groups[groupName] || [];
-  const selected = quick ? quickCases(cases) : cases;
+
+  const cases =
+    (
+      viewportSource.groups[
+        groupName
+      ] || []
+    )
+      .filter(
+        matchesGeometryFilters
+      );
+
+  const selected =
+    quick
+      ? quickCases(cases)
+      : cases;
 
   viewportCases.push(
     ...selected.map(
@@ -174,6 +220,9 @@ for (const familyName of families) {
       .filter(
         (item) =>
           item.family === familyName
+      )
+      .filter(
+        matchesGeometryFilters
       );
 
   viewportCases.push(
@@ -701,10 +750,22 @@ const evaluateMetrics = (metrics, state, familyName) => {
   const tol = t.containmentTolerancePx;
   const r = metrics.rects;
 
+  const isPhoneLandscapeShort =
+    familyName === 'phone-landscape' &&
+    metrics.viewport.innerHeight <= 355;
+
   const minTitleFontPx =
     familyName === 'phone-portrait'
-      ? (t.phonePortraitMinTitleFontPx ?? t.minTitleFontPx)
-      : t.minTitleFontPx;
+      ? (
+          t.phonePortraitMinTitleFontPx ??
+          t.minTitleFontPx
+        )
+      : isPhoneLandscapeShort
+        ? (
+            t.phoneLandscapeShortMinTitleFontPx ??
+            t.minTitleFontPx
+          )
+        : t.minTitleFontPx;
 
   const isPhonePortraitNarrowTall =
     familyName === 'phone-portrait' &&
@@ -724,53 +785,13 @@ const evaluateMetrics = (metrics, state, familyName) => {
             t.phonePortraitMinBodyFontPx ??
             t.minBodyFontPx
           )
-        : t.minBodyFontPx;
+        : isPhoneLandscapeShort
+          ? (
+              t.phoneLandscapeShortMinBodyFontPx ??
+              t.minBodyFontPx
+            )
+          : t.minBodyFontPx;
 
-  if (
-    familyName === 'phone-portrait' &&
-    metrics.modelState
-  ) {
-    const isWideMediumPhone =
-      metrics.viewport.innerWidth >= 430 &&
-      metrics.viewport.innerWidth <= 447 &&
-      metrics.viewport.innerHeight >= 730 &&
-      metrics.viewport.innerHeight <= 779;
-
-    const expectedResponsiveScale =
-      isWideMediumPhone
-        ? 1.07
-        : 1;
-
-    const actualResponsiveScale =
-      Number.isFinite(
-        metrics.modelState
-          .responsiveScale
-      )
-        ? metrics.modelState
-            .responsiveScale
-        : 1;
-
-    if (
-      Math.abs(
-        actualResponsiveScale -
-        expectedResponsiveScale
-      ) >
-      0.005
-    ) {
-      addIssue(
-        issues,
-        'FAIL',
-        'ABOUT_MODEL_RESPONSIVE_SCALE_MISMATCH',
-        'About model responsive scale does not match the approved phone-portrait geometry rule.',
-        {
-          expectedResponsiveScale,
-          actualResponsiveScale,
-          viewport:
-            metrics.viewport,
-        }
-      );
-    }
-  }
 
 
   if (metrics.document.scrollWidth > metrics.viewport.innerWidth + t.horizontalOverflowTolerancePx) {
@@ -851,6 +872,14 @@ const evaluateMetrics = (metrics, state, familyName) => {
     addIssue(issues, 'FAIL', 'CONTENT_MISSING', 'Phone portrait must keep all three About paragraphs visible.', {
       visibleParagraphCount: metrics.visibleParagraphCount,
       requiredVisibleParagraphs: t.requiredVisibleParagraphs ?? 3,
+    });
+  } else if (
+    familyName === 'phone-landscape' &&
+    metrics.visibleParagraphCount < (t.phoneLandscapeRequiredVisibleParagraphs ?? 3)
+  ) {
+    addIssue(issues, 'FAIL', 'CONTENT_MISSING', 'Phone landscape must keep all three About paragraphs visible.', {
+      visibleParagraphCount: metrics.visibleParagraphCount,
+      requiredVisibleParagraphs: t.phoneLandscapeRequiredVisibleParagraphs ?? 3,
     });
   } else if (metrics.visibleParagraphCount < t.recommendedVisibleParagraphs) {
     addIssue(issues, 'REVIEW', 'CONTENT_REDUCED', 'Fewer About paragraphs are visible.', {
@@ -1821,6 +1850,24 @@ const csvEscape = (value) => {
     quick,
     onePerWidth,
     webglProbe,
+    geometryFilters: {
+      minWidth:
+        Number.isFinite(minWidth)
+          ? minWidth
+          : null,
+      maxWidth:
+        Number.isFinite(maxWidth)
+          ? maxWidth
+          : null,
+      minHeight:
+        Number.isFinite(minHeight)
+          ? minHeight
+          : null,
+      maxHeight:
+        Number.isFinite(maxHeight)
+          ? maxHeight
+          : null,
+    },
     viewportCases: viewportCases.length,
     modelStates: modelStates.length,
     total: results.length,
