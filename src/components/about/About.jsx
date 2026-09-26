@@ -103,6 +103,79 @@ const buttonVariants = {
 };
 
 
+const AboutKeyword = ({
+  scene,
+  activeScene,
+  setActiveScene,
+  children,
+}) => {
+  const isActive =
+    activeScene === scene;
+
+
+  const activate =
+    useCallback(() => {
+      setActiveScene(scene);
+    }, [
+      scene,
+      setActiveScene,
+    ]);
+
+
+  const handleKeyDown =
+    useCallback(
+      (event) => {
+        if (
+          event.key !== "Enter" &&
+          event.key !== " "
+        ) {
+          return;
+        }
+
+
+        event.preventDefault();
+
+        activate();
+      },
+      [activate]
+    );
+
+
+  return (
+    <span
+      className="aboutKeyword"
+
+      role="button"
+
+      tabIndex={0}
+
+      data-active={
+        isActive
+      }
+
+      aria-pressed={
+        isActive
+      }
+
+      onClick={
+        activate
+      }
+
+      onKeyDown={
+        handleKeyDown
+      }
+    >
+      <span
+        className=
+          "aboutKeywordText"
+      >
+        {children}
+      </span>
+    </span>
+  );
+};
+
+
 const About = () => {
   /*
    * QA-only deterministic scene/model selection.
@@ -289,35 +362,19 @@ const About = () => {
             >
             I’m a{" "}
 
-            <button
-              type="button"
+            <AboutKeyword
+              scene="developer"
 
-              className=
-                "aboutKeyword"
-
-              data-active={
-                activeScene ===
-                "developer"
+              activeScene={
+                activeScene
               }
 
-              aria-pressed={
-                activeScene ===
-                "developer"
-              }
-
-              onClick={() =>
-                setActiveScene(
-                  "developer"
-                )
+              setActiveScene={
+                setActiveScene
               }
             >
-              <span
-                className=
-                  "aboutKeywordText"
-              >
-                full-stack software engineer
-              </span>
-            </button>{" "}
+              full-stack software engineer
+            </AboutKeyword>{" "}
 
             who enjoys turning complex
             problems into reliable,
@@ -326,98 +383,50 @@ const About = () => {
             Over the years, I’ve
             worked across{" "}
 
-            <button
-              type="button"
+            <AboutKeyword
+              scene="backend"
 
-              className=
-                "aboutKeyword"
-
-              data-active={
-                activeScene ===
-                "backend"
+              activeScene={
+                activeScene
               }
 
-              aria-pressed={
-                activeScene ===
-                "backend"
-              }
-
-              onClick={() =>
-                setActiveScene(
-                  "backend"
-                )
+              setActiveScene={
+                setActiveScene
               }
             >
-              <span
-                className=
-                  "aboutKeywordText"
-              >
-                Java and Spring-based
-                systems,
-              </span>
-            </button>{" "}
+              Java and Spring-based
+              systems,
+            </AboutKeyword>{" "}
 
-            <button
-              type="button"
+            <AboutKeyword
+              scene="frontend"
 
-              className=
-                "aboutKeyword"
-
-              data-active={
-                activeScene ===
-                "frontend"
+              activeScene={
+                activeScene
               }
 
-              aria-pressed={
-                activeScene ===
-                "frontend"
-              }
-
-              onClick={() =>
-                setActiveScene(
-                  "frontend"
-                )
+              setActiveScene={
+                setActiveScene
               }
             >
-              <span
-                className=
-                  "aboutKeywordText"
-              >
-                modern front-end
-                development,
-              </span>
-            </button>{" "}
+              modern front-end
+              development,
+            </AboutKeyword>{" "}
             and{" "}
 
-            <button
-              type="button"
+            <AboutKeyword
+              scene="cloud"
 
-              className=
-                "aboutKeyword"
-
-              data-active={
-                activeScene ===
-                "cloud"
+              activeScene={
+                activeScene
               }
 
-              aria-pressed={
-                activeScene ===
-                "cloud"
-              }
-
-              onClick={() =>
-                setActiveScene(
-                  "cloud"
-                )
+              setActiveScene={
+                setActiveScene
               }
             >
-              <span
-                className=
-                  "aboutKeywordText"
-              >
-                cloud &amp; automation,
-              </span>
-            </button>{" "}
+              cloud &amp; automation,
+            </AboutKeyword>{" "}
             building applications
             and tools that are designed
             to scale and stay dependable.
@@ -464,38 +473,22 @@ const About = () => {
             Outside of development,
             you’ll usually find me{" "}
 
-            <button
-              type="button"
+            <AboutKeyword
+              scene="hobbies"
 
-              className=
-                "aboutKeyword"
-
-              data-active={
-                activeScene ===
-                "hobbies"
+              activeScene={
+                activeScene
               }
 
-              aria-pressed={
-                activeScene ===
-                "hobbies"
-              }
-
-              onClick={() =>
-                setActiveScene(
-                  "hobbies"
-                )
+              setActiveScene={
+                setActiveScene
               }
             >
-              <span
-                className=
-                  "aboutKeywordText"
-              >
-                working out, gaming,
-                cycling, or getting lost
-                in a good movie or TV
-                series.
-              </span>
-            </button>
+              working out, gaming,
+              cycling, or getting lost
+              in a good movie or TV
+              series.
+            </AboutKeyword>
             </span>
           </motion.p>
         </motion.div>
