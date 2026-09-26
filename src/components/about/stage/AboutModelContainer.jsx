@@ -1,5 +1,6 @@
 import {
-    Canvas
+    Canvas,
+    useThree,
 } from "@react-three/fiber";
 
 import {
@@ -88,6 +89,96 @@ const StageBoundsAnchor = () => {
             />
         </mesh>
     );
+};
+
+
+const AboutQaWebGLProbe = ({
+    enabled,
+}) => {
+    const {
+        gl,
+        scene,
+        camera,
+    } = useThree();
+
+
+    useEffect(() => {
+        if (!enabled) {
+            return undefined;
+        }
+
+
+        window.__ABOUT_QA_WEBGL_PROBE__ =
+            () => {
+                /*
+                 * Force one render immediately before readback.
+                 * QA mode uses preserveDrawingBuffer so toDataURL
+                 * can verify the WebGL framebuffer independently
+                 * of Playwright's page.screenshot compositor.
+                 */
+                gl.render(
+                    scene,
+                    camera
+                );
+
+
+                const context =
+                    gl.getContext();
+
+
+                context.finish?.();
+
+
+                return {
+                    dataUrl:
+                        gl.domElement
+                            .toDataURL(
+                                "image/png"
+                            ),
+
+                    canvasWidth:
+                        gl.domElement
+                            .width,
+
+                    canvasHeight:
+                        gl.domElement
+                            .height,
+
+                    clientWidth:
+                        gl.domElement
+                            .clientWidth,
+
+                    clientHeight:
+                        gl.domElement
+                            .clientHeight,
+
+                    contextLost:
+                        Boolean(
+                            context
+                                .isContextLost?.()
+                        ),
+
+                    glError:
+                        context
+                            .getError?.() ??
+                        null,
+                };
+            };
+
+
+        return () => {
+            delete window
+                .__ABOUT_QA_WEBGL_PROBE__;
+        };
+    }, [
+        enabled,
+        gl,
+        scene,
+        camera,
+    ]);
+
+
+    return null;
 };
 
 
@@ -1372,6 +1463,15 @@ const AboutModelContainer = ({
 
                         powerPreference:
                             "high-performance",
+
+                        /*
+                         * QA only:
+                         * makes renderer readback deterministic so
+                         * WebKit screenshot/compositor failures can
+                         * be separated from actual Three rendering.
+                         */
+                        preserveDrawingBuffer:
+                            qaMode,
                     }}
 
                     onCreated={({
@@ -1381,6 +1481,13 @@ const AboutModelContainer = ({
                             1;
                     }}
                 >
+                    <AboutQaWebGLProbe
+                        enabled={
+                            qaMode
+                        }
+                    />
+
+
                     <Suspense
                         fallback={null}
                     >
