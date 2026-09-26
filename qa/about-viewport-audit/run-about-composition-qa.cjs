@@ -23,6 +23,7 @@ const modelFilter = argValue('model') || 'all';
 const sceneFilter = argValue('scene') || null;
 const browserName = (argValue('browser') || 'chromium').toLowerCase();
 const onePerWidth = hasFlag('one-per-width');
+const webglProbe = hasFlag('webgl-probe');
 const quick = hasFlag('quick');
 const strict = hasFlag('strict');
 const includeModal = hasFlag('modal');
@@ -1359,8 +1360,13 @@ const csvEscape = (value) => {
   ensureDir(outputDir);
   const goodDir = path.join(outputDir, 'good_screenshots');
   const badDir = path.join(outputDir, 'bad_screenshots');
+  const webglProbeDir = path.join(outputDir, 'webgl_probe');
   ensureDir(goodDir);
   ensureDir(badDir);
+
+  if (webglProbe) {
+    ensureDir(webglProbeDir);
+  }
 
   const viteRoot =
     buildStaticCandidateRoot();
@@ -1515,6 +1521,90 @@ const csvEscape = (value) => {
             contract.settleMs
           );
 
+          let webglProbeResult = null;
+
+          if (webglProbe) {
+            webglProbeResult =
+              await page.evaluate(
+                () => {
+                  const probe =
+                    window.__ABOUT_QA_WEBGL_PROBE__;
+
+                  if (
+                    typeof probe !==
+                    'function'
+                  ) {
+                    return {
+                      available: false,
+                    };
+                  }
+
+                  try {
+                    return {
+                      available: true,
+                      ...probe(),
+                    };
+                  } catch (error) {
+                    return {
+                      available: true,
+                      error:
+                        String(
+                          error?.stack ||
+                          error
+                        ),
+                    };
+                  }
+                }
+              );
+
+            if (
+              webglProbeResult
+                ?.dataUrl
+                ?.startsWith(
+                  'data:image/png;base64,'
+                )
+            ) {
+              const base64 =
+                webglProbeResult
+                  .dataUrl
+                  .slice(
+                    'data:image/png;base64,'
+                      .length
+                  );
+
+              const filename =
+                `${sanitize(browserName)}__${testCase.width}x${testCase.height}__${sanitize(state.scene)}-${sanitize(state.model)}__canvas-readback.png`;
+
+              const fullPath =
+                path.join(
+                  webglProbeDir,
+                  filename
+                );
+
+              fs.writeFileSync(
+                fullPath,
+                Buffer.from(
+                  base64,
+                  'base64'
+                )
+              );
+
+              webglProbeResult = {
+                ...webglProbeResult,
+                dataUrl: undefined,
+                readbackPath:
+                  path.relative(
+                    root,
+                    fullPath
+                  ),
+                readbackBytes:
+                  fs.statSync(
+                    fullPath
+                  ).size,
+              };
+            }
+          }
+
           const metrics =
             await collectMetrics(page);
           const issues = evaluateMetrics(
@@ -1540,6 +1630,8 @@ const csvEscape = (value) => {
             status,
             issues,
             metrics,
+            webglProbe:
+              webglProbeResult,
           };
           results.push(item);
 
@@ -1672,6 +1764,7 @@ const csvEscape = (value) => {
     family,
     quick,
     onePerWidth,
+    webglProbe,
     viewportCases: viewportCases.length,
     modelStates: modelStates.length,
     total: results.length,
@@ -1694,6 +1787,7 @@ const csvEscape = (value) => {
     '# About Composition QA',
     '',
     `- Browser: **${browserName}**`,
+    `- WebGL probe: **${webglProbe ? 'enabled' : 'disabled'}**`,
     `- Family: **${family}**${quick ? ' (quick)' : ''}${onePerWidth ? ' (one-per-width)' : ''}`,
     `- Viewport cases: **${summary.viewportCases}**`,
     `- Model states per viewport: **${summary.modelStates}**`,
