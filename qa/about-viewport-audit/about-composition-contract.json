@@ -89,7 +89,10 @@
     "phonePortraitLaptopButtonMaxGapPx": 1,
     "phonePortraitMaxBottomSlackPx": 50,
     "phonePortraitNarrowTallMinBodyFontPx": 10.5,
-    "phonePortraitMinBottomBufferPx": 14
+    "phonePortraitMinBottomBufferPx": 14,
+    "phoneLandscapeShortMinTitleFontPx": 20,
+    "phoneLandscapeShortMinBodyFontPx": 9.5,
+    "phoneLandscapeRequiredVisibleParagraphs": 3
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
@@ -112,6 +115,24 @@
       "family": "phone-portrait",
       "source": "OBSERVED",
       "orientation": "portrait"
+    },
+    {
+      "id": "about-phone-landscape__boundary-720x355",
+      "width": 720,
+      "height": 355,
+      "label": "About phone-landscape short boundary sentinel",
+      "family": "phone-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "about-phone-landscape__boundary-720x356",
+      "width": 720,
+      "height": 356,
+      "label": "About phone-landscape normal boundary sentinel",
+      "family": "phone-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
     }
   ]
 }
