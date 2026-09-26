@@ -1376,6 +1376,12 @@ const collectModalMetrics = async (page) => page.evaluate(() => {
       naturalWidth: image.naturalWidth,
       naturalHeight: image.naturalHeight,
       complete: image.complete,
+      objectFit:
+        getComputedStyle(image)
+          .objectFit,
+      objectPosition:
+        getComputedStyle(image)
+          .objectPosition,
     } : null,
   };
 });
@@ -1425,6 +1431,83 @@ const evaluateModalMetrics = (metrics) => {
       image: r.image,
       source: metrics.image,
     });
+  }
+
+
+  if (
+    r.imageViewport &&
+    (
+      r.image.left <
+        r.imageViewport.left - tol ||
+      r.image.top <
+        r.imageViewport.top - tol ||
+      r.image.right >
+        r.imageViewport.right + tol ||
+      r.image.bottom >
+        r.imageViewport.bottom + tol
+    )
+  ) {
+    addIssue(
+      issues,
+      'FAIL',
+      'MODAL_IMAGE_VIEWPORT_ESCAPE',
+      'Laptop screen image extends outside its image viewport.',
+      {
+        image: r.image,
+        imageViewport:
+          r.imageViewport,
+      }
+    );
+  }
+
+
+  const naturalAspect =
+    metrics.image?.naturalWidth > 0 &&
+    metrics.image?.naturalHeight > 0
+      ? (
+          metrics.image.naturalWidth /
+          metrics.image.naturalHeight
+        )
+      : null;
+
+  const renderedAspect =
+    r.image.width > 0 &&
+    r.image.height > 0
+      ? (
+          r.image.width /
+          r.image.height
+        )
+      : null;
+
+  const aspectTolerance =
+    contract.thresholds
+      .modalImageAspectRatioTolerance ??
+    0.03;
+
+  if (
+    Number.isFinite(naturalAspect) &&
+    Number.isFinite(renderedAspect) &&
+    Math.abs(
+      renderedAspect -
+      naturalAspect
+    ) >
+      aspectTolerance
+  ) {
+    addIssue(
+      issues,
+      'FAIL',
+      'MODAL_IMAGE_ASPECT_DISTORTED',
+      'Laptop screen image box does not preserve the source image aspect ratio.',
+      {
+        naturalAspect,
+        renderedAspect,
+        aspectTolerance,
+        objectFit:
+          metrics.image?.objectFit,
+        objectPosition:
+          metrics.image?.objectPosition,
+      }
+    );
   }
 
   return issues;
