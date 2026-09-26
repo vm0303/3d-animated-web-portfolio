@@ -82,16 +82,11 @@
     min-height: 0;
 }
 .aboutKeyword {
-    appearance: none;
-
     display: inline;
 
     margin: 0;
     padding: 0;
 
-    border: 0;
-
-    background: transparent;
     color: inherit;
 
     font: inherit;
@@ -99,6 +94,8 @@
     line-height: inherit;
 
     text-align: left;
+
+    white-space: normal;
 
     cursor: pointer;
 }
@@ -121,6 +118,7 @@
     background-position: left center;
     background-size: 0% 100%;
 
+    -webkit-box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
 
