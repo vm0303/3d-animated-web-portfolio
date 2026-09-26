@@ -41,6 +41,24 @@ if (overrideCssPath && !fs.existsSync(overrideCssPath)) {
 }
 const overrideCss = overrideCssPath ? fs.readFileSync(overrideCssPath, 'utf8') : null;
 
+/*
+ * WebKit + React Three Fiber/WebGL candidate load-order rule:
+ *
+ * Hero QA already proved that injecting responsive candidate CSS after the
+ * app begins mounting can leave WebKit's screenshot compositor with a blank
+ * WebGL layer even when the canvas/backing store is healthy.
+ *
+ * Therefore WebKit automatically uses a temporary static candidate root:
+ * candidate CSS is appended to about.css BEFORE Vite starts and BEFORE
+ * React/Three.js creates the canvas.
+ */
+const staticCandidateMode =
+  hasFlag('static-candidate') ||
+  (
+    browserName === 'webkit' &&
+    Boolean(overrideCssPath)
+  );
+
 const FAMILY_TO_GROUP = contract.familyGroups;
 if (family !== 'all' && !FAMILY_TO_GROUP[family]) {
   throw new Error(`Unknown family: ${family}`);
@@ -243,40 +261,272 @@ const waitForHttp = async (url, timeoutMs = 30000) => {
   throw new Error(`Timed out waiting for ${url}`);
 };
 
-const startVite = async () => {
-  if (explicitBaseUrl) return { baseUrl: explicitBaseUrl, child: null };
-  const viteBin = path.join(root, 'node_modules', 'vite', 'bin', 'vite.js');
-  if (!fs.existsSync(viteBin)) {
-    throw new Error('Vite is not installed. Run npm install first.');
+const candidateTempRoot =
+  path.join(
+    outputDir,
+    '.static-candidate-root'
+  );
+
+
+const buildStaticCandidateRoot = () => {
+  if (!staticCandidateMode) {
+    return root;
   }
-  const baseUrl = `http://127.0.0.1:${port}`;
-  const child = spawn(
-    process.execPath,
-    [viteBin, '--host', '127.0.0.1', '--port', String(port), '--strictPort'],
+
+  if (!overrideCssPath) {
+    return root;
+  }
+
+  if (explicitBaseUrl) {
+    throw new Error(
+      '--static-candidate/automatic WebKit static candidate mode requires the About runner to start its own Vite server. Remove --base-url.'
+    );
+  }
+
+  fs.rmSync(
+    candidateTempRoot,
     {
-      cwd: root,
-      env: { ...process.env },
-      stdio: ['ignore', 'pipe', 'pipe'],
+      recursive: true,
+      force: true,
     }
   );
-  let stderr = '';
-  child.stderr.on('data', (chunk) => { stderr += chunk.toString(); });
-  child.on('exit', (code) => {
-    if (code && code !== 0) process.stderr.write(stderr);
-  });
-  await waitForHttp(baseUrl);
-  return { baseUrl, child };
+
+  ensureDir(
+    candidateTempRoot
+  );
+
+  for (
+    const name of [
+      'index.html',
+      'src',
+      'public',
+    ]
+  ) {
+    const source =
+      path.join(
+        root,
+        name
+      );
+
+    const target =
+      path.join(
+        candidateTempRoot,
+        name
+      );
+
+    if (
+      !fs.existsSync(source)
+    ) {
+      throw new Error(
+        `Missing source required for static About candidate root: ${source}`
+      );
+    }
+
+    fs.cpSync(
+      source,
+      target,
+      {
+        recursive: true,
+      }
+    );
+  }
+
+  for (
+    const name of [
+      'vite.config.js',
+      'vite.config.mjs',
+      'vite.config.cjs',
+      'vite.config.ts',
+      'jsconfig.json',
+      'tsconfig.json',
+    ]
+  ) {
+    const source =
+      path.join(
+        root,
+        name
+      );
+
+    if (
+      fs.existsSync(source)
+    ) {
+      fs.cpSync(
+        source,
+        path.join(
+          candidateTempRoot,
+          name
+        )
+      );
+    }
+  }
+
+  const aboutCssPath =
+    path.join(
+      candidateTempRoot,
+      'src',
+      'components',
+      'about',
+      'about.css'
+    );
+
+  if (
+    !fs.existsSync(
+      aboutCssPath
+    )
+  ) {
+    throw new Error(
+      `Unable to locate About CSS in static candidate root: ${aboutCssPath}`
+    );
+  }
+
+  const baseCss =
+    fs.readFileSync(
+      aboutCssPath,
+      'utf8'
+    );
+
+  const candidateCss =
+    fs.readFileSync(
+      overrideCssPath,
+      'utf8'
+    );
+
+  fs.writeFileSync(
+    aboutCssPath,
+    `${baseCss}\n\n/* QA STATIC ABOUT CANDIDATE — loaded before React/Three.js startup. */\n${candidateCss}\n`,
+    'utf8'
+  );
+
+  return candidateTempRoot;
 };
 
-const installPreMountCandidate = async (page) => {
-  if (!overrideCss) return;
-  await page.route('**/src/components/about/About.jsx*', async (route) => {
-    const response = await route.fetch();
-    const original = await response.text();
-    const injection = `\n;(() => {\n  const old = document.getElementById('qa-about-candidate');\n  old?.remove();\n  const style = document.createElement('style');\n  style.id = 'qa-about-candidate';\n  style.textContent = ${JSON.stringify(overrideCss)};\n  document.head.appendChild(style);\n})();\n`;
-    await route.fulfill({ response, body: injection + original });
-  });
+
+const startVite = async (
+  viteRoot = root
+) => {
+  if (explicitBaseUrl) {
+    return {
+      baseUrl: explicitBaseUrl,
+      child: null,
+      viteRoot: null,
+    };
+  }
+
+  const viteBin =
+    path.join(
+      root,
+      'node_modules',
+      'vite',
+      'bin',
+      'vite.js'
+    );
+
+  if (
+    !fs.existsSync(viteBin)
+  ) {
+    throw new Error(
+      'Vite is not installed. Run npm install first.'
+    );
+  }
+
+  const baseUrl =
+    `http://127.0.0.1:${port}`;
+
+  const child =
+    spawn(
+      process.execPath,
+      [
+        viteBin,
+        viteRoot,
+        '--host',
+        '127.0.0.1',
+        '--port',
+        String(port),
+        '--strictPort',
+      ],
+      {
+        cwd: root,
+        env: {
+          ...process.env,
+        },
+        stdio: [
+          'ignore',
+          'pipe',
+          'pipe',
+        ],
+      }
+    );
+
+  let stderr = '';
+
+  child.stderr.on(
+    'data',
+    (chunk) => {
+      stderr +=
+        chunk.toString();
+    }
+  );
+
+  child.on(
+    'exit',
+    (code) => {
+      if (
+        code &&
+        code !== 0
+      ) {
+        process.stderr.write(
+          stderr
+        );
+      }
+    }
+  );
+
+  await waitForHttp(
+    baseUrl
+  );
+
+  return {
+    baseUrl,
+    child,
+    viteRoot,
+  };
 };
+
+
+const installPreMountCandidate =
+  async (page) => {
+    /*
+     * Static mode already appended candidate CSS to about.css before
+     * React/Three.js startup. Do not inject it a second time.
+     */
+    if (
+      !overrideCss ||
+      staticCandidateMode
+    ) {
+      return;
+    }
+
+    await page.route(
+      '**/src/components/about/About.jsx*',
+      async (route) => {
+        const response =
+          await route.fetch();
+
+        const original =
+          await response.text();
+
+        const injection =
+          `\n;(() => {\n  const old = document.getElementById('qa-about-candidate');\n  old?.remove();\n  const style = document.createElement('style');\n  style.id = 'qa-about-candidate';\n  style.textContent = ${JSON.stringify(overrideCss)};\n  document.head.appendChild(style);\n})();\n`;
+
+        await route.fulfill({
+          response,
+          body:
+            injection +
+            original,
+        });
+      }
+    );
+  };
 
 const collectMetrics = async (page) => page.evaluate(() => {
   const rect = (el) => {
@@ -1112,8 +1362,23 @@ const csvEscape = (value) => {
   ensureDir(goodDir);
   ensureDir(badDir);
 
-  const { baseUrl, child } = await startVite();
-  const browser = await BROWSERS[browserName].launch({ headless: true });
+  const viteRoot =
+    buildStaticCandidateRoot();
+
+  const {
+    baseUrl,
+    child,
+  } =
+    await startVite(
+      viteRoot
+    );
+
+  const browser =
+    await BROWSERS[
+      browserName
+    ].launch({
+      headless: true,
+    });
   const results = [];
 
   try {
@@ -1121,7 +1386,15 @@ const csvEscape = (value) => {
     console.log(`Family: ${family}${quick ? ' (quick)' : ''}${onePerWidth ? ' (one-per-width)' : ''}`);
     console.log(`Browser: ${browserName}`);
     console.log(`Base URL: ${baseUrl}`);
-    if (overrideCssPath) console.log(`Override CSS: ${path.relative(root, overrideCssPath)} (pre-mount)`);
+    if (overrideCssPath) {
+      console.log(
+        `Override CSS: ${path.relative(root, overrideCssPath)}`
+      );
+
+      console.log(
+        `Candidate load mode: ${staticCandidateMode ? 'static/pre-start about.css' : 'About.jsx pre-render module injection'}`
+      );
+    }
 
     let tested = 0;
     for (const testCase of viewportCases) {
@@ -1144,8 +1417,24 @@ const csvEscape = (value) => {
           url.searchParams.set('about-qa', '1');
           url.searchParams.set('about-scene', state.scene);
           url.searchParams.set('about-model', state.model);
-          await page.goto(url.toString(), { waitUntil: 'domcontentloaded', timeout: 30000 });
-          await page.waitForSelector('.about', { timeout: 15000 });
+          await page.goto(
+            url.toString(),
+            {
+              waitUntil:
+                browserName === 'webkit'
+                  ? 'networkidle'
+                  : 'domcontentloaded',
+
+              timeout: 30000,
+            }
+          );
+
+          await page.waitForSelector(
+            '.about',
+            {
+              timeout: 15000,
+            }
+          );
           await page.evaluate(() => {
             document.documentElement.style.scrollBehavior = 'auto';
             const about = document.querySelector('.about');
@@ -1193,8 +1482,41 @@ const csvEscape = (value) => {
             );
           }
 
-          await page.waitForTimeout(contract.settleMs);
-          const metrics = await collectMetrics(page);
+          if (
+            browserName === 'webkit'
+          ) {
+            await page.evaluate(
+              async () => {
+                await document.fonts?.ready;
+
+                await new Promise(
+                  (resolve) =>
+                    requestAnimationFrame(
+                      () =>
+                        requestAnimationFrame(
+                          resolve
+                        )
+                    )
+                );
+              }
+            );
+
+            /*
+             * WebKit compositor grace period after the model is ready.
+             * This is intentionally browser-specific and mirrors the
+             * proven Hero certification workflow.
+             */
+            await page.waitForTimeout(
+              650
+            );
+          }
+
+          await page.waitForTimeout(
+            contract.settleMs
+          );
+
+          const metrics =
+            await collectMetrics(page);
           const issues = evaluateMetrics(
             metrics,
             state,
@@ -1315,7 +1637,31 @@ const csvEscape = (value) => {
     }
   } finally {
     await browser.close();
-    if (child) child.kill();
+
+    if (child) {
+      child.kill();
+
+      /*
+       * Give Windows/Vite a moment to release files before removing
+       * the temporary source tree.
+       */
+      await sleep(250);
+    }
+
+    if (
+      staticCandidateMode &&
+      fs.existsSync(
+        candidateTempRoot
+      )
+    ) {
+      fs.rmSync(
+        candidateTempRoot,
+        {
+          recursive: true,
+          force: true,
+        }
+      );
+    }
   }
 
   const counts = { PASS: 0, REVIEW: 0, FAIL: 0 };
@@ -1331,7 +1677,14 @@ const csvEscape = (value) => {
     total: results.length,
     ...counts,
     overrideCssPath: overrideCssPath ? path.relative(root, overrideCssPath) : null,
-    candidateLoadMode: overrideCssPath ? 'About.jsx pre-render module injection' : null,
+    candidateLoadMode:
+      overrideCssPath
+        ? (
+            staticCandidateMode
+              ? 'static-pre-start-about-css'
+              : 'About.jsx pre-render module injection'
+          )
+        : null,
     modalSentinel: includeModal,
   };
 
