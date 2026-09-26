@@ -39,8 +39,6 @@ const easeInOutCubic = (
 const CarouselModelSlot = ({
     item,
 
-    responsiveScale = 1,
-
     animationId,
 
     playing = false,
@@ -216,10 +214,6 @@ const CarouselModelSlot = ({
         >
             <NormalizedModel
                 item={item}
-
-                responsiveScale={
-                    responsiveScale
-                }
 
                 onReady={
                     onModelReady
