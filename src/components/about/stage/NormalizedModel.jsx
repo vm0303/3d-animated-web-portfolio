@@ -18,7 +18,6 @@ const TARGET_RADIUS = 1.05;
 
 const NormalizedModel = ({
     item,
-    responsiveScale = 1,
     onReady,
 }) => {
     const scaleGroup = useRef(null);
@@ -169,14 +168,8 @@ const NormalizedModel = ({
 
 
         /*
-         * visualScale is ONLY the per-model perceptual correction
+         * visualScale is the per-model perceptual correction
          * after automatic normalization.
-         *
-         * responsiveScale is a separate geometry-driven multiplier
-         * supplied by CSS through AboutModelContainer. Keeping the
-         * two values separate preserves every approved model's
-         * relative optical size while allowing a small viewport-family
-         * correction when the composition needs it.
          */
         const visualScale =
             item.visualScale ?? 1;
@@ -184,8 +177,7 @@ const NormalizedModel = ({
 
         scaleNode.scale.setScalar(
             normalizedScale *
-            visualScale *
-            responsiveScale
+            visualScale
         );
 
 
@@ -199,7 +191,6 @@ const NormalizedModel = ({
     }, [
         item.id,
         item.visualScale,
-        responsiveScale,
     ]);
 
 
