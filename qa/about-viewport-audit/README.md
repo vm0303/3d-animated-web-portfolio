@@ -127,3 +127,36 @@ npm run qa:about:phone:landscape:visual-smoke
 npm run qa:about:phone:landscape
 ```
 
+### Phone landscape — active: short-height V1
+
+The first landscape candidate follows the same family split used by Hero:
+
+```text
+short phone landscape:  height <= 355px
+normal phone landscape: height 356px..500px
+```
+
+Current candidate:
+
+```text
+qa/about-viewport-audit/candidates/about-phone-landscape-short-v1.css
+```
+
+V1 is intentionally limited to the short-height tier. It top-aligns the
+previously oversized text stack, gives copy more horizontal measure, and
+scales typography/gaps from `svh`. It does not change portrait, normal
+landscape, model normalization, per-model `visualScale`, camera framing,
+or modal behavior.
+
+Focused validation order:
+
+```powershell
+npm run qa:about:phone:landscape:short:v1
+npm run qa:about:phone:landscape:short:v1:boundary
+npm run qa:about:phone:landscape:short:v1:visual-smoke
+npm run qa:about:phone:landscape:short:v1:full
+```
+
+Do not promote this candidate until the focused/boundary/visual/full short
+landscape evidence is green and manually accepted.
+
