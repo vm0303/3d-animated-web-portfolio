@@ -283,6 +283,10 @@ const About = () => {
               paragraphVariants
             }
           >
+            <span
+              className=
+                "aboutParagraphText"
+            >
             I’m a{" "}
 
             <button
@@ -478,6 +482,7 @@ const About = () => {
             />
 
             {" "}scale and stay dependable.
+            </span>
           </motion.p>
 
 
@@ -486,6 +491,10 @@ const About = () => {
               paragraphVariants
             }
           >
+            <span
+              className=
+                "aboutParagraphText"
+            >
             What keeps me excited about
             software is the constant
             opportunity to learn,
@@ -500,6 +509,7 @@ const About = () => {
             technologies, I enjoy
             understanding how all the
             pieces fit together.
+            </span>
           </motion.p>
 
 
@@ -508,6 +518,10 @@ const About = () => {
               paragraphVariants
             }
           >
+            <span
+              className=
+                "aboutParagraphText"
+            >
             Outside of development,
             you’ll usually find me{" "}
 
@@ -543,6 +557,7 @@ const About = () => {
                 series.
               </span>
             </button>
+            </span>
           </motion.p>
         </motion.div>
       </div>
