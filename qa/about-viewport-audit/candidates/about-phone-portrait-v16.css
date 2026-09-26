@@ -45,11 +45,12 @@
       max(
         clamp(
           14px,
-          2.2svh,
-          20px
+          4.2svh,
+          26px
         ),
         env(safe-area-inset-bottom)
       );
+      
 
     display: grid !important;
 
