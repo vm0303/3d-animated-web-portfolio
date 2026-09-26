@@ -11,7 +11,6 @@ import {
   AnimatePresence,
 } from "motion/react";
 
-
 import AboutModelContainer
   from "./stage/AboutModelContainer";
 
@@ -358,55 +357,23 @@ const About = () => {
           >
             <span
               className=
-              "aboutParagraphText"
+                "aboutParagraphText"
             >
               I’m a{" "}
 
-<<<<<<< HEAD
-              <button
-                type="button"
+              <AboutKeyword
+                scene="developer"
 
-                className=
-                "aboutKeyword"
-
-                data-active={
-                  activeScene ===
-                  "developer"
+                activeScene={
+                  activeScene
                 }
 
-                aria-pressed={
-                  activeScene ===
-                  "developer"
-                }
-
-                onClick={() =>
-                  setActiveScene(
-                    "developer"
-                  )
+                setActiveScene={
+                  setActiveScene
                 }
               >
-                <span
-                  className=
-                  "aboutKeywordText"
-                >
-                  full-stack software engineer
-                </span>
-              </button>{" "}
-=======
-            <AboutKeyword
-              scene="developer"
-
-              activeScene={
-                activeScene
-              }
-
-              setActiveScene={
-                setActiveScene
-              }
-            >
-              full-stack software engineer
-            </AboutKeyword>{" "}
->>>>>>> c5a72d3ce155299a32ae1345b91b784ed570f28d
+                full-stack software engineer
+              </AboutKeyword>{" "}
 
               who enjoys turning complex
               problems into reliable,
@@ -415,151 +382,54 @@ const About = () => {
               Over the years, I’ve
               worked across{" "}
 
-<<<<<<< HEAD
-              <button
-                type="button"
+              <AboutKeyword
+                scene="backend"
 
-                className=
-                "aboutKeyword"
-
-                data-active={
-                  activeScene ===
-                  "backend"
+                activeScene={
+                  activeScene
                 }
 
-                aria-pressed={
-                  activeScene ===
-                  "backend"
-                }
-
-                onClick={() =>
-                  setActiveScene(
-                    "backend"
-                  )
+                setActiveScene={
+                  setActiveScene
                 }
               >
-                <span
-                  className=
-                  "aboutKeywordText"
-                >
-                  Java and Spring-based
-                  systems,
-                </span>
-              </button>{" "}
+                Java and Spring-based
+                systems,
+              </AboutKeyword>{" "}
 
-              <button
-                type="button"
+              <AboutKeyword
+                scene="frontend"
 
-                className=
-                "aboutKeyword"
-
-                data-active={
-                  activeScene ===
-                  "frontend"
+                activeScene={
+                  activeScene
                 }
 
-                aria-pressed={
-                  activeScene ===
-                  "frontend"
-                }
-
-                onClick={() =>
-                  setActiveScene(
-                    "frontend"
-                  )
+                setActiveScene={
+                  setActiveScene
                 }
               >
-                <span
-                  className=
-                  "aboutKeywordText"
-                >
-                  modern front-end
-                  development,
-                </span>
-              </button>{" "}
+                modern front-end
+                development,
+              </AboutKeyword>{" "}
               and{" "}
 
-              <button
-                type="button"
+              <AboutKeyword
+                scene="cloud"
 
-                className=
-                "aboutKeyword"
-
-                data-active={
-                  activeScene ===
-                  "cloud"
+                activeScene={
+                  activeScene
                 }
 
-                aria-pressed={
-                  activeScene ===
-                  "cloud"
-                }
-
-                onClick={() =>
-                  setActiveScene(
-                    "cloud"
-                  )
+                setActiveScene={
+                  setActiveScene
                 }
               >
-                <span
-                  className=
-                  "aboutKeywordText"
-                >
-                  cloud &amp; automation,
-                </span>
-              </button>{" "}
+                cloud &amp; automation,
+              </AboutKeyword>{" "}
+
               building applications
               and tools that are designed
               to scale and stay dependable.
-=======
-            <AboutKeyword
-              scene="backend"
-
-              activeScene={
-                activeScene
-              }
-
-              setActiveScene={
-                setActiveScene
-              }
-            >
-              Java and Spring-based
-              systems,
-            </AboutKeyword>{" "}
-
-            <AboutKeyword
-              scene="frontend"
-
-              activeScene={
-                activeScene
-              }
-
-              setActiveScene={
-                setActiveScene
-              }
-            >
-              modern front-end
-              development,
-            </AboutKeyword>{" "}
-            and{" "}
-
-            <AboutKeyword
-              scene="cloud"
-
-              activeScene={
-                activeScene
-              }
-
-              setActiveScene={
-                setActiveScene
-              }
-            >
-              cloud &amp; automation,
-            </AboutKeyword>{" "}
-            building applications
-            and tools that are designed
-            to scale and stay dependable.
->>>>>>> c5a72d3ce155299a32ae1345b91b784ed570f28d
             </span>
           </motion.p>
 
@@ -571,7 +441,7 @@ const About = () => {
           >
             <span
               className=
-              "aboutParagraphText"
+                "aboutParagraphText"
             >
               What keeps me excited about
               software is the constant
@@ -598,62 +468,27 @@ const About = () => {
           >
             <span
               className=
-              "aboutParagraphText"
+                "aboutParagraphText"
             >
               Outside of development,
               you’ll usually find me{" "}
 
-<<<<<<< HEAD
-              <button
-                type="button"
+              <AboutKeyword
+                scene="hobbies"
 
-                className=
-                "aboutKeyword"
-
-                data-active={
-                  activeScene ===
-                  "hobbies"
+                activeScene={
+                  activeScene
                 }
 
-                aria-pressed={
-                  activeScene ===
-                  "hobbies"
-                }
-
-                onClick={() =>
-                  setActiveScene(
-                    "hobbies"
-                  )
+                setActiveScene={
+                  setActiveScene
                 }
               >
-                <span
-                  className=
-                  "aboutKeywordText"
-                >
-                  working out, gaming,
-                  cycling, or getting lost
-                  in a good movie or TV
-                  series.
-                </span>
-              </button>
-=======
-            <AboutKeyword
-              scene="hobbies"
-
-              activeScene={
-                activeScene
-              }
-
-              setActiveScene={
-                setActiveScene
-              }
-            >
-              working out, gaming,
-              cycling, or getting lost
-              in a good movie or TV
-              series.
-            </AboutKeyword>
->>>>>>> c5a72d3ce155299a32ae1345b91b784ed570f28d
+                working out, gaming,
+                cycling, or getting lost
+                in a good movie or TV
+                series.
+              </AboutKeyword>
             </span>
           </motion.p>
         </motion.div>
@@ -688,7 +523,7 @@ const About = () => {
                 isLaptopModelReady && (
                   <motion.button
                     key=
-                    "view-screen-button"
+                      "view-screen-button"
 
                     ref={
                       screenTriggerRef
@@ -697,7 +532,7 @@ const About = () => {
                     type="button"
 
                     className=
-                    "aboutScreenTrigger"
+                      "aboutScreenTrigger"
 
                     variants={
                       buttonVariants
@@ -710,7 +545,7 @@ const About = () => {
                     exit="exit"
 
                     aria-haspopup=
-                    "dialog"
+                      "dialog"
 
                     onClick={
                       openLaptopScreen
@@ -725,7 +560,7 @@ const About = () => {
                       aria-hidden="true"
 
                       className=
-                      "aboutScreenTriggerIcon"
+                        "aboutScreenTriggerIcon"
                     >
                       ↗
                     </span>
