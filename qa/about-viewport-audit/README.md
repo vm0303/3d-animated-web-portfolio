@@ -371,6 +371,10 @@ tablets:   4182
 laptops:   4183
 ```
 
+The parallel orchestrator launches the About QA runner directly with the
+current Node executable. It intentionally does not spawn nested `npm.cmd`
+processes, avoiding the Windows/Node 22 `spawn EINVAL` failure mode.
+
 Run everything:
 
 ```powershell
