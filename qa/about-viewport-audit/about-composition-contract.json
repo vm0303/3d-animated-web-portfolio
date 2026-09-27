@@ -124,8 +124,13 @@
     "tabletLandscapeCompactMinBodyFontPx": 15,
     "wideDesktopHiResMinWidthPx": 3840,
     "wideDesktopHiResMinHeightPx": 2000,
-    "wideDesktopHiResMinTitleFontPx": 110,
-    "wideDesktopHiResMinBodyFontPx": 28
+    "wideDesktopHiResMinTitleFontPx": 160,
+    "wideDesktopHiResMinBodyFontPx": 40,
+    "wideDesktopHiResMaxParagraphMeasurePx": 1500,
+    "wideDesktopHiResMinScreenTriggerFontPx": 28,
+    "wideDesktopHiResMinModalTitleFontPx": 36,
+    "wideDesktopHiResMinModalCloseSizePx": 88,
+    "wideDesktopHiResMinModalCloseIconSizePx": 34
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,

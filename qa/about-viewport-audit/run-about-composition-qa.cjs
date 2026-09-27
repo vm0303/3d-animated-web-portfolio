@@ -840,6 +840,14 @@ const collectMetrics = async (page) => page.evaluate(() => {
         ),
     } : null,
     screenTriggerVisible: isVisible(screenTrigger),
+    screenTrigger: screenTrigger ? {
+      fontSize:
+        parseFloat(
+          getComputedStyle(
+            screenTrigger
+          ).fontSize
+        ),
+    } : null,
   };
 });
 
@@ -1726,27 +1734,38 @@ const evaluateMetrics = (metrics, state, familyName) => {
 
   if (
     isWideDesktop &&
-    r.list &&
-    r.list.width >
-      (
-        t.wideDesktopMaxParagraphMeasurePx ??
-        940
-      ) +
-        tol
+    r.list
   ) {
-    addIssue(
-      issues,
-      'FAIL',
-      'WIDE_DESKTOP_MEASURE_TOO_WIDE',
-      'Wide desktop should scale the composition without turning the About copy into an overly long text measure.',
-      {
-        width:
-          r.list.width,
-        maxMeasure:
-          t.wideDesktopMaxParagraphMeasurePx ??
-          940,
-      }
-    );
+    const maxWideMeasure =
+      isWideDesktopHiRes
+        ? (
+            t.wideDesktopHiResMaxParagraphMeasurePx ??
+            t.wideDesktopMaxParagraphMeasurePx ??
+            940
+          )
+        : (
+            t.wideDesktopMaxParagraphMeasurePx ??
+            940
+          );
+
+    if (
+      r.list.width >
+        maxWideMeasure +
+          tol
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'WIDE_DESKTOP_MEASURE_TOO_WIDE',
+        'Wide desktop should scale the composition without turning the About copy into an overly long text measure.',
+        {
+          width:
+            r.list.width,
+          maxMeasure:
+            maxWideMeasure,
+        }
+      );
+    }
   }
 
 
@@ -1780,6 +1799,33 @@ const evaluateMetrics = (metrics, state, familyName) => {
           button: r.screenTrigger,
           right: r.right,
         });
+      }
+
+      if (
+        isWideDesktopHiRes &&
+        (
+          !metrics.screenTrigger ||
+          metrics.screenTrigger.fontSize <
+            (
+              t.wideDesktopHiResMinScreenTriggerFontPx ??
+              28
+            )
+        )
+      ) {
+        addIssue(
+          issues,
+          'FAIL',
+          'WIDE_DESKTOP_VIEW_SCREEN_TEXT_TOO_SMALL',
+          'High-resolution wide desktop View screen text is below the accepted readability floor.',
+          {
+            fontSize:
+              metrics.screenTrigger?.fontSize ??
+              null,
+            minFontSize:
+              t.wideDesktopHiResMinScreenTriggerFontPx ??
+              28,
+          }
+        );
       }
 
       if (
@@ -1872,7 +1918,9 @@ const collectModalMetrics = async (page) => page.evaluate(() => {
   const modal = document.querySelector('.laptopScreenModal');
   const dialog = document.querySelector('.laptopScreenDialog');
   const toolbar = document.querySelector('.laptopScreenToolbar');
+  const modalTitle = document.querySelector('.laptopScreenTitle');
   const close = document.querySelector('.laptopScreenClose');
+  const closeIcon = document.querySelector('.laptopScreenCloseIcon');
   const imageViewport = document.querySelector('.laptopScreenViewport');
   const image = document.querySelector('.laptopScreenImage');
 
@@ -1890,6 +1938,20 @@ const collectModalMetrics = async (page) => page.evaluate(() => {
       close: rect(close),
       imageViewport: rect(imageViewport),
       image: rect(image),
+    },
+    chrome: {
+      titleFontSize:
+        modalTitle
+          ? parseFloat(
+              getComputedStyle(
+                modalTitle
+              ).fontSize
+            )
+          : null,
+      closeIcon:
+        rect(
+          closeIcon
+        ),
     },
     image: image ? {
       naturalWidth: image.naturalWidth,
@@ -2003,6 +2065,102 @@ const evaluateModalMetrics = (
       }
     );
   }
+
+  const isWideDesktopHiResModal =
+    familyName === 'desktop-wide' &&
+    width >=
+      (
+        t.wideDesktopHiResMinWidthPx ??
+        3840
+      ) &&
+    height >=
+      (
+        t.wideDesktopHiResMinHeightPx ??
+        2000
+      );
+
+  if (
+    isWideDesktopHiResModal
+  ) {
+    const minModalTitleFont =
+      t.wideDesktopHiResMinModalTitleFontPx ??
+      36;
+
+    if (
+      !Number.isFinite(
+        metrics.chrome?.titleFontSize
+      ) ||
+      metrics.chrome.titleFontSize <
+        minModalTitleFont
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'WIDE_DESKTOP_MODAL_TITLE_TOO_SMALL',
+        'High-resolution wide desktop modal title is below the accepted readability floor.',
+        {
+          fontSize:
+            metrics.chrome?.titleFontSize ??
+            null,
+          minFontSize:
+            minModalTitleFont,
+        }
+      );
+    }
+
+    const minCloseSize =
+      t.wideDesktopHiResMinModalCloseSizePx ??
+      88;
+
+    if (
+      r.close.width <
+        minCloseSize -
+          tol ||
+      r.close.height <
+        minCloseSize -
+          tol
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'WIDE_DESKTOP_MODAL_CLOSE_TOO_SMALL',
+        'High-resolution wide desktop close control is below the accepted size floor.',
+        {
+          close:
+            r.close,
+          minCloseSize,
+        }
+      );
+    }
+
+    const minCloseIconSize =
+      t.wideDesktopHiResMinModalCloseIconSizePx ??
+      34;
+
+    if (
+      !metrics.chrome?.closeIcon ||
+      metrics.chrome.closeIcon.width <
+        minCloseIconSize -
+          tol ||
+      metrics.chrome.closeIcon.height <
+        minCloseIconSize -
+          tol
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'WIDE_DESKTOP_MODAL_CLOSE_ICON_TOO_SMALL',
+        'High-resolution wide desktop close icon is below the accepted size floor.',
+        {
+          closeIcon:
+            metrics.chrome?.closeIcon ??
+            null,
+          minCloseIconSize,
+        }
+      );
+    }
+  }
+
 
   const isNonPhoneModalGeometry =
     width >= 501 &&

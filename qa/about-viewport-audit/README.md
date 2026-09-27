@@ -886,3 +886,33 @@ real-iPhone verification of the temporarily applied outer-portrait CSS, that
 family is accepted; the temporary production edit was reverted and no
 production About promotion has occurred yet.
 
+### Wide Desktop V2 — high-resolution text/chrome correction
+
+The first high-resolution pass correctly enlarged the 3D model and modal image,
+but manual review still found the surrounding UI too small. The 3840x2160+ tier
+now scales the remaining content substantially:
+
+- About title: 160–260px
+- About body: 40–56px
+- View screen label: 28–40px
+- modal Portfolio screen title: 36–52px
+- modal close control: 88–112px
+- modal X icon: 34–44px
+
+The 3D Stage frame edge remains 1.8 and the modal dialog/image sizing is
+unchanged from the previous pass.
+
+The high-resolution paragraph measure is now allowed to scale fluidly from
+1100px toward 1500px; the QA runner previously kept enforcing the old 940px
+wide-desktop limit and therefore produced the unrelated
+WIDE_DESKTOP_MEASURE_TOO_WIDE failure.
+
+QA now also enforces minimum View screen, modal-title, close-control, and
+close-icon sizes for this high-resolution tier.
+
+Re-run:
+
+```powershell
+npm run qa:about:wide-desktop:v2:highres-smoke
+```
+
