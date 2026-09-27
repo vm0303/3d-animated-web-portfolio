@@ -1821,6 +1821,425 @@
 }
 
 
+/*
+ * ABOUT — PRODUCTION NORMAL PHONE LANDSCAPE (V1)
+ *
+ * PROMOTED / FROZEN NORMAL-LANDSCAPE TIER.
+ *
+ * Family boundary mirrors Hero:
+ *   width  <= 1100px
+ *   height 356px..500px
+ *   orientation: landscape
+ *
+ * The <=355px short tier is already promoted/frozen in about.css.
+ * Normal V1 keeps the same structural principles without carrying over
+ * short-height compression:
+ *
+ * - left lane stays left-aligned;
+ * - complete text stack stays vertically centered;
+ * - 60/40 text/model split preserves readable line measure;
+ * - title/body/gaps scale primarily from svh;
+ * - all three authored paragraphs remain present;
+ * - model normalization, per-model visualScale, camera framing,
+ *   carousel behavior, and portrait tiers remain untouched;
+ * - the proven V3 landscape modal containment pattern is reused here,
+ *   but only inside the normal 356–500px tier.
+ */
+
+@media
+  (max-width: 1100px)
+  and (min-height: 356px)
+  and (max-height: 500px)
+  and (orientation: landscape) {
+
+  .about {
+    display:
+      flex !important;
+
+    flex-direction:
+      row !important;
+
+    align-items:
+      stretch !important;
+
+    width:
+      100% !important;
+
+    height:
+      100% !important;
+
+    overflow:
+      hidden !important;
+  }
+
+
+  /* ======================================================
+     TEXT LANE
+     ====================================================== */
+
+  .aSection.left {
+    flex:
+      0 0
+      60% !important;
+
+    width:
+      60% !important;
+
+    justify-content:
+      center !important;
+
+    align-items:
+      stretch !important;
+
+    padding:
+      clamp(
+        11px,
+        3svh,
+        15px
+      )
+      clamp(
+        12px,
+        1.8vw,
+        18px
+      ) !important;
+
+    overflow:
+      hidden !important;
+  }
+
+
+  .aTitle {
+    flex:
+      0 0
+      auto !important;
+
+    align-self:
+      flex-start !important;
+
+    margin:
+      0
+      0
+      clamp(
+        8px,
+        2.6svh,
+        13px
+      ) !important;
+
+    font-size:
+      clamp(
+        28px,
+        7.9svh,
+        38px
+      ) !important;
+
+    line-height:
+      1 !important;
+
+    text-align:
+      left !important;
+  }
+
+
+  .aboutList {
+    width:
+      100% !important;
+
+    max-width:
+      none !important;
+
+    min-width:
+      0 !important;
+
+    display:
+      flex !important;
+
+    flex-direction:
+      column !important;
+
+    gap:
+      clamp(
+        8px,
+        2.3svh,
+        12px
+      ) !important;
+  }
+
+
+  .aboutList p {
+    width:
+      100% !important;
+
+    margin:
+      0 !important;
+
+    padding:
+      0 !important;
+
+    font-size:
+      clamp(
+        11px,
+        3.2svh,
+        14px
+      ) !important;
+
+    line-height:
+      1.4 !important;
+
+    white-space:
+      normal !important;
+
+    text-wrap:
+      pretty !important;
+
+    word-break:
+      normal !important;
+
+    overflow-wrap:
+      normal !important;
+
+    hyphens:
+      none !important;
+  }
+
+
+  /* ======================================================
+     MODEL LANE
+     ====================================================== */
+
+  .aSection.right {
+    flex:
+      0 0
+      40% !important;
+
+    width:
+      40% !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+  }
+
+
+  .aboutModelContainer,
+  .aboutCanvasShell {
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+  }
+
+
+  .aboutScreenTrigger {
+    bottom:
+      clamp(
+        12px,
+        3.6svh,
+        18px
+      ) !important;
+
+    gap:
+      6px !important;
+
+    padding:
+      clamp(
+        6px,
+        1.9svh,
+        8px
+      )
+      clamp(
+        10px,
+        1.7vw,
+        14px
+      ) !important;
+
+    font-size:
+      clamp(
+        10px,
+        3svh,
+        13px
+      ) !important;
+
+    line-height:
+      1 !important;
+  }
+
+
+  /* ======================================================
+     NORMAL LANDSCAPE MODAL — V3 CONTAINMENT PATTERN
+     ====================================================== */
+
+  .laptopScreenModal {
+    padding:
+      max(
+        4px,
+        env(safe-area-inset-top)
+      )
+      max(
+        4px,
+        env(safe-area-inset-right)
+      )
+      max(
+        4px,
+        env(safe-area-inset-bottom)
+      )
+      max(
+        4px,
+        env(safe-area-inset-left)
+      ) !important;
+  }
+
+
+  .laptopScreenDialog {
+    width:
+      min(
+        94vw,
+        1200px
+      ) !important;
+
+    height:
+      calc(
+        100dvh - 8px
+      ) !important;
+
+    max-height:
+      calc(
+        100dvh - 8px
+      ) !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+  }
+
+
+  .laptopScreenToolbar {
+    min-height:
+      38px !important;
+
+    padding:
+      4px
+      6px
+      4px
+      10px !important;
+  }
+
+
+  .laptopScreenTitle {
+    font-size:
+      clamp(
+        11px,
+        3.4svh,
+        14px
+      ) !important;
+  }
+
+
+  .laptopScreenClose {
+    width:
+      30px !important;
+
+    height:
+      30px !important;
+  }
+
+
+  .laptopScreenCloseIcon {
+    width:
+      13px !important;
+
+    height:
+      13px !important;
+  }
+
+
+  .laptopScreenCloseIcon::before,
+  .laptopScreenCloseIcon::after {
+    width:
+      14px !important;
+  }
+
+
+  .laptopScreenViewport {
+    --about-landscape-modal-pad:
+      clamp(
+        3px,
+        1.5svh,
+        6px
+      );
+
+    position:
+      relative !important;
+
+    flex:
+      1 1 0 !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+
+    overflow:
+      hidden !important;
+
+    padding:
+      0 !important;
+  }
+
+
+  .laptopScreenImage {
+    position:
+      absolute !important;
+
+    inset:
+      var(
+        --about-landscape-modal-pad
+      ) !important;
+
+    width:
+      calc(
+        100%
+        -
+        (
+          2 *
+          var(
+            --about-landscape-modal-pad
+          )
+        )
+      ) !important;
+
+    height:
+      calc(
+        100%
+        -
+        (
+          2 *
+          var(
+            --about-landscape-modal-pad
+          )
+        )
+      ) !important;
+
+    max-width:
+      none !important;
+
+    max-height:
+      none !important;
+
+    object-fit:
+      contain !important;
+
+    object-position:
+      center center !important;
+  }
+}
+
+
 /* =========================================
    REDUCED MOTION
    ========================================= */
