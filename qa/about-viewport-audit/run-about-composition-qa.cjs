@@ -754,6 +754,11 @@ const evaluateMetrics = (metrics, state, familyName) => {
     familyName === 'phone-landscape' &&
     metrics.viewport.innerHeight <= 355;
 
+  const isPhoneLandscapeNormal =
+    familyName === 'phone-landscape' &&
+    metrics.viewport.innerHeight >= 356 &&
+    metrics.viewport.innerHeight <= 500;
+
   const minTitleFontPx =
     familyName === 'phone-portrait'
       ? (
@@ -765,7 +770,12 @@ const evaluateMetrics = (metrics, state, familyName) => {
             t.phoneLandscapeShortMinTitleFontPx ??
             t.minTitleFontPx
           )
-        : t.minTitleFontPx;
+        : isPhoneLandscapeNormal
+          ? (
+              t.phoneLandscapeNormalMinTitleFontPx ??
+              t.minTitleFontPx
+            )
+          : t.minTitleFontPx;
 
   const isPhonePortraitNarrowTall =
     familyName === 'phone-portrait' &&
@@ -790,7 +800,12 @@ const evaluateMetrics = (metrics, state, familyName) => {
               t.phoneLandscapeShortMinBodyFontPx ??
               t.minBodyFontPx
             )
-          : t.minBodyFontPx;
+          : isPhoneLandscapeNormal
+            ? (
+                t.phoneLandscapeNormalMinBodyFontPx ??
+                t.minBodyFontPx
+              )
+            : t.minBodyFontPx;
 
 
 
