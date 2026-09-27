@@ -903,6 +903,17 @@ const evaluateMetrics = (metrics, state, familyName) => {
       )
     );
 
+  const isMediumPortraitCompactTall =
+    isMediumPortrait &&
+    viewportWidth >= 501 &&
+    viewportWidth <= 699 &&
+    viewportHeight >= 800;
+
+  const isMediumPortraitTallTablet =
+    isMediumPortrait &&
+    viewportWidth >= 900 &&
+    viewportHeight >= 1320;
+
   const isMediumPortraitTabletScale =
     isMediumPortrait &&
     viewportWidth >= 700;
@@ -949,16 +960,28 @@ const evaluateMetrics = (metrics, state, familyName) => {
                     t.phonePortraitMinTitleFontPx ??
                     t.minTitleFontPx
                   )
-                : isMediumPortraitTabletScale
+                : isMediumPortraitTallTablet
                   ? (
+                      t.mediumPortraitTallTabletMinTitleFontPx ??
                       t.mediumPortraitTabletMinTitleFontPx ??
                       t.minTitleFontPx
                     )
-                  : isMediumPortrait
+                  : isMediumPortraitCompactTall
                     ? (
+                        t.mediumPortraitCompactTallMinTitleFontPx ??
                         t.mediumPortraitCompactMinTitleFontPx ??
                         t.minTitleFontPx
                       )
+                    : isMediumPortraitTabletScale
+                      ? (
+                          t.mediumPortraitTabletMinTitleFontPx ??
+                          t.minTitleFontPx
+                        )
+                      : isMediumPortrait
+                        ? (
+                            t.mediumPortraitCompactMinTitleFontPx ??
+                            t.minTitleFontPx
+                          )
                     : isTabletLandscapeShort
                       ? (
                           t.tabletLandscapeShortMinTitleFontPx ??
@@ -1014,16 +1037,28 @@ const evaluateMetrics = (metrics, state, familyName) => {
                       t.phonePortraitMinBodyFontPx ??
                       t.minBodyFontPx
                     )
-                  : isMediumPortraitTabletScale
+                  : isMediumPortraitTallTablet
                     ? (
+                        t.mediumPortraitTallTabletMinBodyFontPx ??
                         t.mediumPortraitTabletMinBodyFontPx ??
                         t.minBodyFontPx
                       )
-                    : isMediumPortrait
+                    : isMediumPortraitCompactTall
                       ? (
+                          t.mediumPortraitCompactTallMinBodyFontPx ??
                           t.mediumPortraitCompactMinBodyFontPx ??
                           t.minBodyFontPx
                         )
+                      : isMediumPortraitTabletScale
+                        ? (
+                            t.mediumPortraitTabletMinBodyFontPx ??
+                            t.minBodyFontPx
+                          )
+                        : isMediumPortrait
+                          ? (
+                              t.mediumPortraitCompactMinBodyFontPx ??
+                              t.minBodyFontPx
+                            )
                       : isTabletLandscapeShort
                         ? (
                             t.tabletLandscapeShortMinBodyFontPx ??
@@ -1818,7 +1853,8 @@ const evaluateModalMetrics = (
   familyName
 ) => {
   const issues = [];
-  const tol = contract.thresholds.containmentTolerancePx;
+  const t = contract.thresholds;
+  const tol = t.containmentTolerancePx;
   const r = metrics.rects;
   const width = metrics.viewport.visualWidth;
   const height = metrics.viewport.visualHeight;
