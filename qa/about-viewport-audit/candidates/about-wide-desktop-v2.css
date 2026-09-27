@@ -1,0 +1,67 @@
+/*
+ * ABOUT — WIDE DESKTOP V2
+ * TEST CANDIDATE ONLY.
+ *
+ * Apply after wide-desktop V1 and non-phone modal V1.
+ * V2 keeps 1921–2560 unchanged and scales the About-only host after 2560.
+ */
+@media (min-width: 2561px) and (orientation: landscape) {
+  .about {
+    width: min(calc(75vw - 32px), 260dvh, 4200px) !important;
+    max-width: none !important;
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .aTitle {
+    font-size: clamp(64px, 2.2vw, 100px) !important;
+    margin-bottom: clamp(24px, 1.6svh, 36px) !important;
+  }
+
+  .aboutList {
+    width: min(100%, 940px) !important;
+    gap: clamp(20px, 1.35svh, 28px) !important;
+  }
+
+  .aboutList p {
+    font-size: clamp(18px, 0.65vw, 25px) !important;
+    line-height: 1.55 !important;
+  }
+
+  .aSection.left {
+    padding-inline-end: clamp(48px, 2.5vw, 96px) !important;
+  }
+
+  .aboutScreenTrigger {
+    padding:
+      clamp(10px, 0.65vw, 14px)
+      clamp(18px, 1vw, 24px) !important;
+    font-size: clamp(14px, 0.48vw, 18px) !important;
+  }
+
+  .laptopScreenDialog {
+    width:
+      min(
+        90vw,
+        3300px,
+        calc(160dvh - 155px)
+      ) !important;
+  }
+
+  .laptopScreenToolbar {
+    min-height: clamp(52px, 3dvh, 68px) !important;
+    padding:
+      clamp(10px, 0.7vw, 16px)
+      clamp(14px, 0.9vw, 22px) !important;
+  }
+
+  .laptopScreenTitle {
+    font-size: clamp(16px, 0.55vw, 20px) !important;
+  }
+
+  .laptopScreenClose {
+    width: clamp(38px, 1.2vw, 46px) !important;
+    height: clamp(38px, 1.2vw, 46px) !important;
+  }
+}

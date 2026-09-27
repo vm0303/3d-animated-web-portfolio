@@ -2415,6 +2415,47 @@ const csvEscape = (value) => {
             });
           }
         } catch (error) {
+          const executionIssues = [
+            {
+              severity: 'FAIL',
+              code: 'QA_EXECUTION_ERROR',
+              message: String(error?.stack || error),
+            },
+            ...runtimeErrors.map(
+              (runtimeError) => ({
+                severity: 'FAIL',
+                code: 'RUNTIME_ERROR',
+                message: runtimeError,
+              })
+            ),
+          ];
+
+          let executionScreenshotPath = null;
+
+          try {
+            const filename =
+              `FAIL__${sanitize(testCase.aboutFamily)}__${testCase.width}x${testCase.height}__${sanitize(state.scene)}-${sanitize(state.model)}__execution-error__${sanitize(testCase.id)}.png`;
+
+            const fullPath =
+              path.join(
+                badDir,
+                filename
+              );
+
+            await page.screenshot({
+              path: fullPath,
+              fullPage: false,
+            });
+
+            executionScreenshotPath =
+              path.relative(
+                root,
+                fullPath
+              );
+          } catch {
+            /* The page/browser may already be unavailable. */
+          }
+
           results.push({
             id: `${testCase.id}__${state.scene}-${state.model}`,
             browser: browserName,
@@ -2427,8 +2468,10 @@ const csvEscape = (value) => {
             scene: state.scene,
             model: state.model,
             status: 'FAIL',
-            issues: [{ severity: 'FAIL', code: 'QA_EXECUTION_ERROR', message: String(error?.stack || error) }],
+            issues: executionIssues,
             metrics: null,
+            executionScreenshotPath,
+            pageUrl: page.url(),
           });
         } finally {
           await context.close();

@@ -792,3 +792,59 @@ the certification reports are green and the all-model screenshots have been
 manually accepted. Production promotion and production closure remain separate
 steps.
 
+### Cross-browser checkpoint and Wide Desktop V2
+
+The locked-candidate browser sentinel produced:
+
+```text
+Chromium  146 PASS / 0 REVIEW / 0 FAIL
+Firefox   146 PASS / 0 REVIEW / 0 FAIL
+WebKit    136 PASS / 0 REVIEW / 5 FAIL
+```
+
+All five WebKit failures belong to foldable outer portrait and are
+`QA_EXECUTION_ERROR` timeouts waiting for `.about`. No About metrics were
+collected in those cases. Every other WebKit responsive family passed,
+including unfolded foldables, both tablet orientations, standard desktop, and
+wide desktop. Treat outer portrait as an infrastructure rerun, not a geometry
+failure.
+
+The runner now preserves browser/runtime console errors and attempts an
+execution-error screenshot so a repeated startup failure has actionable
+evidence.
+
+Retry only that state:
+
+```powershell
+npm run qa:about:certify:locked:webkit:outer-portrait:retry
+```
+
+#### Wide Desktop V2
+
+Manual review overrules the numeric V1 PASS for wide desktop. V1 kept the
+About host near 1888px, the model lane near 944px, and the modal at 1600px
+while synthetic CSS viewports grew through 3440, 3840, 5120, and 7680px.
+
+V2 keeps the accepted 1921–2560 geometry unchanged and starts a continuous
+post-2560 scale tier. It expands only the About composition beyond the global
+2000px container cap, keeps paragraph measure capped at 940px, allows
+title/body to grow to 100px/25px, gives the model lane the larger host width,
+and raises the modal ceiling while retaining the 8:5 and viewport-height
+constraints.
+
+Run the laptop + modal visual sweep across every wide viewport:
+
+```powershell
+npm run qa:about:wide-desktop:v2:visual-smoke
+```
+
+Do not run V2 all-model or V2 cross-browser certification until those
+screenshots are manually accepted. Once accepted:
+
+```powershell
+npm run qa:about:wide-desktop:v2:all-models
+npm run qa:about:wide-desktop:v2:cross-browser
+```
+
+All other responsive geometry remains frozen.
+
