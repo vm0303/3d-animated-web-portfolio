@@ -1953,6 +1953,9 @@ const csvEscape = (value) => {
     generatedAt: new Date().toISOString(),
     browser: browserName,
     family,
+    orientation:
+      orientationFilter ||
+      null,
     quick,
     onePerWidth,
     webglProbe,
@@ -1998,6 +2001,7 @@ const csvEscape = (value) => {
     `- Browser: **${browserName}**`,
     `- WebGL probe: **${webglProbe ? 'enabled' : 'disabled'}**`,
     `- Family: **${family}**${quick ? ' (quick)' : ''}${onePerWidth ? ' (one-per-width)' : ''}`,
+    `- Orientation filter: **${orientationFilter || 'all'}**`,
     `- Viewport cases: **${summary.viewportCases}**`,
     `- Model states per viewport: **${summary.modelStates}**`,
     `- Total: **${summary.total}**`,
