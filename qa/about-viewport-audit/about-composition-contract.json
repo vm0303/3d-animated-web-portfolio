@@ -113,7 +113,11 @@
     "wideDesktopMinBodyFontPx": 18,
     "wideDesktopMaxParagraphMeasurePx": 940,
     "nonPhoneModalImageAspectRatio": 1.6,
-    "nonPhoneModalAspectTolerance": 0.05
+    "nonPhoneModalAspectTolerance": 0.05,
+    "mediumPortraitCompactTallMinTitleFontPx": 38,
+    "mediumPortraitCompactTallMinBodyFontPx": 15,
+    "mediumPortraitTallTabletMinTitleFontPx": 56,
+    "mediumPortraitTallTabletMinBodyFontPx": 19
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
