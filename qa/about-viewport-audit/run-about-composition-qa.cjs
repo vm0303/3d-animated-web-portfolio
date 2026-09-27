@@ -73,16 +73,64 @@ const screenshotMode = argValue('screenshots') || 'bad';
 const explicitBaseUrl = argValue('base-url') || process.env.QA_BASE_URL || null;
 const port = Number(argValue('port') || process.env.QA_PORT || 4174);
 const overrideCssArg = argValue('override-css') || null;
+
+const overrideCssArgs =
+  overrideCssArg
+    ? overrideCssArg
+        .split(',')
+        .map(
+          (value) =>
+            value.trim()
+        )
+        .filter(Boolean)
+    : [];
 const outputDir = path.resolve(
   root,
   argValue('output-dir') || `qa-results/about/${family}${quick ? '-quick' : ''}`
 );
 
-const overrideCssPath = overrideCssArg ? path.resolve(root, overrideCssArg) : null;
-if (overrideCssPath && !fs.existsSync(overrideCssPath)) {
-  throw new Error(`Missing override CSS: ${overrideCssPath}`);
+const overrideCssPaths =
+  overrideCssArgs.map(
+    (value) =>
+      path.resolve(
+        root,
+        value
+      )
+  );
+
+for (
+  const candidatePath of
+  overrideCssPaths
+) {
+  if (
+    !fs.existsSync(
+      candidatePath
+    )
+  ) {
+    throw new Error(
+      `Missing override CSS: ${candidatePath}`
+    );
+  }
 }
-const overrideCss = overrideCssPath ? fs.readFileSync(overrideCssPath, 'utf8') : null;
+
+const overrideCssPath =
+  overrideCssPaths[0] ||
+  null;
+
+const overrideCss =
+  overrideCssPaths.length
+    ? overrideCssPaths
+        .map(
+          (candidatePath) =>
+            fs.readFileSync(
+              candidatePath,
+              'utf8'
+            )
+        )
+        .join(
+          '\n\n/* ===== NEXT ABOUT QA CANDIDATE ===== */\n\n'
+        )
+    : null;
 
 /*
  * WebKit + React Three Fiber/WebGL candidate load-order rule:
@@ -480,10 +528,7 @@ const buildStaticCandidateRoot = () => {
     );
 
   const candidateCss =
-    fs.readFileSync(
-      overrideCssPath,
-      'utf8'
-    );
+    overrideCss;
 
   fs.writeFileSync(
     aboutCssPath,
@@ -794,14 +839,83 @@ const evaluateMetrics = (metrics, state, familyName) => {
   const tol = t.containmentTolerancePx;
   const r = metrics.rects;
 
+  const viewportWidth =
+    metrics.viewport.innerWidth;
+
+  const viewportHeight =
+    metrics.viewport.innerHeight;
+
+  const isPortraitGeometry =
+    viewportHeight >
+    viewportWidth;
+
+  const isLandscapeGeometry =
+    viewportWidth >
+    viewportHeight;
+
   const isPhoneLandscapeShort =
     familyName === 'phone-landscape' &&
-    metrics.viewport.innerHeight <= 355;
+    viewportHeight <= 355;
 
   const isPhoneLandscapeNormal =
     familyName === 'phone-landscape' &&
-    metrics.viewport.innerHeight >= 356 &&
-    metrics.viewport.innerHeight <= 500;
+    viewportHeight >= 356 &&
+    viewportHeight <= 500;
+
+  const isPhonePortraitNarrowTall =
+    familyName === 'phone-portrait' &&
+    viewportWidth <= 370 &&
+    viewportHeight >= 700 &&
+    viewportHeight <= 760;
+
+  /*
+   * Foldable outer displays that occupy phone-like geometry inherit the
+   * already-approved phone readability contract instead of being forced
+   * through the generic 14px foldable floor.
+   */
+  const isFoldablePhoneLikeLandscape =
+    familyName === 'foldable' &&
+    isLandscapeGeometry &&
+    viewportWidth <= 1100 &&
+    viewportHeight <= 500;
+
+  const isFoldablePhoneLikePortrait =
+    familyName === 'foldable' &&
+    isPortraitGeometry &&
+    viewportWidth <= 500;
+
+  const isFoldableNarrowTallPortrait =
+    isFoldablePhoneLikePortrait &&
+    viewportWidth >= 390 &&
+    viewportWidth <= 429 &&
+    viewportHeight >= 880;
+
+  /*
+   * Medium portrait unifies unfolded foldables + tablet portrait.
+   */
+  const isMediumPortrait =
+    isPortraitGeometry &&
+    (
+      familyName === 'tablet-portrait' ||
+      (
+        familyName === 'foldable' &&
+        viewportWidth >= 501
+      )
+    );
+
+  const isMediumPortraitTabletScale =
+    isMediumPortrait &&
+    viewportWidth >= 700;
+
+  const isTabletLandscape =
+    familyName === 'tablet-landscape';
+
+  const isTabletLandscapeShort =
+    isTabletLandscape &&
+    viewportHeight <= 640;
+
+  const isWideDesktop =
+    familyName === 'desktop-wide';
 
   const minTitleFontPx =
     familyName === 'phone-portrait'
@@ -819,13 +933,48 @@ const evaluateMetrics = (metrics, state, familyName) => {
               t.phoneLandscapeNormalMinTitleFontPx ??
               t.minTitleFontPx
             )
-          : t.minTitleFontPx;
-
-  const isPhonePortraitNarrowTall =
-    familyName === 'phone-portrait' &&
-    metrics.viewport.innerWidth <= 370 &&
-    metrics.viewport.innerHeight >= 700 &&
-    metrics.viewport.innerHeight <= 760;
+          : isFoldablePhoneLikeLandscape
+            ? (
+                t.phoneLandscapeNormalMinTitleFontPx ??
+                t.minTitleFontPx
+              )
+            : isFoldableNarrowTallPortrait
+              ? (
+                  t.foldableNarrowTallMinTitleFontPx ??
+                  t.phonePortraitMinTitleFontPx ??
+                  t.minTitleFontPx
+                )
+              : isFoldablePhoneLikePortrait
+                ? (
+                    t.phonePortraitMinTitleFontPx ??
+                    t.minTitleFontPx
+                  )
+                : isMediumPortraitTabletScale
+                  ? (
+                      t.mediumPortraitTabletMinTitleFontPx ??
+                      t.minTitleFontPx
+                    )
+                  : isMediumPortrait
+                    ? (
+                        t.mediumPortraitCompactMinTitleFontPx ??
+                        t.minTitleFontPx
+                      )
+                    : isTabletLandscapeShort
+                      ? (
+                          t.tabletLandscapeShortMinTitleFontPx ??
+                          t.minTitleFontPx
+                        )
+                      : isTabletLandscape
+                        ? (
+                            t.tabletLandscapeMinTitleFontPx ??
+                            t.minTitleFontPx
+                          )
+                        : isWideDesktop
+                          ? (
+                              t.wideDesktopMinTitleFontPx ??
+                              t.minTitleFontPx
+                            )
+                          : t.minTitleFontPx;
 
   const minBodyFontPx =
     isPhonePortraitNarrowTall
@@ -849,8 +998,48 @@ const evaluateMetrics = (metrics, state, familyName) => {
                 t.phoneLandscapeNormalMinBodyFontPx ??
                 t.minBodyFontPx
               )
-            : t.minBodyFontPx;
-
+            : isFoldablePhoneLikeLandscape
+              ? (
+                  t.phoneLandscapeNormalMinBodyFontPx ??
+                  t.minBodyFontPx
+                )
+              : isFoldableNarrowTallPortrait
+                ? (
+                    t.foldableNarrowTallMinBodyFontPx ??
+                    t.phonePortraitMinBodyFontPx ??
+                    t.minBodyFontPx
+                  )
+                : isFoldablePhoneLikePortrait
+                  ? (
+                      t.phonePortraitMinBodyFontPx ??
+                      t.minBodyFontPx
+                    )
+                  : isMediumPortraitTabletScale
+                    ? (
+                        t.mediumPortraitTabletMinBodyFontPx ??
+                        t.minBodyFontPx
+                      )
+                    : isMediumPortrait
+                      ? (
+                          t.mediumPortraitCompactMinBodyFontPx ??
+                          t.minBodyFontPx
+                        )
+                      : isTabletLandscapeShort
+                        ? (
+                            t.tabletLandscapeShortMinBodyFontPx ??
+                            t.minBodyFontPx
+                          )
+                        : isTabletLandscape
+                          ? (
+                              t.tabletLandscapeMinBodyFontPx ??
+                              t.minBodyFontPx
+                            )
+                          : isWideDesktop
+                            ? (
+                                t.wideDesktopMinBodyFontPx ??
+                                t.minBodyFontPx
+                              )
+                            : t.minBodyFontPx;
 
 
   if (metrics.document.scrollWidth > metrics.viewport.innerWidth + t.horizontalOverflowTolerancePx) {
@@ -1276,6 +1465,199 @@ const evaluateMetrics = (metrics, state, familyName) => {
     }
   }
 
+  /*
+   * Medium portrait is intentionally stacked:
+   * model/button above, title/copy below.
+   */
+  if (
+    isMediumPortrait &&
+    r.right &&
+    r.left &&
+    r.list &&
+    r.title
+  ) {
+    if (
+      r.right.bottom >
+      r.left.top +
+        tol
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'MEDIUM_PORTRAIT_NOT_STACKED',
+        'Medium portrait must place the model region above the About text region.',
+        {
+          right:
+            r.right,
+          left:
+            r.left,
+        }
+      );
+    }
+
+    const listLeftInset =
+      r.list.left -
+      r.about.left;
+
+    const listRightInset =
+      r.about.right -
+      r.list.right;
+
+    const measureCenterDelta =
+      Math.abs(
+        listLeftInset -
+        listRightInset
+      );
+
+    const maxMeasure =
+      t.mediumPortraitMaxParagraphMeasurePx ??
+      780;
+
+    if (
+      r.list.width >
+      maxMeasure +
+        tol
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'MEDIUM_PORTRAIT_MEASURE_TOO_WIDE',
+        'Medium portrait copy exceeds the intended centered reading measure.',
+        {
+          width:
+            r.list.width,
+          maxMeasure,
+        }
+      );
+    }
+
+    if (
+      measureCenterDelta >
+      (
+        t.mediumPortraitCenterTolerancePx ??
+        12
+      )
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'MEDIUM_PORTRAIT_MEASURE_OFF_CENTER',
+        'Medium portrait paragraph measure should remain horizontally centered.',
+        {
+          listLeftInset,
+          listRightInset,
+          measureCenterDelta,
+        }
+      );
+    }
+
+    const compositionTop =
+      Math.min(
+        r.right.top,
+        r.left.top
+      );
+
+    const compositionBottom =
+      Math.max(
+        r.right.bottom,
+        r.left.bottom
+      );
+
+    const usedHeight =
+      compositionBottom -
+      compositionTop;
+
+    const unusedRatio =
+      Math.max(
+        0,
+        (
+          r.about.height -
+          usedHeight
+        ) /
+        r.about.height
+      );
+
+    if (
+      unusedRatio >
+      (
+        t.mediumPortraitMaxUnusedRatio ??
+        0.28
+      )
+    ) {
+      addIssue(
+        issues,
+        'REVIEW',
+        'MEDIUM_PORTRAIT_EXCESS_DEAD_SPACE',
+        'Medium portrait leaves a large amount of unused vertical space.',
+        {
+          unusedRatio,
+          usedHeight,
+          aboutHeight:
+            r.about.height,
+        }
+      );
+    }
+  }
+
+
+  if (
+    isTabletLandscape &&
+    r.left &&
+    r.about
+  ) {
+    const textShare =
+      r.left.width /
+      r.about.width;
+
+    if (
+      textShare <
+      (
+        t.tabletLandscapeMinTextShare ??
+        0.53
+      )
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'TABLET_LANDSCAPE_TEXT_LANE_NARROW',
+        'Tablet landscape should give the text lane slightly more than half of the composition.',
+        {
+          textShare,
+          required:
+            t.tabletLandscapeMinTextShare ??
+            0.53,
+        }
+      );
+    }
+  }
+
+
+  if (
+    isWideDesktop &&
+    r.list &&
+    r.list.width >
+      (
+        t.wideDesktopMaxParagraphMeasurePx ??
+        940
+      ) +
+        tol
+  ) {
+    addIssue(
+      issues,
+      'FAIL',
+      'WIDE_DESKTOP_MEASURE_TOO_WIDE',
+      'Wide desktop should scale the composition without turning the About copy into an overly long text measure.',
+      {
+        width:
+          r.list.width,
+        maxMeasure:
+          t.wideDesktopMaxParagraphMeasurePx ??
+          940,
+      }
+    );
+  }
+
+
   const visibleContentRects = [r.title, r.list, r.model, r.screenTrigger].filter(Boolean);
   for (const item of visibleContentRects) {
     if (
@@ -1529,6 +1911,68 @@ const evaluateModalMetrics = (
     );
   }
 
+  const isNonPhoneModalGeometry =
+    width >= 501 &&
+    height >= 501;
+
+  if (
+    isNonPhoneModalGeometry &&
+    r.imageViewport
+  ) {
+    const viewportAspect =
+      r.imageViewport.width /
+      r.imageViewport.height;
+
+    const expectedAspect =
+      t.nonPhoneModalImageAspectRatio ??
+      1.6;
+
+    const aspectTolerance =
+      t.nonPhoneModalAspectTolerance ??
+      0.05;
+
+    if (
+      Math.abs(
+        viewportAspect -
+        expectedAspect
+      ) >
+      aspectTolerance
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'NON_PHONE_MODAL_ASPECT_MISMATCH',
+        'Non-phone modal image viewport should follow the source image aspect ratio.',
+        {
+          viewportAspect,
+          expectedAspect,
+          aspectTolerance,
+          imageViewport:
+            r.imageViewport,
+        }
+      );
+    }
+
+    if (
+      metrics.image?.objectFit !==
+      'contain'
+    ) {
+      addIssue(
+        issues,
+        'FAIL',
+        'NON_PHONE_MODAL_IMAGE_NOT_CONTAINED',
+        'Non-phone modal image should use object-fit: contain.',
+        {
+          objectFit:
+            metrics.image?.objectFit,
+          objectPosition:
+            metrics.image?.objectPosition,
+        }
+      );
+    }
+  }
+
+
   return issues;
 };
 
@@ -1579,9 +2023,19 @@ const csvEscape = (value) => {
     console.log(`Family: ${family}${quick ? ' (quick)' : ''}${onePerWidth ? ' (one-per-width)' : ''}`);
     console.log(`Browser: ${browserName}`);
     console.log(`Base URL: ${baseUrl}`);
-    if (overrideCssPath) {
+    if (
+      overrideCssPaths.length
+    ) {
       console.log(
-        `Override CSS: ${path.relative(root, overrideCssPath)}`
+        `Override CSS: ${overrideCssPaths
+          .map(
+            (candidatePath) =>
+              path.relative(
+                root,
+                candidatePath
+              )
+          )
+          .join(', ')}`
       );
 
       console.log(
@@ -1981,7 +2435,23 @@ const csvEscape = (value) => {
     modelStates: modelStates.length,
     total: results.length,
     ...counts,
-    overrideCssPath: overrideCssPath ? path.relative(root, overrideCssPath) : null,
+    overrideCssPath:
+      overrideCssPath
+        ? path.relative(
+            root,
+            overrideCssPath
+          )
+        : null,
+
+    overrideCssPaths:
+      overrideCssPaths.map(
+        (candidatePath) =>
+          path.relative(
+            root,
+            candidatePath
+          )
+      ),
+
     candidateLoadMode:
       overrideCssPath
         ? (
