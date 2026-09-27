@@ -9,6 +9,14 @@ const root =
     '..'
   );
 
+const runnerPath =
+  path.join(
+    root,
+    'qa',
+    'about-viewport-audit',
+    'run-about-composition-qa.cjs'
+  );
+
 const outputDir =
   path.join(
     root,
@@ -24,28 +32,141 @@ fs.mkdirSync(
   }
 );
 
-const npmBin =
-  process.platform === 'win32'
-    ? 'npm.cmd'
-    : 'npm';
+/*
+ * Do NOT spawn npm/npm.cmd here.
+ *
+ * On Windows/Node 22, directly spawning npm.cmd can throw spawn EINVAL
+ * before the child process even starts. The discovery workers do not need
+ * npm itself; they only need the About QA runner.
+ *
+ * Launch the runner with the current Node executable instead. This is
+ * cross-platform, avoids shell quoting, and keeps the three-worker model:
+ *
+ *   foldables (portrait -> landscape)
+ *   tablets   (portrait -> landscape)
+ *   laptops   (standard -> wide)
+ *
+ * The three workers run in parallel. Steps within one worker remain serial.
+ */
 
 const jobs = [
   {
-    name: 'foldables',
-    script:
-      'qa:about:discover:foldables',
+    name:
+      'foldables',
+
+    steps: [
+      {
+        name:
+          'portrait',
+
+        args: [
+          '--family=foldable',
+          '--orientation=portrait',
+          '--model=laptop',
+          '--one-per-width',
+          '--modal',
+          '--screenshots=all',
+          '--browser=chromium',
+          '--port=4181',
+          '--output-dir=qa-results/about/discovery/foldables/portrait',
+        ],
+      },
+      {
+        name:
+          'landscape',
+
+        args: [
+          '--family=foldable',
+          '--orientation=landscape',
+          '--model=laptop',
+          '--one-per-width',
+          '--modal',
+          '--screenshots=all',
+          '--browser=chromium',
+          '--port=4181',
+          '--output-dir=qa-results/about/discovery/foldables/landscape',
+        ],
+      },
+    ],
   },
+
   {
-    name: 'tablets',
-    script:
-      'qa:about:discover:tablets',
+    name:
+      'tablets',
+
+    steps: [
+      {
+        name:
+          'portrait',
+
+        args: [
+          '--family=tablet-portrait',
+          '--model=laptop',
+          '--one-per-width',
+          '--modal',
+          '--screenshots=all',
+          '--browser=chromium',
+          '--port=4182',
+          '--output-dir=qa-results/about/discovery/tablets/portrait',
+        ],
+      },
+      {
+        name:
+          'landscape',
+
+        args: [
+          '--family=tablet-landscape',
+          '--model=laptop',
+          '--one-per-width',
+          '--modal',
+          '--screenshots=all',
+          '--browser=chromium',
+          '--port=4182',
+          '--output-dir=qa-results/about/discovery/tablets/landscape',
+        ],
+      },
+    ],
   },
+
   {
-    name: 'laptops',
-    script:
-      'qa:about:discover:laptops',
+    name:
+      'laptops',
+
+    steps: [
+      {
+        name:
+          'standard',
+
+        args: [
+          '--family=desktop-standard',
+          '--model=laptop',
+          '--one-per-width',
+          '--modal',
+          '--screenshots=all',
+          '--browser=chromium',
+          '--port=4183',
+          '--output-dir=qa-results/about/discovery/laptops/standard',
+        ],
+      },
+      {
+        name:
+          'wide',
+
+        args: [
+          '--family=desktop-wide',
+          '--model=laptop',
+          '--one-per-width',
+          '--modal',
+          '--screenshots=all',
+          '--browser=chromium',
+          '--port=4183',
+          '--output-dir=qa-results/about/discovery/laptops/wide',
+        ],
+      },
+    ],
   },
 ];
+
 
 const prefixLines =
   (
@@ -53,12 +174,12 @@ const prefixLines =
     chunk,
     stream
   ) => {
-    const text =
+    const chunkText =
       chunk.toString();
 
     for (
       const line of
-      text.split(
+      chunkText.split(
         /\r?\n/
       )
     ) {
@@ -72,19 +193,47 @@ const prefixLines =
     }
   };
 
-const runJob =
-  (job) =>
+
+const runStep =
+  (
+    job,
+    step
+  ) =>
     new Promise(
       (resolve) => {
         const started =
           Date.now();
 
+        const prefix =
+          `${job.name}/${step.name}`;
+
+        console.log(
+          `[${prefix}] starting`
+        );
+
+        let settled =
+          false;
+
+        const finish =
+          (result) => {
+            if (settled) {
+              return;
+            }
+
+            settled =
+              true;
+
+            resolve(
+              result
+            );
+          };
+
         const child =
           spawn(
-            npmBin,
+            process.execPath,
             [
-              'run',
-              job.script,
+              runnerPath,
+              ...step.args,
             ],
             {
               cwd: root,
@@ -96,6 +245,8 @@ const runJob =
                 'pipe',
                 'pipe',
               ],
+              windowsHide:
+                true,
             }
           );
 
@@ -103,7 +254,7 @@ const runJob =
           'data',
           (chunk) =>
             prefixLines(
-              job.name,
+              prefix,
               chunk,
               process.stdout
             )
@@ -113,7 +264,7 @@ const runJob =
           'data',
           (chunk) =>
             prefixLines(
-              job.name,
+              prefix,
               chunk,
               process.stderr
             )
@@ -122,11 +273,11 @@ const runJob =
         child.on(
           'error',
           (error) => {
-            resolve({
+            finish({
               name:
-                job.name,
-              script:
-                job.script,
+                step.name,
+              args:
+                step.args,
               exitCode:
                 1,
               durationMs:
@@ -144,11 +295,11 @@ const runJob =
             code,
             signal
           ) => {
-            resolve({
+            finish({
               name:
-                job.name,
-              script:
-                job.script,
+                step.name,
+              args:
+                step.args,
               exitCode:
                 code ?? 1,
               signal:
@@ -162,6 +313,51 @@ const runJob =
       }
     );
 
+
+const runJob =
+  async (job) => {
+    const started =
+      Date.now();
+
+    const steps = [];
+
+    for (
+      const step of
+      job.steps
+    ) {
+      const result =
+        await runStep(
+          job,
+          step
+        );
+
+      steps.push(
+        result
+      );
+
+      console.log(
+        `[${job.name}/${step.name}] exit ${result.exitCode} (${Math.round(result.durationMs / 1000)}s)`
+      );
+    }
+
+    return {
+      name:
+        job.name,
+      exitCode:
+        steps.some(
+          (step) =>
+            step.exitCode !== 0
+        )
+          ? 1
+          : 0,
+      durationMs:
+        Date.now() -
+        started,
+      steps,
+    };
+  };
+
+
 (async () => {
   console.log(
     'About parallel discovery: foldables + tablets + laptops.'
@@ -169,6 +365,10 @@ const runJob =
 
   console.log(
     'Each family runs its own sub-families sequentially; the three family workers run in parallel.'
+  );
+
+  console.log(
+    `Node executable: ${process.execPath}`
   );
 
   const started =
@@ -184,16 +384,30 @@ const runJob =
   const summary = {
     artifactType:
       'about-parallel-discovery-summary',
+
     startedAt:
       new Date(
         started
-      ).toISOString(),
+      )
+        .toISOString(),
+
     finishedAt:
       new Date()
         .toISOString(),
+
     durationMs:
       Date.now() -
       started,
+
+    nodeExecutable:
+      process.execPath,
+
+    runnerPath:
+      path.relative(
+        root,
+        runnerPath
+      ),
+
     jobs:
       results,
   };
