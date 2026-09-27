@@ -508,3 +508,49 @@ Do not promote any of these candidates until its focused geometry and manual
 visual review are accepted. Cross-browser Chromium/Firefox/WebKit expansion
 comes after geometry stabilization.
 
+### Medium portrait V2 — screenshot-audit corrections
+
+The V1 ZIP was manually reviewed screenshot-by-screenshot, including both
+good and bad screenshot folders.
+
+Changes in V2 are intentionally narrow:
+
+- Keep all folded landscape screenshots unchanged; they were visually clean.
+- Keep good folded portrait widths 431–475px unchanged.
+- Retain the V1 narrow/tall 390–429px portrait correction because production
+  400x960 and 412x923 were visibly too small.
+- For unfolded 501–699px portrait, only the tall >=800px subset is changed.
+  The 626x890 screenshots had visibly small copy and excess unused vertical
+  space. 540x720 and 645x715 remain unchanged.
+- For tablet portrait, only >=900px wide and >=1320px tall is changed.
+  985x1410 and 1023/1025x1366 looked miniature and left too much unused
+  vertical space. 1024x1292 and 1032x1302 remain unchanged because their
+  screenshots were already balanced.
+- No new modal CSS change was made from this ZIP. Existing captured modal
+  screenshots were fully visible and uncropped. The missing non-phone modal
+  evidence was caused by a QA ReferenceError, now fixed by restoring the
+  contract threshold binding inside evaluateModalMetrics.
+
+Run the two demonstrated problem subsets first:
+
+```powershell
+npm run qa:about:medium-portrait:v2:problem-foldable
+npm run qa:about:medium-portrait:v2:problem-tablet
+```
+
+Then rerun the representative visual matrix, including modal captures:
+
+```powershell
+npm run qa:about:medium-portrait:v2:visual-smoke:foldable
+npm run qa:about:medium-portrait:v2:visual-smoke:tablet
+```
+
+Modal-only confirmation:
+
+```powershell
+npm run qa:about:medium-portrait:v2:modal-only
+```
+
+Only after those screenshots are approved should V2 be expanded to all model
+states or promoted.
+
