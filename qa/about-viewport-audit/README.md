@@ -554,3 +554,20 @@ npm run qa:about:medium-portrait:v2:modal-only
 Only after those screenshots are approved should V2 be expanded to all model
 states or promoted.
 
+### Medium portrait model framing candidate
+
+The V2 laptop screenshots show a consistently undersized 3D model across the
+501–1100px portrait range. Apply
+`candidates/about-medium-portrait-model-frame-v1.css` after V2. It sets the
+Stage's fixed camera frame edge to `1.9` within that range; the production
+default remains `2.55`, and per-model `visualScale` values stay unchanged.
+The model frame is tied to the candidate because V2's stacked layout has not
+yet been promoted to production.
+
+The screenshot audit covered all 104 images in `Results(6).zip` (54 distinct
+images; the rest were byte-identical repeats). Chromium visual sweeps captured
+14 foldable and 12 tablet portrait geometries with the laptop and modal.
+All ten model states were then checked at 645x715 and 985x1410. The 985x1410
+QA failures are the existing 800px copy measure exceeding the 780px contract;
+they are unrelated to the model frame. Continue the normal visual approval and
+cross-browser workflow before promoting the candidate.

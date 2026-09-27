@@ -15,6 +15,7 @@ import {
     Suspense,
     useCallback,
     useEffect,
+    useLayoutEffect,
     useRef,
     useState,
 } from "react";
@@ -52,6 +53,8 @@ const INTERACTION_RESUME_DELAY = 1200;
  */
 const LAMA_ZOOM_DURATION = 1000;
 
+const DESKTOP_FRAME_EDGE = 2.55;
+
 
 /*
  * Important adaptation:
@@ -65,18 +68,17 @@ const LAMA_ZOOM_DURATION = 1000;
  * the same Stage/Bounds zoom mechanism while keeping the
  * model sizes from aboutScenes.js meaningful.
  *
- * These dimensions reproduce the current desktop framing
- * closely with the existing fov={38} camera. We can make
- * this geometry-responsive later with the rest of About.
+ * The frame edge can be set by a scoped layout candidate
+ * without changing model normalization or per-model visualScale.
  */
-const StageBoundsAnchor = () => {
+const StageBoundsAnchor = ({ edge }) => {
     return (
         <mesh>
             <boxGeometry
                 args={[
-                    2.55,
-                    2.55,
-                    2.55,
+                    edge,
+                    edge,
+                    edge,
                 ]}
             />
 
@@ -188,6 +190,32 @@ const AboutModelContainer = ({
     qaMode = false,
     qaModelId = null,
 }) => {
+    const modelContainerRef = useRef(null);
+    const [frameEdge, setFrameEdge] =
+        useState(DESKTOP_FRAME_EDGE);
+
+    useLayoutEffect(() => {
+        const node = modelContainerRef.current;
+        if (!node) return undefined;
+
+        const syncFrame = () => {
+            const value = Number.parseFloat(
+                getComputedStyle(node).getPropertyValue(
+                    "--about-stage-frame-edge"
+                )
+            );
+            setFrameEdge(
+                Number.isFinite(value) && value > 0
+                    ? value
+                    : DESKTOP_FRAME_EDGE
+            );
+        };
+
+        syncFrame();
+        window.addEventListener("resize", syncFrame);
+        return () => window.removeEventListener("resize", syncFrame);
+    }, []);
+
     const initialScene =
         ABOUT_SCENES[
         activeScene
@@ -1405,6 +1433,8 @@ const AboutModelContainer = ({
             className=
             "aboutModelContainer"
 
+            ref={modelContainerRef}
+
             data-about-qa={
                 qaMode
                     ? "true"
@@ -1506,7 +1536,7 @@ const AboutModelContainer = ({
                         */}
                         <PerspectiveCamera
                             key={
-                                `camera-${sceneZoomEpoch}`
+                                `camera-${sceneZoomEpoch}-${frameEdge}`
                             }
 
                             makeDefault
@@ -1555,7 +1585,7 @@ const AboutModelContainer = ({
 
                         <Stage
                             key={
-                                `stage-${sceneZoomEpoch}`
+                                `stage-${sceneZoomEpoch}-${frameEdge}`
                             }
 
                             preset="soft"
@@ -1575,7 +1605,7 @@ const AboutModelContainer = ({
                              */
                             adjustCamera={1.2}
                         >
-                            <StageBoundsAnchor />
+                            <StageBoundsAnchor edge={frameEdge} />
                         </Stage>
 
 
