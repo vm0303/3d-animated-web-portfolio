@@ -429,3 +429,82 @@ Firefox and WebKit before promotion/final closure. Do not run the full
 browser × 10-model × exhaustive-geometry Cartesian matrix during early
 candidate iteration.
 
+## Post-phone candidate architecture
+
+The manual discovery review established four responsive structures rather than
+device-name-specific layouts:
+
+1. Folded phone-like displays
+   - keep the frozen phone geometry;
+   - foldable QA inherits phone readability expectations when geometry is phone-like.
+2. Medium portrait
+   - unfolded foldable portrait + tablet portrait;
+   - stacked model -> View screen -> About title -> three paragraphs.
+3. Medium landscape
+   - unfolded foldable landscape + tablet/compact-landscape geometry;
+   - keep two columns, use a 55/45 text/model split and height-aware typography.
+4. Desktop
+   - standard desktop stays structurally unchanged;
+   - post-1920 wide desktop gets a typography/measure scale tier first.
+
+A shared non-phone modal candidate uses the source screenshot's 8:5 aspect
+ratio instead of an unrelated fixed dialog height.
+
+Candidate files:
+
+```text
+qa/about-viewport-audit/candidates/about-medium-portrait-v1.css
+qa/about-viewport-audit/candidates/about-non-phone-modal-v1.css
+qa/about-viewport-audit/candidates/about-medium-landscape-v1.css
+qa/about-viewport-audit/candidates/about-wide-desktop-v1.css
+```
+
+The About runner accepts comma-separated `--override-css` values so shared
+candidates can be composed without duplicating the non-phone modal rules.
+
+### Stage 1 — medium portrait
+
+```powershell
+npm run qa:about:medium-portrait:v1
+npm run qa:about:medium-portrait:v1:visual-smoke:foldable
+npm run qa:about:medium-portrait:v1:visual-smoke:tablet
+```
+
+Only after visual acceptance:
+
+```powershell
+npm run qa:about:medium-portrait:v1:full
+```
+
+Folded outer-display semantics can be checked independently:
+
+```powershell
+npm run qa:about:foldable:outer:semantics
+```
+
+### Stage 2 — medium landscape
+
+```powershell
+npm run qa:about:medium-landscape:v1
+npm run qa:about:medium-landscape:v1:visual-smoke
+```
+
+### Stage 3 — standard laptop modal sanity
+
+Standard laptop layout is intentionally unchanged. Test the shared modal only:
+
+```powershell
+npm run qa:about:standard-laptop:modal:v1
+```
+
+### Stage 4 — wide desktop scale
+
+```powershell
+npm run qa:about:wide-desktop:v1
+npm run qa:about:wide-desktop:v1:visual-smoke
+```
+
+Do not promote any of these candidates until its focused geometry and manual
+visual review are accepted. Cross-browser Chromium/Firefox/WebKit expansion
+comes after geometry stabilization.
+
