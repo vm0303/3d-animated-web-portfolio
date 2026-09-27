@@ -1464,49 +1464,18 @@ const evaluateModalMetrics = (
   }
 
 
-  const naturalAspect =
-    metrics.image?.naturalWidth > 0 &&
-    metrics.image?.naturalHeight > 0
-      ? (
-          metrics.image.naturalWidth /
-          metrics.image.naturalHeight
-        )
-      : null;
-
-  const renderedAspect =
-    r.image.width > 0 &&
-    r.image.height > 0
-      ? (
-          r.image.width /
-          r.image.height
-        )
-      : null;
-
-  const aspectTolerance =
-    contract.thresholds
-      .modalImageAspectRatioTolerance ??
-    0.03;
-
   if (
     familyName ===
       'phone-landscape' &&
-    Number.isFinite(naturalAspect) &&
-    Number.isFinite(renderedAspect) &&
-    Math.abs(
-      renderedAspect -
-      naturalAspect
-    ) >
-      aspectTolerance
+    metrics.image?.objectFit !==
+      'contain'
   ) {
     addIssue(
       issues,
       'FAIL',
-      'MODAL_IMAGE_ASPECT_DISTORTED',
-      'Laptop screen image box does not preserve the source image aspect ratio.',
+      'MODAL_IMAGE_NOT_CONTAINED',
+      'Phone-landscape laptop screen must render with object-fit: contain.',
       {
-        naturalAspect,
-        renderedAspect,
-        aspectTolerance,
         objectFit:
           metrics.image?.objectFit,
         objectPosition:
