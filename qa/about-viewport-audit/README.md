@@ -221,3 +221,65 @@ Next-tier baseline:
 npm run qa:about:phone:landscape:normal:356-baseline
 ```
 
+### Phone landscape — short V3 promoted / frozen
+
+Production source:
+
+```text
+src/components/about/about.css
+```
+
+Promoted candidate:
+
+```text
+qa/about-viewport-audit/candidates/about-phone-landscape-short-v3.css
+```
+
+Validated scope:
+
+```text
+width <= 1100px
+height <= 355px
+orientation: landscape
+```
+
+The short tier is now frozen. Normal-landscape work must not alter the
+promoted <=355px composition.
+
+Production verification:
+
+```powershell
+npm run qa:about:closure:phone:landscape:short
+npm run qa:about:phone:landscape:short:production:visual-smoke
+```
+
+### Phone landscape — active: normal V1
+
+Current candidate:
+
+```text
+qa/about-viewport-audit/candidates/about-phone-landscape-normal-v1.css
+```
+
+Scope:
+
+```text
+width <= 1100px
+height 356px..500px
+orientation: landscape
+```
+
+Normal V1 keeps the accepted landscape structure but relaxes the short-height
+compression. It keeps the text left-aligned and vertically centered, preserves
+all three paragraphs, uses a 60/40 text/model split, and carries the proven V3
+modal containment pattern only inside the normal tier.
+
+Validation order:
+
+```powershell
+npm run qa:about:phone:landscape:normal:v1
+npm run qa:about:phone:landscape:normal:v1:boundary
+npm run qa:about:phone:landscape:normal:v1:visual-smoke
+npm run qa:about:phone:landscape:normal:v1:full
+```
+
