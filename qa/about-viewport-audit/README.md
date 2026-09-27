@@ -650,3 +650,52 @@ qa-results/about/parallel-candidates/parallel-candidates-summary.json
 This is a visual/discovery pass using the laptop sentinel. Candidate promotion
 remains family-scoped after the screenshots and reports are reviewed.
 
+### Manual review checkpoint — parallel candidate pass
+
+Manual screenshot review of the parallel candidate ZIP established the following
+laptop-sentinel state:
+
+- Foldable outer landscape: visually accepted. Keep production geometry unchanged.
+- Foldable unfolded portrait: visually accepted. Freeze the current medium portrait
+  V2 + modal V1 + model-frame V1 candidate stack; do not retune it.
+- Foldable unfolded landscape: visually accepted. Freeze the current medium
+  landscape V1 + modal V1 candidate stack; do not retune it.
+- Tablet portrait: visually accepted. Freeze the current medium portrait V2 +
+  modal V1 + model-frame V1 candidate stack; do not retune it.
+- Tablet landscape: visually accepted. The six readability failures were caused
+  by the QA contract switching to the 46px/16px normal tablet floor before the
+  accepted compact-height typography tier ended. Tablet landscape <=768px high
+  now uses a 42px title / 15px body floor. CSS is unchanged.
+- Foldable outer portrait: not accepted yet. 400x960 and 412x923 need the
+  narrow/tall readability correction.
+
+The outer-portrait correction is isolated in:
+
+```text
+qa/about-viewport-audit/candidates/about-foldable-outer-portrait-v1.css
+```
+
+Run it with:
+
+```powershell
+npm run qa:about:foldable:outer:portrait:v1
+```
+
+Because 390–429px / >=880px portrait geometry can also occur on conventional
+phones, this candidate must not be promoted blindly. Compare the frozen phone
+overlap with and without the candidate:
+
+```powershell
+npm run qa:about:foldable:outer:portrait:v1:phone-overlap
+```
+
+Tablet landscape contract confirmation:
+
+```powershell
+npm run qa:about:tablet:landscape:accepted
+```
+
+The accepted candidate states above are frozen for further tuning, but still
+require the planned all-model and cross-browser certification before production
+promotion.
+

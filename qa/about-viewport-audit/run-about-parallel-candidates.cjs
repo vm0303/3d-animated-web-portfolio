@@ -63,6 +63,10 @@ const mediumLandscapeStack = [
 const standardLaptopStack =
   'qa/about-viewport-audit/candidates/about-non-phone-modal-v1.css';
 
+
+const outerPortraitStack =
+  'qa/about-viewport-audit/candidates/about-foldable-outer-portrait-v1.css';
+
 const wideDesktopStack = [
   'qa/about-viewport-audit/candidates/about-wide-desktop-v1.css',
   'qa/about-viewport-audit/candidates/about-non-phone-modal-v1.css',
@@ -87,6 +91,7 @@ const jobs = [
           '--family=foldable',
           '--orientation=portrait',
           '--max-width=500',
+          `--override-css=${outerPortraitStack}`,
           '--output-dir=qa-results/about/parallel-candidates/foldables/outer-portrait',
         ],
       },
@@ -408,6 +413,8 @@ const runJob =
         mediumPortraitStack,
       mediumLandscape:
         mediumLandscapeStack,
+      outerPortrait:
+        outerPortraitStack,
       standardLaptop:
         standardLaptopStack,
       wideDesktop:

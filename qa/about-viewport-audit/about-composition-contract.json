@@ -118,7 +118,10 @@
     "mediumPortraitCompactTallMinBodyFontPx": 15,
     "mediumPortraitTallTabletMinTitleFontPx": 56,
     "mediumPortraitTallTabletMinBodyFontPx": 19,
-    "tabletPortraitMaxParagraphMeasurePx": 800
+    "tabletPortraitMaxParagraphMeasurePx": 800,
+    "tabletLandscapeCompactMaxHeightPx": 768,
+    "tabletLandscapeCompactMinTitleFontPx": 42,
+    "tabletLandscapeCompactMinBodyFontPx": 15
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,

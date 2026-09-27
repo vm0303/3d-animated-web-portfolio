@@ -1,0 +1,64 @@
+/*
+ * ABOUT — FOLDABLE OUTER PORTRAIT V1
+ *
+ * TEST CANDIDATE ONLY.
+ *
+ * The explicit folded-outer review found only the narrow/tall
+ * 390–429px portrait envelope weak:
+ *   - 400x960
+ *   - 412x923
+ *
+ * This is the previously screenshot-audited narrow/tall correction extracted
+ * from medium portrait V2 so outer portrait can be tested independently.
+ *
+ * IMPORTANT:
+ * This selector is geometry-based. A conventional phone with the same
+ * viewport can also match it. Do not promote this rule until the paired
+ * frozen-phone overlap regression has been visually reviewed.
+ */
+
+@media
+  (min-width: 390px)
+  and (max-width: 429px)
+  and (min-height: 880px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      clamp(
+        18px,
+        2.15svh,
+        22px
+      ) !important;
+  }
+
+  .aTitle {
+    font-size:
+      clamp(
+        34px,
+        8.6vw,
+        38px
+      ) !important;
+  }
+
+  .aboutList {
+    padding-inline:
+      clamp(
+        10px,
+        2.8vw,
+        14px
+      ) !important;
+  }
+
+  .aboutList p {
+    font-size:
+      clamp(
+        13.5px,
+        3.4vw,
+        14.5px
+      ) !important;
+
+    line-height:
+      1.46 !important;
+  }
+}

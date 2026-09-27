@@ -925,6 +925,14 @@ const evaluateMetrics = (metrics, state, familyName) => {
     isTabletLandscape &&
     viewportHeight <= 640;
 
+  const isTabletLandscapeCompact =
+    isTabletLandscape &&
+    viewportHeight <=
+      (
+        t.tabletLandscapeCompactMaxHeightPx ??
+        768
+      );
+
   const isWideDesktop =
     familyName === 'desktop-wide';
 
@@ -982,8 +990,9 @@ const evaluateMetrics = (metrics, state, familyName) => {
                             t.mediumPortraitCompactMinTitleFontPx ??
                             t.minTitleFontPx
                           )
-                    : isTabletLandscapeShort
+                    : isTabletLandscapeCompact
                       ? (
+                          t.tabletLandscapeCompactMinTitleFontPx ??
                           t.tabletLandscapeShortMinTitleFontPx ??
                           t.minTitleFontPx
                         )
@@ -1059,8 +1068,9 @@ const evaluateMetrics = (metrics, state, familyName) => {
                               t.mediumPortraitCompactMinBodyFontPx ??
                               t.minBodyFontPx
                             )
-                      : isTabletLandscapeShort
+                      : isTabletLandscapeCompact
                         ? (
+                            t.tabletLandscapeCompactMinBodyFontPx ??
                             t.tabletLandscapeShortMinBodyFontPx ??
                             t.minBodyFontPx
                           )
