@@ -22,6 +22,23 @@ const family = argValue('family') || 'phone-portrait';
 const modelFilter = argValue('model') || 'all';
 const sceneFilter = argValue('scene') || null;
 
+const orientationFilter =
+  (
+    argValue('orientation') ||
+    ''
+  )
+    .toLowerCase();
+
+if (
+  orientationFilter &&
+  orientationFilter !== 'portrait' &&
+  orientationFilter !== 'landscape'
+) {
+  throw new Error(
+    `Unknown orientation: ${orientationFilter}. Use portrait or landscape.`
+  );
+}
+
 const minWidth =
   Number(
     argValue('min-width') ||
@@ -144,6 +161,27 @@ const matchesGeometryFilters =
     item.height <= maxHeight;
 
 
+const matchesOrientationFilter =
+  (item) => {
+    if (!orientationFilter) {
+      return true;
+    }
+
+    const itemOrientation =
+      item.orientation ||
+      (
+        item.width > item.height
+          ? 'landscape'
+          : 'portrait'
+      );
+
+    return (
+      itemOrientation ===
+      orientationFilter
+    );
+  };
+
+
 const oneRepresentativePerWidth = (cases) => {
   const byWidth = new Map();
 
@@ -199,6 +237,9 @@ for (const familyName of families) {
     )
       .filter(
         matchesGeometryFilters
+      )
+      .filter(
+        matchesOrientationFilter
       );
 
   const selected =
@@ -223,6 +264,9 @@ for (const familyName of families) {
       )
       .filter(
         matchesGeometryFilters
+      )
+      .filter(
+        matchesOrientationFilter
       );
 
   viewportCases.push(
