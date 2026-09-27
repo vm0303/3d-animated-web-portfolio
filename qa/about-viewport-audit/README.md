@@ -283,3 +283,54 @@ npm run qa:about:phone:landscape:normal:v1:visual-smoke
 npm run qa:about:phone:landscape:normal:v1:full
 ```
 
+### Phone landscape — normal V1 promoted / frozen
+
+Production source:
+
+```text
+src/components/about/about.css
+```
+
+Promoted candidate:
+
+```text
+qa/about-viewport-audit/candidates/about-phone-landscape-normal-v1.css
+```
+
+Validated scope:
+
+```text
+width <= 1100px
+height 356px..500px
+orientation: landscape
+```
+
+Normal V1 is accepted and frozen. Together with short V3, phone landscape is complete.
+
+`SINGLE_WORD_LINE` has been removed from the About QA runner. Natural
+single-word wrapping is accepted across About families. The stricter
+`PUNCTUATION_ONLY_LINE` check remains.
+
+Production verification:
+
+```powershell
+npm run qa:about:closure:phone:landscape:normal
+npm run qa:about:phone:landscape:normal:production:visual-smoke
+npm run qa:about:closure:phone:landscape
+npm run qa:about:closure:phones
+```
+
+### Phones — complete / frozen
+
+Phone portrait V17 and phone landscape short V3 + normal V1 are now promoted.
+Later foldable/tablet/laptop work must not reopen phone geometry unless a
+regression is demonstrated against the phone contracts.
+
+### Next phase — parallel discovery, serial promotion
+
+Foldables, tablets, and laptops may be baseline-tested in parallel to save
+time, but candidate fixes and promotions remain family-scoped and frozen in
+order. Cross-browser expansion should be performed after a family candidate is
+geometrically stable rather than running every browser × model × geometry
+combination during early iteration.
+
