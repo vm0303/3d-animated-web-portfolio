@@ -161,6 +161,24 @@
       "family": "phone-landscape",
       "source": "SYNTHETIC",
       "orientation": "landscape"
+    },
+    {
+      "id": "about-phone-portrait__foldable-overlap-400x960",
+      "width": 400,
+      "height": 960,
+      "label": "Phone regression sentinel matching foldable outer portrait 400x960",
+      "family": "phone-portrait",
+      "source": "SYNTHETIC",
+      "orientation": "portrait"
+    },
+    {
+      "id": "about-phone-portrait__foldable-overlap-412x923",
+      "width": 412,
+      "height": 923,
+      "label": "Phone regression sentinel matching foldable outer portrait 412x923",
+      "family": "phone-portrait",
+      "source": "SYNTHETIC",
+      "orientation": "portrait"
     }
   ]
 }

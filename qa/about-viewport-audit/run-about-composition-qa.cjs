@@ -370,6 +370,20 @@ if (onePerWidth) {
     ]);
 }
 
+if (!viewportCases.length) {
+  throw new Error(
+    [
+      'No About QA viewport cases matched the requested selection.',
+      `family=${family}`,
+      `orientation=${orientationFilter || 'any'}`,
+      `minWidth=${Number.isFinite(minWidth) ? minWidth : 'none'}`,
+      `maxWidth=${Number.isFinite(maxWidth) ? maxWidth : 'none'}`,
+      `minHeight=${Number.isFinite(minHeight) ? minHeight : 'none'}`,
+      `maxHeight=${Number.isFinite(maxHeight) ? maxHeight : 'none'}`,
+    ].join(' ')
+  );
+}
+
 let modelStates = contract.modelStates;
 if (modelFilter !== 'all') {
   modelStates = modelStates.filter((state) => state.model === modelFilter);

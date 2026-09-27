@@ -699,3 +699,96 @@ The accepted candidate states above are frozen for further tuning, but still
 require the planned all-model and cross-browser certification before production
 promotion.
 
+### Geometry lock checkpoint — laptop review and certification handoff
+
+The laptop-sentinel screenshots from the parallel candidate run were manually
+reviewed alongside their metrics.
+
+- Standard desktop/laptop: accepted and geometry-locked. The layout remains
+  balanced from 1024x768 through 1920x1080; only the shared non-phone modal
+  candidate is layered over the existing production desktop geometry.
+- Wide desktop: accepted and geometry-locked on V1. The composition is
+  intentionally bounded/centered rather than stretched across ultra-wide
+  canvases. At 3840px and wider the accepted tier holds the title at 80px,
+  body copy at 21px, reading measure at 880px, and the About host at its
+  existing ~1888px maximum width. Large outer gutters on 32:9/8K-width
+  geometry are intentional; the content itself is not shrinking.
+
+With those approvals, the responsive geometry design is complete once the
+foldable-outer portrait phone-overlap regression is confirmed.
+
+#### Phone-overlap regression sentinels
+
+The About contract now includes explicit synthetic phone-portrait sentinels at:
+
+```text
+400x960
+412x923
+```
+
+These are deliberately the same CSS geometries as the two corrected foldable
+outer displays. They let the frozen phone layout be compared with and without
+`about-foldable-outer-portrait-v1.css`.
+
+The runner now throws an error when a requested selection contains zero
+viewport cases. A zero-case QA command can no longer report a misleading
+successful run.
+
+Run:
+
+```powershell
+npm run qa:about:foldable:outer:portrait:v1:phone-overlap
+```
+
+Both baseline and candidate reports must show real viewport cases before the
+outer-portrait correction is eligible for production promotion.
+
+#### Locked-candidate all-model certification
+
+After the phone-overlap comparison is visually accepted, run all ten About
+model states in Chromium across one representative case per width for every
+locked responsive structure:
+
+```powershell
+npm run qa:about:certify:locked:models:chromium
+```
+
+This uses the accepted candidate stacks and captures all screenshots under:
+
+```text
+qa-results/about/certification/locked-models-chromium/
+```
+
+#### Locked-candidate cross-browser certification
+
+After the all-model Chromium screenshots are approved, run the laptop/WebGL
+sentinel across Chromium, Firefox, and WebKit:
+
+```powershell
+npm run qa:about:certify:locked:cross-browser
+```
+
+or run each browser independently:
+
+```powershell
+npm run qa:about:certify:locked:browser:chromium
+npm run qa:about:certify:locked:browser:firefox
+npm run qa:about:certify:locked:browser:webkit
+```
+
+The browser passes use strict QA, the WebGL probe, one representative geometry
+per width, and failure screenshots. WebKit automatically uses the runner's
+pre-mount static-candidate path.
+
+For a single sequential command covering the all-model Chromium pass followed
+by all three browser sentinels:
+
+```powershell
+npm run qa:about:certify:locked:all
+```
+
+Do not promote these candidates into `src/components/about/about.css` until
+the certification reports are green and the all-model screenshots have been
+manually accepted. Production promotion and production closure remain separate
+steps.
+
