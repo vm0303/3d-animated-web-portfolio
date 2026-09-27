@@ -571,3 +571,30 @@ All ten model states were then checked at 645x715 and 985x1410. The 985x1410
 QA failures are the existing 800px copy measure exceeding the 780px contract;
 they are unrelated to the model frame. Continue the normal visual approval and
 cross-browser workflow before promoting the candidate.
+
+
+Run the laptop-sentinel visual sweep with the complete candidate stack:
+
+```powershell
+npm run qa:about:medium-portrait:model-frame:v1:visual-smoke:foldable
+npm run qa:about:medium-portrait:model-frame:v1:visual-smoke:tablet
+```
+
+Or run both sequentially:
+
+```powershell
+npm run qa:about:medium-portrait:model-frame:v1:visual-smoke
+```
+
+These commands apply, in cascade order:
+
+```text
+about-medium-portrait-v2.css
+about-non-phone-modal-v1.css
+about-medium-portrait-model-frame-v1.css
+```
+
+They intentionally use the laptop as the geometry sentinel, capture all selected
+screenshots, and do not alter the frozen phone production CSS. Review these
+screenshots and reports before expanding the model-frame candidate to the
+all-model certification pass.
