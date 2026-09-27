@@ -188,3 +188,36 @@ npm run qa:about:phone:landscape:short:v2:visual-smoke
 npm run qa:about:phone:landscape:short:v2:full
 ```
 
+### Phone landscape — active: short-height V3
+
+V2 composition is accepted: the left lane stays left-aligned and vertically
+centered. V3 does not change that composition.
+
+V3 fixes only the landscape laptop-screen modal. The image viewport is now a
+definite positioned box, and the image fills that box with
+`object-fit: contain`. This prevents the intrinsic-height image element from
+extending below the short landscape viewport.
+
+Boundary handling is explicit:
+
+- `355px` belongs to the short-landscape tier and is the current V3 boundary.
+- `356px` belongs to the next normal-landscape tier.
+- The earlier combined 355/356 command failed at 356 because the short
+  candidate intentionally stops at 355; that does not indicate a short-tier
+  regression.
+- A separate 356 baseline command is retained for the next phase.
+
+Validation:
+
+```powershell
+npm run qa:about:phone:landscape:short:v3
+npm run qa:about:phone:landscape:short:v3:boundary
+npm run qa:about:phone:landscape:short:v3:visual-smoke
+```
+
+Next-tier baseline:
+
+```powershell
+npm run qa:about:phone:landscape:normal:356-baseline
+```
+
