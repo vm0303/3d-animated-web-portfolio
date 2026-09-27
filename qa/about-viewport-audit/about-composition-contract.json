@@ -105,8 +105,7 @@
     "phonePortraitPreserveThreeParagraphCopyExactly": true,
     "phonePortraitCssOnlyTextLayout": true,
     "phonePortraitNoResponsiveHardBreaks": true,
-    "phonePortraitNoCompactCopySubstitutions": true,
-    "phonePortraitAllowSingleWordLine": true
+    "phonePortraitNoCompactCopySubstitutions": true
   },
   "supplementalViewports": [
     {
