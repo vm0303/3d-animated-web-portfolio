@@ -138,7 +138,17 @@
     "qa:about:closure:phone:landscape:normal": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-landscape --min-height=356 --max-height=500 --model=all --modal --screenshots=bad --browser=chromium --strict --output-dir=qa-results/about/final-closure/phone-landscape-normal",
     "qa:about:phone:landscape:normal:production:visual-smoke": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-landscape --min-height=356 --max-height=500 --model=laptop --one-per-width --modal --screenshots=all --browser=chromium --output-dir=qa-results/about/production/phone-landscape-normal-visual-smoke",
     "qa:about:closure:phone:landscape": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=phone-landscape --model=all --modal --screenshots=bad --browser=chromium --strict --output-dir=qa-results/about/final-closure/phone-landscape",
-    "qa:about:closure:phones": "npm run qa:about:closure:phone:portrait && npm run qa:about:closure:phone:landscape"
+    "qa:about:closure:phones": "npm run qa:about:closure:phone:portrait && npm run qa:about:closure:phone:landscape",
+    "qa:about:discover:foldable:portrait": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=foldable --orientation=portrait --model=laptop --one-per-width --modal --screenshots=all --browser=chromium --port=4181 --output-dir=qa-results/about/discovery/foldables/portrait",
+    "qa:about:discover:foldable:landscape": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=foldable --orientation=landscape --model=laptop --one-per-width --modal --screenshots=all --browser=chromium --port=4181 --output-dir=qa-results/about/discovery/foldables/landscape",
+    "qa:about:discover:foldables": "npm run qa:about:discover:foldable:portrait && npm run qa:about:discover:foldable:landscape",
+    "qa:about:discover:tablet:portrait": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=tablet-portrait --model=laptop --one-per-width --modal --screenshots=all --browser=chromium --port=4182 --output-dir=qa-results/about/discovery/tablets/portrait",
+    "qa:about:discover:tablet:landscape": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=tablet-landscape --model=laptop --one-per-width --modal --screenshots=all --browser=chromium --port=4182 --output-dir=qa-results/about/discovery/tablets/landscape",
+    "qa:about:discover:tablets": "npm run qa:about:discover:tablet:portrait && npm run qa:about:discover:tablet:landscape",
+    "qa:about:discover:laptop:standard": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=desktop-standard --model=laptop --one-per-width --modal --screenshots=all --browser=chromium --port=4183 --output-dir=qa-results/about/discovery/laptops/standard",
+    "qa:about:discover:laptop:wide": "node qa/about-viewport-audit/run-about-composition-qa.cjs --family=desktop-wide --model=laptop --one-per-width --modal --screenshots=all --browser=chromium --port=4183 --output-dir=qa-results/about/discovery/laptops/wide",
+    "qa:about:discover:laptops": "npm run qa:about:discover:laptop:standard && npm run qa:about:discover:laptop:wide",
+    "qa:about:discover:parallel": "node qa/about-viewport-audit/run-about-parallel-discovery.cjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
