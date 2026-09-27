@@ -1,0 +1,126 @@
+/*
+ * ABOUT — MEDIUM LANDSCAPE V1
+ *
+ * TEST CANDIDATE ONLY.
+ *
+ * Shared geometry-oriented two-column refinement for unfolded foldable /
+ * tablet-class landscape and overlapping compact laptop geometries.
+ *
+ * This is intentionally a calibration, not a redesign:
+ * - retain two columns;
+ * - give text 55% and model 45%;
+ * - increase typography with available height;
+ * - avoid aggressive growth at the 579–632px short-height edge.
+ */
+
+@media
+  (min-width: 701px)
+  and (max-width: 1600px)
+  and (min-height: 501px)
+  and (max-height: 1000px)
+  and (orientation: landscape) {
+
+  .about {
+    display:
+      flex !important;
+
+    flex-direction:
+      row !important;
+
+    align-items:
+      stretch !important;
+
+    overflow:
+      hidden !important;
+  }
+
+
+  .aSection.left {
+    flex:
+      0 0
+      55% !important;
+
+    width:
+      55% !important;
+
+    justify-content:
+      center !important;
+
+    align-items:
+      flex-start !important;
+
+    padding-inline-end:
+      clamp(
+        18px,
+        2.2vw,
+        36px
+      ) !important;
+  }
+
+
+  .aSection.right {
+    flex:
+      0 0
+      45% !important;
+
+    width:
+      45% !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+  }
+
+
+  .aTitle {
+    margin:
+      0
+      0
+      clamp(
+        14px,
+        2svh,
+        22px
+      ) !important;
+
+    font-size:
+      clamp(
+        42px,
+        6.2svh,
+        58px
+      ) !important;
+
+    line-height:
+      1 !important;
+  }
+
+
+  .aboutList {
+    width:
+      min(
+        100%,
+        820px
+      ) !important;
+
+    gap:
+      clamp(
+        12px,
+        1.8svh,
+        18px
+      ) !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      clamp(
+        15px,
+        2.05svh,
+        18px
+      ) !important;
+
+    line-height:
+      1.5 !important;
+  }
+}
