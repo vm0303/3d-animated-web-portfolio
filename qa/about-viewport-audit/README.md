@@ -848,3 +848,41 @@ npm run qa:about:wide-desktop:v2:cross-browser
 
 All other responsive geometry remains frozen.
 
+### Wide Desktop V2 — high-resolution/tall correction
+
+The first V2 visual sweep passed numerically but manual screenshot review found
+the 3840x2160-and-taller wide tier still visually undersized. 3840x1600 and
+5120x1440 remain accepted and are intentionally not changed.
+
+The high-resolution tier is gated by both:
+
+```text
+width  >= 3840px
+height >= 2000px
+```
+
+It increases title/body presence, lowers the Stage frame edge to 1.8 so all 3D
+models render larger without changing per-model visualScale, enlarges the View
+screen control, and scales modal toolbar text/close icon while preserving the
+already-approved large modal image/dialog geometry.
+
+The QA contract now requires at least a 110px title and 28px body font in this
+tier so a future cap regression cannot silently pass.
+
+Focused visual review:
+
+```powershell
+npm run qa:about:wide-desktop:v2:highres-smoke
+```
+
+Full V2 visual regression, including the unchanged lower-wide viewports:
+
+```powershell
+npm run qa:about:wide-desktop:v2:visual-smoke
+```
+
+The WebKit outer-portrait retry completed 10/10 PASS. Together with manual
+real-iPhone verification of the temporarily applied outer-portrait CSS, that
+family is accepted; the temporary production edit was reverted and no
+production About promotion has occurred yet.
+

@@ -950,6 +950,19 @@ const evaluateMetrics = (metrics, state, familyName) => {
   const isWideDesktop =
     familyName === 'desktop-wide';
 
+  const isWideDesktopHiRes =
+    isWideDesktop &&
+    viewportWidth >=
+      (
+        t.wideDesktopHiResMinWidthPx ??
+        3840
+      ) &&
+    viewportHeight >=
+      (
+        t.wideDesktopHiResMinHeightPx ??
+        2000
+      );
+
   const minTitleFontPx =
     familyName === 'phone-portrait'
       ? (
@@ -1015,12 +1028,18 @@ const evaluateMetrics = (metrics, state, familyName) => {
                             t.tabletLandscapeMinTitleFontPx ??
                             t.minTitleFontPx
                           )
-                        : isWideDesktop
+                        : isWideDesktopHiRes
                           ? (
+                              t.wideDesktopHiResMinTitleFontPx ??
                               t.wideDesktopMinTitleFontPx ??
                               t.minTitleFontPx
                             )
-                          : t.minTitleFontPx;
+                          : isWideDesktop
+                            ? (
+                                t.wideDesktopMinTitleFontPx ??
+                                t.minTitleFontPx
+                              )
+                            : t.minTitleFontPx;
 
   const minBodyFontPx =
     isPhonePortraitNarrowTall
@@ -1093,12 +1112,18 @@ const evaluateMetrics = (metrics, state, familyName) => {
                               t.tabletLandscapeMinBodyFontPx ??
                               t.minBodyFontPx
                             )
-                          : isWideDesktop
+                          : isWideDesktopHiRes
                             ? (
+                                t.wideDesktopHiResMinBodyFontPx ??
                                 t.wideDesktopMinBodyFontPx ??
                                 t.minBodyFontPx
                               )
-                            : t.minBodyFontPx;
+                            : isWideDesktop
+                              ? (
+                                  t.wideDesktopMinBodyFontPx ??
+                                  t.minBodyFontPx
+                                )
+                              : t.minBodyFontPx;
 
 
   if (metrics.document.scrollWidth > metrics.viewport.innerWidth + t.horizontalOverflowTolerancePx) {

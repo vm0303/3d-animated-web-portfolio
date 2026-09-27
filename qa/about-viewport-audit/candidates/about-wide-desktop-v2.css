@@ -65,3 +65,176 @@
     height: clamp(38px, 1.2vw, 46px) !important;
   }
 }
+
+/*
+ * HIGH-RESOLUTION / TALL WIDE-DESKTOP SCALE TIER
+ *
+ * 3840x1600 and 5120x1440 were visually accepted, so height participates in
+ * this handoff. The larger tier begins only when both axes provide enough
+ * room. It addresses 3840x2160, 5120x2160, 7680x2160 and neighboring shapes.
+ *
+ * The layout host and modal image sizing from the first V2 tier stay intact.
+ * This tier scales the content that was still visually undersized:
+ * title/body, 3D camera framing, View screen control, and modal chrome.
+ */
+@media
+  (min-width: 3840px)
+  and (min-height: 2000px)
+  and (orientation: landscape) {
+
+  .about {
+    --about-stage-frame-edge:
+      1.8;
+  }
+
+
+  .aTitle {
+    font-size:
+      clamp(
+        110px,
+        3vw,
+        140px
+      ) !important;
+
+    margin-bottom:
+      clamp(
+        34px,
+        1.8svh,
+        44px
+      ) !important;
+  }
+
+
+  .aboutList {
+    width:
+      min(
+        100%,
+        1100px
+      ) !important;
+
+    gap:
+      clamp(
+        26px,
+        1.5svh,
+        34px
+      ) !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      clamp(
+        28px,
+        0.8vw,
+        32px
+      ) !important;
+
+    line-height:
+      1.55 !important;
+  }
+
+
+  .aSection.left {
+    padding-inline-end:
+      clamp(
+        72px,
+        2.6vw,
+        120px
+      ) !important;
+  }
+
+
+  .aboutScreenTrigger {
+    padding:
+      clamp(
+        14px,
+        0.75vw,
+        18px
+      )
+      clamp(
+        22px,
+        1.1vw,
+        30px
+      ) !important;
+
+    font-size:
+      clamp(
+        18px,
+        0.55vw,
+        22px
+      ) !important;
+  }
+
+
+  /*
+   * The V2 dialog/image is already the desired large size.
+   * Scale only the toolbar chrome so it remains proportional to that image.
+   */
+  .laptopScreenToolbar {
+    min-height:
+      clamp(
+        88px,
+        4.8dvh,
+        112px
+      ) !important;
+
+    padding:
+      clamp(
+        16px,
+        0.8vw,
+        22px
+      )
+      clamp(
+        22px,
+        1vw,
+        30px
+      ) !important;
+  }
+
+
+  .laptopScreenTitle {
+    font-size:
+      clamp(
+        24px,
+        0.7vw,
+        28px
+      ) !important;
+  }
+
+
+  .laptopScreenClose {
+    width:
+      clamp(
+        64px,
+        1.6vw,
+        72px
+      ) !important;
+
+    height:
+      clamp(
+        64px,
+        1.6vw,
+        72px
+      ) !important;
+  }
+
+
+  .laptopScreenCloseIcon {
+    width:
+      24px !important;
+
+    height:
+      24px !important;
+  }
+
+
+  .laptopScreenCloseIcon::before,
+  .laptopScreenCloseIcon::after {
+    width:
+      26px !important;
+
+    height:
+      3px !important;
+  }
+}
+

@@ -121,7 +121,11 @@
     "tabletPortraitMaxParagraphMeasurePx": 800,
     "tabletLandscapeCompactMaxHeightPx": 768,
     "tabletLandscapeCompactMinTitleFontPx": 42,
-    "tabletLandscapeCompactMinBodyFontPx": 15
+    "tabletLandscapeCompactMinBodyFontPx": 15,
+    "wideDesktopHiResMinWidthPx": 3840,
+    "wideDesktopHiResMinHeightPx": 2000,
+    "wideDesktopHiResMinTitleFontPx": 110,
+    "wideDesktopHiResMinBodyFontPx": 28
   },
   "designPolicy": {
     "readabilityBeforeDensity": true,
