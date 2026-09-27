@@ -334,3 +334,94 @@ order. Cross-browser expansion should be performed after a family candidate is
 geometrically stable rather than running every browser × model × geometry
 combination during early iteration.
 
+## Parallel discovery phase
+
+Phones are frozen. The next discovery pass intentionally runs three family
+workers in parallel:
+
+1. Foldables
+   - portrait first
+   - landscape second
+2. Tablets
+   - portrait first
+   - landscape second
+3. Laptops
+   - standard first
+   - wide second
+
+Each family worker is sequential internally, but the three family workers run
+at the same time. This caps the initial workload at three concurrent
+Playwright/R3F processes instead of launching every browser × model × geometry
+combination at once.
+
+Discovery uses:
+
+- Chromium only;
+- Laptop model only;
+- one representative geometry per width;
+- laptop modal sentinel;
+- screenshots for every selected geometry;
+- production About CSS only (no candidate override).
+
+The three workers use separate Vite ports so they can run safely in parallel:
+
+```text
+foldables: 4181
+tablets:   4182
+laptops:   4183
+```
+
+Run everything:
+
+```powershell
+npm run qa:about:discover:parallel
+```
+
+Or run a family independently:
+
+```powershell
+npm run qa:about:discover:foldables
+npm run qa:about:discover:tablets
+npm run qa:about:discover:laptops
+```
+
+Individual discovery commands:
+
+```powershell
+npm run qa:about:discover:foldable:portrait
+npm run qa:about:discover:foldable:landscape
+
+npm run qa:about:discover:tablet:portrait
+npm run qa:about:discover:tablet:landscape
+
+npm run qa:about:discover:laptop:standard
+npm run qa:about:discover:laptop:wide
+```
+
+Outputs are isolated under:
+
+```text
+qa-results/about/discovery/foldables/
+qa-results/about/discovery/tablets/
+qa-results/about/discovery/laptops/
+```
+
+The parallel orchestrator also writes:
+
+```text
+qa-results/about/parallel-discovery/parallel-discovery-summary.json
+```
+
+Discovery results are diagnostic. A FAIL in this stage does not stop the other
+families. After reviewing the three baselines, candidate CSS work remains
+family-scoped and promotion stays serial:
+
+```text
+foldables -> tablets -> laptops
+```
+
+Once one family is geometrically stable in Chromium, expand that family to
+Firefox and WebKit before promotion/final closure. Do not run the full
+browser × 10-model × exhaustive-geometry Cartesian matrix during early
+candidate iteration.
+
