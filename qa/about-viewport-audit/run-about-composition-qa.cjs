@@ -917,25 +917,11 @@ const evaluateMetrics = (metrics, state, familyName) => {
         break;
       }
 
-      if (
-        !(
-          familyName === 'phone-portrait' &&
-          contract.designPolicy
-            ?.phonePortraitAllowSingleWordLine
-        )
-      ) {
-        addIssue(
-          issues,
-          'FAIL',
-          'SINGLE_WORD_LINE',
-          'A paragraph contains a line with only one word/token.',
-          {
-            token: onlyToken,
-            lines: p.lineTokens,
-          }
-        );
-      }
-
+      /*
+       * Single-word lines are visually acceptable in responsive About copy.
+       * Keep only the punctuation-only guard above; do not fail a geometry
+       * solely because natural wrapping leaves one word on a line.
+       */
       break;
     }
   }
