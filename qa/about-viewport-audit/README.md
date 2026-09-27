@@ -598,3 +598,55 @@ They intentionally use the laptop as the geometry sentinel, capture all selected
 screenshots, and do not alter the frozen phone production CSS. Review these
 screenshots and reports before expanding the model-frame candidate to the
 all-model certification pass.
+
+### Parallel candidate visual review
+
+Folded outer-display coverage is not considered accepted merely because the
+phone families are frozen. The candidate review explicitly rechecks those
+foldable states with production CSS and keeps them separate from unfolded
+candidate geometry.
+
+The tablet portrait reading-measure contract is also family-specific now:
+tablet portrait may use up to 800px, while unfolded foldables keep the shared
+780px medium-portrait limit.
+
+Run the current candidate visual matrix with one command:
+
+```powershell
+npm run qa:about:candidates:parallel
+```
+
+The runner starts three workers in parallel:
+
+```text
+foldables
+  outer portrait       production CSS
+  unfolded portrait    medium portrait V2 + modal V1 + model frame V1
+  outer landscape      production CSS
+  unfolded landscape   medium landscape V1 + modal V1
+
+tablets
+  portrait             medium portrait V2 + modal V1 + model frame V1
+  landscape            medium landscape V1 + modal V1
+
+laptops
+  standard             non-phone modal V1
+  wide                 wide desktop V1 + non-phone modal V1
+```
+
+Each worker is sequential internally and has its own Vite port. Results are
+written under:
+
+```text
+qa-results/about/parallel-candidates/
+```
+
+with a combined summary at:
+
+```text
+qa-results/about/parallel-candidates/parallel-candidates-summary.json
+```
+
+This is a visual/discovery pass using the laptop sentinel. Candidate promotion
+remains family-scoped after the screenshots and reports are reviewed.
+

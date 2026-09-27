@@ -1545,8 +1545,16 @@ const evaluateMetrics = (metrics, state, familyName) => {
       );
 
     const maxMeasure =
-      t.mediumPortraitMaxParagraphMeasurePx ??
-      780;
+      familyName === 'tablet-portrait'
+        ? (
+            t.tabletPortraitMaxParagraphMeasurePx ??
+            t.mediumPortraitMaxParagraphMeasurePx ??
+            780
+          )
+        : (
+            t.mediumPortraitMaxParagraphMeasurePx ??
+            780
+          );
 
     if (
       r.list.width >
