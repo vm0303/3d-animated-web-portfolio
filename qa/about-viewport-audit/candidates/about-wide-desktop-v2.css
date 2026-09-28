@@ -260,8 +260,10 @@
 
 /*
  * Wider 2160p-class canvases grow the model lane substantially.
- * Restore the previously accepted 1.8 Stage frame so the model stays
- * balanced instead of scaling with the lane width.
+ *
+ * 3840x2160 at frame edge 1.6 is the accepted visual anchor.
+ * The 5120-class lane needs a larger frame edge so the model footprint
+ * stays near the same share of the right-hand region.
  */
 @media
   (min-width: 4800px)
@@ -270,7 +272,24 @@
 
   .about {
     --about-stage-frame-edge:
-      1.8;
+      2.0;
+  }
+}
+
+
+/*
+ * Extreme-width / 2160p-class pressure gets one final framing step.
+ * This keeps the 3D model from growing again as the About host approaches
+ * its wide-tier cap.
+ */
+@media
+  (min-width: 6400px)
+  and (min-height: 2000px)
+  and (orientation: landscape) {
+
+  .about {
+    --about-stage-frame-edge:
+      2.1;
   }
 }
 

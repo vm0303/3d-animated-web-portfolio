@@ -973,3 +973,28 @@ Re-run:
 npm run qa:about:wide-desktop:v2:highres-smoke
 ```
 
+### Wide Desktop V2 — final model-footprint correction
+
+Full-resolution inspection of the focused high-resolution screenshots showed
+that the 3D laptop occupied progressively more of the model lane even though
+the 3840x2160 composition was already accepted:
+
+- 3840x2160: ~82% of the right-hand lane (accepted anchor)
+- 5120x2160: ~90%
+- 7680x2160: ~94%
+
+The high-resolution text, View screen control, and popup modal are unchanged.
+Only Stage framing changes with additional horizontal pressure:
+
+- 3840-class tall-wide: frame edge 1.6
+- >=4800px wide / >=2000px tall: frame edge 2.0
+- >=6400px wide / >=2000px tall: frame edge 2.1
+
+These values are geometry-pressure tiers, not named-device overrides.
+
+Re-run:
+
+```powershell
+npm run qa:about:wide-desktop:v2:highres-smoke
+```
+
