@@ -949,3 +949,27 @@ If visually accepted, run the full wide V2 regression:
 npm run qa:about:wide-desktop:v2:visual-smoke
 ```
 
+### Wide Desktop V2 — 3840 anchor / wider-model correction
+
+The latest focused screenshots establish 3840x2160 as visually acceptable.
+Its previous FAIL was contract-only: measured title/body were ~145.9px/35px
+while QA still required the superseded 160px/40px experiment.
+
+The accepted high-resolution typography/chrome values therefore match the
+manually reviewed candidate, and QA now uses 145px/35px floors.
+
+The only visual defect in that run was 3D model dominance at 5120x2160 and
+7680x2160. Model framing is now decoupled from the text scale:
+
+- 3840-class tall-wide: Stage frame edge 1.6
+- >=4800px wide and >=2000px tall: Stage frame edge 1.8
+
+This restores the previously accepted model framing on the wider canvases
+without changing their text, View screen control, or modal chrome.
+
+Re-run:
+
+```powershell
+npm run qa:about:wide-desktop:v2:highres-smoke
+```
+

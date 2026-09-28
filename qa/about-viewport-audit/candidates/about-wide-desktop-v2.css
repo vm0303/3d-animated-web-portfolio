@@ -69,17 +69,13 @@
 /*
  * HIGH-RESOLUTION / TALL WIDE-DESKTOP SCALE TIER
  *
- * 3840x1600 and 5120x1440 were visually accepted, so height participates in
- * this handoff. The larger tier begins only when both axes provide enough
- * room. It addresses 3840x2160, 5120x2160, 7680x2160 and neighboring shapes.
+ * 3840x2160 is the visual anchor.
+ * Text/chrome values below match the manually reviewed local candidate.
  *
- * The layout host and modal image sizing from the first V2 tier stay intact.
- * This tier scales the content that was still visually undersized:
- * title/body, 3D camera framing, View screen control, and modal chrome.
- *
- * Typography and modal chrome scale primarily from viewport HEIGHT here.
- * 3840x2160, 5120x2160, and 7680x2160 share the same vertical canvas, so
- * they should not keep enlarging text merely because horizontal width grows.
+ * Model framing is intentionally separate from typography:
+ * - 3840-class tall-wide keeps frame edge 1.6 (manually accepted).
+ * - wider tall-wide canvases step back to 1.8 so the 3D model does not
+ *   become too dominant as the model lane itself grows.
  */
 @media
   (min-width: 3840px)
@@ -88,23 +84,23 @@
 
   .about {
     --about-stage-frame-edge:
-      1.8;
+      1.6;
   }
 
 
   .aTitle {
     font-size:
       clamp(
-        150px,
-        7.2svh,
+        90px,
+        3.8vw,
         160px
       ) !important;
 
     margin-bottom:
       clamp(
-        42px,
-        2.1svh,
-        52px
+        44px,
+        2.2svh,
+        58px
       ) !important;
   }
 
@@ -115,16 +111,16 @@
         100%,
         clamp(
           1100px,
-          56svh,
-          1240px
+          22vw,
+          1500px
         )
       ) !important;
 
     gap:
       clamp(
         34px,
-        1.8svh,
-        42px
+        1.9svh,
+        46px
       ) !important;
   }
 
@@ -132,9 +128,9 @@
   .aboutList p {
     font-size:
       clamp(
-        38px,
-        1.8svh,
-        42px
+        35px,
+        0.9vw,
+        43px
       ) !important;
 
     line-height:
@@ -145,9 +141,9 @@
   .aSection.left {
     padding-inline-end:
       clamp(
-        76px,
-        4.5svh,
-        100px
+        68px,
+        2.6vw,
+        98px
       ) !important;
   }
 
@@ -168,8 +164,8 @@
     font-size:
       clamp(
         28px,
-        1.4svh,
-        32px
+        0.6vw,
+        40px
       ) !important;
 
     gap:
@@ -181,10 +177,6 @@
   }
 
 
-  /*
-   * The V2 dialog/image is already the desired large size.
-   * Scale only the toolbar chrome so it remains proportional to that image.
-   */
   .laptopScreenToolbar {
     min-height:
       clamp(
@@ -211,8 +203,8 @@
     font-size:
       clamp(
         36px,
-        1.85svh,
-        42px
+        0.8vw,
+        52px
       ) !important;
   }
 
@@ -221,15 +213,15 @@
     width:
       clamp(
         88px,
-        4.4svh,
-        100px
+        1.5vw,
+        112px
       ) !important;
 
     height:
       clamp(
         88px,
-        4.4svh,
-        100px
+        1.5vw,
+        112px
       ) !important;
   }
 
@@ -238,15 +230,15 @@
     width:
       clamp(
         34px,
-        1.8svh,
-        40px
+        0.55vw,
+        44px
       ) !important;
 
     height:
       clamp(
         34px,
-        1.8svh,
-        40px
+        0.55vw,
+        44px
       ) !important;
   }
 
@@ -256,12 +248,29 @@
     width:
       clamp(
         38px,
-        2svh,
-        44px
+        0.62vw,
+        50px
       ) !important;
 
     height:
       4px !important;
+  }
+}
+
+
+/*
+ * Wider 2160p-class canvases grow the model lane substantially.
+ * Restore the previously accepted 1.8 Stage frame so the model stays
+ * balanced instead of scaling with the lane width.
+ */
+@media
+  (min-width: 4800px)
+  and (min-height: 2000px)
+  and (orientation: landscape) {
+
+  .about {
+    --about-stage-frame-edge:
+      1.8;
   }
 }
 
