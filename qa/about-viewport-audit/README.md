@@ -998,3 +998,72 @@ Re-run:
 npm run qa:about:wide-desktop:v2:highres-smoke
 ```
 
+### Final production promotion and laptop-only closure
+
+The accepted About responsive candidate stack has been promoted into
+`src/components/about/about.css` on `css-viewport-test`.
+
+Promotion preserves the tested cascade and does not change model GLBs,
+per-model visualScale values, or the About model loader. The previously
+completed all-model candidate certification remains valid evidence; final
+production closure intentionally uses the laptop as the geometry/WebGL
+sentinel instead of repeating all ten models.
+
+The production block contains:
+
+```text
+medium portrait V2
+medium landscape V1
+wide desktop V1
+shared non-phone modal V1
+medium portrait model frame V1
+wide desktop V2
+```
+
+The narrow/tall 390–429px outer portrait correction is already part of medium
+portrait V2 and is not duplicated.
+
+Run the final closure with one command:
+
+```powershell
+npm run qa:about:closure:production:laptop
+```
+
+This runs production CSS only — no `--override-css` — across:
+
+```text
+phone portrait
+phone landscape short
+phone landscape normal
+foldable outer portrait
+foldable unfolded portrait
+foldable outer landscape
+foldable unfolded landscape
+tablet portrait
+tablet landscape
+desktop standard
+desktop wide
+```
+
+for Chromium, Firefox, and WebKit. Every case uses the laptop model, modal
+sentinel, one representative geometry per width, strict contract checks, and
+the WebGL probe. Chromium captures all screenshots for final visual parity;
+Firefox/WebKit capture failures only. A failed WebKit step is retried once in a
+fresh process because of the documented Playwright/WebKit WebGL-context issue.
+
+Results are written to:
+
+```text
+qa-results/about/final-production-closure/
+```
+
+with the combined summary at:
+
+```text
+qa-results/about/final-production-closure/production-closure-summary.json
+```
+
+Do not copy the About changes to the `starter` branch until this production
+closure is green and the Chromium production screenshots match the accepted
+candidate visuals.
+
