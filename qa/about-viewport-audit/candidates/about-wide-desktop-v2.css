@@ -76,6 +76,10 @@
  * The layout host and modal image sizing from the first V2 tier stay intact.
  * This tier scales the content that was still visually undersized:
  * title/body, 3D camera framing, View screen control, and modal chrome.
+ *
+ * Typography and modal chrome scale primarily from viewport HEIGHT here.
+ * 3840x2160, 5120x2160, and 7680x2160 share the same vertical canvas, so
+ * they should not keep enlarging text merely because horizontal width grows.
  */
 @media
   (min-width: 3840px)
@@ -91,16 +95,16 @@
   .aTitle {
     font-size:
       clamp(
-        160px,
-        3.8vw,
-        260px
+        150px,
+        7.2svh,
+        160px
       ) !important;
 
     margin-bottom:
       clamp(
-        44px,
-        2.2svh,
-        58px
+        42px,
+        2.1svh,
+        52px
       ) !important;
   }
 
@@ -111,16 +115,16 @@
         100%,
         clamp(
           1100px,
-          22vw,
-          1500px
+          56svh,
+          1240px
         )
       ) !important;
 
     gap:
       clamp(
         34px,
-        1.9svh,
-        46px
+        1.8svh,
+        42px
       ) !important;
   }
 
@@ -128,9 +132,9 @@
   .aboutList p {
     font-size:
       clamp(
-        40px,
-        0.9vw,
-        56px
+        38px,
+        1.8svh,
+        42px
       ) !important;
 
     line-height:
@@ -141,9 +145,9 @@
   .aSection.left {
     padding-inline-end:
       clamp(
-        72px,
-        2.6vw,
-        120px
+        76px,
+        4.5svh,
+        100px
       ) !important;
   }
 
@@ -164,8 +168,8 @@
     font-size:
       clamp(
         28px,
-        0.6vw,
-        40px
+        1.4svh,
+        32px
       ) !important;
 
     gap:
@@ -207,8 +211,8 @@
     font-size:
       clamp(
         36px,
-        0.8vw,
-        52px
+        1.85svh,
+        42px
       ) !important;
   }
 
@@ -217,15 +221,15 @@
     width:
       clamp(
         88px,
-        1.5vw,
-        112px
+        4.4svh,
+        100px
       ) !important;
 
     height:
       clamp(
         88px,
-        1.5vw,
-        112px
+        4.4svh,
+        100px
       ) !important;
   }
 
@@ -234,15 +238,15 @@
     width:
       clamp(
         34px,
-        0.55vw,
-        44px
+        1.8svh,
+        40px
       ) !important;
 
     height:
       clamp(
         34px,
-        0.55vw,
-        44px
+        1.8svh,
+        40px
       ) !important;
   }
 
@@ -252,8 +256,8 @@
     width:
       clamp(
         38px,
-        0.62vw,
-        50px
+        2svh,
+        44px
       ) !important;
 
     height:

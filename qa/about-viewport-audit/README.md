@@ -916,3 +916,36 @@ Re-run:
 npm run qa:about:wide-desktop:v2:highres-smoke
 ```
 
+### Wide Desktop V2 — balanced 2160p ultrawide scaling
+
+Manual experimentation showed why the previous high-resolution rule overshot
+at 5120x2160 and 7680x2160: title/body/button/modal chrome were driven by
+viewport width even though those viewports share the same 2160px height.
+
+The corrected tier restores the already-approved Stage frame edge of 1.8 and
+makes high-resolution typography/chrome primarily height-driven:
+
+- About title: 150–160px
+- About body: 38–42px
+- paragraph measure: 1100–1240px
+- View screen text: 28–32px
+- Portfolio screen modal title: 36–42px
+- modal close control: 88–100px
+- modal X icon: 34–40px
+
+At 2160px height these values remain nearly constant across 3840, 5120, and
+7680 widths instead of ballooning with horizontal width. The large modal image
+and accepted 1.8 model framing remain unchanged.
+
+Re-run the focused sweep:
+
+```powershell
+npm run qa:about:wide-desktop:v2:highres-smoke
+```
+
+If visually accepted, run the full wide V2 regression:
+
+```powershell
+npm run qa:about:wide-desktop:v2:visual-smoke
+```
+
