@@ -1,5 +1,6 @@
 import {
-    Canvas
+    Canvas,
+    useThree,
 } from "@react-three/fiber";
 
 import {
@@ -14,6 +15,7 @@ import {
     Suspense,
     useCallback,
     useEffect,
+    useLayoutEffect,
     useRef,
     useState,
 } from "react";
@@ -51,6 +53,8 @@ const INTERACTION_RESUME_DELAY = 1200;
  */
 const LAMA_ZOOM_DURATION = 1000;
 
+const DESKTOP_FRAME_EDGE = 2.55;
+
 
 /*
  * Important adaptation:
@@ -64,18 +68,17 @@ const LAMA_ZOOM_DURATION = 1000;
  * the same Stage/Bounds zoom mechanism while keeping the
  * model sizes from aboutScenes.js meaningful.
  *
- * These dimensions reproduce the current desktop framing
- * closely with the existing fov={38} camera. We can make
- * this geometry-responsive later with the rest of About.
+ * The frame edge can be set by a scoped layout candidate
+ * without changing model normalization or per-model visualScale.
  */
-const StageBoundsAnchor = () => {
+const StageBoundsAnchor = ({ edge }) => {
     return (
         <mesh>
             <boxGeometry
                 args={[
-                    2.55,
-                    2.55,
-                    2.55,
+                    edge,
+                    edge,
+                    edge,
                 ]}
             />
 
@@ -91,12 +94,128 @@ const StageBoundsAnchor = () => {
 };
 
 
+const AboutQaWebGLProbe = ({
+    enabled,
+}) => {
+    const {
+        gl,
+        scene,
+        camera,
+    } = useThree();
+
+
+    useEffect(() => {
+        if (!enabled) {
+            return undefined;
+        }
+
+
+        window.__ABOUT_QA_WEBGL_PROBE__ =
+            () => {
+                /*
+                 * Force one render immediately before readback.
+                 * QA mode uses preserveDrawingBuffer so toDataURL
+                 * can verify the WebGL framebuffer independently
+                 * of Playwright's page.screenshot compositor.
+                 */
+                gl.render(
+                    scene,
+                    camera
+                );
+
+
+                const context =
+                    gl.getContext();
+
+
+                context.finish?.();
+
+
+                return {
+                    dataUrl:
+                        gl.domElement
+                            .toDataURL(
+                                "image/png"
+                            ),
+
+                    canvasWidth:
+                        gl.domElement
+                            .width,
+
+                    canvasHeight:
+                        gl.domElement
+                            .height,
+
+                    clientWidth:
+                        gl.domElement
+                            .clientWidth,
+
+                    clientHeight:
+                        gl.domElement
+                            .clientHeight,
+
+                    contextLost:
+                        Boolean(
+                            context
+                                .isContextLost?.()
+                        ),
+
+                    glError:
+                        context
+                            .getError?.() ??
+                        null,
+                };
+            };
+
+
+        return () => {
+            delete window
+                .__ABOUT_QA_WEBGL_PROBE__;
+        };
+    }, [
+        enabled,
+        gl,
+        scene,
+        camera,
+    ]);
+
+
+    return null;
+};
+
+
 const AboutModelContainer = ({
     activeScene,
     onLaptopReady,
     qaMode = false,
     qaModelId = null,
 }) => {
+    const modelContainerRef = useRef(null);
+    const [frameEdge, setFrameEdge] =
+        useState(DESKTOP_FRAME_EDGE);
+
+    useLayoutEffect(() => {
+        const node = modelContainerRef.current;
+        if (!node) return undefined;
+
+        const syncFrame = () => {
+            const value = Number.parseFloat(
+                getComputedStyle(node).getPropertyValue(
+                    "--about-stage-frame-edge"
+                )
+            );
+            setFrameEdge(
+                Number.isFinite(value) && value > 0
+                    ? value
+                    : DESKTOP_FRAME_EDGE
+            );
+        };
+
+        syncFrame();
+        window.addEventListener("resize", syncFrame);
+        return () => window.removeEventListener("resize", syncFrame);
+    }, []);
+
     const initialScene =
         ABOUT_SCENES[
         activeScene
@@ -1314,6 +1433,8 @@ const AboutModelContainer = ({
             className=
             "aboutModelContainer"
 
+            ref={modelContainerRef}
+
             data-about-qa={
                 qaMode
                     ? "true"
@@ -1372,6 +1493,15 @@ const AboutModelContainer = ({
 
                         powerPreference:
                             "high-performance",
+
+                        /*
+                         * QA only:
+                         * makes renderer readback deterministic so
+                         * WebKit screenshot/compositor failures can
+                         * be separated from actual Three rendering.
+                         */
+                        preserveDrawingBuffer:
+                            qaMode,
                     }}
 
                     onCreated={({
@@ -1381,6 +1511,13 @@ const AboutModelContainer = ({
                             1;
                     }}
                 >
+                    <AboutQaWebGLProbe
+                        enabled={
+                            qaMode
+                        }
+                    />
+
+
                     <Suspense
                         fallback={null}
                     >
@@ -1399,7 +1536,7 @@ const AboutModelContainer = ({
                         */}
                         <PerspectiveCamera
                             key={
-                                `camera-${sceneZoomEpoch}`
+                                `camera-${sceneZoomEpoch}-${frameEdge}`
                             }
 
                             makeDefault
@@ -1448,7 +1585,7 @@ const AboutModelContainer = ({
 
                         <Stage
                             key={
-                                `stage-${sceneZoomEpoch}`
+                                `stage-${sceneZoomEpoch}-${frameEdge}`
                             }
 
                             preset="soft"
@@ -1468,7 +1605,7 @@ const AboutModelContainer = ({
                              */
                             adjustCamera={1.2}
                         >
-                            <StageBoundsAnchor />
+                            <StageBoundsAnchor edge={frameEdge} />
                         </Stage>
 
 
