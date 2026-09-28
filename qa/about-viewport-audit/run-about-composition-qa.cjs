@@ -2339,6 +2339,23 @@ const csvEscape = (value) => {
             about?.closest('section')?.scrollIntoView({ behavior: 'auto', block: 'start' });
           });
 
+          /*
+           * Extreme CSS-pixel viewports can take longer for Three.js/R3F to
+           * finish the QA-ready handshake when the WebGL probe is enabled.
+           *
+           * The 5120x2160 / 7680x2160 certification screenshots can already
+           * contain a fully rendered model at the old 20s cutoff, so that
+           * timeout can create a false QA_EXECUTION_ERROR. Keep the normal
+           * path unchanged and give only the high-resolution probe cases
+           * additional settling time.
+           */
+          const aboutReadyTimeoutMs =
+            webglProbe &&
+            testCase.width >= 4800 &&
+            testCase.height >= 2000
+              ? 45000
+              : 20000;
+
           await page.waitForFunction(
             ({ scene, model }) => {
               const el = document.querySelector('.aboutModelContainer[data-about-qa="true"]');
@@ -2347,7 +2364,7 @@ const csvEscape = (value) => {
                 el?.dataset.aboutReady === 'true';
             },
             { scene: state.scene, model: state.model },
-            { timeout: 20000 }
+            { timeout: aboutReadyTimeoutMs }
           );
 
           if (
