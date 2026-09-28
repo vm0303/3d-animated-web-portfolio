@@ -1,4 +1,6 @@
 import "./portfolio.css"
+import {motion,useScroll, useTransform} from "motion/react"
+import { useRef,useState,useEffect } from "react"
 
 
 const items = [
@@ -40,29 +42,57 @@ const items = [
 ];
 
 
-const ListItem = ({ item }) => (
-  <div className="pItem">
-    <div className="pImg">
-      <img src={item.img} alt="" />
+
+const ListItem = ({ item }) => {
+  return (
+    <div className="pItem">
+      <div className="pImg">
+        <img src={item.img} alt="" />
+      </div>
+      <div className="pText">
+        <h1>{item.title}</h1>
+        <p>{item.desc}</p>
+        <a href={item.link} target="_blank" rel="noopener noreferrer">
+          <button>View Project</button>
+        </a>
+      </div>
     </div>
-    <div className="pText">
-      <h1>{item.title}</h1>
-      <p>{item.desc}</p>
-      <a href={item.link} target="_blank" rel="noopener noreferrer">
-        <button>View Project</button>
-      </a>
-    </div>
-  </div>
-);
+  );
+}
+
 
 const Portfolio = () => {
+
+  const [containerDistance,setContainerDistance] = useState(0);
+
+  const ref = useRef(null);
+  
+  const {scrollYProgress} = useScroll({ target: ref });
+
+  const xTranslate = useTransform(scrollYProgress, [0, 1], [0, -window.innerWidth * items.length]);
+
+  useEffect(() => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setContainerDistance(rect.left);
+    }
+  }, []);
+
   return (
-    <div className='portfolio'>
-      <div className="pList">
+    <div className='portfolio' ref={ref}>
+      <motion.div className="pList" style={{ x: xTranslate }}>
+        <div className="empty"
+        style={{ width: window.innerWidth - containerDistance }}
+        />
         {items.map(item=>(
           <ListItem item={item} key={item.id}/>
         ))}
-      </div>
+      </motion.div>
+      <section/>
+      <section/>
+      <section/>
+      <section/>
+      <section/>
     </div>
   )
 }
