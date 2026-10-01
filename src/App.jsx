@@ -28,8 +28,9 @@ const App = () => {
         <About />
       </section>
 
-      {/* Section for Portfolio exists inside Portfolio */}
-      <Portfolio />
+      <section id="#portfolio">
+        <Portfolio />
+      </section>
 
 
       <section id="#contact">
