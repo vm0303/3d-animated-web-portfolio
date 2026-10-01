@@ -158,18 +158,52 @@ async function waitForServer(timeoutMs = 30000) {
 }
 async function startServerIfNeeded() {
   if (await serverUp()) return { child: null, reused: true };
-  const npm = process.platform === "win32" ? "npm.cmd" : "npm";
-  const child = spawn(npm, ["run", "dev", "--", "--host", "127.0.0.1", "--port", String(port)], {
-    cwd: ROOT,
-    stdio: ["ignore", "pipe", "pipe"],
-    env: { ...process.env, BROWSER: "none" }
-  });
+
+  /*
+   * Do not spawn npm.cmd directly on Windows.
+   * Node/Windows can reject .cmd launchers with spawn EINVAL.
+   *
+   * The proven Hero/About QA runners launch Vite through the current
+   * Node executable instead, which is portable across Windows/macOS/Linux.
+   */
+  const viteBin = path.join(
+    ROOT,
+    "node_modules",
+    "vite",
+    "bin",
+    "vite.js"
+  );
+
+  if (!fs.existsSync(viteBin)) {
+    throw new Error("Vite is not installed. Run npm install first.");
+  }
+
+  const child = spawn(
+    process.execPath,
+    [
+      viteBin,
+      ROOT,
+      "--host",
+      "127.0.0.1",
+      "--port",
+      String(port),
+      "--strictPort"
+    ],
+    {
+      cwd: ROOT,
+      stdio: ["ignore", "pipe", "pipe"],
+      env: { ...process.env, BROWSER: "none" }
+    }
+  );
+
   child.stdout.on("data", (d) => process.stdout.write("[vite] " + d));
   child.stderr.on("data", (d) => process.stderr.write("[vite] " + d));
+
   if (!(await waitForServer())) {
     child.kill();
     throw new Error("Vite server did not become ready on port " + port);
   }
+
   return { child, reused: false };
 }
 
