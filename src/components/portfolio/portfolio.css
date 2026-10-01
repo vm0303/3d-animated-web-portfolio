@@ -1,3 +1,337 @@
-.portfolio{
-    
+.portfolio {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+
+
+  outline: none;
+}
+
+/* =========================
+   EMBLA
+   ========================= */
+
+.pViewport {
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+}
+
+.pContainer {
+  display: flex;
+  height: 100%;
+
+  touch-action: pan-y pinch-zoom;
+}
+
+.pSlide {
+  flex: 0 0 100%;
+  min-width: 0;
+
+  height: 100%;
+}
+
+.pSlideContent {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.05fr)
+    minmax(0, 0.95fr);
+
+  align-items: center;
+
+  gap: clamp(
+    48px,
+    7vw,
+    140px
+  );
+
+  padding-inline:
+    clamp(
+      76px,
+      7vw,
+      140px
+    );
+
+  padding-block:
+    clamp(
+      40px,
+      6vh,
+      90px
+    );
+}
+
+/* =========================
+   PROJECT IMAGE
+   ========================= */
+
+.pImg {
+  width: 100%;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+}
+
+.pImg img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  object-fit: cover;
+}
+
+/* =========================
+   PROJECT TEXT
+   ========================= */
+
+.pText {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 24px;
+
+  min-width: 0;
+}
+
+.pText h1 {
+  font-size:
+    clamp(
+      42px,
+      4vw,
+      72px
+    );
+
+  line-height: 1.05;
+}
+
+.pText p {
+  max-width: 700px;
+
+  font-size:
+    clamp(
+      16px,
+      1.25vw,
+      22px
+    );
+
+  line-height: 1.5;
+
+  font-weight: 300;
+}
+
+.pText button {
+  padding: 14px 18px;
+
+  border: none;
+  border-radius: 10px;
+
+  background-color: #399bfc;
+  color: white;
+
+  font-size: 16px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+/* =========================
+   LEFT / RIGHT CONTROLS
+   ========================= */
+
+.pArrow {
+  position: absolute;
+
+  top: 50%;
+  z-index: 10;
+
+  /*
+   * Keep a reasonable clickable target,
+   * but make the actual visual arrow smaller.
+   */
+  width:
+    clamp(
+      42px,
+      3vw,
+      52px
+    );
+
+  height:
+    clamp(
+      58px,
+      4vw,
+      72px
+    );
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  opacity: 0;
+
+  transform:
+    translateY(-50%);
+
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+
+.pArrow svg {
+  width:
+    clamp(
+      22px,
+      1.7vw,
+      30px
+    );
+
+  height: auto;
+}
+
+
+.pArrow path {
+  fill: none;
+
+  stroke: #f3f0f0;
+
+  stroke-width: 3;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+.pArrowLeft {
+  left:
+    clamp(
+      10px,
+      1.25vw,
+      22px
+    );
+}
+
+
+.pArrowRight {
+  right:
+    clamp(
+      10px,
+      1.25vw,
+      22px
+    );
+}
+
+
+.portfolio:hover .pArrow,
+.portfolio:focus-within .pArrow {
+  opacity: 1;
+}
+
+
+.portfolio:hover .pArrowLeft,
+.portfolio:focus-within .pArrowLeft {
+  transform:
+    translateY(-50%)
+    translateX(3px);
+}
+
+
+.portfolio:hover .pArrowRight,
+.portfolio:focus-within .pArrowRight {
+  transform:
+    translateY(-50%)
+    translateX(-3px);
+}
+
+/* =========================
+   DOT NAVIGATION
+   ========================= */
+
+.pDots {
+  position: absolute;
+
+  left: 50%;
+  bottom:
+    clamp(
+      18px,
+      4vh,
+      42px
+    );
+
+  z-index: 10;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  transform: translateX(-50%);
+}
+
+.pDot {
+  width: 11px;
+  height: 11px;
+
+  padding: 0;
+
+  border: 2px solid rgba(255, 255, 255, 0.75);
+
+  border-radius: 999px;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  transition:
+    width 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.pDotActive {
+  width: 28px;
+
+  background-color: #399bfc;
+  border-color: #399bfc;
+}
+
+/*
+ * Touch devices don't really have hover.
+ * Keep arrows available there.
+ */
+@media (hover: none) {
+  .pArrow {
+    opacity: 1;
+  }
+
+  .pArrowLeft {
+    transform:
+      translateY(-50%)
+      translateX(8px);
+  }
+
+  .pArrowRight {
+    transform:
+      translateY(-50%)
+      translateX(-8px);
+  }
 }

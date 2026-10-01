@@ -32,6 +32,7 @@ const App = () => {
         <Portfolio />
       </section>
 
+
       <section id="#contact">
         <Contact />
       </section>
