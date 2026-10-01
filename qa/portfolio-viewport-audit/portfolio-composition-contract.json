@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "artifactType": "portfolio-composition-contract",
+  "purpose": "Responsive geometry and carousel interaction QA for the five-project Embla Portfolio section.",
+  "viewportSource": "qa/viewport-audit/hero-cross-browser-exhaustive-contract.json",
+  "familyGroups": {
+    "phone-portrait": "phone-portrait-exhaustive",
+    "phone-landscape": "phone-landscape-exhaustive",
+    "tablet-portrait": "tablet-portrait-exhaustive",
+    "tablet-landscape": "tablet-landscape-exhaustive",
+    "foldable": "foldable-exhaustive",
+    "desktop-standard": "desktop-standard",
+    "desktop-wide": "desktop-wide"
+  },
+  "projects": [
+    {
+      "index": 0,
+      "id": 1,
+      "title": "WeathAware"
+    },
+    {
+      "index": 1,
+      "id": 2,
+      "title": "NYC Info Tours"
+    },
+    {
+      "index": 2,
+      "id": 3,
+      "title": "2048"
+    },
+    {
+      "index": 3,
+      "id": 4,
+      "title": "DocQuery"
+    },
+    {
+      "index": 4,
+      "id": 5,
+      "title": "React Arcade Puzzles"
+    }
+  ],
+  "landscapeTiers": {
+    "phone-landscape": {
+      "shortMaxHeightPx": 355
+    },
+    "foldable": {
+      "shortMaxHeightPx": 500
+    },
+    "tablet-landscape": {
+      "shortMaxHeightPx": 768
+    }
+  },
+  "thresholds": {
+    "containmentTolerancePx": 2,
+    "horizontalOverflowTolerancePx": 2,
+    "minArrowHitWidthPx": 40,
+    "minArrowHitHeightPx": 44,
+    "minDotVisualSizePx": 9,
+    "motionInactiveMaxOpacity": 0.2,
+    "motionActiveMinOpacity": 0.92,
+    "settleMs": 750
+  },
+  "readability": {
+    "phone-portrait": {
+      "minTitleFontPx": 28,
+      "minBodyFontPx": 14
+    },
+    "phone-landscape:short": {
+      "minTitleFontPx": 20,
+      "minBodyFontPx": 12
+    },
+    "phone-landscape:normal": {
+      "minTitleFontPx": 24,
+      "minBodyFontPx": 13
+    },
+    "foldable:portrait": {
+      "minTitleFontPx": 28,
+      "minBodyFontPx": 14
+    },
+    "foldable:landscape:short": {
+      "minTitleFontPx": 22,
+      "minBodyFontPx": 12
+    },
+    "foldable:landscape:normal": {
+      "minTitleFontPx": 26,
+      "minBodyFontPx": 13
+    },
+    "tablet-portrait": {
+      "minTitleFontPx": 36,
+      "minBodyFontPx": 16
+    },
+    "tablet-landscape:short": {
+      "minTitleFontPx": 34,
+      "minBodyFontPx": 15
+    },
+    "tablet-landscape:normal": {
+      "minTitleFontPx": 40,
+      "minBodyFontPx": 16
+    },
+    "desktop-standard": {
+      "minTitleFontPx": 42,
+      "minBodyFontPx": 16
+    },
+    "desktop-wide": {
+      "minTitleFontPx": 48,
+      "minBodyFontPx": 18
+    }
+  },
+  "supplementalViewports": [
+    {
+      "id": "portfolio-phone-landscape__boundary-720x355",
+      "width": 720,
+      "height": 355,
+      "label": "Portfolio phone-landscape short boundary",
+      "family": "phone-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "portfolio-phone-landscape__boundary-720x356",
+      "width": 720,
+      "height": 356,
+      "label": "Portfolio phone-landscape normal boundary",
+      "family": "phone-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "portfolio-foldable__landscape-960x500",
+      "width": 960,
+      "height": 500,
+      "label": "Portfolio foldable short-landscape boundary",
+      "family": "foldable",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "portfolio-foldable__landscape-960x501",
+      "width": 960,
+      "height": 501,
+      "label": "Portfolio foldable normal-landscape boundary",
+      "family": "foldable",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "portfolio-tablet-landscape__boundary-1204x768",
+      "width": 1204,
+      "height": 768,
+      "label": "Portfolio tablet-landscape short boundary",
+      "family": "tablet-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "portfolio-tablet-landscape__boundary-1204x769",
+      "width": 1204,
+      "height": 769,
+      "label": "Portfolio tablet-landscape normal boundary",
+      "family": "tablet-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    }
+  ]
+}
