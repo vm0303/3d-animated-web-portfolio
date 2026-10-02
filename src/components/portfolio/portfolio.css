@@ -320,18 +320,31 @@
 }
 
 /* =========================
-   PHONE CAROUSEL CONTROLS
+   NON-LAPTOP CAROUSEL CONTROLS
    ========================= */
 
 /*
- * Phones use direct swipe/drag plus dot navigation.
- * Do not spend scarce horizontal space on arrow controls.
+ * Touch-first devices use direct swipe/drag plus dot navigation.
+ * Arrows are reserved for laptop/desktop-style fine-pointer interaction.
  *
- * This geometry rule also naturally covers folded outer-display
- * foldables when their CSS viewport is phone-sized.
+ * The geometry fallback keeps phone-sized QA/emulation arrow-free even
+ * when the test browser exposes a desktop pointer.
  */
-@media (max-width: 500px),
+@media (hover: none),
+       (pointer: coarse),
+       (max-width: 500px),
        (orientation: landscape) and (max-height: 500px) {
+  .pArrow {
+    display: none;
+  }
+}
+
+/*
+ * Portrait tablet/foldable geometry is touch-first in this project.
+ * This also keeps desktop-emulated QA screenshots aligned with the real
+ * device interaction policy.
+ */
+@media (orientation: portrait) and (max-width: 1100px) {
   .pArrow {
     display: none;
   }
