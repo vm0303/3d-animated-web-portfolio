@@ -164,44 +164,22 @@
   ],
   "portraitSpacing": {
     "phone-portrait": {
-      "imageToTitle": {
-        "hardMin": 8,
-        "idealMin": 12,
-        "idealMax": 24,
-        "reviewMax": 36
-      },
-      "titleToDescription": {
-        "hardMin": 4,
-        "idealMin": 6,
-        "idealMax": 14,
-        "reviewMax": 20
-      },
-      "descriptionToButton": {
-        "hardMin": 8,
-        "idealMin": 12,
-        "idealMax": 24,
-        "reviewMax": 32
-      }
-    },
-    "foldable:portrait": {
-      "imageToTitle": {
-        "hardMin": 10,
-        "idealMin": 14,
-        "idealMax": 30,
+      "sharedGap": {
+        "hardMin": 18,
+        "idealMin": 22,
+        "idealMax": 40,
         "reviewMax": 44
       },
-      "titleToDescription": {
-        "hardMin": 5,
-        "idealMin": 8,
-        "idealMax": 16,
-        "reviewMax": 24
+      "equalTolerancePx": 2.5
+    },
+    "foldable:portrait": {
+      "sharedGap": {
+        "hardMin": 20,
+        "idealMin": 24,
+        "idealMax": 44,
+        "reviewMax": 50
       },
-      "descriptionToButton": {
-        "hardMin": 10,
-        "idealMin": 14,
-        "idealMax": 28,
-        "reviewMax": 40
-      }
+      "equalTolerancePx": 3
     }
   }
 }

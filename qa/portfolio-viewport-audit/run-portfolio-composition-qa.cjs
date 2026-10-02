@@ -431,29 +431,45 @@ function evaluateCase(v, project, metrics, motion) {
       ];
 
     if (spacingPolicy) {
+      const portraitGaps = [
+        metrics.title.top - metrics.image.bottom,
+        metrics.body.top - metrics.title.bottom,
+        metrics.button.top - metrics.body.bottom
+      ];
+
       evaluateSpacing(
         review,
         hard,
         "IMAGE_TO_TITLE",
-        metrics.title.top - metrics.image.bottom,
-        spacingPolicy.imageToTitle
+        portraitGaps[0],
+        spacingPolicy.sharedGap
       );
 
       evaluateSpacing(
         review,
         hard,
         "TITLE_TO_DESCRIPTION",
-        metrics.body.top - metrics.title.bottom,
-        spacingPolicy.titleToDescription
+        portraitGaps[1],
+        spacingPolicy.sharedGap
       );
 
       evaluateSpacing(
         review,
         hard,
         "DESCRIPTION_TO_BUTTON",
-        metrics.button.top - metrics.body.bottom,
-        spacingPolicy.descriptionToButton
+        portraitGaps[2],
+        spacingPolicy.sharedGap
       );
+
+      const minGap = Math.min(...portraitGaps);
+      const maxGap = Math.max(...portraitGaps);
+
+      if (
+        maxGap - minGap >
+        spacingPolicy.equalTolerancePx
+      ) {
+        hard.push("PORTRAIT_STACK_GAPS_UNEVEN");
+      }
     }
   }
 
