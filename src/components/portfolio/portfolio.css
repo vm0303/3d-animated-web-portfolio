@@ -330,7 +330,8 @@
  * This geometry rule also naturally covers folded outer-display
  * foldables when their CSS viewport is phone-sized.
  */
-@media (max-width: 500px) {
+@media (max-width: 500px),
+       (orientation: landscape) and (max-height: 500px) {
   .pArrow {
     display: none;
   }

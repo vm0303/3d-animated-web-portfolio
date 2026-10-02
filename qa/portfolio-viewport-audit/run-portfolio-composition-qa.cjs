@@ -336,7 +336,7 @@ function evaluateCase(v, project, metrics, motion) {
     }
   }
   const phoneArrowless =
-    v.width <= 500;
+    Math.min(v.width, v.height) <= 500;
 
   if (phoneArrowless) {
     if (
@@ -630,7 +630,11 @@ async function runInteractionCheck(page) {
 
   const phoneMode =
     await page.evaluate(
-      () => innerWidth <= 500
+      () =>
+        Math.min(
+          innerWidth,
+          innerHeight
+        ) <= 500
     );
 
   result.phoneMode = phoneMode;
