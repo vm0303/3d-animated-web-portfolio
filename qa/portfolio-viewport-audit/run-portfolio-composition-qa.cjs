@@ -282,6 +282,10 @@ async function readMetrics(page, expectedIndex) {
       button:rect(button),
       leftArrow:rect(leftArrow),
       rightArrow:rect(rightArrow),
+      leftArrowDisplay:leftArrow ? style(leftArrow).display : "",
+      rightArrowDisplay:rightArrow ? style(rightArrow).display : "",
+      leftArrowOpacity:leftArrow ? parseFloat(style(leftArrow).opacity) : 0,
+      rightArrowOpacity:rightArrow ? parseFloat(style(rightArrow).opacity) : 0,
       dots:rect(dots),
       titleFont:title ? parseFloat(style(title).fontSize) : 0,
       titleLineHeight:title ? parseFloat(style(title).lineHeight) : 0,
@@ -308,7 +312,7 @@ function evaluateCase(v, project, metrics, motion) {
   const review = [];
   const t = contract.thresholds;
   const read = readabilityFor(v);
-  const requiredRects = ["portfolio","carouselViewport","slide","content","image","text","title","body","button","leftArrow","rightArrow","dots"];
+  const requiredRects = ["portfolio","carouselViewport","slide","content","image","text","title","body","button","dots"];
   for (const key of requiredRects) if (!metrics[key]) hard.push("MISSING_" + key.toUpperCase());
 
   if (metrics.document.scrollWidth > metrics.document.clientWidth + t.horizontalOverflowTolerancePx) {
@@ -331,10 +335,43 @@ function evaluateCase(v, project, metrics, motion) {
       hard.push(key.toUpperCase() + "_OUTSIDE_PORTFOLIO");
     }
   }
-  for (const key of ["leftArrow","rightArrow","dots"]) {
-    if (metrics[key] && metrics.portfolio && !rectContained(metrics[key], metrics.portfolio, t.containmentTolerancePx)) {
-      hard.push(key.toUpperCase() + "_OUTSIDE_PORTFOLIO");
+  const phoneArrowless =
+    v.width <= 500;
+
+  if (phoneArrowless) {
+    if (
+      metrics.leftArrowDisplay !== "none" ||
+      metrics.rightArrowDisplay !== "none"
+    ) {
+      hard.push("PHONE_ARROWS_VISIBLE");
     }
+  } else {
+    for (const key of ["leftArrow","rightArrow"]) {
+      if (!metrics[key]) {
+        hard.push("MISSING_" + key.toUpperCase());
+      } else if (
+        metrics.portfolio &&
+        !rectContained(
+          metrics[key],
+          metrics.portfolio,
+          t.containmentTolerancePx
+        )
+      ) {
+        hard.push(key.toUpperCase() + "_OUTSIDE_PORTFOLIO");
+      }
+    }
+  }
+
+  if (
+    metrics.dots &&
+    metrics.portfolio &&
+    !rectContained(
+      metrics.dots,
+      metrics.portfolio,
+      t.containmentTolerancePx
+    )
+  ) {
+    hard.push("DOTS_OUTSIDE_PORTFOLIO");
   }
   if (!metrics.imageNatural || !metrics.imageNatural.complete || metrics.imageNatural.width <= 0 || metrics.imageNatural.height <= 0) {
     hard.push("IMAGE_NOT_LOADED");
@@ -532,10 +569,12 @@ function evaluateCase(v, project, metrics, motion) {
   if (metrics.dots && metrics.button && intersectionArea(metrics.dots, metrics.button) > 4) {
     review.push("DOTS_BUTTON_OVERLAP");
   }
-  if (metrics.leftArrow && metrics.leftArrow.width < t.minArrowHitWidthPx) review.push("LEFT_ARROW_HIT_WIDTH");
-  if (metrics.rightArrow && metrics.rightArrow.width < t.minArrowHitWidthPx) review.push("RIGHT_ARROW_HIT_WIDTH");
-  if (metrics.leftArrow && metrics.leftArrow.height < t.minArrowHitHeightPx) review.push("LEFT_ARROW_HIT_HEIGHT");
-  if (metrics.rightArrow && metrics.rightArrow.height < t.minArrowHitHeightPx) review.push("RIGHT_ARROW_HIT_HEIGHT");
+  if (!phoneArrowless) {
+    if (metrics.leftArrow && metrics.leftArrow.width < t.minArrowHitWidthPx) review.push("LEFT_ARROW_HIT_WIDTH");
+    if (metrics.rightArrow && metrics.rightArrow.width < t.minArrowHitWidthPx) review.push("RIGHT_ARROW_HIT_WIDTH");
+    if (metrics.leftArrow && metrics.leftArrow.height < t.minArrowHitHeightPx) review.push("LEFT_ARROW_HIT_HEIGHT");
+    if (metrics.rightArrow && metrics.rightArrow.height < t.minArrowHitHeightPx) review.push("RIGHT_ARROW_HIT_HEIGHT");
+  }
   if (metrics.titleFont < read.minTitleFontPx) review.push("TITLE_FONT_SMALL");
   if (metrics.bodyFont < read.minBodyFontPx) review.push("BODY_FONT_SMALL");
 
@@ -583,9 +622,18 @@ async function runInteractionCheck(page) {
     nextLoop:false,
     prevLoop:false,
     keyboard:false,
+    phoneMode:false,
     controlsHiddenInitially:false,
-    controlsRevealOnTouch:false
+    controlsRevealOnInteraction:false,
+    controlsStayHiddenOnPhone:false
   };
+
+  const phoneMode =
+    await page.evaluate(
+      () => innerWidth <= 500
+    );
+
+  result.phoneMode = phoneMode;
 
   await page.evaluate(() => {
     if (document.activeElement instanceof HTMLElement) {
@@ -594,14 +642,17 @@ async function runInteractionCheck(page) {
   });
 
   await page.mouse.move(1, 1);
-  await page.waitForTimeout(220);
+  await page.waitForTimeout(380);
 
   result.controlsHiddenInitially =
     await page.locator(".pArrowRight").evaluate(
-      (el) =>
-        parseFloat(
-          getComputedStyle(el).opacity
-        ) < 0.1
+      (el) => {
+        const style = getComputedStyle(el);
+        return (
+          style.display === "none" ||
+          parseFloat(style.opacity) < 0.1
+        );
+      }
     );
 
   await page.locator(".portfolio").dispatchEvent(
@@ -615,31 +666,102 @@ async function runInteractionCheck(page) {
     }
   );
 
-  await page.waitForTimeout(220);
+  await page.waitForTimeout(380);
 
-  result.controlsRevealOnTouch =
-    await page.locator(".pArrowRight").evaluate(
-      (el) =>
-        parseFloat(
-          getComputedStyle(el).opacity
-        ) > 0.9
-    );
+  if (phoneMode) {
+    result.controlsStayHiddenOnPhone =
+      await page.locator(".pArrowRight").evaluate(
+        (el) =>
+          getComputedStyle(el).display === "none"
+      );
+
+    result.controlsRevealOnInteraction = true;
+  } else {
+    result.controlsRevealOnInteraction =
+      await page.locator(".pArrowRight").evaluate(
+        (el) =>
+          parseFloat(
+            getComputedStyle(el).opacity
+          ) > 0.9
+      );
+
+    result.controlsStayHiddenOnPhone = true;
+  }
 
   const dots = page.locator(".pDot");
+
+  /*
+   * Loop navigation is tested with dots on phone-size layouts because
+   * phone arrows are intentionally absent. On larger layouts, retain
+   * the arrow-loop test.
+   */
   await dots.nth(4).click({force:true});
   await page.waitForTimeout(contract.thresholds.settleMs);
-  await page.locator(".pArrowRight").click({force:true});
-  await page.waitForTimeout(contract.thresholds.settleMs);
-  result.nextLoop = await page.locator(".pDot").nth(0).getAttribute("aria-current") === "true";
 
-  await page.locator(".pArrowLeft").click({force:true});
-  await page.waitForTimeout(contract.thresholds.settleMs);
-  result.prevLoop = await page.locator(".pDot").nth(4).getAttribute("aria-current") === "true";
+  if (phoneMode) {
+    /*
+     * Embla drag/swipe smoke: dragging left from the last project should
+     * loop to the first project.
+     */
+    const box =
+      await page.locator(".pViewport").boundingBox();
+
+    if (box) {
+      const y = box.y + box.height / 2;
+      const startX = box.x + box.width * 0.75;
+      const endX = box.x + box.width * 0.25;
+
+      await page.mouse.move(startX, y);
+      await page.mouse.down();
+      await page.mouse.move(endX, y, { steps:12 });
+      await page.mouse.up();
+      await page.waitForTimeout(contract.thresholds.settleMs);
+    }
+
+    result.nextLoop =
+      await dots.nth(0).getAttribute("aria-current") === "true";
+
+    /*
+     * Drag right from the first project to loop back to the last.
+     */
+    const boxBack =
+      await page.locator(".pViewport").boundingBox();
+
+    if (boxBack) {
+      const y = boxBack.y + boxBack.height / 2;
+      const startX = boxBack.x + boxBack.width * 0.25;
+      const endX = boxBack.x + boxBack.width * 0.75;
+
+      await page.mouse.move(startX, y);
+      await page.mouse.down();
+      await page.mouse.move(endX, y, { steps:12 });
+      await page.mouse.up();
+      await page.waitForTimeout(contract.thresholds.settleMs);
+    }
+
+    result.prevLoop =
+      await dots.nth(4).getAttribute("aria-current") === "true";
+  } else {
+    await page.locator(".pArrowRight").click({force:true});
+    await page.waitForTimeout(contract.thresholds.settleMs);
+
+    result.nextLoop =
+      await dots.nth(0).getAttribute("aria-current") === "true";
+
+    await page.locator(".pArrowLeft").click({force:true});
+    await page.waitForTimeout(contract.thresholds.settleMs);
+
+    result.prevLoop =
+      await dots.nth(4).getAttribute("aria-current") === "true";
+  }
 
   await page.locator(".portfolio").focus();
   await page.keyboard.press("ArrowRight");
   await page.waitForTimeout(contract.thresholds.settleMs);
-  result.keyboard = await page.locator(".pDot").nth(0).getAttribute("aria-current") === "true";
+
+  result.keyboard =
+    await dots.nth(0).getAttribute("aria-current") === "true";
+
   return result;
 }
 
@@ -729,7 +851,8 @@ async function runInteractionCheck(page) {
       !interactions.prevLoop ||
       !interactions.keyboard ||
       !interactions.controlsHiddenInitially ||
-      !interactions.controlsRevealOnTouch
+      !interactions.controlsRevealOnInteraction ||
+      !interactions.controlsStayHiddenOnPhone
     )
   ) {
     process.exitCode = strict ? 1 : 0;

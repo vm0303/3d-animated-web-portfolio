@@ -191,8 +191,8 @@
     translateY(-50%);
 
   transition:
-    opacity 180ms ease,
-    transform 180ms ease;
+    opacity 320ms ease,
+    transform 320ms ease;
 }
 
 
@@ -241,7 +241,7 @@
 
 
 .portfolio:hover .pArrow,
-.portfolio:focus-within .pArrow,
+.portfolio:focus-visible .pArrow,
 .portfolio.pControlsActive .pArrow {
   opacity: 1;
   pointer-events: auto;
@@ -249,7 +249,7 @@
 
 
 .portfolio:hover .pArrowLeft,
-.portfolio:focus-within .pArrowLeft,
+.portfolio:focus-visible .pArrowLeft,
 .portfolio.pControlsActive .pArrowLeft {
   transform:
     translateY(-50%)
@@ -258,7 +258,7 @@
 
 
 .portfolio:hover .pArrowRight,
-.portfolio:focus-within .pArrowRight,
+.portfolio:focus-visible .pArrowRight,
 .portfolio.pControlsActive .pArrowRight {
   transform:
     translateY(-50%)
@@ -317,4 +317,21 @@
 
   background-color: #399bfc;
   border-color: #399bfc;
+}
+
+/* =========================
+   PHONE CAROUSEL CONTROLS
+   ========================= */
+
+/*
+ * Phones use direct swipe/drag plus dot navigation.
+ * Do not spend scarce horizontal space on arrow controls.
+ *
+ * This geometry rule also naturally covers folded outer-display
+ * foldables when their CSS viewport is phone-sized.
+ */
+@media (max-width: 500px) {
+  .pArrow {
+    display: none;
+  }
 }

@@ -299,7 +299,7 @@ const Portfolio = () => {
           () => {
             setControlsActive(false)
           },
-          3500
+          2600
         )
     }, [])
 
