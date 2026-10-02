@@ -324,42 +324,94 @@ function evaluateCase(v, project, metrics, motion) {
   /*
    * Portfolio composition contract:
    *
-   * phone portrait:
-   *   image
-   *     ↓
-   *   title / description
-   *     ↓
-   *   button
+   * PHONE PORTRAIT
    *
-   * phone landscape:
-   *   image | title / description
-   *         | button
+   *   IMAGE
+   *     ↓
+   *   TITLE
+   *   DESCRIPTION
+   *     ↓
+   *   BUTTON
+   *
+   * PHONE LANDSCAPE
+   *
+   *   IMAGE  |  TITLE
+   *          |  DESCRIPTION
+   *          |  BUTTON
    */
-  if (v.family === "phone-portrait" && metrics.image && metrics.text) {
-    const stacked =
-      metrics.image.bottom <=
-      metrics.text.top + t.containmentTolerancePx;
+  if (
+    v.family === "phone-portrait" &&
+    metrics.image &&
+    metrics.title &&
+    metrics.body &&
+    metrics.button
+  ) {
+    if (
+      metrics.image.bottom >
+      metrics.title.top + t.containmentTolerancePx
+    ) {
+      hard.push("PHONE_PORTRAIT_IMAGE_TITLE_ORDER");
+    }
 
-    if (!stacked) {
-      hard.push("PHONE_PORTRAIT_NOT_STACKED");
+    if (
+      metrics.title.bottom >
+      metrics.body.top + t.containmentTolerancePx
+    ) {
+      hard.push("PHONE_PORTRAIT_TITLE_DESCRIPTION_ORDER");
+    }
+
+    if (
+      metrics.body.bottom >
+      metrics.button.top + t.containmentTolerancePx
+    ) {
+      hard.push("PHONE_PORTRAIT_DESCRIPTION_BUTTON_ORDER");
     }
   }
 
   if (
     v.family === "phone-landscape" &&
     metrics.image &&
-    metrics.text
+    metrics.title &&
+    metrics.body &&
+    metrics.button
   ) {
-    const sideBySide =
-      metrics.image.right <=
-      metrics.text.left + t.containmentTolerancePx;
+    const rightColumnStartsAfterImage =
+      metrics.title.left >=
+        metrics.image.right - t.containmentTolerancePx &&
+      metrics.body.left >=
+        metrics.image.right - t.containmentTolerancePx &&
+      metrics.button.left >=
+        metrics.image.right - t.containmentTolerancePx;
 
-    if (!sideBySide) {
-      hard.push("PHONE_LANDSCAPE_NOT_SIDE_BY_SIDE");
+    if (!rightColumnStartsAfterImage) {
+      hard.push("PHONE_LANDSCAPE_RIGHT_COLUMN_POSITION");
+    }
+
+    if (
+      metrics.title.bottom >
+      metrics.body.top + t.containmentTolerancePx
+    ) {
+      hard.push("PHONE_LANDSCAPE_TITLE_DESCRIPTION_ORDER");
+    }
+
+    if (
+      metrics.body.bottom >
+      metrics.button.top + t.containmentTolerancePx
+    ) {
+      hard.push("PHONE_LANDSCAPE_DESCRIPTION_BUTTON_ORDER");
     }
   }
 
-  if (metrics.title && metrics.body && metrics.button) {
+  /*
+   * Keep the general vertical content-order check for all other families.
+   */
+  if (
+    v.family !== "phone-portrait" &&
+    v.family !== "phone-landscape" &&
+    metrics.title &&
+    metrics.body &&
+    metrics.button
+  ) {
     if (metrics.title.bottom > metrics.body.top + t.containmentTolerancePx) {
       hard.push("TITLE_BODY_ORDER");
     }
