@@ -297,7 +297,14 @@ function evaluateCase(v, project, metrics, motion) {
   if (metrics.portfolio && metrics.carouselViewport && !rectContained(metrics.carouselViewport, metrics.portfolio, t.containmentTolerancePx)) {
     hard.push("VIEWPORT_OUTSIDE_PORTFOLIO");
   }
-  for (const key of ["content","image","text","title","body","button"]) {
+  /*
+   * Embla can position the selected slide/content wrapper a few CSS pixels
+   * beyond the viewport while loop alignment settles. That is not visible
+   * clipping and must not fail geometry by itself.
+   *
+   * Judge the actual visible project elements instead.
+   */
+  for (const key of ["image","text","title","body","button"]) {
     if (metrics[key] && metrics.portfolio && !rectContained(metrics[key], metrics.portfolio, t.containmentTolerancePx)) {
       hard.push(key.toUpperCase() + "_OUTSIDE_PORTFOLIO");
     }
@@ -312,6 +319,54 @@ function evaluateCase(v, project, metrics, motion) {
   }
   if (metrics.image && metrics.text && intersectionArea(metrics.image, metrics.text) > 4) {
     hard.push("IMAGE_TEXT_OVERLAP");
+  }
+
+  /*
+   * Portfolio composition contract:
+   *
+   * phone portrait:
+   *   image
+   *     ↓
+   *   title / description
+   *     ↓
+   *   button
+   *
+   * phone landscape:
+   *   image | title / description
+   *         | button
+   */
+  if (v.family === "phone-portrait" && metrics.image && metrics.text) {
+    const stacked =
+      metrics.image.bottom <=
+      metrics.text.top + t.containmentTolerancePx;
+
+    if (!stacked) {
+      hard.push("PHONE_PORTRAIT_NOT_STACKED");
+    }
+  }
+
+  if (
+    v.family === "phone-landscape" &&
+    metrics.image &&
+    metrics.text
+  ) {
+    const sideBySide =
+      metrics.image.right <=
+      metrics.text.left + t.containmentTolerancePx;
+
+    if (!sideBySide) {
+      hard.push("PHONE_LANDSCAPE_NOT_SIDE_BY_SIDE");
+    }
+  }
+
+  if (metrics.title && metrics.body && metrics.button) {
+    if (metrics.title.bottom > metrics.body.top + t.containmentTolerancePx) {
+      hard.push("TITLE_BODY_ORDER");
+    }
+
+    if (metrics.body.bottom > metrics.button.top + t.containmentTolerancePx) {
+      hard.push("BODY_BUTTON_ORDER");
+    }
   }
   if (metrics.dots && metrics.button && intersectionArea(metrics.dots, metrics.button) > 4) {
     review.push("DOTS_BUTTON_OVERLAP");

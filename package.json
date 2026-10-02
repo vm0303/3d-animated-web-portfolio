@@ -208,7 +208,10 @@
     "qa:portfolio:desktop:standard": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=desktop-standard --project=all --screenshots=bad --browser=chromium --output-dir=qa-results/portfolio/desktop-standard",
     "qa:portfolio:desktop:wide": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=desktop-wide --project=all --screenshots=bad --browser=chromium --output-dir=qa-results/portfolio/desktop-wide",
     "qa:portfolio:quick:phone:portrait": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=phone-portrait --quick --project=all --screenshots=all --browser=chromium --interaction-check --output-dir=qa-results/portfolio/quick/phone-portrait",
-    "qa:portfolio:quick:phone:landscape": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=phone-landscape --quick --project=all --screenshots=all --browser=chromium --interaction-check --output-dir=qa-results/portfolio/quick/phone-landscape"
+    "qa:portfolio:quick:phone:landscape": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=phone-landscape --quick --project=all --screenshots=all --browser=chromium --interaction-check --output-dir=qa-results/portfolio/quick/phone-landscape",
+    "qa:portfolio:phone:portrait:v1": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=phone-portrait --project=all --screenshots=all --browser=chromium --override-css=qa/portfolio-viewport-audit/candidates/portfolio-phone-portrait-v1.css --output-dir=qa-results/portfolio/candidates/phone-portrait-v1",
+    "qa:portfolio:phone:portrait:v1:quick": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=phone-portrait --quick --project=all --screenshots=all --browser=chromium --interaction-check --override-css=qa/portfolio-viewport-audit/candidates/portfolio-phone-portrait-v1.css --output-dir=qa-results/portfolio/candidates/phone-portrait-v1-quick",
+    "qa:portfolio:phone:landscape:recheck": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=phone-landscape --quick --project=all --screenshots=all --browser=chromium --interaction-check --output-dir=qa-results/portfolio/recheck/phone-landscape"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
