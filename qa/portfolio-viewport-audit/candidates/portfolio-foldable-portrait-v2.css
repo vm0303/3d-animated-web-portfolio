@@ -171,4 +171,9 @@
         24px
       );
   }
+
+  /* Foldable portrait is swipe/dot navigation only. */
+  .pArrow {
+    display: none;
+  }
 }
