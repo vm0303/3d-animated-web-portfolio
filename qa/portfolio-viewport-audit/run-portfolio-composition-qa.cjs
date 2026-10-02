@@ -218,6 +218,25 @@ function intersectionArea(a, b) {
   const h = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
   return w * h;
 }
+function evaluateSpacing(review, hard, code, value, policy) {
+  if (!Number.isFinite(value) || !policy) return;
+
+  if (value < policy.hardMin) {
+    hard.push(code + "_TOO_TIGHT");
+    return;
+  }
+
+  if (
+    value < policy.idealMin ||
+    value > policy.idealMax
+  ) {
+    if (value > policy.reviewMax) {
+      hard.push(code + "_TOO_LOOSE");
+    } else {
+      review.push(code + "_SPACING");
+    }
+  }
+}
 function sanitize(s) {
   return String(s).replace(/[^a-z0-9._-]+/gi, "-").replace(/^-+|-+$/g, "");
 }
@@ -265,8 +284,11 @@ async function readMetrics(page, expectedIndex) {
       rightArrow:rect(rightArrow),
       dots:rect(dots),
       titleFont:title ? parseFloat(style(title).fontSize) : 0,
+      titleLineHeight:title ? parseFloat(style(title).lineHeight) : 0,
+      titleWhiteSpace:title ? style(title).whiteSpace : "",
       bodyFont:body ? parseFloat(style(body).fontSize) : 0,
       bodyLineHeight:body ? parseFloat(style(body).lineHeight) : 0,
+      bodyTextAlign:body ? style(body).textAlign : "",
       buttonFont:button ? parseFloat(style(button).fontSize) : 0,
       imageOpacity:image ? parseFloat(style(image).opacity) : 0,
       textOpacity:text ? parseFloat(style(text).opacity) : 0,
@@ -339,8 +361,15 @@ function evaluateCase(v, project, metrics, motion) {
    *          |  DESCRIPTION
    *          |  BUTTON
    */
+  const portraitStackRequired =
+    v.family === "phone-portrait" ||
+    (
+      v.family === "foldable" &&
+      caseOrientation(v) === "portrait"
+    );
+
   if (
-    v.family === "phone-portrait" &&
+    portraitStackRequired &&
     metrics.image &&
     metrics.title &&
     metrics.body &&
@@ -350,21 +379,81 @@ function evaluateCase(v, project, metrics, motion) {
       metrics.image.bottom >
       metrics.title.top + t.containmentTolerancePx
     ) {
-      hard.push("PHONE_PORTRAIT_IMAGE_TITLE_ORDER");
+      hard.push("PORTRAIT_IMAGE_TITLE_ORDER");
     }
 
     if (
       metrics.title.bottom >
       metrics.body.top + t.containmentTolerancePx
     ) {
-      hard.push("PHONE_PORTRAIT_TITLE_DESCRIPTION_ORDER");
+      hard.push("PORTRAIT_TITLE_DESCRIPTION_ORDER");
     }
 
     if (
       metrics.body.bottom >
       metrics.button.top + t.containmentTolerancePx
     ) {
-      hard.push("PHONE_PORTRAIT_DESCRIPTION_BUTTON_ORDER");
+      hard.push("PORTRAIT_DESCRIPTION_BUTTON_ORDER");
+    }
+
+    /*
+     * Portrait titles must remain on one line, including the longest
+     * project title ("React Arcade Puzzles").
+     */
+    if (
+      metrics.titleLineHeight > 0 &&
+      metrics.title.height >
+        metrics.titleLineHeight * 1.2
+    ) {
+      hard.push("PORTRAIT_TITLE_WRAPPED");
+    }
+
+    /*
+     * Paragraph copy is deliberately left-aligned even though the
+     * portrait title/button may be centered.
+     */
+    if (
+      !["left", "start"].includes(
+        String(metrics.bodyTextAlign).toLowerCase()
+      )
+    ) {
+      hard.push("PORTRAIT_DESCRIPTION_NOT_LEFT_ALIGNED");
+    }
+
+    const spacingKey =
+      v.family === "phone-portrait"
+        ? "phone-portrait"
+        : "foldable:portrait";
+
+    const spacingPolicy =
+      contract.portraitSpacing?.[
+        spacingKey
+      ];
+
+    if (spacingPolicy) {
+      evaluateSpacing(
+        review,
+        hard,
+        "IMAGE_TO_TITLE",
+        metrics.title.top - metrics.image.bottom,
+        spacingPolicy.imageToTitle
+      );
+
+      evaluateSpacing(
+        review,
+        hard,
+        "TITLE_TO_DESCRIPTION",
+        metrics.body.top - metrics.title.bottom,
+        spacingPolicy.titleToDescription
+      );
+
+      evaluateSpacing(
+        review,
+        hard,
+        "DESCRIPTION_TO_BUTTON",
+        metrics.button.top - metrics.body.bottom,
+        spacingPolicy.descriptionToButton
+      );
     }
   }
 
@@ -408,6 +497,10 @@ function evaluateCase(v, project, metrics, motion) {
   if (
     v.family !== "phone-portrait" &&
     v.family !== "phone-landscape" &&
+    !(
+      v.family === "foldable" &&
+      caseOrientation(v) === "portrait"
+    ) &&
     metrics.title &&
     metrics.body &&
     metrics.button
@@ -470,7 +563,52 @@ async function motionProbe(page) {
 }
 
 async function runInteractionCheck(page) {
-  const result = { nextLoop:false, prevLoop:false, keyboard:false };
+  const result = {
+    nextLoop:false,
+    prevLoop:false,
+    keyboard:false,
+    controlsHiddenInitially:false,
+    controlsRevealOnTouch:false
+  };
+
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  });
+
+  await page.mouse.move(1, 1);
+  await page.waitForTimeout(220);
+
+  result.controlsHiddenInitially =
+    await page.locator(".pArrowRight").evaluate(
+      (el) =>
+        parseFloat(
+          getComputedStyle(el).opacity
+        ) < 0.1
+    );
+
+  await page.locator(".portfolio").dispatchEvent(
+    "pointerdown",
+    {
+      pointerType:"touch",
+      pointerId:7,
+      isPrimary:true,
+      clientX:20,
+      clientY:20
+    }
+  );
+
+  await page.waitForTimeout(220);
+
+  result.controlsRevealOnTouch =
+    await page.locator(".pArrowRight").evaluate(
+      (el) =>
+        parseFloat(
+          getComputedStyle(el).opacity
+        ) > 0.9
+    );
+
   const dots = page.locator(".pDot");
   await dots.nth(4).click({force:true});
   await page.waitForTimeout(contract.thresholds.settleMs);
@@ -568,7 +706,16 @@ async function runInteractionCheck(page) {
   fs.writeFileSync(path.join(outputDir, "summary.json"), JSON.stringify(summary, null, 2));
 
   process.stdout.write("\nPortfolio QA summary\n" + JSON.stringify(summary, null, 2) + "\n");
-  if (interactions && (!interactions.nextLoop || !interactions.prevLoop || !interactions.keyboard)) {
+  if (
+    interactions &&
+    (
+      !interactions.nextLoop ||
+      !interactions.prevLoop ||
+      !interactions.keyboard ||
+      !interactions.controlsHiddenInitially ||
+      !interactions.controlsRevealOnTouch
+    )
+  ) {
     process.exitCode = strict ? 1 : 0;
   }
   if (strict && summary.fail > 0) process.exitCode = 1;

@@ -185,6 +185,7 @@
   cursor: pointer;
 
   opacity: 0;
+  pointer-events: none;
 
   transform:
     translateY(-50%);
@@ -240,13 +241,16 @@
 
 
 .portfolio:hover .pArrow,
-.portfolio:focus-within .pArrow {
+.portfolio:focus-within .pArrow,
+.portfolio.pControlsActive .pArrow {
   opacity: 1;
+  pointer-events: auto;
 }
 
 
 .portfolio:hover .pArrowLeft,
-.portfolio:focus-within .pArrowLeft {
+.portfolio:focus-within .pArrowLeft,
+.portfolio.pControlsActive .pArrowLeft {
   transform:
     translateY(-50%)
     translateX(3px);
@@ -254,7 +258,8 @@
 
 
 .portfolio:hover .pArrowRight,
-.portfolio:focus-within .pArrowRight {
+.portfolio:focus-within .pArrowRight,
+.portfolio.pControlsActive .pArrowRight {
   transform:
     translateY(-50%)
     translateX(-3px);
@@ -312,26 +317,4 @@
 
   background-color: #399bfc;
   border-color: #399bfc;
-}
-
-/*
- * Touch devices don't really have hover.
- * Keep arrows available there.
- */
-@media (hover: none) {
-  .pArrow {
-    opacity: 1;
-  }
-
-  .pArrowLeft {
-    transform:
-      translateY(-50%)
-      translateX(8px);
-  }
-
-  .pArrowRight {
-    transform:
-      translateY(-50%)
-      translateX(-8px);
-  }
 }

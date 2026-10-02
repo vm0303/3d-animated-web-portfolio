@@ -268,6 +268,51 @@ const Portfolio = () => {
     setSelectedIndex,
   ] = useState(0)
 
+  /*
+   * Arrow controls stay hidden until the carousel is actively engaged.
+   *
+   * Hover/focus are handled in CSS.
+   * Pointer down covers mouse clicks, pen input, and touch. On touch,
+   * keep the arrows visible briefly so the user can tap them after
+   * touching/swiping the carousel.
+   */
+  const [
+    controlsActive,
+    setControlsActive,
+  ] = useState(false)
+
+  const controlsTimerRef =
+    useRef(null)
+
+  const activateControls =
+    useCallback(() => {
+      setControlsActive(true)
+
+      if (controlsTimerRef.current) {
+        window.clearTimeout(
+          controlsTimerRef.current
+        )
+      }
+
+      controlsTimerRef.current =
+        window.setTimeout(
+          () => {
+            setControlsActive(false)
+          },
+          3500
+        )
+    }, [])
+
+  useEffect(() => {
+    return () => {
+      if (controlsTimerRef.current) {
+        window.clearTimeout(
+          controlsTimerRef.current
+        )
+      }
+    }
+  }, [])
+
 
   const scrollPrev = useCallback(() => {
     emblaApi?.scrollPrev()
@@ -357,11 +402,19 @@ const Portfolio = () => {
     <div
       ref={portfolioRef}
 
-      className="portfolio"
+      className={
+        `portfolio ${
+          controlsActive
+            ? "pControlsActive"
+            : ""
+        }`
+      }
 
       tabIndex={0}
 
       onKeyDown={handleKeyDown}
+
+      onPointerDown={activateControls}
 
       aria-label="Portfolio projects"
     >
