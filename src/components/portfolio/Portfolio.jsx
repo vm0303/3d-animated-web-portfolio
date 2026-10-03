@@ -54,9 +54,7 @@ const items = [
 ]
 
 
-/*
- * Laptop / desktop motion keeps the existing directional entrance.
- */
+/* Laptop / desktop keeps the directional entrance motion. */
 const imageVariants = {
   inactive: {
     x: -180,
@@ -94,7 +92,6 @@ const textVariants = {
     transition: {
       duration: 0.55,
       ease: "easeOut",
-
       staggerChildren: 0.08,
       delayChildren: 0.08,
     },
@@ -123,17 +120,19 @@ const textItemVariants = {
 
 
 /*
- * Phones, foldables, and tablets use a fade-only sequence.
+ * Phones, folded/unfolded foldables, and tablets use Motion fade-ins only.
+ * Each component receives a full 1.2-second fade. The next component begins
+ * when the previous fade finishes:
  *
- * No x/y movement is used here. The components enter one-by-one:
+ * image     0.0s -> 1.2s
+ * title     1.2s -> 2.4s
+ * paragraph 2.4s -> 3.6s
+ * button    3.6s -> 4.8s
  *
- * image  -> immediately
- * title  -> 2 seconds
- * text   -> 4 seconds
- * button -> 6 seconds
- *
- * This mode is selected for touch-first / coarse-pointer devices.
+ * No x/y/scale motion is applied in this mode.
  */
+const TOUCH_FADE_DURATION = 1.2
+
 const fadeOnlyImageVariants = {
   inactive: {
     opacity: 0,
@@ -143,7 +142,7 @@ const fadeOnlyImageVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.5,
+      duration: TOUCH_FADE_DURATION,
       ease: "easeOut",
     },
   },
@@ -170,7 +169,7 @@ const fadeOnlyItemVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.5,
+      duration: TOUCH_FADE_DURATION,
       delay: delaySeconds,
       ease: "easeOut",
     },
@@ -207,15 +206,6 @@ const ProjectSlide = ({
   portfolioInView,
   fadeOnlyMotion,
 }) => {
-
-  /*
-   * This is the actual animation condition.
-   *
-   * A project animates only when:
-   *
-   * 1. Portfolio itself is on screen
-   * 2. This project is Embla's selected project
-   */
   const shouldAnimate =
     portfolioInView && isActive
 
@@ -243,18 +233,8 @@ const ProjectSlide = ({
 
         <motion.div
           className="pImg"
-
           variants={selectedImageVariants}
-
-          /*
-           * IMPORTANT:
-           * Do NOT use initial={false}.
-           *
-           * We want WeathAware to begin in the
-           * inactive state before Portfolio enters.
-           */
           initial="inactive"
-
           animate={
             shouldAnimate
               ? "active"
@@ -270,11 +250,8 @@ const ProjectSlide = ({
 
         <motion.div
           className="pText"
-
           variants={selectedTextVariants}
-
           initial="inactive"
-
           animate={
             shouldAnimate
               ? "active"
@@ -283,7 +260,11 @@ const ProjectSlide = ({
         >
           <motion.h1
             variants={selectedTextItemVariants}
-            custom={fadeOnlyMotion ? 2 : undefined}
+            custom={
+              fadeOnlyMotion
+                ? TOUCH_FADE_DURATION
+                : undefined
+            }
           >
             {item.title}
           </motion.h1>
@@ -291,7 +272,11 @@ const ProjectSlide = ({
 
           <motion.p
             variants={selectedTextItemVariants}
-            custom={fadeOnlyMotion ? 4 : undefined}
+            custom={
+              fadeOnlyMotion
+                ? TOUCH_FADE_DURATION * 2
+                : undefined
+            }
           >
             {item.desc}
           </motion.p>
@@ -299,8 +284,11 @@ const ProjectSlide = ({
 
           <motion.a
             variants={selectedTextItemVariants}
-            custom={fadeOnlyMotion ? 6 : undefined}
-
+            custom={
+              fadeOnlyMotion
+                ? TOUCH_FADE_DURATION * 3
+                : undefined
+            }
             href={item.link}
             target="_blank"
             rel="noopener noreferrer"
@@ -319,18 +307,8 @@ const ProjectSlide = ({
 
 
 const Portfolio = () => {
-
   const portfolioRef = useRef(null)
 
-  /*
-   * Trigger fairly early.
-   *
-   * 0.15 means we don't wait until almost half of the
-   * Portfolio section is visible.
-   *
-   * As soon as roughly 15% enters the viewport,
-   * Motion starts.
-   */
   const portfolioInView =
     useInView(
       portfolioRef,
@@ -353,11 +331,6 @@ const Portfolio = () => {
   ] = useState(0)
 
 
-  /*
-   * Real phones, foldables, and tablets are touch-first / coarse-pointer
-   * devices. They use the sequential fade-only motion above rather than
-   * the laptop/desktop x/y entrance motion.
-   */
   const [
     fadeOnlyMotion,
     setFadeOnlyMotion,
@@ -400,13 +373,10 @@ const Portfolio = () => {
 
 
   /*
-   * Laptop/desktop carousel arrows are activity-driven.
-   *
-   * Entering the Portfolio shows them.
-   * Pointer movement, clicks, wheel activity, or keyboard focus keeps them
-   * visible. Five seconds after the last activity they fade back out.
-   *
-   * Phone/foldable/tablet CSS still hides arrows completely.
+   * Laptop/desktop arrows are activity-driven.
+   * Portfolio entry shows them immediately. Every pointer/keyboard/wheel
+   * interaction restarts the five-second idle timer. When the timer expires,
+   * CSS performs the actual opacity fade instead of removing the controls.
    */
   const [
     controlsActive,
@@ -534,29 +504,23 @@ const Portfolio = () => {
 
 
   const handleKeyDown = (event) => {
-
     activateControls()
 
     if (event.key === "ArrowLeft") {
       event.preventDefault()
-
       scrollPrev()
     }
 
-
     if (event.key === "ArrowRight") {
       event.preventDefault()
-
       scrollNext()
     }
-
   }
 
 
   return (
     <div
       ref={portfolioRef}
-
       className={
         `portfolio ${
           controlsActive
@@ -564,16 +528,12 @@ const Portfolio = () => {
             : ""
         }`
       }
-
       tabIndex={0}
-
       onKeyDown={handleKeyDown}
-
       onPointerMove={activateControls}
       onPointerDown={activateControls}
       onWheel={activateControls}
       onFocus={activateControls}
-
       aria-label="Portfolio projects"
     >
 
@@ -585,25 +545,19 @@ const Portfolio = () => {
 
           {items.map(
             (item, index) => (
-
               <ProjectSlide
                 key={item.id}
-
                 item={item}
-
                 isActive={
                   index === selectedIndex
                 }
-
                 portfolioInView={
                   portfolioInView
                 }
-
                 fadeOnlyMotion={
                   fadeOnlyMotion
                 }
               />
-
             )
           )}
 
@@ -613,11 +567,8 @@ const Portfolio = () => {
 
       <button
         type="button"
-
         className="pArrow pArrowLeft"
-
         onClick={scrollPrev}
-
         aria-label="Previous project"
       >
         <ArrowIcon direction="left" />
@@ -626,11 +577,8 @@ const Portfolio = () => {
 
       <button
         type="button"
-
         className="pArrow pArrowRight"
-
         onClick={scrollNext}
-
         aria-label="Next project"
       >
         <ArrowIcon direction="right" />
@@ -639,20 +587,15 @@ const Portfolio = () => {
 
       <div
         className="pDots"
-
         role="group"
-
         aria-label="Choose project"
       >
 
         {items.map(
           (item, index) => (
-
             <button
               type="button"
-
               key={item.id}
-
               className={
                 `pDot ${
                   index === selectedIndex
@@ -660,22 +603,18 @@ const Portfolio = () => {
                     : ""
                 }`
               }
-
               onClick={() =>
                 scrollTo(index)
               }
-
               aria-label={
                 `Go to ${item.title}`
               }
-
               aria-current={
                 index === selectedIndex
                   ? "true"
                   : undefined
               }
             />
-
           )
         )}
 
