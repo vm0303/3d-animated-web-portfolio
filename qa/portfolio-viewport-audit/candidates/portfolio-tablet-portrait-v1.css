@@ -12,7 +12,8 @@
  *   BUTTON
  *
  * Tablet portrait should scale up beyond phone sizing while preserving a
- * balanced vertical stack. Candidate-only until manual visual approval.
+ * balanced vertical stack. This revision increases paragraph scale so the
+ * copy grows visibly across medium and large tablet widths.
  */
 
 @media (orientation: portrait) {
@@ -112,9 +113,9 @@
 
     font-size:
       clamp(
-        38px,
-        5.1vw,
-        58px
+        40px,
+        5.3vw,
+        60px
       );
 
     line-height: 1.05;
@@ -130,9 +131,9 @@
 
     font-size:
       clamp(
-        16px,
-        2vw,
-        21px
+        20px,
+        2.35vw,
+        25px
       );
 
     line-height: 1.45;
