@@ -240,16 +240,20 @@
 }
 
 
-.portfolio:hover .pArrow,
-.portfolio:focus-visible .pArrow,
+/*
+ * Arrow visibility is state-driven from Portfolio.jsx.
+ *
+ * Entering the section or interacting with it applies .pControlsActive.
+ * Five seconds after the last activity that class is removed, allowing the
+ * arrows to fade out even if the mouse cursor is still resting over the
+ * Portfolio section.
+ */
 .portfolio.pControlsActive .pArrow {
   opacity: 1;
   pointer-events: auto;
 }
 
 
-.portfolio:hover .pArrowLeft,
-.portfolio:focus-visible .pArrowLeft,
 .portfolio.pControlsActive .pArrowLeft {
   transform:
     translateY(-50%)
@@ -257,8 +261,6 @@
 }
 
 
-.portfolio:hover .pArrowRight,
-.portfolio:focus-visible .pArrowRight,
 .portfolio.pControlsActive .pArrowRight {
   transform:
     translateY(-50%)
