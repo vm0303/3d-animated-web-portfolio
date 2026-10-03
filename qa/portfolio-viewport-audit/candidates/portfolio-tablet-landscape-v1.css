@@ -8,8 +8,8 @@
  *             BUTTON
  *
  * The image is centered vertically on the left. Title/text/button form a
- * left-aligned right column. Component sizing grows on larger tablet
- * viewports instead of remaining phone-sized.
+ * left-aligned right column. This revision increases paragraph scale so
+ * medium and large tablet heights do not stay visually phone-sized.
  */
 
 @media (orientation: landscape) {
@@ -120,9 +120,9 @@
 
     font-size:
       clamp(
-        34px,
+        36px,
         5.7svh,
-        50px
+        53px
       );
 
     line-height: 1.04;
@@ -138,9 +138,9 @@
 
     font-size:
       clamp(
-        15px,
-        2.4svh,
-        20px
+        18px,
+        3svh,
+        26px
       );
 
     line-height: 1.42;
@@ -166,9 +166,9 @@
 
     font-size:
       clamp(
-        14px,
+        15px,
         2svh,
-        18px
+        19px
       );
   }
 
