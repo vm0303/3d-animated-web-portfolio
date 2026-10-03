@@ -1,0 +1,22 @@
+/*
+ * Portfolio interaction timing overrides.
+ *
+ * Keep arrow fade-in and fade-out visually symmetric. The base stylesheet
+ * delays visibility: hidden until the fade-out finishes; when controls become
+ * active again, visibility switches on immediately and opacity then eases in
+ * over the same 900ms duration used for fade-out.
+ */
+
+.pArrow {
+  transition:
+    opacity 900ms ease,
+    transform 900ms ease,
+    visibility 0s linear 900ms;
+}
+
+.portfolio.pControlsActive .pArrow {
+  transition:
+    opacity 900ms ease,
+    transform 900ms ease,
+    visibility 0s linear 0s;
+}

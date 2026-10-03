@@ -1,4 +1,5 @@
 import "./portfolio.css"
+import "./portfolio-interaction.css"
 
 import {
   motion,
@@ -120,20 +121,13 @@ const textItemVariants = {
 
 
 /*
- * Phones, folded/unfolded foldables, and tablets use Motion fade-ins only.
- * Each component receives a full 1.2-second fade. The next component begins
- * when the previous fade finishes:
- *
- * image     0.0s -> 1.2s
- * title     1.2s -> 2.4s
- * paragraph 2.4s -> 3.6s
- * button    3.6s -> 4.8s
- *
- * No x/y/scale motion is applied in this mode.
+ * Phones, folded/unfolded foldables, and tablets use one shared Motion fade.
+ * The full project composition fades together for 1.2 seconds with no x/y
+ * movement and no stagger between image/title/paragraph/button.
  */
 const TOUCH_FADE_DURATION = 1.2
 
-const fadeOnlyImageVariants = {
+const touchFadeVariants = {
   inactive: {
     opacity: 0,
   },
@@ -146,34 +140,6 @@ const fadeOnlyImageVariants = {
       ease: "easeOut",
     },
   },
-}
-
-
-const fadeOnlyTextContainerVariants = {
-  inactive: {
-    opacity: 1,
-  },
-
-  active: {
-    opacity: 1,
-  },
-}
-
-
-const fadeOnlyItemVariants = {
-  inactive: {
-    opacity: 0,
-  },
-
-  active: (delaySeconds = 0) => ({
-    opacity: 1,
-
-    transition: {
-      duration: TOUCH_FADE_DURATION,
-      delay: delaySeconds,
-      ease: "easeOut",
-    },
-  }),
 }
 
 
@@ -209,36 +175,54 @@ const ProjectSlide = ({
   const shouldAnimate =
     portfolioInView && isActive
 
-  const selectedImageVariants =
-    fadeOnlyMotion
-      ? fadeOnlyImageVariants
-      : imageVariants
-
-  const selectedTextVariants =
-    fadeOnlyMotion
-      ? fadeOnlyTextContainerVariants
-      : textVariants
-
-  const selectedTextItemVariants =
-    fadeOnlyMotion
-      ? fadeOnlyItemVariants
-      : textItemVariants
-
   return (
     <article
       className="pSlide"
       aria-hidden={!isActive}
     >
-      <div className="pSlideContent">
+      <motion.div
+        className="pSlideContent"
+        variants={
+          fadeOnlyMotion
+            ? touchFadeVariants
+            : undefined
+        }
+        initial={
+          fadeOnlyMotion
+            ? "inactive"
+            : false
+        }
+        animate={
+          fadeOnlyMotion
+            ? (
+                shouldAnimate
+                  ? "active"
+                  : "inactive"
+              )
+            : undefined
+        }
+      >
 
         <motion.div
           className="pImg"
-          variants={selectedImageVariants}
-          initial="inactive"
-          animate={
-            shouldAnimate
-              ? "active"
+          variants={
+            fadeOnlyMotion
+              ? undefined
+              : imageVariants
+          }
+          initial={
+            fadeOnlyMotion
+              ? false
               : "inactive"
+          }
+          animate={
+            fadeOnlyMotion
+              ? undefined
+              : (
+                  shouldAnimate
+                    ? "active"
+                    : "inactive"
+                )
           }
         >
           <img
@@ -250,20 +234,31 @@ const ProjectSlide = ({
 
         <motion.div
           className="pText"
-          variants={selectedTextVariants}
-          initial="inactive"
-          animate={
-            shouldAnimate
-              ? "active"
+          variants={
+            fadeOnlyMotion
+              ? undefined
+              : textVariants
+          }
+          initial={
+            fadeOnlyMotion
+              ? false
               : "inactive"
+          }
+          animate={
+            fadeOnlyMotion
+              ? undefined
+              : (
+                  shouldAnimate
+                    ? "active"
+                    : "inactive"
+                )
           }
         >
           <motion.h1
-            variants={selectedTextItemVariants}
-            custom={
+            variants={
               fadeOnlyMotion
-                ? TOUCH_FADE_DURATION
-                : undefined
+                ? undefined
+                : textItemVariants
             }
           >
             {item.title}
@@ -271,11 +266,10 @@ const ProjectSlide = ({
 
 
           <motion.p
-            variants={selectedTextItemVariants}
-            custom={
+            variants={
               fadeOnlyMotion
-                ? TOUCH_FADE_DURATION * 2
-                : undefined
+                ? undefined
+                : textItemVariants
             }
           >
             {item.desc}
@@ -283,11 +277,10 @@ const ProjectSlide = ({
 
 
           <motion.a
-            variants={selectedTextItemVariants}
-            custom={
+            variants={
               fadeOnlyMotion
-                ? TOUCH_FADE_DURATION * 3
-                : undefined
+                ? undefined
+                : textItemVariants
             }
             href={item.link}
             target="_blank"
@@ -300,7 +293,7 @@ const ProjectSlide = ({
 
         </motion.div>
 
-      </div>
+      </motion.div>
     </article>
   )
 }
@@ -309,11 +302,24 @@ const ProjectSlide = ({
 const Portfolio = () => {
   const portfolioRef = useRef(null)
 
+  /* Project content can wait until the section is meaningfully visible. */
   const portfolioInView =
     useInView(
       portfolioRef,
       {
         amount: 0.15,
+      }
+    )
+
+  /*
+   * Arrow visibility reacts earlier so scrolling into Portfolio itself is
+   * enough to begin the arrow fade-in, even before project Motion starts.
+   */
+  const portfolioControlsInView =
+    useInView(
+      portfolioRef,
+      {
+        amount: 0.05,
       }
     )
 
@@ -374,9 +380,11 @@ const Portfolio = () => {
 
   /*
    * Laptop/desktop arrows are activity-driven.
-   * Portfolio entry shows them immediately. Every pointer/keyboard/wheel
-   * interaction restarts the five-second idle timer. When the timer expires,
-   * CSS performs the actual opacity fade instead of removing the controls.
+   *
+   * - scrolling into Portfolio fades them in
+   * - pointer/keyboard/wheel activity restarts the five-second idle timer
+   * - after five idle seconds, CSS fades them back out
+   * - fade-in and fade-out use the same duration
    */
   const [
     controlsActive,
@@ -415,7 +423,7 @@ const Portfolio = () => {
     ])
 
   useEffect(() => {
-    if (portfolioInView) {
+    if (portfolioControlsInView) {
       activateControls()
       return
     }
@@ -423,7 +431,7 @@ const Portfolio = () => {
     clearControlsTimer()
     setControlsActive(false)
   }, [
-    portfolioInView,
+    portfolioControlsInView,
     activateControls,
     clearControlsTimer,
   ])
