@@ -1,5 +1,5 @@
 /*
- * Portfolio tablet portrait V1
+ * Portfolio tablet portrait V1 — LOCKED
  *
  * Required composition:
  *
@@ -11,9 +11,10 @@
  *     ↓
  *   BUTTON
  *
- * Tablet portrait should scale up beyond phone sizing while preserving a
- * balanced vertical stack. This revision increases paragraph scale so the
- * copy grows visibly across medium and large tablet widths.
+ * Tablet portrait scales beyond phone sizing while preserving a balanced
+ * vertical stack. This geometry was manually accepted after exhaustive
+ * Chromium screenshot review. Do not retune without a demonstrated
+ * regression.
  */
 
 @media (orientation: portrait) {
