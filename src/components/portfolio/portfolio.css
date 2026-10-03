@@ -6,8 +6,6 @@
 
   overflow: hidden;
 
-
-
   outline: none;
 }
 
@@ -155,10 +153,6 @@
   top: 50%;
   z-index: 10;
 
-  /*
-   * Keep a reasonable clickable target,
-   * but make the actual visual arrow smaller.
-   */
   width:
     clamp(
       42px,
@@ -185,16 +179,24 @@
   cursor: pointer;
 
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 
   transform:
     translateY(-50%);
 
-  transition:
-    opacity 320ms ease,
-    transform 320ms ease;
-}
+  will-change: opacity, transform;
 
+  /*
+   * Fade-out is deliberately slower than fade-in so the idle transition is
+   * visibly a fade instead of reading as an abrupt disappearance.
+   * Visibility is delayed until opacity finishes fading.
+   */
+  transition:
+    opacity 900ms ease,
+    transform 900ms ease,
+    visibility 0s linear 900ms;
+}
 
 .pArrow svg {
   width:
@@ -207,7 +209,6 @@
   height: auto;
 }
 
-
 .pArrow path {
   fill: none;
 
@@ -219,7 +220,6 @@
   stroke-linejoin: round;
 }
 
-
 .pArrowLeft {
   left:
     clamp(
@@ -228,7 +228,6 @@
       22px
     );
 }
-
 
 .pArrowRight {
   right:
@@ -239,27 +238,22 @@
     );
 }
 
-
-/*
- * Arrow visibility is state-driven from Portfolio.jsx.
- *
- * Entering the section or interacting with it applies .pControlsActive.
- * Five seconds after the last activity that class is removed, allowing the
- * arrows to fade out even if the mouse cursor is still resting over the
- * Portfolio section.
- */
 .portfolio.pControlsActive .pArrow {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
-}
 
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease,
+    visibility 0s linear 0s;
+}
 
 .portfolio.pControlsActive .pArrowLeft {
   transform:
     translateY(-50%)
     translateX(3px);
 }
-
 
 .portfolio.pControlsActive .pArrowRight {
   transform:
@@ -321,32 +315,1116 @@
   border-color: #399bfc;
 }
 
+/* =========================================================
+   PROMOTED RESPONSIVE GEOMETRY
+
+   These rules promote the manually accepted phone/foldable/tablet candidates
+   into production Portfolio CSS. Where phone and folded-outer CSS viewports
+   overlap, they share one narrow production tier because CSS cannot identify
+   a device-family label and both families use the same visual contract.
+
+   Larger touch-first layouts use .pTouchLayout, supplied by Portfolio.jsx,
+   so laptop/desktop geometry is not replaced merely because a window happens
+   to have tablet-like dimensions.
+   ========================================================= */
+
 /* =========================
-   NON-LAPTOP CAROUSEL CONTROLS
+   PHONES + FOLDED OUTER — PORTRAIT
+   Locked narrow portrait tier (phone portrait V3 contract)
    ========================= */
 
-/*
- * Touch-first devices use direct swipe/drag plus dot navigation.
- * Arrows are reserved for laptop/desktop-style fine-pointer interaction.
- *
- * The geometry fallback keeps phone-sized QA/emulation arrow-free even
- * when the test browser exposes a desktop pointer.
- */
-@media (hover: none),
-       (pointer: coarse),
-       (max-width: 500px),
-       (orientation: landscape) and (max-height: 500px) {
+@media (max-width: 500px) and (orientation: portrait) {
+  .pSlideContent {
+    --portfolio-portrait-gap:
+      clamp(
+        22px,
+        4.2svh,
+        40px
+      );
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    align-content: center;
+    justify-items: center;
+
+    gap: var(--portfolio-portrait-gap);
+
+    padding-inline:
+      clamp(
+        20px,
+        5.5vw,
+        28px
+      );
+
+    padding-block:
+      clamp(
+        18px,
+        3svh,
+        28px
+      )
+      clamp(
+        52px,
+        8svh,
+        72px
+      );
+  }
+
+  .pImg {
+    width:
+      min(
+        88%,
+        340px
+      );
+
+    max-height:
+      clamp(
+        118px,
+        26svh,
+        220px
+      );
+
+    border-radius:
+      clamp(
+        12px,
+        3vw,
+        18px
+      );
+  }
+
+  .pImg img {
+    width: 100%;
+    height: 100%;
+
+    max-height:
+      clamp(
+        118px,
+        26svh,
+        220px
+      );
+
+    object-fit: cover;
+  }
+
+  .pText {
+    width:
+      min(
+        100%,
+        390px
+      );
+
+    align-items: center;
+    gap: var(--portfolio-portrait-gap);
+
+    min-width: 0;
+
+    text-align: center;
+  }
+
+  .pText h1 {
+    max-width: 100%;
+
+    margin: 0;
+
+    white-space: nowrap;
+
+    font-size:
+      clamp(
+        27px,
+        6.9vw,
+        34px
+      );
+
+    line-height: 1.05;
+  }
+
+  .pText p {
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0;
+
+    text-align: left;
+
+    font-size:
+      clamp(
+        13px,
+        3.35vw,
+        16px
+      );
+
+    line-height: 1.35;
+  }
+
+  .pText a {
+    align-self: center;
+    margin: 0;
+  }
+
+  .pText button {
+    padding:
+      clamp(
+        9px,
+        1.7svh,
+        12px
+      )
+      clamp(
+        12px,
+        3.4vw,
+        16px
+      );
+
+    font-size:
+      clamp(
+        13px,
+        3.35vw,
+        16px
+      );
+  }
+
+  .pDots {
+    bottom:
+      clamp(
+        12px,
+        2.2svh,
+        20px
+      );
+
+    gap:
+      clamp(
+        8px,
+        2.4vw,
+        11px
+      );
+  }
+
   .pArrow {
     display: none;
   }
 }
 
-/*
- * Portrait tablet/foldable geometry is touch-first in this project.
- * This also keeps desktop-emulated QA screenshots aligned with the real
- * device interaction policy.
- */
-@media (orientation: portrait) and (max-width: 1100px) {
+/* =========================
+   PHONES + FOLDED OUTER — LANDSCAPE
+   Locked shared short-landscape tier
+   ========================= */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .pSlideContent {
+    --portfolio-landscape-gap:
+      clamp(
+        7px,
+        2.5svh,
+        12px
+      );
+
+    grid-template-columns:
+      minmax(0, 0.9fr)
+      minmax(0, 1.1fr);
+
+    align-items: center;
+
+    gap:
+      clamp(
+        18px,
+        4vw,
+        42px
+      );
+
+    padding-inline:
+      clamp(
+        28px,
+        5vw,
+        54px
+      );
+
+    padding-block:
+      clamp(
+        8px,
+        2.2svh,
+        14px
+      )
+      clamp(
+        28px,
+        8svh,
+        38px
+      );
+  }
+
+  .pImg {
+    width: 100%;
+
+    max-width:
+      min(
+        40vw,
+        390px
+      );
+
+    max-height:
+      min(
+        55svh,
+        240px
+      );
+
+    justify-self: center;
+
+    border-radius:
+      clamp(
+        10px,
+        2svh,
+        16px
+      );
+  }
+
+  .pImg img {
+    width: 100%;
+    height: 100%;
+
+    max-height:
+      min(
+        55svh,
+        240px
+      );
+
+    object-fit: cover;
+  }
+
+  .pText {
+    width: 100%;
+    max-width:
+      min(
+        52vw,
+        520px
+      );
+
+    gap: var(--portfolio-landscape-gap);
+
+    min-width: 0;
+
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .pText h1 {
+    max-width: 100%;
+
+    margin: 0;
+
+    white-space: nowrap;
+    text-align: left;
+
+    font-size:
+      clamp(
+        22px,
+        7svh,
+        30px
+      );
+
+    line-height: 1.02;
+  }
+
+  .pText p {
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0;
+
+    text-align: left;
+
+    font-size:
+      clamp(
+        12px,
+        3.8svh,
+        14px
+      );
+
+    line-height: 1.28;
+  }
+
+  .pText a {
+    align-self: flex-start;
+    margin: 0;
+  }
+
+  .pText button {
+    padding:
+      clamp(
+        6px,
+        2svh,
+        9px
+      )
+      clamp(
+        10px,
+        2vw,
+        14px
+      );
+
+    font-size:
+      clamp(
+        11px,
+        3.5svh,
+        14px
+      );
+  }
+
+  .pDots {
+    bottom:
+      clamp(
+        6px,
+        2svh,
+        10px
+      );
+
+    gap:
+      clamp(
+        7px,
+        1.4vw,
+        10px
+      );
+  }
+
+  .pDot {
+    width:
+      clamp(
+        8px,
+        2.6svh,
+        10px
+      );
+
+    height:
+      clamp(
+        8px,
+        2.6svh,
+        10px
+      );
+  }
+
+  .pDotActive {
+    width:
+      clamp(
+        20px,
+        6svh,
+        26px
+      );
+  }
+
+  .pArrow {
+    display: none;
+  }
+}
+
+/* =========================
+   TABLET PORTRAIT — LOCKED
+
+   Larger portrait touch layouts start from the accepted tablet geometry.
+   Near-square inner foldables override it in the next block.
+   ========================= */
+
+@media (orientation: portrait) and (min-width: 501px) and (max-width: 1100px) {
+  .portfolio.pTouchLayout .pSlideContent {
+    --portfolio-tablet-portrait-gap:
+      clamp(
+        28px,
+        3.1svh,
+        44px
+      );
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    align-content: center;
+    justify-items: center;
+
+    gap: var(--portfolio-tablet-portrait-gap);
+
+    padding-inline:
+      clamp(
+        44px,
+        7vw,
+        92px
+      );
+
+    padding-block:
+      clamp(
+        34px,
+        4svh,
+        60px
+      )
+      clamp(
+        72px,
+        7svh,
+        98px
+      );
+  }
+
+  .portfolio.pTouchLayout .pImg {
+    width:
+      min(
+        72vw,
+        650px
+      );
+
+    max-height:
+      min(
+        34svh,
+        430px
+      );
+
+    justify-self: center;
+
+    border-radius:
+      clamp(
+        16px,
+        2vw,
+        22px
+      );
+  }
+
+  .portfolio.pTouchLayout .pImg img {
+    width: 100%;
+    height: 100%;
+
+    max-height:
+      min(
+        34svh,
+        430px
+      );
+
+    object-fit: cover;
+  }
+
+  .portfolio.pTouchLayout .pText {
+    width:
+      min(
+        82vw,
+        820px
+      );
+
+    min-width: 0;
+
+    align-items: center;
+    gap: var(--portfolio-tablet-portrait-gap);
+
+    text-align: center;
+  }
+
+  .portfolio.pTouchLayout .pText h1 {
+    max-width: 100%;
+
+    margin: 0;
+
+    white-space: nowrap;
+
+    font-size:
+      clamp(
+        40px,
+        5.3vw,
+        60px
+      );
+
+    line-height: 1.05;
+  }
+
+  .portfolio.pTouchLayout .pText p {
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0;
+
+    text-align: left;
+
+    font-size:
+      clamp(
+        20px,
+        2.35vw,
+        25px
+      );
+
+    line-height: 1.45;
+  }
+
+  .portfolio.pTouchLayout .pText a {
+    align-self: center;
+    margin: 0;
+  }
+
+  .portfolio.pTouchLayout .pText button {
+    padding:
+      clamp(
+        12px,
+        1.5svh,
+        16px
+      )
+      clamp(
+        18px,
+        2vw,
+        24px
+      );
+
+    font-size:
+      clamp(
+        15px,
+        1.7vw,
+        18px
+      );
+  }
+
+  .portfolio.pTouchLayout .pDots {
+    bottom:
+      clamp(
+        18px,
+        2.4svh,
+        28px
+      );
+  }
+}
+
+/* =========================
+   UNFOLDED FOLDABLE PORTRAIT — LOCKED
+
+   Near-square inner displays take the unfolded candidate scale instead of
+   the taller tablet portrait scale.
+   ========================= */
+
+@media (orientation: portrait) and (min-width: 501px) and (max-width: 1100px) and (min-aspect-ratio: 6/7) {
+  .portfolio.pTouchLayout .pSlideContent {
+    --portfolio-unfolded-portrait-gap:
+      clamp(
+        28px,
+        3.6svh,
+        48px
+      );
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    align-content: center;
+    justify-items: center;
+
+    gap: var(--portfolio-unfolded-portrait-gap);
+
+    padding-inline:
+      clamp(
+        40px,
+        7vw,
+        84px
+      );
+
+    padding-block:
+      clamp(
+        28px,
+        4svh,
+        56px
+      )
+      clamp(
+        64px,
+        7svh,
+        92px
+      );
+  }
+
+  .portfolio.pTouchLayout .pImg {
+    width:
+      min(
+        74vw,
+        620px
+      );
+
+    max-height:
+      min(
+        31svh,
+        340px
+      );
+
+    justify-self: center;
+
+    border-radius:
+      clamp(
+        16px,
+        2.2vw,
+        22px
+      );
+  }
+
+  .portfolio.pTouchLayout .pImg img {
+    width: 100%;
+    height: 100%;
+
+    max-height:
+      min(
+        31svh,
+        340px
+      );
+
+    object-fit: cover;
+  }
+
+  .portfolio.pTouchLayout .pText {
+    width:
+      min(
+        80vw,
+        780px
+      );
+
+    align-items: center;
+    gap: var(--portfolio-unfolded-portrait-gap);
+
+    min-width: 0;
+
+    text-align: center;
+  }
+
+  .portfolio.pTouchLayout .pText h1 {
+    max-width: 100%;
+
+    margin: 0;
+
+    white-space: nowrap;
+
+    font-size:
+      clamp(
+        34px,
+        5vw,
+        52px
+      );
+
+    line-height: 1.05;
+  }
+
+  .portfolio.pTouchLayout .pText p {
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0;
+
+    text-align: left;
+
+    font-size:
+      clamp(
+        15px,
+        2vw,
+        20px
+      );
+
+    line-height: 1.4;
+  }
+
+  .portfolio.pTouchLayout .pText a {
+    align-self: center;
+    margin: 0;
+  }
+
+  .portfolio.pTouchLayout .pText button {
+    padding:
+      clamp(
+        11px,
+        1.5svh,
+        15px
+      )
+      clamp(
+        16px,
+        2.2vw,
+        22px
+      );
+
+    font-size:
+      clamp(
+        14px,
+        1.8vw,
+        18px
+      );
+  }
+
+  .portfolio.pTouchLayout .pDots {
+    bottom:
+      clamp(
+        16px,
+        2.2svh,
+        26px
+      );
+  }
+}
+
+/* =========================
+   TABLET LANDSCAPE — LOCKED
+
+   Known tablet landscape widths begin at about 1080px. This keeps the
+   accepted tablet candidate off normal laptop/desktop layouts unless the
+   interaction mode is touch-first.
+   ========================= */
+
+@media (orientation: landscape) and (min-height: 501px) and (min-width: 1080px) and (max-width: 1600px) {
+  .portfolio.pTouchLayout .pSlideContent {
+    --portfolio-tablet-landscape-gap:
+      clamp(
+        14px,
+        2.4svh,
+        24px
+      );
+
+    grid-template-columns:
+      minmax(0, 0.95fr)
+      minmax(0, 1.05fr);
+
+    align-items: center;
+
+    gap:
+      clamp(
+        32px,
+        4vw,
+        72px
+      );
+
+    padding-inline:
+      clamp(
+        48px,
+        5vw,
+        96px
+      );
+
+    padding-block:
+      clamp(
+        24px,
+        4svh,
+        42px
+      )
+      clamp(
+        56px,
+        8svh,
+        78px
+      );
+  }
+
+  .portfolio.pTouchLayout .pImg {
+    width: 100%;
+
+    max-width:
+      min(
+        42vw,
+        620px
+      );
+
+    max-height:
+      min(
+        58svh,
+        420px
+      );
+
+    justify-self: center;
+    align-self: center;
+
+    border-radius:
+      clamp(
+        14px,
+        1.8vw,
+        22px
+      );
+  }
+
+  .portfolio.pTouchLayout .pImg img {
+    width: 100%;
+    height: 100%;
+
+    max-height:
+      min(
+        58svh,
+        420px
+      );
+
+    object-fit: cover;
+  }
+
+  .portfolio.pTouchLayout .pText {
+    width: 100%;
+
+    max-width:
+      min(
+        48vw,
+        720px
+      );
+
+    min-width: 0;
+
+    align-items: flex-start;
+    gap: var(--portfolio-tablet-landscape-gap);
+
+    text-align: left;
+  }
+
+  .portfolio.pTouchLayout .pText h1 {
+    max-width: 100%;
+
+    margin: 0;
+
+    white-space: nowrap;
+    text-align: left;
+
+    font-size:
+      clamp(
+        36px,
+        min(
+          5.7svh,
+          4.4vw
+        ),
+        53px
+      );
+
+    line-height: 1.04;
+  }
+
+  .portfolio.pTouchLayout .pText p {
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0;
+
+    text-align: left;
+
+    font-size:
+      clamp(
+        18px,
+        3svh,
+        26px
+      );
+
+    line-height: 1.42;
+  }
+
+  .portfolio.pTouchLayout .pText a {
+    align-self: flex-start;
+    margin: 0;
+  }
+
+  .portfolio.pTouchLayout .pText button {
+    padding:
+      clamp(
+        10px,
+        1.5svh,
+        14px
+      )
+      clamp(
+        16px,
+        1.8vw,
+        22px
+      );
+
+    font-size:
+      clamp(
+        15px,
+        2svh,
+        19px
+      );
+  }
+
+  .portfolio.pTouchLayout .pDots {
+    bottom:
+      clamp(
+        12px,
+        2svh,
+        24px
+      );
+
+    gap:
+      clamp(
+        8px,
+        1vw,
+        12px
+      );
+  }
+}
+
+/* =========================
+   UNFOLDED FOLDABLE LANDSCAPE — LOCKED
+
+   This covers the smaller inner landscape range plus near-square inner
+   layouts that overlap the lower edge of tablet widths.
+   ========================= */
+
+@media (orientation: landscape) and (min-height: 501px) and (max-width: 1079px),
+       (orientation: landscape) and (min-height: 501px) and (min-width: 1080px) and (max-width: 1199px) and (max-aspect-ratio: 28/25) {
+  .portfolio.pTouchLayout .pSlideContent {
+    --portfolio-unfolded-landscape-gap:
+      clamp(
+        14px,
+        2svh,
+        22px
+      );
+
+    grid-template-columns:
+      minmax(0, 0.95fr)
+      minmax(0, 1.05fr);
+
+    align-items: center;
+
+    gap:
+      clamp(
+        30px,
+        4vw,
+        64px
+      );
+
+    padding-inline:
+      clamp(
+        44px,
+        6vw,
+        80px
+      );
+
+    padding-block:
+      clamp(
+        24px,
+        4svh,
+        48px
+      )
+      clamp(
+        56px,
+        7svh,
+        78px
+      );
+  }
+
+  .portfolio.pTouchLayout .pImg {
+    width: 100%;
+
+    max-width:
+      min(
+        42vw,
+        520px
+      );
+
+    max-height:
+      min(
+        58svh,
+        380px
+      );
+
+    justify-self: center;
+    align-self: center;
+
+    border-radius:
+      clamp(
+        14px,
+        2vw,
+        20px
+      );
+  }
+
+  .portfolio.pTouchLayout .pImg img {
+    width: 100%;
+    height: 100%;
+
+    max-height:
+      min(
+        58svh,
+        380px
+      );
+
+    object-fit: cover;
+  }
+
+  .portfolio.pTouchLayout .pText {
+    width: 100%;
+
+    max-width:
+      min(
+        46vw,
+        640px
+      );
+
+    min-width: 0;
+
+    align-items: flex-start;
+    gap: var(--portfolio-unfolded-landscape-gap);
+
+    text-align: left;
+  }
+
+  .portfolio.pTouchLayout .pText h1 {
+    max-width: 100%;
+
+    margin: 0;
+
+    white-space: nowrap;
+    text-align: left;
+
+    font-size:
+      clamp(
+        30px,
+        4vw,
+        48px
+      );
+
+    line-height: 1.04;
+  }
+
+  .portfolio.pTouchLayout .pText p {
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0;
+
+    text-align: left;
+
+    font-size:
+      clamp(
+        14px,
+        1.8vw,
+        18px
+      );
+
+    line-height: 1.4;
+  }
+
+  .portfolio.pTouchLayout .pText a {
+    align-self: flex-start;
+    margin: 0;
+  }
+
+  .portfolio.pTouchLayout .pText button {
+    padding:
+      clamp(
+        9px,
+        1.4svh,
+        13px
+      )
+      clamp(
+        14px,
+        2vw,
+        20px
+      );
+
+    font-size:
+      clamp(
+        13px,
+        1.6vw,
+        17px
+      );
+  }
+
+  .portfolio.pTouchLayout .pDots {
+    bottom:
+      clamp(
+        12px,
+        2svh,
+        22px
+      );
+
+    gap:
+      clamp(
+        8px,
+        1.2vw,
+        11px
+      );
+  }
+}
+
+/* All touch-first promoted families use swipe/drag + dots only. */
+.portfolio.pTouchLayout .pArrow {
+  display: none;
+}
+
+/* Keep narrow emulated QA geometries arrow-free even on a fine pointer. */
+@media (max-width: 500px),
+       (orientation: landscape) and (max-height: 500px) {
   .pArrow {
     display: none;
   }
