@@ -526,6 +526,10 @@ const Portfolio = () => {
           controlsActive
             ? "pControlsActive"
             : ""
+        } ${
+          fadeOnlyMotion
+            ? "pTouchLayout"
+            : ""
         }`
       }
       tabIndex={0}
