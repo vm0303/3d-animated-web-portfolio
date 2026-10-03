@@ -24,13 +24,14 @@ Production uses generalized viewport/input tiers rather than device-name media q
 
 Before laptop/desktop geometry and final Firefox/WebKit certification, Portfolio interaction/motion polish is being finalized:
 
-- laptop/desktop carousel arrows become visible when Portfolio enters the viewport or when the user interacts with it
+- laptop/desktop carousel arrows fade in whenever the Portfolio section is scrolled into view
 - pointer movement, pointer input, wheel input, focus, and keyboard interaction restart the arrow idle timer
-- after 5 seconds of inactivity, the active class is removed and CSS fades the arrows out over 900ms rather than removing them abruptly
+- after 5 seconds of inactivity, the active class is removed and the arrows fade out over 900ms
+- arrow fade-in and fade-out both use the same 900ms duration
 - phones, folded foldables, unfolded foldables, and tablets hide carousel arrows and use swipe/drag plus dots
-- touch-first phones/foldables/tablets use Motion opacity-only project entrance animation with no x/y/scale movement
-- each touch fade lasts exactly 1.2 seconds
-- sequence timing is image `0.0–1.2s`, title `1.2–2.4s`, paragraph `2.4–3.6s`, button `3.6–4.8s`
+- touch-first phones/foldables/tablets use one Motion opacity-only fade for the full project composition with no x/y/scale movement
+- image, title, paragraph, and button fade together as one group
+- the touch composition fade lasts exactly 1.2 seconds
 - laptop/desktop retains the existing directional Motion entrance pending its own geometry phase
 
 ## Still pending
