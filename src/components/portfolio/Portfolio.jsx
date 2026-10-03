@@ -54,6 +54,9 @@ const items = [
 ]
 
 
+/*
+ * Laptop / desktop motion keeps the existing directional entrance.
+ */
 const imageVariants = {
   inactive: {
     x: -180,
@@ -119,6 +122,68 @@ const textItemVariants = {
 }
 
 
+/*
+ * Phones, foldables, and tablets use a fade-only sequence.
+ *
+ * No x/y movement is used here. The components enter one-by-one:
+ *
+ * image  -> immediately
+ * title  -> 2 seconds
+ * text   -> 4 seconds
+ * button -> 6 seconds
+ *
+ * This mode is selected for touch-first / coarse-pointer devices.
+ */
+const fadeOnlyImageVariants = {
+  inactive: {
+    opacity: 0,
+  },
+
+  active: {
+    opacity: 1,
+
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+}
+
+
+const fadeOnlyTextContainerVariants = {
+  inactive: {
+    opacity: 1,
+  },
+
+  active: {
+    opacity: 1,
+  },
+}
+
+
+const fadeOnlyItemVariants = {
+  inactive: {
+    opacity: 0,
+  },
+
+  active: (delaySeconds = 0) => ({
+    opacity: 1,
+
+    transition: {
+      duration: 0.5,
+      delay: delaySeconds,
+      ease: "easeOut",
+    },
+  }),
+}
+
+
+const TOUCH_MOTION_QUERY =
+  "(hover: none), (pointer: coarse)"
+
+const ARROW_IDLE_MS = 5000
+
+
 const ArrowIcon = ({ direction }) => (
   <svg
     viewBox="0 0 32 56"
@@ -140,6 +205,7 @@ const ProjectSlide = ({
   item,
   isActive,
   portfolioInView,
+  fadeOnlyMotion,
 }) => {
 
   /*
@@ -153,6 +219,21 @@ const ProjectSlide = ({
   const shouldAnimate =
     portfolioInView && isActive
 
+  const selectedImageVariants =
+    fadeOnlyMotion
+      ? fadeOnlyImageVariants
+      : imageVariants
+
+  const selectedTextVariants =
+    fadeOnlyMotion
+      ? fadeOnlyTextContainerVariants
+      : textVariants
+
+  const selectedTextItemVariants =
+    fadeOnlyMotion
+      ? fadeOnlyItemVariants
+      : textItemVariants
+
   return (
     <article
       className="pSlide"
@@ -163,7 +244,7 @@ const ProjectSlide = ({
         <motion.div
           className="pImg"
 
-          variants={imageVariants}
+          variants={selectedImageVariants}
 
           /*
            * IMPORTANT:
@@ -190,7 +271,7 @@ const ProjectSlide = ({
         <motion.div
           className="pText"
 
-          variants={textVariants}
+          variants={selectedTextVariants}
 
           initial="inactive"
 
@@ -201,21 +282,24 @@ const ProjectSlide = ({
           }
         >
           <motion.h1
-            variants={textItemVariants}
+            variants={selectedTextItemVariants}
+            custom={fadeOnlyMotion ? 2 : undefined}
           >
             {item.title}
           </motion.h1>
 
 
           <motion.p
-            variants={textItemVariants}
+            variants={selectedTextItemVariants}
+            custom={fadeOnlyMotion ? 4 : undefined}
           >
             {item.desc}
           </motion.p>
 
 
           <motion.a
-            variants={textItemVariants}
+            variants={selectedTextItemVariants}
+            custom={fadeOnlyMotion ? 6 : undefined}
 
             href={item.link}
             target="_blank"
@@ -268,13 +352,61 @@ const Portfolio = () => {
     setSelectedIndex,
   ] = useState(0)
 
+
   /*
-   * Arrow controls stay hidden until the carousel is actively engaged.
+   * Real phones, foldables, and tablets are touch-first / coarse-pointer
+   * devices. They use the sequential fade-only motion above rather than
+   * the laptop/desktop x/y entrance motion.
+   */
+  const [
+    fadeOnlyMotion,
+    setFadeOnlyMotion,
+  ] = useState(() => {
+    if (typeof window === "undefined") {
+      return false
+    }
+
+    return window
+      .matchMedia(TOUCH_MOTION_QUERY)
+      .matches
+  })
+
+  useEffect(() => {
+    const mediaQuery =
+      window.matchMedia(
+        TOUCH_MOTION_QUERY
+      )
+
+    const syncMotionMode = () => {
+      setFadeOnlyMotion(
+        mediaQuery.matches
+      )
+    }
+
+    syncMotionMode()
+
+    mediaQuery.addEventListener(
+      "change",
+      syncMotionMode
+    )
+
+    return () => {
+      mediaQuery.removeEventListener(
+        "change",
+        syncMotionMode
+      )
+    }
+  }, [])
+
+
+  /*
+   * Laptop/desktop carousel arrows are activity-driven.
    *
-   * Hover/focus are handled in CSS.
-   * Pointer down covers mouse clicks, pen input, and touch. On touch,
-   * keep the arrows visible briefly so the user can tap them after
-   * touching/swiping the carousel.
+   * Entering the Portfolio shows them.
+   * Pointer movement, clicks, wheel activity, or keyboard focus keeps them
+   * visible. Five seconds after the last activity they fade back out.
+   *
+   * Phone/foldable/tablet CSS still hides arrows completely.
    */
   const [
     controlsActive,
@@ -284,34 +416,55 @@ const Portfolio = () => {
   const controlsTimerRef =
     useRef(null)
 
-  const activateControls =
+  const clearControlsTimer =
     useCallback(() => {
-      setControlsActive(true)
-
       if (controlsTimerRef.current) {
         window.clearTimeout(
           controlsTimerRef.current
         )
+
+        controlsTimerRef.current = null
       }
+    }, [])
+
+  const activateControls =
+    useCallback(() => {
+      setControlsActive(true)
+      clearControlsTimer()
 
       controlsTimerRef.current =
         window.setTimeout(
           () => {
             setControlsActive(false)
+            controlsTimerRef.current = null
           },
-          2600
+          ARROW_IDLE_MS
         )
-    }, [])
+    }, [
+      clearControlsTimer,
+    ])
+
+  useEffect(() => {
+    if (portfolioInView) {
+      activateControls()
+      return
+    }
+
+    clearControlsTimer()
+    setControlsActive(false)
+  }, [
+    portfolioInView,
+    activateControls,
+    clearControlsTimer,
+  ])
 
   useEffect(() => {
     return () => {
-      if (controlsTimerRef.current) {
-        window.clearTimeout(
-          controlsTimerRef.current
-        )
-      }
+      clearControlsTimer()
     }
-  }, [])
+  }, [
+    clearControlsTimer,
+  ])
 
 
   const scrollPrev = useCallback(() => {
@@ -382,6 +535,8 @@ const Portfolio = () => {
 
   const handleKeyDown = (event) => {
 
+    activateControls()
+
     if (event.key === "ArrowLeft") {
       event.preventDefault()
 
@@ -414,7 +569,10 @@ const Portfolio = () => {
 
       onKeyDown={handleKeyDown}
 
+      onPointerMove={activateControls}
       onPointerDown={activateControls}
+      onWheel={activateControls}
+      onFocus={activateControls}
 
       aria-label="Portfolio projects"
     >
@@ -439,6 +597,10 @@ const Portfolio = () => {
 
                 portfolioInView={
                   portfolioInView
+                }
+
+                fadeOnlyMotion={
+                  fadeOnlyMotion
                 }
               />
 
