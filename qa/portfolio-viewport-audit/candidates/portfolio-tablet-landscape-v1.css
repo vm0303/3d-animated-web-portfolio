@@ -10,6 +10,10 @@
  * The image is centered vertically on the left. Title/text/button form a
  * left-aligned right column. This revision increases paragraph scale so
  * medium and large tablet heights do not stay visually phone-sized.
+ *
+ * The title scale is constrained by both viewport height and width. This
+ * prevents the longest title (React Arcade Puzzles) from overflowing the
+ * right column on tall-but-narrow tablet landscapes such as 1080x957-959.
  */
 
 @media (orientation: landscape) {
@@ -121,7 +125,10 @@
     font-size:
       clamp(
         36px,
-        5.7svh,
+        min(
+          5.7svh,
+          4.4vw
+        ),
         53px
       );
 
