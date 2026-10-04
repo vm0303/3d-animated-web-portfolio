@@ -188,9 +188,8 @@
   will-change: opacity, transform;
 
   /*
-   * Fade-out is deliberately slower than fade-in so the idle transition is
-   * visibly a fade instead of reading as an abrupt disappearance.
-   * Visibility is delayed until opacity finishes fading.
+   * Fade-in and fade-out use the same 900ms timing. Visibility is delayed
+   * until the fade-out completes and becomes visible immediately on entry.
    */
   transition:
     opacity 900ms ease,
@@ -244,8 +243,8 @@
   pointer-events: auto;
 
   transition:
-    opacity 320ms ease,
-    transform 320ms ease,
+    opacity 900ms ease,
+    transform 900ms ease,
     visibility 0s linear 0s;
 }
 

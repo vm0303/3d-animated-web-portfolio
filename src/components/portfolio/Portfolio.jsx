@@ -1,5 +1,4 @@
 import "./portfolio.css"
-import "./portfolio-interaction.css"
 
 import {
   motion,
