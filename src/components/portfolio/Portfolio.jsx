@@ -146,7 +146,8 @@ const TOUCH_MOTION_QUERY =
   "(hover: none), (pointer: coarse)"
 
 const ARROW_IDLE_MS = 5000
-const POINTER_MOVE_REARM_MS = 250
+const ARROW_IDLE_CHECK_MS = 250
+const POINTER_ACTIVITY_THRESHOLD_PX = 3
 
 
 const ArrowIcon = ({ direction }) => (
@@ -379,134 +380,151 @@ const Portfolio = () => {
 
 
   /*
-   * Laptop/desktop arrows use a fixed visibility window.
+   * Laptop/desktop arrows use true mouse inactivity.
    *
-   * - scrolling into Portfolio starts one five-second window
-   * - the first pointer movement after a brief pointer pause can reveal them
-   * - ordinary pointer movement never extends an already-running window
-   * - intentional input (pointer down, wheel, focus, keyboard) may restart it
-   * - after five seconds, CSS fades the arrows out on schedule
+   * - entering Portfolio reveals the arrows
+   * - meaningful mouse movement keeps them visible
+   * - movement updates one last-activity timestamp instead of restarting
+   *   competing visibility/re-arm timers
+   * - tiny pointer jitter under the threshold is ignored
+   * - after five seconds with no meaningful mouse movement, CSS fades them out
+   * - moving the mouse again immediately reveals them
    */
   const [
     controlsActive,
     setControlsActive,
   ] = useState(false)
 
-  const controlsTimerRef =
+  const idleCheckRef =
     useRef(null)
 
-  const pointerMoveRearmTimerRef =
+  const lastPointerActivityAtRef =
     useRef(null)
 
-  const pointerMoveArmedRef =
-    useRef(true)
+  const lastPointerPositionRef =
+    useRef(null)
 
-  const clearControlsTimer =
+  const clearIdleCheck =
     useCallback(() => {
-      if (controlsTimerRef.current) {
-        window.clearTimeout(
-          controlsTimerRef.current
+      if (idleCheckRef.current !== null) {
+        window.clearInterval(
+          idleCheckRef.current
         )
 
-        controlsTimerRef.current = null
+        idleCheckRef.current = null
       }
     }, [])
 
-  const clearPointerMoveRearmTimer =
+  const recordPointerActivity =
     useCallback(() => {
-      if (pointerMoveRearmTimerRef.current) {
-        window.clearTimeout(
-          pointerMoveRearmTimerRef.current
-        )
+      lastPointerActivityAtRef.current =
+        performance.now()
 
-        pointerMoveRearmTimerRef.current = null
-      }
+      setControlsActive(true)
     }, [])
 
-  const showControlsForWindow =
+  const handlePointerMove =
     useCallback(
-      (restartTimer = false) => {
-        if (restartTimer) {
-          clearControlsTimer()
-        } else if (controlsTimerRef.current) {
+      (event) => {
+        if (
+          event.pointerType &&
+          event.pointerType !== "mouse"
+        ) {
           return
         }
 
-        setControlsActive(true)
+        const nextPosition = {
+          x: event.clientX,
+          y: event.clientY,
+        }
 
-        controlsTimerRef.current =
-          window.setTimeout(
-            () => {
-              setControlsActive(false)
-              controlsTimerRef.current = null
-            },
-            ARROW_IDLE_MS
+        const previousPosition =
+          lastPointerPositionRef.current
+
+        if (!previousPosition) {
+          lastPointerPositionRef.current =
+            nextPosition
+
+          recordPointerActivity()
+          return
+        }
+
+        const distance =
+          Math.hypot(
+            nextPosition.x - previousPosition.x,
+            nextPosition.y - previousPosition.y
           )
+
+        if (
+          distance <
+          POINTER_ACTIVITY_THRESHOLD_PX
+        ) {
+          return
+        }
+
+        lastPointerPositionRef.current =
+          nextPosition
+
+        recordPointerActivity()
       },
-      [
-        clearControlsTimer,
-      ]
+      [recordPointerActivity]
     )
-
-  const restartControlsWindow =
-    useCallback(() => {
-      showControlsForWindow(true)
-    }, [showControlsForWindow])
-
-  const handlePointerMove =
-    useCallback(() => {
-      if (pointerMoveArmedRef.current) {
-        pointerMoveArmedRef.current = false
-        showControlsForWindow(false)
-      }
-
-      clearPointerMoveRearmTimer()
-
-      pointerMoveRearmTimerRef.current =
-        window.setTimeout(
-          () => {
-            pointerMoveArmedRef.current = true
-            pointerMoveRearmTimerRef.current = null
-          },
-          POINTER_MOVE_REARM_MS
-        )
-    }, [
-      clearPointerMoveRearmTimer,
-      showControlsForWindow,
-    ])
 
   const handlePointerLeave =
     useCallback(() => {
-      clearPointerMoveRearmTimer()
-      pointerMoveArmedRef.current = true
-    }, [clearPointerMoveRearmTimer])
+      lastPointerPositionRef.current = null
+    }, [])
 
   useEffect(() => {
-    if (portfolioControlsInView) {
-      restartControlsWindow()
+    if (
+      !portfolioControlsInView ||
+      fadeOnlyMotion
+    ) {
+      clearIdleCheck()
+      lastPointerActivityAtRef.current = null
+      lastPointerPositionRef.current = null
+      setControlsActive(false)
       return
     }
 
-    clearControlsTimer()
-    clearPointerMoveRearmTimer()
-    pointerMoveArmedRef.current = true
-    setControlsActive(false)
+    recordPointerActivity()
+
+    clearIdleCheck()
+
+    idleCheckRef.current =
+      window.setInterval(
+        () => {
+          const lastActivity =
+            lastPointerActivityAtRef.current
+
+          if (
+            lastActivity === null ||
+            performance.now() - lastActivity <
+              ARROW_IDLE_MS
+          ) {
+            return
+          }
+
+          setControlsActive(false)
+        },
+        ARROW_IDLE_CHECK_MS
+      )
+
+    return () => {
+      clearIdleCheck()
+    }
   }, [
     portfolioControlsInView,
-    restartControlsWindow,
-    clearControlsTimer,
-    clearPointerMoveRearmTimer,
+    fadeOnlyMotion,
+    clearIdleCheck,
+    recordPointerActivity,
   ])
 
   useEffect(() => {
     return () => {
-      clearControlsTimer()
-      clearPointerMoveRearmTimer()
+      clearIdleCheck()
     }
-  }, [
-    clearControlsTimer,
-    clearPointerMoveRearmTimer,
-  ])
+  }, [clearIdleCheck])
 
 
   const scrollPrev = useCallback(() => {
@@ -576,8 +594,6 @@ const Portfolio = () => {
 
 
   const handleKeyDown = (event) => {
-    restartControlsWindow()
-
     if (event.key === "ArrowLeft") {
       event.preventDefault()
       scrollPrev()
@@ -608,9 +624,6 @@ const Portfolio = () => {
       onKeyDown={handleKeyDown}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      onPointerDown={restartControlsWindow}
-      onWheel={restartControlsWindow}
-      onFocus={restartControlsWindow}
       aria-label="Portfolio projects"
     >
 
