@@ -54,6 +54,7 @@ const items = [
 ]
 
 
+/* Laptop / desktop keeps the directional entrance motion. */
 const imageVariants = {
   inactive: {
     x: -180,
@@ -91,7 +92,6 @@ const textVariants = {
     transition: {
       duration: 0.55,
       ease: "easeOut",
-
       staggerChildren: 0.08,
       delayChildren: 0.08,
     },
@@ -119,6 +119,35 @@ const textItemVariants = {
 }
 
 
+/*
+ * Phones, folded/unfolded foldables, and tablets use one shared Motion fade.
+ * The full project composition fades together for 1.2 seconds with no x/y
+ * movement and no stagger between image/title/paragraph/button.
+ */
+const TOUCH_FADE_DURATION = 1.2
+
+const touchFadeVariants = {
+  inactive: {
+    opacity: 0,
+  },
+
+  active: {
+    opacity: 1,
+
+    transition: {
+      duration: TOUCH_FADE_DURATION,
+      ease: "easeOut",
+    },
+  },
+}
+
+
+const TOUCH_MOTION_QUERY =
+  "(hover: none), (pointer: coarse)"
+
+const ARROW_IDLE_MS = 5000
+
+
 const ArrowIcon = ({ direction }) => (
   <svg
     viewBox="0 0 32 56"
@@ -140,16 +169,8 @@ const ProjectSlide = ({
   item,
   isActive,
   portfolioInView,
+  fadeOnlyMotion,
 }) => {
-
-  /*
-   * This is the actual animation condition.
-   *
-   * A project animates only when:
-   *
-   * 1. Portfolio itself is on screen
-   * 2. This project is Embla's selected project
-   */
   const shouldAnimate =
     portfolioInView && isActive
 
@@ -158,26 +179,49 @@ const ProjectSlide = ({
       className="pSlide"
       aria-hidden={!isActive}
     >
-      <div className="pSlideContent">
+      <motion.div
+        className="pSlideContent"
+        variants={
+          fadeOnlyMotion
+            ? touchFadeVariants
+            : undefined
+        }
+        initial={
+          fadeOnlyMotion
+            ? "inactive"
+            : false
+        }
+        animate={
+          fadeOnlyMotion
+            ? (
+                shouldAnimate
+                  ? "active"
+                  : "inactive"
+              )
+            : undefined
+        }
+      >
 
         <motion.div
           className="pImg"
-
-          variants={imageVariants}
-
-          /*
-           * IMPORTANT:
-           * Do NOT use initial={false}.
-           *
-           * We want WeathAware to begin in the
-           * inactive state before Portfolio enters.
-           */
-          initial="inactive"
-
-          animate={
-            shouldAnimate
-              ? "active"
+          variants={
+            fadeOnlyMotion
+              ? undefined
+              : imageVariants
+          }
+          initial={
+            fadeOnlyMotion
+              ? false
               : "inactive"
+          }
+          animate={
+            fadeOnlyMotion
+              ? undefined
+              : (
+                  shouldAnimate
+                    ? "active"
+                    : "inactive"
+                )
           }
         >
           <img
@@ -189,34 +233,54 @@ const ProjectSlide = ({
 
         <motion.div
           className="pText"
-
-          variants={textVariants}
-
-          initial="inactive"
-
-          animate={
-            shouldAnimate
-              ? "active"
+          variants={
+            fadeOnlyMotion
+              ? undefined
+              : textVariants
+          }
+          initial={
+            fadeOnlyMotion
+              ? false
               : "inactive"
+          }
+          animate={
+            fadeOnlyMotion
+              ? undefined
+              : (
+                  shouldAnimate
+                    ? "active"
+                    : "inactive"
+                )
           }
         >
           <motion.h1
-            variants={textItemVariants}
+            variants={
+              fadeOnlyMotion
+                ? undefined
+                : textItemVariants
+            }
           >
             {item.title}
           </motion.h1>
 
 
           <motion.p
-            variants={textItemVariants}
+            variants={
+              fadeOnlyMotion
+                ? undefined
+                : textItemVariants
+            }
           >
             {item.desc}
           </motion.p>
 
 
           <motion.a
-            variants={textItemVariants}
-
+            variants={
+              fadeOnlyMotion
+                ? undefined
+                : textItemVariants
+            }
             href={item.link}
             target="_blank"
             rel="noopener noreferrer"
@@ -228,30 +292,33 @@ const ProjectSlide = ({
 
         </motion.div>
 
-      </div>
+      </motion.div>
     </article>
   )
 }
 
 
 const Portfolio = () => {
-
   const portfolioRef = useRef(null)
 
-  /*
-   * Trigger fairly early.
-   *
-   * 0.15 means we don't wait until almost half of the
-   * Portfolio section is visible.
-   *
-   * As soon as roughly 15% enters the viewport,
-   * Motion starts.
-   */
+  /* Project content can wait until the section is meaningfully visible. */
   const portfolioInView =
     useInView(
       portfolioRef,
       {
         amount: 0.15,
+      }
+    )
+
+  /*
+   * Arrow visibility reacts earlier so scrolling into Portfolio itself is
+   * enough to begin the arrow fade-in, even before project Motion starts.
+   */
+  const portfolioControlsInView =
+    useInView(
+      portfolioRef,
+      {
+        amount: 0.05,
       }
     )
 
@@ -267,6 +334,114 @@ const Portfolio = () => {
     selectedIndex,
     setSelectedIndex,
   ] = useState(0)
+
+
+  const [
+    fadeOnlyMotion,
+    setFadeOnlyMotion,
+  ] = useState(() => {
+    if (typeof window === "undefined") {
+      return false
+    }
+
+    return window
+      .matchMedia(TOUCH_MOTION_QUERY)
+      .matches
+  })
+
+  useEffect(() => {
+    const mediaQuery =
+      window.matchMedia(
+        TOUCH_MOTION_QUERY
+      )
+
+    const syncMotionMode = () => {
+      setFadeOnlyMotion(
+        mediaQuery.matches
+      )
+    }
+
+    syncMotionMode()
+
+    mediaQuery.addEventListener(
+      "change",
+      syncMotionMode
+    )
+
+    return () => {
+      mediaQuery.removeEventListener(
+        "change",
+        syncMotionMode
+      )
+    }
+  }, [])
+
+
+  /*
+   * Laptop/desktop arrows are activity-driven.
+   *
+   * - scrolling into Portfolio fades them in
+   * - pointer/keyboard/wheel activity restarts the five-second idle timer
+   * - after five idle seconds, CSS fades them back out
+   * - fade-in and fade-out use the same duration
+   */
+  const [
+    controlsActive,
+    setControlsActive,
+  ] = useState(false)
+
+  const controlsTimerRef =
+    useRef(null)
+
+  const clearControlsTimer =
+    useCallback(() => {
+      if (controlsTimerRef.current) {
+        window.clearTimeout(
+          controlsTimerRef.current
+        )
+
+        controlsTimerRef.current = null
+      }
+    }, [])
+
+  const activateControls =
+    useCallback(() => {
+      setControlsActive(true)
+      clearControlsTimer()
+
+      controlsTimerRef.current =
+        window.setTimeout(
+          () => {
+            setControlsActive(false)
+            controlsTimerRef.current = null
+          },
+          ARROW_IDLE_MS
+        )
+    }, [
+      clearControlsTimer,
+    ])
+
+  useEffect(() => {
+    if (portfolioControlsInView) {
+      activateControls()
+      return
+    }
+
+    clearControlsTimer()
+    setControlsActive(false)
+  }, [
+    portfolioControlsInView,
+    activateControls,
+    clearControlsTimer,
+  ])
+
+  useEffect(() => {
+    return () => {
+      clearControlsTimer()
+    }
+  }, [
+    clearControlsTimer,
+  ])
 
 
   const scrollPrev = useCallback(() => {
@@ -336,33 +511,40 @@ const Portfolio = () => {
 
 
   const handleKeyDown = (event) => {
+    activateControls()
 
     if (event.key === "ArrowLeft") {
       event.preventDefault()
-
       scrollPrev()
     }
 
-
     if (event.key === "ArrowRight") {
       event.preventDefault()
-
       scrollNext()
     }
-
   }
 
 
   return (
     <div
       ref={portfolioRef}
-
-      className="portfolio"
-
+      className={
+        `portfolio ${
+          controlsActive
+            ? "pControlsActive"
+            : ""
+        } ${
+          fadeOnlyMotion
+            ? "pTouchLayout"
+            : ""
+        }`
+      }
       tabIndex={0}
-
       onKeyDown={handleKeyDown}
-
+      onPointerMove={activateControls}
+      onPointerDown={activateControls}
+      onWheel={activateControls}
+      onFocus={activateControls}
       aria-label="Portfolio projects"
     >
 
@@ -374,21 +556,19 @@ const Portfolio = () => {
 
           {items.map(
             (item, index) => (
-
               <ProjectSlide
                 key={item.id}
-
                 item={item}
-
                 isActive={
                   index === selectedIndex
                 }
-
                 portfolioInView={
                   portfolioInView
                 }
+                fadeOnlyMotion={
+                  fadeOnlyMotion
+                }
               />
-
             )
           )}
 
@@ -398,11 +578,8 @@ const Portfolio = () => {
 
       <button
         type="button"
-
         className="pArrow pArrowLeft"
-
         onClick={scrollPrev}
-
         aria-label="Previous project"
       >
         <ArrowIcon direction="left" />
@@ -411,11 +588,8 @@ const Portfolio = () => {
 
       <button
         type="button"
-
         className="pArrow pArrowRight"
-
         onClick={scrollNext}
-
         aria-label="Next project"
       >
         <ArrowIcon direction="right" />
@@ -424,20 +598,15 @@ const Portfolio = () => {
 
       <div
         className="pDots"
-
         role="group"
-
         aria-label="Choose project"
       >
 
         {items.map(
           (item, index) => (
-
             <button
               type="button"
-
               key={item.id}
-
               className={
                 `pDot ${
                   index === selectedIndex
@@ -445,22 +614,18 @@ const Portfolio = () => {
                     : ""
                 }`
               }
-
               onClick={() =>
                 scrollTo(index)
               }
-
               aria-label={
                 `Go to ${item.title}`
               }
-
               aria-current={
                 index === selectedIndex
                   ? "true"
                   : undefined
               }
             />
-
           )
         )}
 
