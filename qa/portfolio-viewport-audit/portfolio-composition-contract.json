@@ -58,7 +58,7 @@
     "minDotVisualSizePx": 9,
     "motionInactiveMaxOpacity": 0.2,
     "motionActiveMinOpacity": 0.92,
-    "settleMs": 750
+    "settleMs": 1350
   },
   "readability": {
     "phone-portrait": {
