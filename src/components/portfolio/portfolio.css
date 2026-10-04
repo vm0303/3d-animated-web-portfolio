@@ -178,8 +178,7 @@
 
   cursor: pointer;
 
-  opacity: 0;
-  visibility: hidden;
+  opacity: 0.18;
   pointer-events: none;
 
   transform:
@@ -188,13 +187,13 @@
   will-change: opacity, transform;
 
   /*
-   * Fade-in and fade-out use the same 900ms timing. Visibility is delayed
-   * until the fade-out completes and becomes visible immediately on entry.
+   * Idle arrows remain faintly visible instead of disappearing completely.
+   * The softer 1200ms opacity transition makes the move into the resting
+   * state less abrupt while preserving the existing positional motion.
    */
   transition:
-    opacity 900ms ease,
-    transform 900ms ease,
-    visibility 0s linear 900ms;
+    opacity 1200ms ease,
+    transform 900ms ease;
 }
 
 .pArrow svg {
@@ -239,13 +238,11 @@
 
 .portfolio.pControlsActive .pArrow {
   opacity: 1;
-  visibility: visible;
   pointer-events: auto;
 
   transition:
-    opacity 900ms ease,
-    transform 900ms ease,
-    visibility 0s linear 0s;
+    opacity 1200ms ease,
+    transform 900ms ease;
 }
 
 .portfolio.pControlsActive .pArrowLeft {
