@@ -1,9 +1,36 @@
 import "./hero.css";
 import { motion } from "motion/react";
-import { useState, useEffect, useRef, Suspense } from "react";
+import { Component, useState, useEffect, useRef, Suspense } from "react";
 import Speech from "./Speech";
 import { Canvas } from "@react-three/fiber";
 import Shape from "./Shape";
+
+
+class HeroCanvasErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { failed: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(error) {
+    console.warn(
+      "[Hero] 3D canvas failed; continuing with the DOM/image Hero fallback.",
+      error,
+    );
+  }
+
+  render() {
+    if (this.state.failed) {
+      return null;
+    }
+
+    return this.props.children;
+  }
+}
 
 
 const heroTitleVariants = {
@@ -295,11 +322,13 @@ const Hero = () => {
       </div>
       <motion.div className="bg" variants={backgroundVariants} initial="initial" animate="animate">
         {/* 3d */}
-        <Canvas>
-          <Suspense fallback="Loading...">
-            <Shape />
-          </Suspense>
-        </Canvas>
+        <HeroCanvasErrorBoundary>
+          <Canvas fallback={null}>
+            <Suspense fallback={null}>
+              <Shape />
+            </Suspense>
+          </Canvas>
+        </HeroCanvasErrorBoundary>
         <div className="hImg">
           <img src="/Hero.png" alt="Hero" title="Hero" />
         </div>
