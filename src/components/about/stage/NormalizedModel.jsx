@@ -168,8 +168,8 @@ const NormalizedModel = ({
 
 
         /*
-         * visualScale is ONLY a small perceptual
-         * correction after automatic normalization.
+         * visualScale is the per-model perceptual correction
+         * after automatic normalization.
          */
         const visualScale =
             item.visualScale ?? 1;

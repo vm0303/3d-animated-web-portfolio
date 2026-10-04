@@ -1,0 +1,443 @@
+/*
+ * ABOUT — MEDIUM PORTRAIT V1
+ *
+ * TEST CANDIDATE ONLY.
+ *
+ * Shared portrait architecture for:
+ * - narrow/very-tall folded outer displays below the existing 430px tier;
+ * - unfolded foldable portrait;
+ * - tablet portrait.
+ *
+ * It does not alter the frozen phone portrait rules at 430–500px.
+ */
+
+
+/* Narrow + very-tall folded outer portrait correction. */
+@media
+  (min-width: 390px)
+  and (max-width: 429px)
+  and (min-height: 880px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      clamp(
+        18px,
+        2.15svh,
+        22px
+      ) !important;
+  }
+
+
+  .aTitle {
+    font-size:
+      clamp(
+        34px,
+        8.6vw,
+        38px
+      ) !important;
+  }
+
+
+  .aboutList {
+    padding-inline:
+      clamp(
+        10px,
+        2.8vw,
+        14px
+      ) !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      clamp(
+        13.5px,
+        3.4vw,
+        14.5px
+      ) !important;
+
+    line-height:
+      1.46 !important;
+  }
+}
+
+
+/* Unfolded foldable portrait + tablet portrait. */
+@media
+  (min-width: 501px)
+  and (max-width: 1100px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-medium-portrait-gap:
+      clamp(
+        18px,
+        2.3svh,
+        34px
+      );
+
+    display:
+      grid !important;
+
+    grid-template-columns:
+      minmax(
+        0,
+        1fr
+      ) !important;
+
+    grid-template-rows:
+      clamp(
+        240px,
+        36svh,
+        500px
+      )
+      auto !important;
+
+    align-content:
+      center !important;
+
+    row-gap:
+      var(
+        --about-medium-portrait-gap
+      ) !important;
+
+    width:
+      100% !important;
+
+    height:
+      100% !important;
+
+    overflow:
+      hidden !important;
+  }
+
+
+  .aSection {
+    width:
+      100% !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+  }
+
+
+  .aSection.right {
+    grid-column:
+      1 !important;
+
+    grid-row:
+      1 !important;
+
+    position:
+      relative !important;
+
+    display:
+      flex !important;
+
+    flex-direction:
+      column !important;
+
+    align-items:
+      stretch !important;
+
+    justify-content:
+      stretch !important;
+
+    width:
+      100% !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+
+    gap:
+      clamp(
+        6px,
+        0.8svh,
+        10px
+      ) !important;
+  }
+
+
+  .aboutModelContainer {
+    flex:
+      1 1 0 !important;
+
+    width:
+      100% !important;
+
+    height:
+      auto !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+  }
+
+
+  .aboutScreenTrigger {
+    position:
+      relative !important;
+
+    left:
+      auto !important;
+
+    bottom:
+      auto !important;
+
+    flex:
+      0 0
+      auto !important;
+
+    align-self:
+      center !important;
+
+    transform:
+      translateY(
+        -8px
+      ) !important;
+
+    margin:
+      0
+      auto !important;
+
+    padding:
+      clamp(
+        8px,
+        1svh,
+        10px
+      )
+      clamp(
+        14px,
+        2vw,
+        18px
+      ) !important;
+
+    font-size:
+      clamp(
+        13px,
+        1.65vw,
+        15px
+      ) !important;
+
+    line-height:
+      1 !important;
+  }
+
+
+  .aSection.left {
+    grid-column:
+      1 !important;
+
+    grid-row:
+      2 !important;
+
+    display:
+      flex !important;
+
+    flex-direction:
+      column !important;
+
+    justify-content:
+      flex-start !important;
+
+    align-items:
+      stretch !important;
+
+    gap:
+      var(
+        --about-medium-portrait-gap
+      ) !important;
+
+    width:
+      100% !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      0 !important;
+
+    padding:
+      0
+      clamp(
+        12px,
+        2.5vw,
+        28px
+      )
+      clamp(
+        18px,
+        2.4svh,
+        32px
+      ) !important;
+
+    overflow:
+      hidden !important;
+  }
+
+
+  .aTitle {
+    flex:
+      0 0
+      auto !important;
+
+    align-self:
+      center !important;
+
+    margin:
+      0 !important;
+
+    font-size:
+      clamp(
+        36px,
+        5.4vw,
+        54px
+      ) !important;
+
+    line-height:
+      1 !important;
+
+    text-align:
+      center !important;
+  }
+
+
+  .aboutList {
+    width:
+      min(
+        calc(
+          100% - 24px
+        ),
+        760px
+      ) !important;
+
+    max-width:
+      760px !important;
+
+    min-width:
+      0 !important;
+
+    display:
+      flex !important;
+
+    flex-direction:
+      column !important;
+
+    gap:
+      var(
+        --about-medium-portrait-gap
+      ) !important;
+
+    margin-inline:
+      auto !important;
+
+    padding:
+      0 !important;
+  }
+
+
+  .aboutList p {
+    width:
+      100% !important;
+
+    margin:
+      0 !important;
+
+    padding:
+      0 !important;
+
+    font-size:
+      clamp(
+        14px,
+        2.25vw,
+        18px
+      ) !important;
+
+    line-height:
+      1.5 !important;
+
+    text-align:
+      left !important;
+
+    white-space:
+      normal !important;
+
+    text-wrap:
+      pretty !important;
+
+    word-break:
+      normal !important;
+
+    overflow-wrap:
+      normal !important;
+
+    hyphens:
+      none !important;
+  }
+}
+
+
+/* True tablet-width portrait gets the larger readability tier. */
+@media
+  (min-width: 700px)
+  and (max-width: 1100px)
+  and (orientation: portrait) {
+
+  .aTitle {
+    font-size:
+      clamp(
+        42px,
+        5vw,
+        54px
+      ) !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      clamp(
+        16px,
+        1.8vw,
+        18px
+      ) !important;
+  }
+}
+
+
+/* Compact unfolded portrait keeps the stack but preserves model room. */
+@media
+  (min-width: 501px)
+  and (max-width: 699px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-medium-portrait-gap:
+      clamp(
+        12px,
+        1.9svh,
+        18px
+      );
+
+    grid-template-rows:
+      clamp(
+        220px,
+        32svh,
+        320px
+      )
+      auto !important;
+  }
+
+
+  .aboutList {
+    max-width:
+      640px !important;
+  }
+}

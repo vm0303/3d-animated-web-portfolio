@@ -1,0 +1,180 @@
+/*
+ * Portfolio unfolded foldable portrait V1
+ *
+ * Required composition:
+ *
+ *   IMAGE
+ *     ↓
+ *   TITLE
+ *     ↓
+ *   TEXT
+ *     ↓
+ *   BUTTON
+ *
+ * Unfolded/inner portrait uses the larger display without changing the
+ * approved portrait hierarchy. Candidate-only until visual approval.
+ */
+
+@media (orientation: portrait) and (min-width: 501px) {
+  .pSlideContent {
+    --portfolio-unfolded-portrait-gap:
+      clamp(
+        28px,
+        3.6svh,
+        48px
+      );
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    align-content: center;
+    justify-items: center;
+
+    gap: var(--portfolio-unfolded-portrait-gap);
+
+    padding-inline:
+      clamp(
+        40px,
+        7vw,
+        84px
+      );
+
+    padding-block:
+      clamp(
+        28px,
+        4svh,
+        56px
+      )
+      clamp(
+        64px,
+        7svh,
+        92px
+      );
+  }
+
+  .pImg {
+    width:
+      min(
+        74vw,
+        620px
+      );
+
+    max-height:
+      min(
+        31svh,
+        340px
+      );
+
+    justify-self: center;
+
+    border-radius:
+      clamp(
+        16px,
+        2.2vw,
+        22px
+      );
+  }
+
+  .pImg img {
+    width: 100%;
+    height: 100%;
+
+    max-height:
+      min(
+        31svh,
+        340px
+      );
+
+    object-fit: cover;
+  }
+
+  .pText {
+    width:
+      min(
+        80vw,
+        780px
+      );
+
+    align-items: center;
+    gap: var(--portfolio-unfolded-portrait-gap);
+
+    min-width: 0;
+
+    text-align: center;
+  }
+
+  .pText h1 {
+    max-width: 100%;
+
+    margin: 0;
+
+    white-space: nowrap;
+
+    font-size:
+      clamp(
+        34px,
+        5vw,
+        52px
+      );
+
+    line-height: 1.05;
+  }
+
+  .pText p {
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0;
+
+    text-align: left;
+
+    font-size:
+      clamp(
+        15px,
+        2vw,
+        20px
+      );
+
+    line-height: 1.4;
+  }
+
+  .pText a {
+    align-self: center;
+    margin: 0;
+  }
+
+  .pText button {
+    padding:
+      clamp(
+        11px,
+        1.5svh,
+        15px
+      )
+      clamp(
+        16px,
+        2.2vw,
+        22px
+      );
+
+    font-size:
+      clamp(
+        14px,
+        1.8vw,
+        18px
+      );
+  }
+
+  .pDots {
+    bottom:
+      clamp(
+        16px,
+        2.2svh,
+        26px
+      );
+  }
+
+  /* Unfolded foldables use swipe/drag + dots, not arrow controls. */
+  .pArrow {
+    display: none;
+  }
+}

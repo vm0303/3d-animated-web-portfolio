@@ -214,6 +214,7 @@ const CarouselModelSlot = ({
         >
             <NormalizedModel
                 item={item}
+
                 onReady={
                     onModelReady
                 }

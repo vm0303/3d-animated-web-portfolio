@@ -1,0 +1,1364 @@
+/*
+ * ABOUT PHONE PORTRAIT — V11
+ *
+ * Locked mobile order:
+ *   1. centered 3D model
+ *      + centered View screen button for Laptop
+ *   2. centered About Me title
+ *   3. all three About paragraphs, left aligned
+ *
+ * V11 preserves every already-good phone portrait geometry and targets
+ * only the remaining 360x728-class and 500x690-class paragraph layout.
+ *
+ * Instead of shrinking type or hoping the line-breaking algorithm lands
+ * on a specific editorial grouping, V11 uses responsive line-break hooks
+ * for these two known capacity bands. The markup remains one paragraph;
+ * the breaks are hidden everywhere else.
+ *
+ * 375x547 remains the golden compact reference.
+ *
+ * Refinements:
+ * - reduce wrap pressure on narrow/taller phones without hiding copy;
+ * - preserve the requested keyword sequences on 360-class and 402-class
+ *   portrait geometry;
+ * - consume excess bottom slack on spacious 448-class and 500-class phones
+ *   with larger type, larger equal rhythm, and a larger model stage;
+ * - nudge View screen upward slightly toward the Laptop;
+ * - keep all three paragraphs and the proven modal behavior.
+ */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .about {
+    --about-phone-rhythm-gap:
+      clamp(
+        14px,
+        2.3svh,
+        20px
+      );
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+
+    grid-template-rows:
+      clamp(
+        225px,
+        43svh,
+        380px
+      )
+      minmax(0, 1fr) !important;
+
+    row-gap:
+      var(
+        --about-phone-rhythm-gap
+      ) !important;
+
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+
+  .aSection {
+    width: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+
+
+  /* ======================================================
+     1. MODEL GROUP
+     ====================================================== */
+
+  .aSection.right {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    position: relative !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    /*
+     * Internal Laptop-model -> View screen spacing.
+     * This is intentionally tighter than the major page rhythm.
+     */
+    gap:
+      clamp(
+        4px,
+        0.7svh,
+        6px
+      ) !important;
+
+    padding:
+      clamp(
+        2px,
+        0.7svh,
+        6px
+      )
+      0
+      0 !important;
+  }
+
+
+  .aboutModelContainer {
+    flex: 1 1 0 !important;
+
+    width: 100% !important;
+    height: auto !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+
+
+  .aboutCanvasShell {
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+
+
+  .aboutCanvasShell canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+
+  /*
+   * Laptop button remains part of the model group.
+   * It stays centered and in normal flow.
+   */
+  .aboutScreenTrigger {
+    position: relative !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    flex: 0 0 auto !important;
+    align-self: center !important;
+
+    transform: none !important;
+
+    margin:
+      0
+      auto !important;
+
+    gap: 5px !important;
+
+    padding:
+      clamp(
+        6px,
+        1.15svh,
+        8px
+      )
+      clamp(
+        10px,
+        3vw,
+        13px
+      ) !important;
+
+    font-size:
+      clamp(
+        11px,
+        3.25vw,
+        13px
+      ) !important;
+
+    line-height: 1 !important;
+  }
+
+
+  .aboutScreenTrigger:hover {
+    transform:
+      translateY(-2px) !important;
+  }
+
+
+  /* ======================================================
+     2. TITLE + 3. COMPLETE COPY
+     ====================================================== */
+
+  .aSection.left {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+
+    /*
+     * Same rhythm value as model -> title.
+     * This creates title -> paragraph 1 spacing.
+     */
+    gap:
+      var(
+        --about-phone-rhythm-gap
+      ) !important;
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding:
+      0
+      0
+      clamp(
+        4px,
+        0.8svh,
+        8px
+      ) !important;
+
+    overflow: hidden !important;
+  }
+
+
+  .aTitle {
+    flex: 0 0 auto !important;
+
+    align-self: center !important;
+
+    margin: 0 !important;
+
+    font-size:
+      clamp(
+        28px,
+        min(
+          8.3vw,
+          5.2svh
+        ),
+        36px
+      ) !important;
+
+    line-height: 1 !important;
+
+    text-align: center !important;
+  }
+
+
+  .aboutList {
+    width: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    /*
+     * V5 preserves the V4 rule: paragraph 1 -> 2 and paragraph 2 -> 3 use
+     * the EXACT SAME rhythm as model -> title and title -> copy.
+     */
+    gap:
+      var(
+        --about-phone-rhythm-gap
+      ) !important;
+  }
+
+
+  .aboutList p {
+    margin: 0 !important;
+
+    font-size:
+      clamp(
+        10.5px,
+        min(
+          3.35vw,
+          2.05svh
+        ),
+        13.5px
+      ) !important;
+
+    line-height: 1.4 !important;
+
+    text-align: left !important;
+
+    text-wrap: pretty;
+
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+  }
+
+
+  .aboutKeywordText {
+    padding:
+      0.01em
+      0.08em !important;
+  }
+
+
+  /* ======================================================
+     PHONE LAPTOP SCREEN MODAL
+     Proven behavior — unchanged.
+     ====================================================== */
+
+  .laptopScreenModal {
+    padding:
+      max(
+        6px,
+        env(safe-area-inset-top)
+      )
+      max(
+        6px,
+        env(safe-area-inset-right)
+      )
+      max(
+        6px,
+        env(safe-area-inset-bottom)
+      )
+      max(
+        6px,
+        env(safe-area-inset-left)
+      ) !important;
+  }
+
+
+  .laptopScreenDialog {
+    width: 100% !important;
+    height: auto !important;
+
+    max-height:
+      calc(
+        100dvh - 12px
+      ) !important;
+
+    border:
+      1px solid
+      rgba(
+        28,
+        181,
+        224,
+        0.52
+      ) !important;
+
+    border-radius:
+      clamp(
+        10px,
+        3vw,
+        16px
+      ) !important;
+  }
+
+
+  .laptopScreenToolbar {
+    min-height: 40px !important;
+
+    padding:
+      5px
+      6px
+      5px
+      11px !important;
+  }
+
+
+  .laptopScreenTitle {
+    font-size:
+      clamp(
+        12px,
+        3.45vw,
+        14px
+      ) !important;
+  }
+
+
+  .laptopScreenClose {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+
+  .laptopScreenCloseIcon {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+
+  .laptopScreenCloseIcon::before,
+  .laptopScreenCloseIcon::after {
+    width: 15px !important;
+  }
+
+
+  .laptopScreenViewport {
+    flex: 0 0 auto !important;
+
+    padding:
+      clamp(
+        4px,
+        1.25vw,
+        7px
+      ) !important;
+  }
+
+
+  .laptopScreenImage {
+    width: 100% !important;
+    height: auto !important;
+
+    max-width: 100% !important;
+    max-height:
+      calc(
+        100dvh - 58px
+      ) !important;
+
+    object-fit: contain !important;
+
+    border-radius:
+      clamp(
+        5px,
+        1.5vw,
+        7px
+      ) !important;
+  }
+}
+
+
+/*
+ * WIDE + TALL PHONE PORTRAIT
+ *
+ * The 500×960-class geometry has enough room to use a visibly larger
+ * text tier. Do not leave it looking like an enlarged small phone.
+ */
+@media
+  (min-width: 480px)
+  and (max-width: 500px)
+  and (min-height: 900px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap: 22px;
+  }
+
+
+  .aTitle {
+    font-size: 40px !important;
+  }
+
+
+  .aboutList p {
+    font-size: 15.5px !important;
+    line-height: 1.45 !important;
+  }
+
+
+  .aboutScreenTrigger {
+    font-size: 14px !important;
+
+    padding:
+      8px
+      14px !important;
+  }
+}
+
+
+
+/* =========================================================
+   V6 PHONE-PORTRAIT CAPACITY REFINEMENTS
+   ========================================================= */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  /*
+   * A small visual nudge only. The button remains part of the
+   * Laptop model group, but sits closer to the visible Laptop.
+   */
+  .aboutScreenTrigger {
+    transform:
+      translateY(-8px) !important;
+  }
+
+  .aboutScreenTrigger:hover {
+    transform:
+      translateY(-10px) !important;
+  }
+
+  .aboutKeywordText {
+    padding-inline:
+      0.04em !important;
+  }
+}
+
+
+/*
+ * NARROW + TALL PHONE
+ *
+ * Increase usable line width slightly and hold body type close to the
+ * golden 375x547 reading density. The extra height is returned as equal
+ * vertical rhythm and a slightly larger model stage.
+ */
+@media
+  (max-width: 370px)
+  and (min-height: 680px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      clamp(
+        20px,
+        3svh,
+        23px
+      );
+
+    width:
+      calc(
+        100% + 12px
+      ) !important;
+
+    margin-inline:
+      -6px !important;
+
+    grid-template-rows:
+      clamp(
+        230px,
+        44svh,
+        330px
+      )
+      minmax(0, 1fr) !important;
+  }
+
+  .aTitle {
+    font-size:
+      30px !important;
+  }
+
+  .aboutList p {
+    font-size:
+      10.5px !important;
+
+    line-height:
+      1.42 !important;
+  }
+}
+
+
+/*
+ * MID-WIDTH PHONE
+ *
+ * Keep keyword runs together instead of letting the body font grow too
+ * aggressively with width. 402x714 should wrap like the golden viewport,
+ * with "modern front-end development, and cloud & automation," together.
+ */
+@media
+  (min-width: 391px)
+  and (max-width: 420px)
+  and (min-height: 650px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      20px;
+
+    grid-template-rows:
+      clamp(
+        235px,
+        44svh,
+        335px
+      )
+      minmax(0, 1fr) !important;
+  }
+
+  .aTitle {
+    font-size:
+      34px !important;
+  }
+
+  .aboutList p {
+    font-size:
+      12.5px !important;
+
+    line-height:
+      1.42 !important;
+  }
+}
+
+
+/*
+ * SPACIOUS STANDARD-WIDTH PHONE
+ *
+ * 448x843 has real vertical capacity. Use it for a larger model, larger
+ * readable copy, and larger EQUAL rhythm rather than leaving a large empty
+ * tail after paragraph 3.
+ */
+@media
+  (min-width: 430px)
+  and (max-width: 479px)
+  and (min-height: 780px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      clamp(
+        24px,
+        3.1svh,
+        27px
+      );
+
+    grid-template-rows:
+      clamp(
+        350px,
+        46svh,
+        400px
+      )
+      minmax(0, 1fr) !important;
+  }
+
+  .aTitle {
+    font-size:
+      38px !important;
+  }
+
+  .aboutList p {
+    font-size:
+      14.5px !important;
+
+    line-height:
+      1.44 !important;
+  }
+}
+
+
+/*
+ * WIDE PHONE — NORMAL HEIGHT
+ *
+ * Covers wide-phone portrait geometries such as the observed 500x690.
+ * Use the available width and height instead of leaving a large blank area
+ * beneath paragraph 3.
+ */
+@media
+  (min-width: 480px)
+  and (max-width: 500px)
+  and (min-height: 650px)
+  and (max-height: 899px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      20px;
+
+    grid-template-rows:
+      clamp(
+        295px,
+        45svh,
+        360px
+      )
+      minmax(0, 1fr) !important;
+  }
+
+  .aTitle {
+    font-size:
+      38px !important;
+  }
+
+  .aboutList p {
+    font-size:
+      14.5px !important;
+
+    line-height:
+      1.44 !important;
+  }
+
+  .aboutScreenTrigger {
+    font-size:
+      13.5px !important;
+  }
+}
+
+
+/*
+ * WIDE + TALL PHONE
+ *
+ * Supersedes the earlier V5 wide/tall tier. 500x960 gets a genuinely
+ * larger composition rather than merely inheriting small-phone density.
+ */
+@media
+  (min-width: 480px)
+  and (max-width: 500px)
+  and (min-height: 900px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      28px;
+
+    grid-template-rows:
+      clamp(
+        390px,
+        44svh,
+        420px
+      )
+      minmax(0, 1fr) !important;
+  }
+
+  .aTitle {
+    font-size:
+      42px !important;
+  }
+
+  .aboutList p {
+    font-size:
+      16.5px !important;
+
+    line-height:
+      1.46 !important;
+  }
+
+  .aboutScreenTrigger {
+    font-size:
+      14px !important;
+
+    padding:
+      8px
+      14px !important;
+  }
+}
+
+
+
+/* =========================================================
+   V7 — FAILING-RANGE-ONLY CORRECTIONS
+   ========================================================= */
+
+/*
+ * NARROW + TALL (~360x728)
+ *
+ * V6 had three issues here:
+ * 1. Backend + Frontend keyword run split across lines.
+ * 2. "series." became a one-token final line.
+ * 3. ~97px of unused section height remained below paragraph 3.
+ *
+ * Keep all V6 PASS ranges untouched. This tier:
+ * - gives copy a little more real line width;
+ * - keeps Backend + Frontend + "and" as one atomic readable run;
+ * - trims body size only slightly;
+ * - spends the recovered vertical capacity on the 3D stage and
+ *   the same equal rhythm used by the rest of the phone layout.
+ */
+@media
+  (max-width: 370px)
+  and (min-height: 700px)
+  and (max-height: 760px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      30px;
+
+    width:
+      calc(
+        100% + 24px
+      ) !important;
+
+    margin-inline:
+      -12px !important;
+
+    grid-template-rows:
+      clamp(
+        345px,
+        48svh,
+        355px
+      )
+      minmax(0, 1fr) !important;
+  }
+
+
+  .aboutKeywordRunBackendFrontend {
+    white-space:
+      nowrap;
+  }
+
+
+  .aboutList p {
+    font-size:
+      10px !important;
+
+    line-height:
+      1.42 !important;
+  }
+
+
+  .aboutKeyword {
+    font-weight:
+      650 !important;
+  }
+
+
+  .aboutKeywordText {
+    padding-inline:
+      0 !important;
+  }
+}
+
+
+/*
+ * WIDE + COMPACT-HEIGHT (~500x690)
+ *
+ * V6 was only ~9px too tall, and the final "series." wrapped by itself.
+ * The problem is horizontal capacity, not a need for smaller type.
+ *
+ * Use more of the physical viewport width while preserving the V6 font,
+ * model height, equal rhythm, and modal behavior. The extra line width
+ * pulls the final token back up and reduces total paragraph height enough
+ * to keep the entire About composition inside the section.
+ */
+@media
+  (min-width: 480px)
+  and (max-width: 500px)
+  and (min-height: 650px)
+  and (max-height: 710px)
+  and (orientation: portrait) {
+
+  .about {
+    width:
+      calc(
+        100% + 36px
+      ) !important;
+
+    margin-inline:
+      -18px !important;
+  }
+}
+
+
+
+/* =========================================================
+   V8 — INTRINSIC COPY / FLEXIBLE MODEL CORRECTIONS
+   ========================================================= */
+
+/*
+ * NARROW + TALL (~360x728)
+ *
+ * Do NOT force Backend + Frontend into a nowrap run.
+ * That created horizontal overflow in V7.
+ *
+ * Instead:
+ * - restore a real side gutter;
+ * - restore readable 10.5px body type;
+ * - let the complete text block take its natural height;
+ * - let the model row consume the remaining height.
+ *
+ * The result should preserve every word while using the extra vertical
+ * capacity for the 3D stage instead of leaving dead space at the bottom.
+ */
+@media
+  (max-width: 370px)
+  and (min-height: 700px)
+  and (max-height: 760px)
+  and (orientation: portrait) {
+
+  .about {
+    --about-phone-rhythm-gap:
+      clamp(
+        20px,
+        3svh,
+        23px
+      );
+
+    width:
+      calc(
+        100% + 12px
+      ) !important;
+
+    margin-inline:
+      -6px !important;
+
+    grid-template-rows:
+      minmax(
+        240px,
+        1fr
+      )
+      auto !important;
+  }
+
+
+  .aboutKeywordRunBackendFrontend {
+    white-space:
+      normal !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      10.5px !important;
+
+    line-height:
+      1.42 !important;
+  }
+
+
+  .aboutKeyword {
+    font-weight:
+      700 !important;
+  }
+
+
+  .aboutKeywordText {
+    padding-inline:
+      0.04em !important;
+  }
+}
+
+
+/*
+ * WIDE + COMPACT-HEIGHT (~500x690)
+ *
+ * V7 let paragraph 3 escape the section because the text row was still
+ * constrained to "whatever was left" after a fixed-height model row.
+ *
+ * V8 reverses that responsibility:
+ * - complete copy gets its intrinsic height;
+ * - model gets the remaining height;
+ * - a real edge gutter is retained;
+ * - paragraph 3 balances its lines so "series." cannot become an orphan.
+ */
+@media
+  (min-width: 480px)
+  and (max-width: 500px)
+  and (min-height: 650px)
+  and (max-height: 710px)
+  and (orientation: portrait) {
+
+  .about {
+    width:
+      calc(
+        100% + 20px
+      ) !important;
+
+    margin-inline:
+      -10px !important;
+
+    grid-template-rows:
+      minmax(
+        240px,
+        1fr
+      )
+      auto !important;
+  }
+
+
+  .aboutList > p:nth-child(3) {
+    text-wrap:
+      balance !important;
+  }
+}
+
+
+
+/* =========================================================
+   V9 — NARROW/TALL TYPOGRAPHIC MEASURE
+   ========================================================= */
+
+/*
+ * 360x728-class geometry
+ *
+ * The section lives inside the global 16px .container gutter.
+ * For this one narrow/tall capacity range, reclaim that viewport
+ * width deliberately, then put back a small controlled 2px inner
+ * padding. This gives the copy a 356px text measure at 360px wide:
+ *
+ *   360px viewport
+ *   - 2px left padding
+ *   - 2px right padding
+ *   = 356px usable line width
+ *
+ * That extra measure lets the browser wrap the technical keyword
+ * sequence cleanly at a readable 11px instead of shrinking type.
+ */
+@media
+  (max-width: 370px)
+  and (min-height: 700px)
+  and (max-height: 760px)
+  and (orientation: portrait) {
+
+  .about {
+    width:
+      calc(
+        100% + 32px
+      ) !important;
+
+    margin-inline:
+      -16px !important;
+
+    padding-inline:
+      2px !important;
+
+    grid-template-rows:
+      minmax(
+        240px,
+        1fr
+      )
+      auto !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      11px !important;
+
+    line-height:
+      1.42 !important;
+  }
+
+
+  /*
+   * Balance only the paragraphs where line grouping matters.
+   * Paragraph 2 keeps normal "pretty" wrapping.
+   */
+  .aboutList > p:nth-child(1),
+  .aboutList > p:nth-child(3) {
+    text-wrap:
+      balance !important;
+  }
+
+
+  .aboutKeywordRunBackendFrontend {
+    white-space:
+      normal !important;
+  }
+
+
+  .aboutKeyword {
+    font-weight:
+      700 !important;
+  }
+
+
+  .aboutKeywordText {
+    padding-inline:
+      0.04em !important;
+  }
+}
+
+
+
+/* =========================================================
+   V10 — RESTORE MOBILE TEXT GUTTERS
+   ========================================================= */
+
+/*
+ * NARROW + TALL (~360x728)
+ *
+ * Earlier candidates reclaimed nearly the entire viewport width, which
+ * made the paragraph look visually off-center. Restore the normal container
+ * measure instead. The copy now has the same left/right visual gutter as
+ * the golden 375x547 composition.
+ *
+ * The original "Java and Spring-based systems" label is too long to share
+ * one readable 360px line with "modern front-end development". Rather than
+ * shrinking the whole paragraph, use the equivalent compact mobile label
+ * "Java/Spring systems" and keep the two interactive keyword buttons in
+ * one atomic inline run.
+ */
+@media
+  (max-width: 370px)
+  and (min-height: 700px)
+  and (max-height: 760px)
+  and (orientation: portrait) {
+
+  .about {
+    width: 100% !important;
+
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
+
+    grid-template-rows:
+      minmax(
+        240px,
+        1fr
+      )
+      auto !important;
+  }
+
+
+  .aSection.left {
+    padding-inline:
+      0 !important;
+  }
+
+
+  .aboutBackendLabelFull {
+    display: none !important;
+  }
+
+
+  .aboutBackendLabelCompact {
+    display: inline !important;
+  }
+
+
+  .aboutKeywordRunBackendFrontend {
+    white-space:
+      nowrap !important;
+
+    font-size:
+      10.5px !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      11px !important;
+
+    line-height:
+      1.42 !important;
+  }
+
+
+  .aboutList > p:nth-child(1),
+  .aboutList > p:nth-child(3) {
+    text-wrap:
+      balance !important;
+  }
+
+
+  .aboutKeywordText {
+    padding-inline:
+      0.03em !important;
+  }
+}
+
+
+/*
+ * WIDE + COMPACT HEIGHT (~500x690)
+ *
+ * V9 technically passed because About had been widened beyond its parent
+ * gutter. Visually, that made the text hug the screen edges. Restore the
+ * normal container width so the paragraph is genuinely centered.
+ *
+ * The text row remains intrinsic-height, so any extra wrapping reduces the
+ * flexible model row rather than pushing paragraph 3 outside About.
+ */
+@media
+  (min-width: 480px)
+  and (max-width: 500px)
+  and (min-height: 650px)
+  and (max-height: 710px)
+  and (orientation: portrait) {
+
+  .about {
+    width: 100% !important;
+
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
+
+    grid-template-rows:
+      minmax(
+        240px,
+        1fr
+      )
+      auto !important;
+  }
+
+
+  .aSection.left {
+    padding-inline:
+      0 !important;
+  }
+
+
+  .aboutList > p:nth-child(3) {
+    text-wrap:
+      balance !important;
+  }
+}
+
+
+
+/* =========================================================
+   V11 — EDITORIAL MOBILE LINE COMPOSITION
+   ========================================================= */
+
+/*
+ * 360x728-class
+ *
+ * Keep readable 11px body type and use a centered 8px visual gutter.
+ * The first paragraph is deliberately composed as:
+ *
+ * I’m a ... turning complex
+ * problems ... years, I’ve
+ * worked across Java/Spring systems, modern front-end development,
+ * and cloud & automation, building applications and tools that are
+ * designed to scale and stay dependable.
+ */
+@media
+  (max-width: 370px)
+  and (min-height: 700px)
+  and (max-height: 760px)
+  and (orientation: portrait) {
+
+  .about {
+    width:
+      calc(
+        100% + 16px
+      ) !important;
+
+    margin-inline:
+      -8px !important;
+
+    padding-inline:
+      0 !important;
+
+    grid-template-rows:
+      minmax(
+        240px,
+        1fr
+      )
+      auto !important;
+  }
+
+
+  .aSection.left {
+    padding-inline:
+      0 !important;
+  }
+
+
+  .aboutBackendLabelFull {
+    display:
+      none !important;
+  }
+
+
+  .aboutBackendLabelCompact {
+    display:
+      inline !important;
+  }
+
+
+  .aboutKeywordRunBackendFrontend {
+    white-space:
+      normal !important;
+
+    font-size:
+      inherit !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      11px !important;
+
+    line-height:
+      1.42 !important;
+
+    text-wrap:
+      wrap !important;
+  }
+
+
+  .aboutKeywordText {
+    padding-inline:
+      0 !important;
+  }
+
+
+  .aboutBreakTargetAfterComplex,
+  .aboutBreakTargetAfterYears,
+  .aboutBreak360AfterFrontend,
+  .aboutBreak360AfterAre {
+    display:
+      block !important;
+  }
+}
+
+
+/*
+ * 500x690-class
+ *
+ * Keep the large 14.5px body type, but add 16px padding on BOTH sides
+ * of the text column. This centers the paragraph visually and gives it
+ * the editorial measure requested for this compact-height wide phone.
+ *
+ * The first paragraph is deliberately composed as:
+ *
+ * I’m a ... turning complex
+ * problems ... years, I’ve
+ * worked across Java/Spring systems, modern
+ * front-end development, and cloud & automation, building
+ * applications and tools that are designed to
+ * scale and stay dependable.
+ *
+ * Only this band breaks "modern front-end development" after "modern".
+ */
+@media
+  (min-width: 480px)
+  and (max-width: 500px)
+  and (min-height: 650px)
+  and (max-height: 710px)
+  and (orientation: portrait) {
+
+  .about {
+    width:
+      100% !important;
+
+    margin-inline:
+      0 !important;
+
+    padding-inline:
+      0 !important;
+
+    grid-template-rows:
+      minmax(
+        220px,
+        1fr
+      )
+      auto !important;
+  }
+
+
+  .aSection.left {
+    padding-inline:
+      16px !important;
+  }
+
+
+  .aboutBackendLabelFull {
+    display:
+      none !important;
+  }
+
+
+  .aboutBackendLabelCompact {
+    display:
+      inline !important;
+  }
+
+
+  .aboutKeywordRunBackendFrontend {
+    white-space:
+      normal !important;
+  }
+
+
+  .aboutList p {
+    font-size:
+      14.5px !important;
+
+    line-height:
+      1.44 !important;
+
+    text-wrap:
+      wrap !important;
+  }
+
+
+  .aboutBreakTargetAfterComplex,
+  .aboutBreakTargetAfterYears,
+  .aboutBreak500Frontend,
+  .aboutBreak500AfterBuilding,
+  .aboutBreak500BeforeScale {
+    display:
+      block !important;
+  }
+}
