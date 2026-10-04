@@ -1,7 +1,0 @@
-/* Apply after medium portrait V2. Stage uses this fixed-frame edge for its
-   camera fit; individual model visualScale values remain unchanged. */
-@media (min-width: 501px) and (max-width: 1100px) and (orientation: portrait) {
-  .about {
-    --about-stage-frame-edge: 1.9;
-  }
-}
