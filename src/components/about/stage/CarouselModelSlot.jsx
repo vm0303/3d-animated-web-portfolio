@@ -65,6 +65,9 @@ const CarouselModelSlot = ({
     const completedRef =
         useRef(false);
 
+    const cameraFacingAppliedRef =
+        useRef(false);
+
     const onCompleteRef =
         useRef(onComplete);
 
@@ -89,7 +92,13 @@ const CarouselModelSlot = ({
 
         completedRef.current =
             false;
-    }, [animationId]);
+
+        cameraFacingAppliedRef.current =
+            false;
+    }, [
+        animationId,
+        item.id,
+    ]);
 
 
     useFrame(
@@ -169,6 +178,31 @@ const CarouselModelSlot = ({
             group.position.copy(
                 right
             );
+
+
+            /*
+             * A model can opt into one-time front alignment when it enters
+             * the shared carousel. OrbitControls keeps rotating the camera
+             * continuously across models, so late items can otherwise enter
+             * while the camera happens to be behind them.
+             *
+             * Rotate only this slot to the current camera azimuth. The camera
+             * itself is left untouched, so the accepted carousel motion and
+             * every other model keep their existing behavior.
+             */
+            if (
+                item.faceCameraOnEnter &&
+                !cameraFacingAppliedRef.current
+            ) {
+                group.rotation.y =
+                    Math.atan2(
+                        camera.position.x,
+                        camera.position.z
+                    );
+
+                cameraFacingAppliedRef.current =
+                    true;
+            }
 
 
             /*
