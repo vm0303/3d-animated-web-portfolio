@@ -84,7 +84,7 @@ const CarouselModelSlot = ({
 
 
     /*
-     * Reset motion whenever a new
+     * Reset slide motion whenever a new
      * transition begins.
      */
     useLayoutEffect(() => {
@@ -92,13 +92,18 @@ const CarouselModelSlot = ({
 
         completedRef.current =
             false;
+    }, [animationId]);
 
+
+    /*
+     * Front alignment belongs to the model entry, not the slide animation.
+     * Keeping this separate prevents a second alignment when animationId
+     * changes back to null after the incoming slot becomes the stable slot.
+     */
+    useLayoutEffect(() => {
         cameraFacingAppliedRef.current =
             false;
-    }, [
-        animationId,
-        item.id,
-    ]);
+    }, [item.id]);
 
 
     useFrame(
