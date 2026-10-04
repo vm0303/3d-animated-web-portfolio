@@ -146,6 +146,7 @@ const TOUCH_MOTION_QUERY =
   "(hover: none), (pointer: coarse)"
 
 const ARROW_IDLE_MS = 5000
+const POINTER_MOVE_REARM_MS = 250
 
 
 const ArrowIcon = ({ direction }) => (
@@ -378,12 +379,13 @@ const Portfolio = () => {
 
 
   /*
-   * Laptop/desktop arrows are activity-driven.
+   * Laptop/desktop arrows use a fixed visibility window.
    *
-   * - scrolling into Portfolio fades them in
-   * - pointer/keyboard/wheel activity restarts the five-second idle timer
-   * - after five idle seconds, CSS fades them back out
-   * - fade-in and fade-out use the same duration
+   * - scrolling into Portfolio starts one five-second window
+   * - the first pointer movement after a brief pointer pause can reveal them
+   * - ordinary pointer movement never extends an already-running window
+   * - intentional input (pointer down, wheel, focus, keyboard) may restart it
+   * - after five seconds, CSS fades the arrows out on schedule
    */
   const [
     controlsActive,
@@ -392,6 +394,12 @@ const Portfolio = () => {
 
   const controlsTimerRef =
     useRef(null)
+
+  const pointerMoveRearmTimerRef =
+    useRef(null)
+
+  const pointerMoveArmedRef =
+    useRef(true)
 
   const clearControlsTimer =
     useCallback(() => {
@@ -404,43 +412,100 @@ const Portfolio = () => {
       }
     }, [])
 
-  const activateControls =
+  const clearPointerMoveRearmTimer =
     useCallback(() => {
-      setControlsActive(true)
-      clearControlsTimer()
+      if (pointerMoveRearmTimerRef.current) {
+        window.clearTimeout(
+          pointerMoveRearmTimerRef.current
+        )
 
-      controlsTimerRef.current =
+        pointerMoveRearmTimerRef.current = null
+      }
+    }, [])
+
+  const showControlsForWindow =
+    useCallback(
+      (restartTimer = false) => {
+        if (restartTimer) {
+          clearControlsTimer()
+        } else if (controlsTimerRef.current) {
+          return
+        }
+
+        setControlsActive(true)
+
+        controlsTimerRef.current =
+          window.setTimeout(
+            () => {
+              setControlsActive(false)
+              controlsTimerRef.current = null
+            },
+            ARROW_IDLE_MS
+          )
+      },
+      [
+        clearControlsTimer,
+      ]
+    )
+
+  const restartControlsWindow =
+    useCallback(() => {
+      showControlsForWindow(true)
+    }, [showControlsForWindow])
+
+  const handlePointerMove =
+    useCallback(() => {
+      if (pointerMoveArmedRef.current) {
+        pointerMoveArmedRef.current = false
+        showControlsForWindow(false)
+      }
+
+      clearPointerMoveRearmTimer()
+
+      pointerMoveRearmTimerRef.current =
         window.setTimeout(
           () => {
-            setControlsActive(false)
-            controlsTimerRef.current = null
+            pointerMoveArmedRef.current = true
+            pointerMoveRearmTimerRef.current = null
           },
-          ARROW_IDLE_MS
+          POINTER_MOVE_REARM_MS
         )
     }, [
-      clearControlsTimer,
+      clearPointerMoveRearmTimer,
+      showControlsForWindow,
     ])
+
+  const handlePointerLeave =
+    useCallback(() => {
+      clearPointerMoveRearmTimer()
+      pointerMoveArmedRef.current = true
+    }, [clearPointerMoveRearmTimer])
 
   useEffect(() => {
     if (portfolioControlsInView) {
-      activateControls()
+      restartControlsWindow()
       return
     }
 
     clearControlsTimer()
+    clearPointerMoveRearmTimer()
+    pointerMoveArmedRef.current = true
     setControlsActive(false)
   }, [
     portfolioControlsInView,
-    activateControls,
+    restartControlsWindow,
     clearControlsTimer,
+    clearPointerMoveRearmTimer,
   ])
 
   useEffect(() => {
     return () => {
       clearControlsTimer()
+      clearPointerMoveRearmTimer()
     }
   }, [
     clearControlsTimer,
+    clearPointerMoveRearmTimer,
   ])
 
 
@@ -511,7 +576,7 @@ const Portfolio = () => {
 
 
   const handleKeyDown = (event) => {
-    activateControls()
+    restartControlsWindow()
 
     if (event.key === "ArrowLeft") {
       event.preventDefault()
@@ -541,10 +606,11 @@ const Portfolio = () => {
       }
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      onPointerMove={activateControls}
-      onPointerDown={activateControls}
-      onWheel={activateControls}
-      onFocus={activateControls}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      onPointerDown={restartControlsWindow}
+      onWheel={restartControlsWindow}
+      onFocus={restartControlsWindow}
       aria-label="Portfolio projects"
     >
 
