@@ -10,7 +10,7 @@ import {
 const ViteModel = (props) => {
     const { scene } =
         useGLTF(
-            "./about/vite/vite.glb"
+            "./about/vite.glb"
         );
 
     const model =
