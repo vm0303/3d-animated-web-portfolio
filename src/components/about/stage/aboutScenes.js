@@ -6,6 +6,8 @@ import GearsModel from "../gears/GearsModel";
 import JavaModel from "../java/JavaModel";
 import SpringModel from "../spring/SpringModel";
 import ReactModel from "../react/ReactModel";
+import ViteModel from "../vite/ViteModel";
+import JavaScriptModel from "../javascript/JavaScriptModel";
 import CloudModel from "../cloud/CloudModel";
 
 import DumbbellModel from "../dumbbell/DumbbellModel";
@@ -68,11 +70,38 @@ export const ABOUT_SCENES = {
   frontend: {
     id: "frontend",
 
+    /*
+     * React first, then Vite and JavaScript.
+     * Uses the same carousel behavior
+     * as Backend, Cloud, and Hobbies.
+     */
+    interval: 5000,
+
     items: [
       {
         id: "react",
         Model: ReactModel,
         assetPath: "./about/react.glb",
+
+        stageIntensity: 0.50,
+
+        visualScale: 1.3,
+      },
+
+      {
+        id: "vite",
+        Model: ViteModel,
+        assetPath: "./about/vite.glb",
+
+        stageIntensity: 0.50,
+
+        visualScale: 1.3,
+      },
+
+      {
+        id: "javascript",
+        Model: JavaScriptModel,
+        assetPath: "./about/js-logo.glb",
 
         stageIntensity: 0.50,
 
