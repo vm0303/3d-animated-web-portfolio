@@ -10,7 +10,7 @@ import {
 const JavaScriptModel = (props) => {
     const { scene } =
         useGLTF(
-            "./about/javascript/js-logo.glb"
+            "./about/js-logo.glb"
         );
 
     const model =
