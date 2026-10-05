@@ -25,7 +25,9 @@ const JavaScriptModel = (props) => {
             {...props}
             dispose={null}
         >
-            <primitive object={model} />
+            <group rotation={[0, Math.PI, 0]}>
+                <primitive object={model} />
+            </group>
         </group>
     );
 };
