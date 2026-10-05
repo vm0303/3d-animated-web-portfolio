@@ -61,24 +61,12 @@ Source: https://sketchfab.com/3d-models/cc0-clapperboard-b541acf3a4f040f98b1bbf4
 Creator: https://sketchfab.com/plaggy  
 License: CC0
 
-## Logo-Origin Credits
-
-The following models are based on established technology logos. These credits refer to the logo or trademark origin, not necessarily to the author of the 3D mesh used in this project.
+## Logo-Origin Credit
 
 ### Spring
 
 Based on the **Spring** logo and branding. Spring is a trademark of **Broadcom Inc. and/or its subsidiaries**.  
 Trademark information: https://spring.io/trademarks/
-
-### Vite
-
-Based on the **Vite** logo, designed by **Evan You**.  
-Background: https://github.com/vitejs/vite/discussions/1681
-
-### JavaScript
-
-Based on the unofficial **JavaScript** logo by **Chris Williams**.  
-Reference: https://commons.wikimedia.org/wiki/File:JavaScript.svg
 
 ---
 
