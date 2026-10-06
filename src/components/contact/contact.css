@@ -12,6 +12,7 @@
     align-items: center;
     justify-content: center;
 }
+
 form{
     display: flex;
     flex-direction: column;
@@ -30,9 +31,16 @@ input, textarea{
     flex-direction: column;
     gap: 10px;
 }
+
 label{
    font-size: 14px;
 }
+
+.requiredMark{
+    color: #ff4d4f;
+    margin-left: 4px;
+}
+
 .formButton{
     background-color: #3898f8;
     color: white;
@@ -41,5 +49,22 @@ label{
     border-radius: 10px;
     cursor: pointer;
     font-size: 14px;
-    
+}
+
+.formButton:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.formStatus{
+    min-height: 20px;
+    font-size: 14px;
+}
+
+.successMessage{
+    color: #4ade80;
+}
+
+.errorMessage{
+    color: #ff4d4f;
 }
