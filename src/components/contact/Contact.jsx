@@ -1,10 +1,15 @@
 import "./contact.css";
+
 import emailjs from "@emailjs/browser";
+
 import {
+  useEffect,
   useRef,
   useState,
 } from "react";
+
 import {
+  AnimatePresence,
   motion,
   useInView,
 } from "motion/react";
@@ -58,9 +63,41 @@ const Contact = () => {
     );
 
 
+  /*
+   * Keep the success message visible
+   * for six seconds, then allow
+   * AnimatePresence to fade it out.
+   */
+  useEffect(() => {
+    if (!success) {
+      return;
+    }
+
+
+    const timer =
+      window.setTimeout(
+        () => {
+          setSuccess(false);
+        },
+        6000
+      );
+
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [success]);
+
+
   const sendEmail = (e) => {
     e.preventDefault();
 
+
+    /*
+     * Extra protection against
+     * duplicate submissions while
+     * EmailJS is already processing.
+     */
     if (sending) {
       return;
     }
@@ -86,6 +123,10 @@ const Contact = () => {
           setSuccess(true);
           setError(false);
 
+          /*
+           * Clear the form only after
+           * a successful submission.
+           */
           form.current?.reset();
         },
         () => {
@@ -93,25 +134,32 @@ const Contact = () => {
           setSuccess(false);
         }
       )
-      .finally(() => {
-        setSending(false);
-      });
+      .finally(
+        () => {
+          setSending(false);
+        }
+      );
   };
 
 
   return (
     <div className="contact">
+
       <div className="cSection">
+
         <motion.form
           ref={form}
           onSubmit={sendEmail}
+
           variants={listVariants}
+
           animate={
             isInView
               ? "animate"
               : "initial"
           }
         >
+
           <motion.h1
             variants={listVariants}
           >
@@ -125,6 +173,7 @@ const Contact = () => {
           >
             <label htmlFor="name">
               Name
+
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -149,6 +198,7 @@ const Contact = () => {
           >
             <label htmlFor="email">
               Email
+
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -173,6 +223,7 @@ const Contact = () => {
           >
             <label htmlFor="message">
               Message
+
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -192,10 +243,21 @@ const Contact = () => {
 
 
           <motion.button
-            className="formButton"
+            className={
+              `formButton ${
+                sending
+                  ? "sending"
+                  : ""
+              }`
+            }
+
             variants={listVariants}
+
             type="submit"
+
             disabled={sending}
+
+            aria-busy={sending}
           >
             {
               sending
@@ -207,32 +269,87 @@ const Contact = () => {
 
           <div
             className="formStatus"
+
             aria-live="polite"
             aria-atomic="true"
           >
-            {
-              success && (
-                <span className="successMessage">
-                  Your message was sent successfully. I'll get back to you as soon as possible.
-                </span>
-              )
-            }
 
-            {
-              error && (
-                <span className="errorMessage">
-                  Failed to send your message. Please try again later.
-                </span>
-              )
-            }
+            <AnimatePresence>
+              {
+                success && (
+                  <motion.span
+                    className="successMessage"
+
+                    initial={{
+                      opacity: 0,
+                      y: 4,
+                    }}
+
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+
+                    exit={{
+                      opacity: 0,
+                      y: -4,
+                    }}
+
+                    transition={{
+                      duration: 0.4,
+                      ease: "easeOut",
+                    }}
+                  >
+                    Message sent! Thanks! I'll get back to you as soon as I can.
+                  </motion.span>
+                )
+              }
+            </AnimatePresence>
+
+
+            <AnimatePresence>
+              {
+                error && (
+                  <motion.span
+                    className="errorMessage"
+
+                    initial={{
+                      opacity: 0,
+                      y: 4,
+                    }}
+
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+
+                    exit={{
+                      opacity: 0,
+                      y: -4,
+                    }}
+
+                    transition={{
+                      duration: 0.4,
+                      ease: "easeOut",
+                    }}
+                  >
+                    Failed to send. Please try again.
+                  </motion.span>
+                )
+              }
+            </AnimatePresence>
+
           </div>
+
         </motion.form>
+
       </div>
 
 
       <div className="cSection">
         SVG
       </div>
+
     </div>
   );
 };
