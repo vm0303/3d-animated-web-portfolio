@@ -1,6 +1,7 @@
 import "./contact.css";
 
 import emailjs from "@emailjs/browser";
+import ContactSvg from "./ContactSvg";
 
 import {
   useEffect,
@@ -347,7 +348,7 @@ const Contact = () => {
 
 
       <div className="cSection">
-        SVG
+        <ContactSvg />
       </div>
 
     </div>
