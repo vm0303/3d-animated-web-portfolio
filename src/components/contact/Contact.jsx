@@ -348,7 +348,9 @@ const Contact = () => {
 
 
       <div className="cSection">
-        <ContactSvg />
+        <div className="contactVisual">
+          <ContactSvg />
+        </div>
       </div>
 
     </div>
