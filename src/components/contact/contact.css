@@ -14,8 +14,8 @@
 }
 
 .contactVisual {
-    width: min(78%, 430px);
-    height: min(72%, 460px);
+    width: min(100%, 600px);
+    height: min(100%, 600px);
 
     box-sizing: border-box;
 
@@ -25,7 +25,7 @@
     align-items: center;
     justify-content: center;
 
-    background-color: #041835;
+    background-color: #011534;
 
     border-radius: 50% 0;
 }
@@ -34,8 +34,8 @@
     width: 100%;
     height: 100%;
 
-    max-width: 350px;
-    max-height: 390px;
+    max-width: 600px;
+    max-height: 600px;
 }
 
 form{

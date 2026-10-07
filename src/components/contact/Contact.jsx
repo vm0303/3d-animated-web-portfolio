@@ -16,15 +16,19 @@ import {
 } from "motion/react";
 
 
+/*
+ * Laptop / desktop / landscape:
+ * Form enters from left to right.
+ */
 const listVariants = {
   initial: {
-    x: 100,
+    x: -100,
     opacity: 0,
   },
 
   animate: {
-    opacity: 1,
     x: 0,
+    opacity: 1,
 
     transition: {
       duration: 0.5,
@@ -32,6 +36,63 @@ const listVariants = {
     },
   },
 };
+
+
+/*
+ * Laptop / desktop / landscape:
+ * SVG enters from right to left.
+ */
+const svgVariants = {
+  initial: {
+    x: 200,
+    opacity: 0,
+  },
+
+  animate: {
+    x: 0,
+    opacity: 1,
+
+    transition: {
+      duration: 1,
+      ease: "easeOut",
+    },
+  },
+};
+
+
+/*
+ * Portrait phones, tablets,
+ * folded foldables, and unfolded
+ * foldables use fade-only motion.
+ */
+const portraitFadeVariants = {
+  initial: {
+    opacity: 0,
+  },
+
+  animate: {
+    opacity: 1,
+
+    transition: {
+      duration: 1,
+      ease: "easeOut",
+    },
+  },
+};
+
+
+/*
+ * Fade-only mode applies only when:
+ *
+ * - device is portrait
+ * - device behaves like a touch device
+ *
+ * This avoids applying portrait motion
+ * to normal desktop/laptop layouts.
+ */
+const PORTRAIT_TOUCH_MOTION_QUERY =
+  "(orientation: portrait) and (hover: none), " +
+  "(orientation: portrait) and (pointer: coarse)";
 
 
 const Contact = () => {
@@ -51,17 +112,112 @@ const Contact = () => {
   ] = useState(false);
 
 
+  /*
+   * Decide the initial motion mode
+   * from the current device/orientation.
+   */
+  const [
+    fadeOnlyMotion,
+    setFadeOnlyMotion,
+  ] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window
+      .matchMedia(
+        PORTRAIT_TOUCH_MOTION_QUERY
+      )
+      .matches;
+  });
+
+
+  /*
+   * Contact section visibility ref.
+   *
+   * We use this separately from the
+   * form ref because EmailJS needs the
+   * actual form element.
+   */
+  const contactRef =
+    useRef(null);
+
   const form =
-    useRef();
+    useRef(null);
 
 
+  /*
+   * Both the form and SVG use this
+   * same visibility state so their
+   * entrance animations stay aligned.
+   */
   const isInView =
     useInView(
-      form,
+      contactRef,
       {
-        margin: "-200px",
+        amount: 0.15,
+        once: false,
       }
     );
+
+
+  /*
+   * Update the portrait/mobile motion
+   * mode only while Contact is OFF screen.
+   *
+   * This is important for rotation.
+   *
+   * Example:
+   *
+   * 1. User enters Contact in portrait.
+   * 2. Fade animation runs.
+   * 3. User rotates to landscape.
+   * 4. Contact remains visible.
+   * 5. Motion mode stays locked.
+   *
+   * Therefore nothing disappears,
+   * replays, or suddenly starts sliding.
+   *
+   * Once Contact leaves the viewport,
+   * we can safely update the motion mode
+   * for the next time it enters.
+   */
+  useEffect(() => {
+    const mediaQuery =
+      window.matchMedia(
+        PORTRAIT_TOUCH_MOTION_QUERY
+      );
+
+
+    const syncMotionMode = () => {
+      if (!isInView) {
+        setFadeOnlyMotion(
+          mediaQuery.matches
+        );
+      }
+    };
+
+
+    /*
+     * Synchronize immediately whenever
+     * Contact is currently off screen.
+     */
+    syncMotionMode();
+
+
+    mediaQuery.addEventListener(
+      "change",
+      syncMotionMode
+    );
+
+
+    return () => {
+      mediaQuery.removeEventListener(
+        "change",
+        syncMotionMode
+      );
+    };
+  }, [isInView]);
 
 
   /*
@@ -126,7 +282,7 @@ const Contact = () => {
 
           /*
            * Clear the form only after
-           * a successful submission.
+           * successful submission.
            */
           form.current?.reset();
         },
@@ -143,8 +299,30 @@ const Contact = () => {
   };
 
 
+  /*
+   * Portrait touch device:
+   * simple fade.
+   *
+   * Everything else:
+   * directional desktop/landscape motion.
+   */
+  const activeFormVariants =
+    fadeOnlyMotion
+      ? portraitFadeVariants
+      : listVariants;
+
+
+  const activeSvgVariants =
+    fadeOnlyMotion
+      ? portraitFadeVariants
+      : svgVariants;
+
+
   return (
-    <div className="contact">
+    <div
+      className="contact"
+      ref={contactRef}
+    >
 
       <div className="cSection">
 
@@ -152,7 +330,11 @@ const Contact = () => {
           ref={form}
           onSubmit={sendEmail}
 
-          variants={listVariants}
+          variants={
+            activeFormVariants
+          }
+
+          initial="initial"
 
           animate={
             isInView
@@ -162,7 +344,11 @@ const Contact = () => {
         >
 
           <motion.h1
-            variants={listVariants}
+            variants={
+              fadeOnlyMotion
+                ? undefined
+                : listVariants
+            }
           >
             Let's keep in touch!
           </motion.h1>
@@ -170,7 +356,12 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-            variants={listVariants}
+
+            variants={
+              fadeOnlyMotion
+                ? undefined
+                : listVariants
+            }
           >
             <label htmlFor="name">
               Name
@@ -195,7 +386,12 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-            variants={listVariants}
+
+            variants={
+              fadeOnlyMotion
+                ? undefined
+                : listVariants
+            }
           >
             <label htmlFor="email">
               Email
@@ -220,7 +416,12 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-            variants={listVariants}
+
+            variants={
+              fadeOnlyMotion
+                ? undefined
+                : listVariants
+            }
           >
             <label htmlFor="message">
               Message
@@ -252,7 +453,11 @@ const Contact = () => {
               }`
             }
 
-            variants={listVariants}
+            variants={
+              fadeOnlyMotion
+                ? undefined
+                : listVariants
+            }
 
             type="submit"
 
@@ -348,9 +553,25 @@ const Contact = () => {
 
 
       <div className="cSection">
-        <div className="contactVisual">
+
+        <motion.div
+          className="contactVisual"
+
+          variants={
+            activeSvgVariants
+          }
+
+          initial="initial"
+
+          animate={
+            isInView
+              ? "animate"
+              : "initial"
+          }
+        >
           <ContactSvg />
-        </div>
+        </motion.div>
+
       </div>
 
     </div>
