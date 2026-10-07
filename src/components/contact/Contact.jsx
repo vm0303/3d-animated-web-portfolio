@@ -446,10 +446,9 @@ const Contact = () => {
 
           <motion.button
             className={
-              `formButton ${
-                sending
-                  ? "sending"
-                  : ""
+              `formButton ${sending
+                ? "sending"
+                : ""
               }`
             }
 
@@ -539,7 +538,7 @@ const Contact = () => {
                       ease: "easeOut",
                     }}
                   >
-                    Failed to send. Please try again.
+                    Failed to send message. Please try again later
                   </motion.span>
                 )
               }
