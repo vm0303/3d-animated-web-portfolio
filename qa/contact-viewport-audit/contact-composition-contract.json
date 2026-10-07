@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "artifactType": "contact-composition-contract",
+  "purpose": "Responsive geometry and entry-motion QA for the Contact form and animated SVG across phones, foldables, tablets, and desktop.",
+  "viewportSource": "qa/viewport-audit/hero-cross-browser-exhaustive-contract.json",
+  "familyGroups": {
+    "phone-portrait": "phone-portrait-exhaustive",
+    "phone-landscape": "phone-landscape-exhaustive",
+    "tablet-portrait": "tablet-portrait-exhaustive",
+    "tablet-landscape": "tablet-landscape-exhaustive",
+    "foldable": "foldable-exhaustive",
+    "desktop-standard": "desktop-standard",
+    "desktop-wide": "desktop-wide"
+  },
+  "landscapeTiers": {
+    "phone-landscape": {
+      "shortMaxHeightPx": 355
+    },
+    "foldable": {
+      "shortMaxHeightPx": 500
+    },
+    "tablet-landscape": {
+      "shortMaxHeightPx": 768
+    }
+  },
+  "thresholds": {
+    "containmentTolerancePx": 2,
+    "horizontalOverflowTolerancePx": 2,
+    "overlapToleranceAreaPx": 4,
+    "motionInactiveMaxOpacity": 0.2,
+    "motionActiveMinOpacity": 0.92,
+    "settleMs": 1650
+  },
+  "readability": {
+    "phone-portrait": {
+      "minTitleFontPx": 26,
+      "minLabelFontPx": 13,
+      "minControlFontPx": 16,
+      "minInputHeightPx": 38,
+      "minTextareaHeightPx": 72,
+      "minButtonHeightPx": 38
+    },
+    "phone-landscape:short": {
+      "minTitleFontPx": 20,
+      "minLabelFontPx": 11,
+      "minControlFontPx": 12,
+      "minInputHeightPx": 28,
+      "minTextareaHeightPx": 46,
+      "minButtonHeightPx": 28
+    },
+    "phone-landscape:normal": {
+      "minTitleFontPx": 22,
+      "minLabelFontPx": 12,
+      "minControlFontPx": 13,
+      "minInputHeightPx": 30,
+      "minTextareaHeightPx": 54,
+      "minButtonHeightPx": 30
+    },
+    "foldable:portrait": {
+      "minTitleFontPx": 26,
+      "minLabelFontPx": 13,
+      "minControlFontPx": 15,
+      "minInputHeightPx": 36,
+      "minTextareaHeightPx": 68,
+      "minButtonHeightPx": 36
+    },
+    "foldable:landscape:short": {
+      "minTitleFontPx": 20,
+      "minLabelFontPx": 11,
+      "minControlFontPx": 12,
+      "minInputHeightPx": 28,
+      "minTextareaHeightPx": 46,
+      "minButtonHeightPx": 28
+    },
+    "foldable:landscape:normal": {
+      "minTitleFontPx": 24,
+      "minLabelFontPx": 12,
+      "minControlFontPx": 13,
+      "minInputHeightPx": 32,
+      "minTextareaHeightPx": 60,
+      "minButtonHeightPx": 32
+    },
+    "tablet-portrait": {
+      "minTitleFontPx": 34,
+      "minLabelFontPx": 15,
+      "minControlFontPx": 16,
+      "minInputHeightPx": 42,
+      "minTextareaHeightPx": 100,
+      "minButtonHeightPx": 42
+    },
+    "tablet-landscape:short": {
+      "minTitleFontPx": 30,
+      "minLabelFontPx": 14,
+      "minControlFontPx": 15,
+      "minInputHeightPx": 36,
+      "minTextareaHeightPx": 76,
+      "minButtonHeightPx": 36
+    },
+    "tablet-landscape:normal": {
+      "minTitleFontPx": 34,
+      "minLabelFontPx": 14,
+      "minControlFontPx": 15,
+      "minInputHeightPx": 38,
+      "minTextareaHeightPx": 84,
+      "minButtonHeightPx": 38
+    },
+    "desktop-standard": {
+      "minTitleFontPx": 32,
+      "minLabelFontPx": 14,
+      "minControlFontPx": 14,
+      "minInputHeightPx": 36,
+      "minTextareaHeightPx": 100,
+      "minButtonHeightPx": 36
+    },
+    "desktop-wide": {
+      "minTitleFontPx": 38,
+      "minLabelFontPx": 15,
+      "minControlFontPx": 15,
+      "minInputHeightPx": 40,
+      "minTextareaHeightPx": 120,
+      "minButtonHeightPx": 40
+    }
+  },
+  "supplementalViewports": [
+    {
+      "id": "contact-phone-landscape__boundary-720x355",
+      "width": 720,
+      "height": 355,
+      "label": "Contact phone-landscape short boundary",
+      "family": "phone-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "contact-phone-landscape__boundary-720x356",
+      "width": 720,
+      "height": 356,
+      "label": "Contact phone-landscape normal boundary",
+      "family": "phone-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "contact-foldable__landscape-960x500",
+      "width": 960,
+      "height": 500,
+      "label": "Contact foldable short-landscape boundary",
+      "family": "foldable",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "contact-foldable__landscape-960x501",
+      "width": 960,
+      "height": 501,
+      "label": "Contact foldable normal-landscape boundary",
+      "family": "foldable",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "contact-tablet-landscape__boundary-1204x768",
+      "width": 1204,
+      "height": 768,
+      "label": "Contact tablet-landscape short boundary",
+      "family": "tablet-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    },
+    {
+      "id": "contact-tablet-landscape__boundary-1204x769",
+      "width": 1204,
+      "height": 769,
+      "label": "Contact tablet-landscape normal boundary",
+      "family": "tablet-landscape",
+      "source": "SYNTHETIC",
+      "orientation": "landscape"
+    }
+  ]
+}
