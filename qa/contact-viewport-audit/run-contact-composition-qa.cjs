@@ -225,11 +225,16 @@ function serverUp() {
         hostname: "127.0.0.1",
         port,
         path: "/",
-        timeout: 800,
+        timeout: 5000,
       },
       (res) => {
         res.resume();
-        resolve(res.statusCode >= 200 && res.statusCode < 500);
+
+        /*
+         * Any HTTP response proves that Vite is listening.
+         * Playwright will diagnose application/render failures afterward.
+         */
+        resolve(true);
       }
     );
 
@@ -241,7 +246,7 @@ function serverUp() {
   });
 }
 
-async function waitForServer(timeoutMs = 30000) {
+async function waitForServer(timeoutMs = 60000) {
   const start = Date.now();
 
   while (Date.now() - start < timeoutMs) {
