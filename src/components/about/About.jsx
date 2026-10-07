@@ -11,6 +11,10 @@ import {
   AnimatePresence,
 } from "motion/react";
 
+import {
+  useGLTF,
+} from "@react-three/drei";
+
 import AboutModelContainer
   from "./stage/AboutModelContainer";
 
@@ -22,6 +26,17 @@ import {
 } from "../../qaSrc/aboutQa";
 
 import "./about.css";
+
+
+/*
+ * About always enters on the developer/laptop scene.
+ * Start fetching that one GLB when this module loads so
+ * the visibility gate does not also become the asset-load gate.
+ * Other About models keep their existing on-demand behavior.
+ */
+useGLTF.preload(
+  "./about/laptop.glb"
+);
 
 
 const titleVariants = {
@@ -37,7 +52,7 @@ const titleVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.8,
+      duration: 0.55,
     },
   },
 };
@@ -54,8 +69,8 @@ const listVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.7,
-      staggerChildren: 0.18,
+      duration: 0.5,
+      staggerChildren: 0.1,
     },
   },
 };
@@ -72,7 +87,7 @@ const paragraphVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.6,
+      duration: 0.45,
     },
   },
 };
@@ -87,7 +102,7 @@ const titleMobileVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.8,
+      duration: 0.55,
     },
   },
 };
@@ -102,8 +117,8 @@ const listMobileVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.7,
-      staggerChildren: 0.18,
+      duration: 0.5,
+      staggerChildren: 0.1,
     },
   },
 };
@@ -118,7 +133,7 @@ const paragraphMobileVariants = {
     opacity: 1,
 
     transition: {
-      duration: 0.6,
+      duration: 0.45,
     },
   },
 };
@@ -133,8 +148,8 @@ const modelMobileVariants = {
     opacity: 1,
 
     transition: {
-      duration: 1,
-      delay: 0.15,
+      duration: 0.7,
+      delay: 0.05,
     },
   },
 };

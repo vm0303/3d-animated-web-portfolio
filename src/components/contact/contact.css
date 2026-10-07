@@ -1,3 +1,160 @@
 .contact{
-    
+    height: 100%;
+    display: flex;
+    gap:100px;
+}
+
+.cSection{
+    width: 50%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contactVisual {
+    width: min(100%, 600px);
+    height: min(100%, 600px);
+
+    box-sizing: border-box;
+
+    padding: clamp(24px, 3vw, 36px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #011534;
+
+    border-radius: 50% 0;
+}
+
+.contactVisual svg {
+    width: 100%;
+    height: 100%;
+
+    max-width: 600px;
+    max-height: 600px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 80%;
+}
+
+input, textarea{
+    padding: 12px;
+    border:none;
+    border-radius: 5px;
+}
+
+.formItem{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label{
+   font-size: 14px;
+}
+
+.requiredMark{
+    color: #ff4d4f;
+    margin-left: 4px;
+}
+
+.formButton {
+  position: relative;
+  overflow: hidden;
+
+  background-color: #3898f8;
+  color: white;
+
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.formButton:disabled {
+  cursor: not-allowed;
+}
+
+.formButton.sending {
+  cursor: wait;
+}
+
+.formButton.sending::after {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: -120%;
+
+  width: 60%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+
+  transform: skewX(-20deg);
+
+  animation: buttonShimmer 2.5s infinite;
+}
+
+@keyframes buttonShimmer {
+  0% {
+    left: -120%;
+  }
+
+  100% {
+    left: 160%;
+  }
+}
+
+.formButton:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  .formButton.sending::after {
+    animation: none;
+  }
+}
+.formStatus{
+    min-height: 20px;
+    font-size: 14px;
+}
+
+.successMessage {
+  background: linear-gradient(to right, #91f387, #a8f3ad);
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+
+}
+
+.errorMessage {
+  background: linear-gradient(
+    90deg,
+    #f86f6f,
+    #fd7e7e
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }

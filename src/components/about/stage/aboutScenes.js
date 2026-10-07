@@ -162,6 +162,15 @@ export const ABOUT_SCENES = {
         stageIntensity: 0.70,
 
         visualScale: 1,
+
+        /*
+         * Hobbies shares one continuously rotating OrbitControls camera.
+         * By the time the fourth model arrives, that camera can be viewing
+         * the clapperboard from behind. Align this model to the current
+         * camera azimuth once on entry so its front is shown first without
+         * resetting the shared camera or changing the other models.
+         */
+        faceCameraOnEnter: true,
       },
     ],
   },

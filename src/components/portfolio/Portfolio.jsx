@@ -146,6 +146,8 @@ const TOUCH_MOTION_QUERY =
   "(hover: none), (pointer: coarse)"
 
 const ARROW_IDLE_MS = 5000
+const ARROW_IDLE_CHECK_MS = 250
+const POINTER_ACTIVITY_THRESHOLD_PX = 3
 
 
 const ArrowIcon = ({ direction }) => (
@@ -378,70 +380,151 @@ const Portfolio = () => {
 
 
   /*
-   * Laptop/desktop arrows are activity-driven.
+   * Laptop/desktop arrows use true mouse inactivity.
    *
-   * - scrolling into Portfolio fades them in
-   * - pointer/keyboard/wheel activity restarts the five-second idle timer
-   * - after five idle seconds, CSS fades them back out
-   * - fade-in and fade-out use the same duration
+   * - entering Portfolio reveals the arrows
+   * - meaningful mouse movement keeps them visible
+   * - movement updates one last-activity timestamp instead of restarting
+   *   competing visibility/re-arm timers
+   * - tiny pointer jitter under the threshold is ignored
+   * - after five seconds with no meaningful mouse movement, CSS fades them out
+   * - moving the mouse again immediately reveals them
    */
   const [
     controlsActive,
     setControlsActive,
   ] = useState(false)
 
-  const controlsTimerRef =
+  const idleCheckRef =
     useRef(null)
 
-  const clearControlsTimer =
+  const lastPointerActivityAtRef =
+    useRef(null)
+
+  const lastPointerPositionRef =
+    useRef(null)
+
+  const clearIdleCheck =
     useCallback(() => {
-      if (controlsTimerRef.current) {
-        window.clearTimeout(
-          controlsTimerRef.current
+      if (idleCheckRef.current !== null) {
+        window.clearInterval(
+          idleCheckRef.current
         )
 
-        controlsTimerRef.current = null
+        idleCheckRef.current = null
       }
     }, [])
 
-  const activateControls =
+  const recordPointerActivity =
     useCallback(() => {
-      setControlsActive(true)
-      clearControlsTimer()
+      lastPointerActivityAtRef.current =
+        performance.now()
 
-      controlsTimerRef.current =
-        window.setTimeout(
-          () => {
-            setControlsActive(false)
-            controlsTimerRef.current = null
-          },
-          ARROW_IDLE_MS
-        )
-    }, [
-      clearControlsTimer,
-    ])
+      setControlsActive(true)
+    }, [])
+
+  const handlePointerMove =
+    useCallback(
+      (event) => {
+        if (
+          event.pointerType &&
+          event.pointerType !== "mouse"
+        ) {
+          return
+        }
+
+        const nextPosition = {
+          x: event.clientX,
+          y: event.clientY,
+        }
+
+        const previousPosition =
+          lastPointerPositionRef.current
+
+        if (!previousPosition) {
+          lastPointerPositionRef.current =
+            nextPosition
+
+          recordPointerActivity()
+          return
+        }
+
+        const distance =
+          Math.hypot(
+            nextPosition.x - previousPosition.x,
+            nextPosition.y - previousPosition.y
+          )
+
+        if (
+          distance <
+          POINTER_ACTIVITY_THRESHOLD_PX
+        ) {
+          return
+        }
+
+        lastPointerPositionRef.current =
+          nextPosition
+
+        recordPointerActivity()
+      },
+      [recordPointerActivity]
+    )
+
+  const handlePointerLeave =
+    useCallback(() => {
+      lastPointerPositionRef.current = null
+    }, [])
 
   useEffect(() => {
-    if (portfolioControlsInView) {
-      activateControls()
+    if (
+      !portfolioControlsInView ||
+      fadeOnlyMotion
+    ) {
+      clearIdleCheck()
+      lastPointerActivityAtRef.current = null
+      lastPointerPositionRef.current = null
+      setControlsActive(false)
       return
     }
 
-    clearControlsTimer()
-    setControlsActive(false)
+    recordPointerActivity()
+
+    clearIdleCheck()
+
+    idleCheckRef.current =
+      window.setInterval(
+        () => {
+          const lastActivity =
+            lastPointerActivityAtRef.current
+
+          if (
+            lastActivity === null ||
+            performance.now() - lastActivity <
+              ARROW_IDLE_MS
+          ) {
+            return
+          }
+
+          setControlsActive(false)
+        },
+        ARROW_IDLE_CHECK_MS
+      )
+
+    return () => {
+      clearIdleCheck()
+    }
   }, [
     portfolioControlsInView,
-    activateControls,
-    clearControlsTimer,
+    fadeOnlyMotion,
+    clearIdleCheck,
+    recordPointerActivity,
   ])
 
   useEffect(() => {
     return () => {
-      clearControlsTimer()
+      clearIdleCheck()
     }
-  }, [
-    clearControlsTimer,
-  ])
+  }, [clearIdleCheck])
 
 
   const scrollPrev = useCallback(() => {
@@ -511,8 +594,6 @@ const Portfolio = () => {
 
 
   const handleKeyDown = (event) => {
-    activateControls()
-
     if (event.key === "ArrowLeft") {
       event.preventDefault()
       scrollPrev()
@@ -541,10 +622,8 @@ const Portfolio = () => {
       }
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      onPointerMove={activateControls}
-      onPointerDown={activateControls}
-      onWheel={activateControls}
-      onFocus={activateControls}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
       aria-label="Portfolio projects"
     >
 

@@ -225,15 +225,16 @@
     "qa:portfolio:phone:landscape:v1:normal": "node qa/portfolio-viewport-audit/run-portfolio-composition-qa.cjs --family=phone-landscape --height-tier=normal --project=all --screenshots=all --browser=chromium --interaction-check --override-css=qa/portfolio-viewport-audit/candidates/portfolio-phone-landscape-v1.css --output-dir=qa-results/portfolio/candidates/phone-landscape-v1-normal"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
+    "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.42.2",
     "motion": "^12.42.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-type-animation": "^3.2.0",
-    "three": "^0.185.1",
-    "embla-carousel-react": "^8.6.0"
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

@@ -19,7 +19,7 @@ const Shape = () => {
         scale={2.4}
       >
         <MeshDistortMaterial
-          color="#55a7f9"
+          color="#3898f8"
 
           attach="material"
 

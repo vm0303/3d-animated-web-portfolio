@@ -14,6 +14,63 @@ import NormalizedModel
     from "./NormalizedModel";
 
 
+/*
+ * Keep the first camera-facing correction for the lifetime of one About
+ * Canvas/WebGL renderer.
+ *
+ * Carousel model slots are remounted as items cycle, so a local ref alone
+ * cannot preserve the clapperboard's rotational phase. The renderer, however,
+ * stays alive for the entire About visit and is recreated when About leaves
+ * view and later mounts again. WeakMap gives us exactly that lifetime without
+ * persisting anything across About visits or page refreshes.
+ */
+const cameraFacingAnglesByRenderer =
+    new WeakMap();
+
+
+const getCameraFacingAngle = (
+    renderer,
+    itemId,
+    camera
+) => {
+    let itemAngles =
+        cameraFacingAnglesByRenderer
+            .get(renderer);
+
+
+    if (!itemAngles) {
+        itemAngles = new Map();
+
+        cameraFacingAnglesByRenderer
+            .set(
+                renderer,
+                itemAngles
+            );
+    }
+
+
+    if (itemAngles.has(itemId)) {
+        return itemAngles.get(itemId);
+    }
+
+
+    const angle =
+        Math.atan2(
+            camera.position.x,
+            camera.position.z
+        );
+
+
+    itemAngles.set(
+        itemId,
+        angle
+    );
+
+
+    return angle;
+};
+
+
 const easeInOutCubic = (
     value
 ) => {
@@ -65,6 +122,9 @@ const CarouselModelSlot = ({
     const completedRef =
         useRef(false);
 
+    const cameraFacingAppliedRef =
+        useRef(false);
+
     const onCompleteRef =
         useRef(onComplete);
 
@@ -81,7 +141,7 @@ const CarouselModelSlot = ({
 
 
     /*
-     * Reset motion whenever a new
+     * Reset slide motion whenever a new
      * transition begins.
      */
     useLayoutEffect(() => {
@@ -92,8 +152,19 @@ const CarouselModelSlot = ({
     }, [animationId]);
 
 
+    /*
+     * Each newly mounted slot still needs the stored session correction
+     * applied once. The actual angle is retained outside the slot in the
+     * renderer-scoped WeakMap above.
+     */
+    useLayoutEffect(() => {
+        cameraFacingAppliedRef.current =
+            false;
+    }, [item.id]);
+
+
     useFrame(
-        ({ camera }, delta) => {
+        ({ camera, gl }, delta) => {
             const group =
                 groupRef.current;
 
@@ -169,6 +240,37 @@ const CarouselModelSlot = ({
             group.position.copy(
                 right
             );
+
+
+            /*
+             * Opted-in models get one front-facing correction per About visit.
+             *
+             * First appearance:
+             *   calculate the correction from the current camera azimuth.
+             *
+             * Later appearances during the SAME About visit:
+             *   reuse that exact correction instead of front-aligning again.
+             *   The shared OrbitControls camera therefore keeps the visual
+             *   rotation progressing naturally from its current angle.
+             *
+             * Leaving About destroys its Canvas/WebGL renderer. On the next
+             * visit (or after a page refresh), the new renderer has no stored
+             * correction, so the first clapperboard reveal front-aligns again.
+             */
+            if (
+                item.faceCameraOnEnter &&
+                !cameraFacingAppliedRef.current
+            ) {
+                group.rotation.y =
+                    getCameraFacingAngle(
+                        gl,
+                        item.id,
+                        camera
+                    );
+
+                cameraFacingAppliedRef.current =
+                    true;
+            }
 
 
             /*
