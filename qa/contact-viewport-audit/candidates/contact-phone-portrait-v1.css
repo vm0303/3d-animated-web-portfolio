@@ -1,0 +1,202 @@
+/* =========================================================
+   CONTACT — PHONE / FOLDED OUTER PORTRAIT CANDIDATE V1
+
+   Approved portrait structure:
+
+       SVG / ILLUSTRATION
+              ↓
+             FORM
+
+   This candidate deliberately preserves the vertical composition that was
+   visually approved as the right structure, while reducing the visual and
+   form footprint so the whole Contact composition can fit inside short
+   portrait viewports.
+
+   Production contact.css is not modified by this file. The Contact QA runner
+   injects this candidate with --override-css while we tune it.
+   ========================================================= */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .contact,
+  .contact > .cSection,
+  .contact form,
+  .contactVisual {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .contact {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap:
+      clamp(
+        8px,
+        1.4svh,
+        12px
+      );
+  }
+
+  /*
+   * Contact.jsx DOM order is form first, visual second.
+   * Portrait intentionally presents the illustration first.
+   */
+  .contact > .cSection {
+    width: 100%;
+    height: auto;
+
+    flex: 0 0 auto;
+
+    padding: 0;
+  }
+
+  .contact > .cSection:last-child {
+    order: -1;
+  }
+
+  /* =======================================================
+     SVG / BACKGROUND
+     ======================================================= */
+
+  .contactVisual {
+    width:
+      min(
+        48vw,
+        180px,
+        20svh
+      );
+
+    height: auto;
+    aspect-ratio: 1 / 1;
+
+    padding:
+      clamp(
+        10px,
+        2.5vw,
+        15px
+      );
+  }
+
+  .contactVisual svg {
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  /* =======================================================
+     FORM
+     ======================================================= */
+
+  .contact form {
+    width:
+      min(
+        100%,
+        390px
+      );
+
+    gap:
+      clamp(
+        6px,
+        1.05svh,
+        9px
+      );
+  }
+
+  .contact form h1 {
+    margin: 0;
+
+    text-align: center;
+
+    font-size:
+      clamp(
+        26px,
+        7vw,
+        32px
+      );
+
+    line-height: 1.04;
+  }
+
+  .contact .formItem {
+    gap:
+      clamp(
+        3px,
+        0.55svh,
+        5px
+      );
+  }
+
+  .contact label {
+    font-size:
+      clamp(
+        13px,
+        3.45vw,
+        15px
+      );
+
+    line-height: 1.15;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-width: 0;
+
+    padding:
+      clamp(
+        7px,
+        1.05svh,
+        9px
+      );
+
+    /* Prevent iOS form-focus zoom. */
+    font-size: 16px;
+  }
+
+  .contact textarea {
+    height:
+      clamp(
+        72px,
+        13svh,
+        98px
+      );
+
+    min-height: 72px;
+
+    resize: none;
+  }
+
+  .contact .formButton {
+    padding:
+      clamp(
+        8px,
+        1.15svh,
+        10px
+      );
+
+    font-size:
+      clamp(
+        14px,
+        3.6vw,
+        16px
+      );
+  }
+
+  .contact .formStatus {
+    width: 100%;
+
+    min-height: 2.35em;
+
+    font-size:
+      clamp(
+        11px,
+        3vw,
+        13px
+      );
+
+    line-height: 1.2;
+  }
+}
