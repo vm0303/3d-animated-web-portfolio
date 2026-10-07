@@ -54,9 +54,9 @@ Landscape QA must include short-height and normal-height cases where applicable.
 Preferred content order:
 
 ```text
-CONTACT FORM
-  ↓
 CONTACT SVG / ILLUSTRATION
+  ↓
+CONTACT FORM
 ```
 
 Inside the form:
@@ -77,7 +77,8 @@ STATUS MESSAGE (when present)
 
 Requirements:
 
-- form is the primary content and appears first
+- SVG/illustration appears first and stays contained near the top of the portrait composition
+- form follows below the SVG and remains the primary interactive content
 - form is centered horizontally within the available viewport
 - form title remains readable; wrapping is allowed only when necessary to preserve good sizing
 - labels left-aligned
@@ -85,9 +86,8 @@ Requirements:
 - textarea remains tall enough to be useful
 - send button fully visible and easy to tap
 - success/error text must not push important controls outside the viewport
-- SVG appears below the form and stays contained
 - if the full SVG cannot remain useful without crowding the form, reduce its visual footprint before shrinking form usability
-- preserve deliberate vertical spacing between form components
+- preserve deliberate vertical spacing between SVG and form and between form components
 
 ## 1. Phones — Landscape
 
@@ -116,14 +116,15 @@ Requirements:
 Use the phone-portrait pattern:
 
 ```text
-CONTACT FORM
-  ↓
 CONTACT SVG / ILLUSTRATION
+  ↓
+CONTACT FORM
 ```
 
 Requirements:
 
-- form remains fully usable on the narrow outer display
+- SVG remains contained on the narrow outer display
+- form remains fully usable below it
 - labels and inputs stay readable
 - message field remains practical
 - SVG scales down without pushing the form out of view
@@ -148,12 +149,12 @@ Requirements:
 
 ## 2b. Foldables — Unfolded Portrait
 
-Use a portrait-first vertical composition unless final visual review intentionally approves another layout:
+Use the portrait-first vertical composition:
 
 ```text
-CONTACT FORM
-  ↓
 CONTACT SVG / ILLUSTRATION
+  ↓
+CONTACT FORM
 ```
 
 Requirements:
@@ -161,7 +162,7 @@ Requirements:
 - take advantage of the larger unfolded width
 - do not leave the form at narrow-phone sizing
 - increase form width, spacing, and SVG scale appropriately
-- maintain clear hierarchy between form and illustration
+- maintain clear hierarchy between illustration and form
 - no excessive unused space between the two regions
 
 ## 2b. Foldables — Unfolded Landscape
@@ -186,16 +187,16 @@ Requirements:
 Preferred composition:
 
 ```text
-CONTACT FORM
-  ↓
 CONTACT SVG / ILLUSTRATION
+  ↓
+CONTACT FORM
 ```
 
 Requirements:
 
 - form should scale beyond phone dimensions
 - fields, textarea, title, and button should use tablet space naturally
-- SVG remains meaningful rather than becoming a tiny footer graphic
+- SVG remains meaningful rather than becoming a tiny header graphic
 - spacing should breathe more than phone layouts when height permits
 
 ## 3. Tablets — Landscape
@@ -260,6 +261,7 @@ If the form is wired to EmailJS or another submission system, geometry QA and fu
 
 - form entry Motion should trigger when Contact enters view
 - settled form geometry is measured after animation completes
+- portrait phone/foldable/tablet entry may use the approved fade-only variants; geometry QA measures the settled state
 - animated SVG paths/groups must remain inside the SVG region
 - animation should not create document overflow or persistent clipping
 - WebKit should receive explicit visual review because SVG/Motion rendering can differ from Chromium
