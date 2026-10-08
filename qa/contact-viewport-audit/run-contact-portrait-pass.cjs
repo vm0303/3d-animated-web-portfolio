@@ -25,11 +25,27 @@ const baseOutput = argValue(
   "qa-results/contact/portrait-pass"
 );
 
+const sharedScreenshotMode = argValue("screenshots", "bad");
+const geometryScreenshotMode = argValue(
+  "geometry-screenshots",
+  sharedScreenshotMode
+);
+const formStateScreenshotMode = argValue(
+  "form-state-screenshots",
+  "bad"
+);
+
 const forwarded = process.argv
   .slice(2)
-  .filter((arg) => !arg.startsWith("--output-dir="));
+  .filter(
+    (arg) =>
+      !arg.startsWith("--output-dir=") &&
+      !arg.startsWith("--screenshots=") &&
+      !arg.startsWith("--geometry-screenshots=") &&
+      !arg.startsWith("--form-state-screenshots=")
+  );
 
-function run(label, runner, outputSuffix) {
+function run(label, runner, outputSuffix, screenshotMode) {
   process.stdout.write(`\n=== ${label} ===\n`);
 
   const result = spawnSync(
@@ -37,6 +53,7 @@ function run(label, runner, outputSuffix) {
     [
       runner,
       ...forwarded,
+      `--screenshots=${screenshotMode}`,
       `--output-dir=${path.join(baseOutput, outputSuffix)}`,
     ],
     {
@@ -57,13 +74,15 @@ function run(label, runner, outputSuffix) {
 const geometryCode = run(
   "Contact geometry / motion QA",
   COMPOSITION_RUNNER,
-  "geometry"
+  "geometry",
+  geometryScreenshotMode
 );
 
 const formStateCode = run(
   "Contact mocked success / failure QA",
   FORM_STATE_RUNNER,
-  "form-states"
+  "form-states",
+  formStateScreenshotMode
 );
 
 if (geometryCode !== 0 || formStateCode !== 0) {
