@@ -1,0 +1,262 @@
+/* =========================================================
+   CONTACT — PHONE / FOLDED OUTER PORTRAIT CANDIDATE V3
+
+   Intended portrait composition:
+
+       top breathing room
+               ↓
+        medium SVG / background
+               ↓
+        deliberate section gap
+               ↓
+      breathing room | FORM | breathing room
+               ↓
+       bottom breathing room
+
+   V3 keeps the accepted SVG-first vertical structure from V2, but gives the
+   form more horizontal breathing room, increases label readability, reduces
+   oversized control text, and adds a distinct gap between the Message field
+   and the Send button.
+   ========================================================= */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .contact,
+  .contact > .cSection,
+  .contact form,
+  .contactVisual {
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  .contact {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding-block:
+      clamp(
+        12px,
+        2.2svh,
+        20px
+      );
+
+    padding-inline:
+      clamp(
+        16px,
+        4.5vw,
+        24px
+      );
+
+    gap:
+      clamp(
+        18px,
+        3.2svh,
+        28px
+      );
+  }
+
+  /*
+   * Contact.jsx DOM order is form first, visual second.
+   * Portrait intentionally presents the illustration first.
+   */
+  .contact > .cSection {
+    width: 100%;
+    height: auto;
+
+    flex: 0 0 auto;
+
+    padding-block: 0;
+    padding-inline:
+      clamp(
+        8px,
+        2.5vw,
+        14px
+      );
+  }
+
+  .contact > .cSection:last-child {
+    order: -1;
+  }
+
+  /* =======================================================
+     SVG / BACKGROUND
+     ======================================================= */
+
+  .contactVisual {
+    width:
+      min(
+        58vw,
+        220px,
+        30svh
+      );
+
+    height: auto;
+    aspect-ratio: 1 / 1;
+
+    padding:
+      clamp(
+        15px,
+        3.8vw,
+        22px
+      );
+
+    margin-inline: auto;
+  }
+
+  .contactVisual svg {
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  /* =======================================================
+     FORM
+     ======================================================= */
+
+  .contact form {
+    width:
+      min(
+        100%,
+        390px
+      );
+
+    margin-inline: auto;
+
+    padding-block:
+      clamp(
+        4px,
+        0.8svh,
+        7px
+      );
+
+    padding-inline:
+      clamp(
+        8px,
+        2.4vw,
+        14px
+      );
+
+    gap:
+      clamp(
+        6px,
+        1.05svh,
+        9px
+      );
+  }
+
+  .contact form h1 {
+    margin: 0;
+
+    text-align: center;
+
+    font-size:
+      clamp(
+        26px,
+        7vw,
+        32px
+      );
+
+    line-height: 1.04;
+  }
+
+  .contact .formItem {
+    gap:
+      clamp(
+        4px,
+        0.65svh,
+        6px
+      );
+  }
+
+  .contact label {
+    font-size:
+      clamp(
+        15px,
+        4vw,
+        17px
+      );
+
+    line-height: 1.15;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-width: 0;
+
+    padding:
+      clamp(
+        7px,
+        1.05svh,
+        9px
+      );
+
+    font-size:
+      clamp(
+        14px,
+        3.55vw,
+        15px
+      );
+  }
+
+  .contact textarea {
+    height:
+      clamp(
+        70px,
+        12svh,
+        92px
+      );
+
+    min-height: 70px;
+
+    resize: none;
+  }
+
+  /*
+   * Give the Send button its own breathing room below Message instead of
+   * relying only on the shared form gap.
+   */
+  .contact .formButton {
+    margin-top:
+      clamp(
+        9px,
+        1.7svh,
+        14px
+      );
+
+    padding:
+      clamp(
+        9px,
+        1.3svh,
+        11px
+      );
+
+    font-size:
+      clamp(
+        14px,
+        3.6vw,
+        16px
+      );
+  }
+
+  .contact .formStatus {
+    width: 100%;
+
+    min-height: 2.2em;
+
+    font-size:
+      clamp(
+        11px,
+        3vw,
+        13px
+      );
+
+    line-height: 1.2;
+  }
+}
