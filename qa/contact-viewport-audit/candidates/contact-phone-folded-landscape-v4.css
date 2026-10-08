@@ -1,0 +1,337 @@
+/* =========================================================
+   CONTACT — PHONE + FOLDED-OUTER LANDSCAPE CANDIDATE V4
+
+   V4 keeps the accepted V3 SVG/background geometry unchanged and tunes
+   only the form rhythm from the V3 screenshot review.
+
+   Intended vertical rhythm:
+
+     TITLE
+       ↓ larger breathing room
+     NAME
+     INPUT
+       ↓ larger breathing room
+     EMAIL
+     INPUT
+       ↓ larger breathing room
+     MESSAGE
+     TEXTAREA
+       ↓ extra breathing room
+     SEND BUTTON
+       ↓ deliberate status gap
+     SUCCESS / ERROR
+
+   The spacing scales with available landscape height. Very short phones
+   still preserve the same hierarchy, but compress the whitespace enough to
+   keep the complete form usable inside the section.
+   ========================================================= */
+
+@media (orientation: landscape) and (max-height: 499px) {
+  .contact,
+  .contact > .cSection,
+  .contact form,
+  .contactVisual {
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  .contact {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding-block: clamp(7px, 2svh, 14px);
+    padding-inline: clamp(18px, 3.2vw, 38px);
+
+    gap: clamp(20px, 3.4vw, 42px);
+  }
+
+  .contact > .cSection {
+    width: auto;
+    height: 100%;
+
+    padding-block: clamp(5px, 1.4svh, 9px);
+    padding-inline: clamp(8px, 1.5vw, 16px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact > .cSection:first-child {
+    flex: 1.1 1 0;
+  }
+
+  .contact > .cSection:last-child {
+    flex: 0.9 1 0;
+  }
+
+  /* =======================================================
+     FORM
+     ======================================================= */
+
+  .contact form {
+    width: min(94%, 410px);
+    max-height: 100%;
+
+    margin-inline: auto;
+
+    padding-block: clamp(4px, 1.1svh, 8px);
+    padding-inline: clamp(9px, 1.5vw, 16px);
+
+    /*
+     * This gap is the main space between the title/field groups and between
+     * one completed field and the next label.
+     */
+    gap: clamp(7px, 2.1svh, 11px);
+  }
+
+  .contact form h1 {
+    margin: 0;
+
+    /* Additional title → Name breathing room. */
+    margin-bottom: clamp(5px, 1.5svh, 9px);
+
+    font-size: clamp(20px, 6svh, 30px);
+    line-height: 1.02;
+  }
+
+  .contact .formItem {
+    /* Label → input/textarea breathing room. */
+    gap: clamp(3px, 0.9svh, 6px);
+  }
+
+  .contact label {
+    font-size: clamp(11px, 3.4svh, 14px);
+    line-height: 1.08;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-width: 0;
+
+    padding: clamp(5px, 1.45svh, 8px);
+
+    font-size: clamp(12px, 3.5svh, 15px);
+  }
+
+  .contact textarea {
+    height: clamp(46px, 15svh, 72px);
+    min-height: 46px;
+
+    resize: none;
+  }
+
+  .contact .formButton {
+    /* Message/textarea → Send gets more room than ordinary field spacing. */
+    margin-top: clamp(7px, 2svh, 12px);
+
+    padding: clamp(5px, 1.5svh, 8px);
+
+    font-size: clamp(12px, 3.5svh, 15px);
+  }
+
+  .contact .formStatus {
+    width: 100%;
+
+    /* Keep success/error evenly separated from Send. */
+    margin-top: clamp(6px, 1.7svh, 10px);
+    min-height: clamp(13px, 3.8svh, 19px);
+
+    font-size: clamp(10px, 3svh, 12px);
+    line-height: 1.15;
+  }
+
+  /* =======================================================
+     SQUARE SVG / BACKGROUND
+
+     V4 intentionally keeps the accepted V3 visual geometry unchanged.
+     ======================================================= */
+
+  .contactVisual {
+    --contact-landscape-visual-size:
+      min(
+        39vw,
+        72svh,
+        300px
+      );
+
+    width: var(--contact-landscape-visual-size);
+    height: var(--contact-landscape-visual-size);
+
+    flex: 0 0 auto;
+
+    padding: clamp(16px, 4svh, 26px);
+    margin-inline: auto;
+  }
+
+  .contactVisual svg {
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+/* =========================================================
+   ULTRA-SHORT LANDSCAPE
+   264–320px-class heights
+
+   Keep the same visual hierarchy, but use a compact version of the new
+   breathing-room rhythm so the form still fits the shortest real devices.
+   ========================================================= */
+
+@media (orientation: landscape) and (max-height: 320px) {
+  .contact {
+    padding-block: clamp(4px, 1.5svh, 7px);
+    padding-inline: clamp(14px, 2.4vw, 24px);
+
+    gap: clamp(16px, 2.8vw, 28px);
+  }
+
+  .contact > .cSection {
+    padding-block: 2px;
+    padding-inline: clamp(5px, 1vw, 9px);
+  }
+
+  .contact > .cSection:first-child {
+    flex: 1.13 1 0;
+  }
+
+  .contact > .cSection:last-child {
+    flex: 0.87 1 0;
+  }
+
+  .contact form {
+    width: min(94%, 390px);
+
+    padding-block: 1px;
+    padding-inline: clamp(6px, 1.1vw, 10px);
+
+    gap: clamp(5px, 1.8svh, 7px);
+  }
+
+  .contact form h1 {
+    margin-bottom: clamp(3px, 1.1svh, 5px);
+
+    font-size: clamp(18px, 6.4svh, 24px);
+  }
+
+  .contact .formItem {
+    gap: clamp(2px, 0.8svh, 4px);
+  }
+
+  .contact label {
+    font-size: clamp(10px, 3.6svh, 12px);
+  }
+
+  .contact input,
+  .contact textarea {
+    padding: clamp(4px, 1.35svh, 6px);
+
+    font-size: clamp(11px, 3.8svh, 13px);
+  }
+
+  .contact textarea {
+    height: clamp(40px, 15.5svh, 50px);
+    min-height: 40px;
+  }
+
+  .contact .formButton {
+    margin-top: clamp(4px, 1.5svh, 6px);
+
+    padding: clamp(4px, 1.35svh, 6px);
+
+    font-size: clamp(11px, 3.8svh, 13px);
+  }
+
+  .contact .formStatus {
+    margin-top: clamp(4px, 1.4svh, 6px);
+    min-height: clamp(11px, 3.5svh, 14px);
+
+    font-size: clamp(9px, 3.1svh, 11px);
+  }
+
+  .contactVisual {
+    --contact-landscape-visual-size:
+      min(
+        35vw,
+        68svh,
+        205px
+      );
+
+    padding: clamp(12px, 4svh, 17px);
+  }
+}
+
+/* =========================================================
+   SHORT LANDSCAPE
+   321–355px-class heights
+   ========================================================= */
+
+@media
+  (orientation: landscape)
+  and (min-height: 321px)
+  and (max-height: 355px) {
+
+  .contact {
+    padding-block: clamp(5px, 1.6svh, 9px);
+    padding-inline: clamp(16px, 2.7vw, 30px);
+    gap: clamp(18px, 3vw, 34px);
+  }
+
+  .contact > .cSection {
+    padding-inline: clamp(6px, 1.2vw, 12px);
+  }
+
+  .contact form {
+    width: min(94%, 400px);
+    padding-inline: clamp(7px, 1.25vw, 12px);
+
+    gap: clamp(6px, 1.8svh, 9px);
+  }
+
+  .contact form h1 {
+    margin-bottom: clamp(4px, 1.2svh, 7px);
+  }
+
+  .contact .formItem {
+    gap: clamp(3px, 0.9svh, 5px);
+  }
+
+  .contact input,
+  .contact textarea {
+    padding: clamp(4px, 1.3svh, 7px);
+  }
+
+  .contact textarea {
+    height: clamp(44px, 14.5svh, 58px);
+    min-height: 44px;
+  }
+
+  .contact .formButton {
+    margin-top: clamp(5px, 1.6svh, 8px);
+  }
+
+  .contact .formStatus {
+    margin-top: clamp(5px, 1.5svh, 8px);
+    min-height: clamp(12px, 3.7svh, 16px);
+  }
+
+  .contactVisual {
+    --contact-landscape-visual-size:
+      min(
+        37vw,
+        71svh,
+        250px
+      );
+
+    padding: clamp(14px, 4svh, 20px);
+  }
+}
