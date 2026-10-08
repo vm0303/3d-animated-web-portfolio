@@ -1,0 +1,239 @@
+/* =========================================================
+   CONTACT — PHONE / FOLDED OUTER PORTRAIT CANDIDATE V2
+
+   Intended composition:
+
+       generous top breathing room
+               ↓
+        medium SVG / background
+               ↓
+          deliberate gap
+               ↓
+              form
+               ↓
+       generous bottom breathing room
+
+   This candidate keeps the approved SVG-first portrait order while giving
+   both the illustration and form their own horizontal breathing room.
+   ========================================================= */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .contact,
+  .contact > .cSection,
+  .contact form,
+  .contactVisual {
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  .contact {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding-block:
+      clamp(
+        12px,
+        2.2svh,
+        18px
+      );
+
+    padding-inline:
+      clamp(
+        16px,
+        4.5vw,
+        24px
+      );
+
+    gap:
+      clamp(
+        16px,
+        2.8svh,
+        24px
+      );
+  }
+
+  /*
+   * Contact.jsx DOM order is form first, visual second.
+   * Portrait intentionally displays the illustration first.
+   */
+  .contact > .cSection {
+    width: 100%;
+    height: auto;
+
+    flex: 0 0 auto;
+
+    padding: 0;
+  }
+
+  .contact > .cSection:last-child {
+    order: -1;
+  }
+
+  /* =======================================================
+     SVG / BACKGROUND
+     ======================================================= */
+
+  .contactVisual {
+    width:
+      min(
+        58vw,
+        220px,
+        32svh
+      );
+
+    height: auto;
+    aspect-ratio: 1 / 1;
+
+    padding:
+      clamp(
+        14px,
+        3.6vw,
+        20px
+      );
+
+    margin-inline: auto;
+  }
+
+  .contactVisual svg {
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  /* =======================================================
+     FORM
+     ======================================================= */
+
+  .contact form {
+    width:
+      min(
+        100%,
+        390px
+      );
+
+    margin-inline: auto;
+
+    padding-block:
+      clamp(
+        2px,
+        0.55svh,
+        5px
+      );
+
+    padding-inline:
+      clamp(
+        2px,
+        0.8vw,
+        5px
+      );
+
+    gap:
+      clamp(
+        6px,
+        1.05svh,
+        9px
+      );
+  }
+
+  .contact form h1 {
+    margin: 0;
+
+    text-align: center;
+
+    font-size:
+      clamp(
+        26px,
+        7vw,
+        32px
+      );
+
+    line-height: 1.04;
+  }
+
+  .contact .formItem {
+    gap:
+      clamp(
+        3px,
+        0.55svh,
+        5px
+      );
+  }
+
+  .contact label {
+    font-size:
+      clamp(
+        13px,
+        3.45vw,
+        15px
+      );
+
+    line-height: 1.15;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-width: 0;
+
+    padding:
+      clamp(
+        8px,
+        1.15svh,
+        10px
+      );
+
+    /* Prevent iOS form-focus zoom. */
+    font-size: 16px;
+  }
+
+  .contact textarea {
+    height:
+      clamp(
+        72px,
+        12.5svh,
+        96px
+      );
+
+    min-height: 72px;
+
+    resize: none;
+  }
+
+  .contact .formButton {
+    padding:
+      clamp(
+        9px,
+        1.3svh,
+        11px
+      );
+
+    font-size:
+      clamp(
+        14px,
+        3.6vw,
+        16px
+      );
+  }
+
+  .contact .formStatus {
+    width: 100%;
+
+    min-height: 2.2em;
+
+    font-size:
+      clamp(
+        11px,
+        3vw,
+        13px
+      );
+
+    line-height: 1.2;
+  }
+}
