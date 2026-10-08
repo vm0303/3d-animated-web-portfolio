@@ -663,3 +663,28 @@ label{
     min-height: 1.8em;
   }
 }
+
+/* =========================================================
+   LOCKED TALL / NARROW OUTER-FOLDABLE PORTRAIT
+
+   The locked phone-portrait geometry remains the base.
+   The tall 400px, 412px and 431px outer-display portrait cases have enough
+   vertical room to support a larger SVG/background footprint. Shorter/wider
+   466px and 475px outer-display cases intentionally retain the base sizing.
+   ========================================================= */
+
+@media
+  (orientation: portrait)
+  and (min-width: 400px)
+  and (max-width: 431px)
+  and (min-height: 900px) {
+
+  .contactVisual {
+    width:
+      min(
+        66vw,
+        260px,
+        29svh
+      );
+  }
+}
