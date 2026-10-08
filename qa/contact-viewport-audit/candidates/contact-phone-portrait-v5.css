@@ -1,0 +1,538 @@
+/* =========================================================
+   CONTACT — PHONE / FOLDED OUTER PORTRAIT CANDIDATE V5
+
+   V5 starts from the portrait geometry manually validated on a real
+   Samsung S25+ and keeps that as the spacious/tall portrait target.
+
+   It then adapts by available portrait height rather than by device name:
+
+   - tall portrait: preserve the real-device spacing
+   - medium-height portrait: moderately compress vertical extras
+   - compact-height portrait: compress only what is necessary to keep the
+     whole SVG + form composition inside the Contact section
+
+   Approved order remains:
+
+       top breathing room
+              ↓
+       SVG / background
+              ↓
+          section gap
+              ↓
+       title + form
+              ↓
+      bottom breathing room
+   ========================================================= */
+
+@media (max-width: 500px) and (orientation: portrait) {
+  .contact,
+  .contact > .cSection,
+  .contact form,
+  .contactVisual {
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  .contact {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding-block:
+      clamp(
+        12px,
+        2.2svh,
+        20px
+      );
+
+    padding-inline:
+      clamp(
+        16px,
+        4.5vw,
+        24px
+      );
+
+    gap:
+      clamp(
+        18px,
+        3.2svh,
+        28px
+      );
+  }
+
+  .contact > .cSection {
+    width: 100%;
+    height: auto;
+
+    flex: 0 0 auto;
+
+    padding-block: 0;
+    padding-inline:
+      clamp(
+        8px,
+        2.5vw,
+        14px
+      );
+  }
+
+  /* Contact.jsx is form-first in the DOM; portrait is visual-first. */
+  .contact > .cSection:last-child {
+    order: -1;
+  }
+
+  /* =======================================================
+     SVG / BACKGROUND — tall portrait target
+     ======================================================= */
+
+  .contactVisual {
+    margin-top:
+      clamp(
+        12px,
+        3svh,
+        20px
+      );
+
+    width:
+      min(
+        61vw,
+        232px,
+        32svh
+      );
+
+    height: auto;
+    aspect-ratio: 1 / 1;
+
+    padding:
+      clamp(
+        15px,
+        3.8vw,
+        22px
+      );
+
+    margin-inline: auto;
+  }
+
+  .contactVisual svg {
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  /* =======================================================
+     FORM — tall portrait target
+     ======================================================= */
+
+  .contact form {
+    width:
+      min(
+        100%,
+        390px
+      );
+
+    margin-inline: auto;
+
+    padding-block:
+      clamp(
+        4px,
+        0.8svh,
+        7px
+      );
+
+    padding-inline:
+      clamp(
+        8px,
+        2.4vw,
+        14px
+      );
+
+    gap:
+      clamp(
+        6px,
+        1.05svh,
+        9px
+      );
+  }
+
+  .contact form h1 {
+    margin: 0;
+
+    margin-bottom:
+      clamp(
+        8px,
+        1.5svh,
+        13px
+      );
+
+    text-align: center;
+
+    font-size:
+      clamp(
+        26px,
+        7vw,
+        32px
+      );
+
+    line-height: 1.04;
+  }
+
+  .contact .formItem {
+    gap:
+      clamp(
+        7px,
+        1.25svh,
+        10px
+      );
+  }
+
+  .contact label {
+    font-size:
+      clamp(
+        15px,
+        4vw,
+        17px
+      );
+
+    line-height: 1.15;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-width: 0;
+
+    padding:
+      clamp(
+        7px,
+        1.05svh,
+        9px
+      );
+
+    margin-bottom:
+      clamp(
+        6px,
+        1.05svh,
+        9px
+      );
+
+    font-size:
+      clamp(
+        14px,
+        3.55vw,
+        15px
+      );
+  }
+
+  .contact textarea {
+    height:
+      clamp(
+        70px,
+        12svh,
+        92px
+      );
+
+    min-height: 70px;
+    resize: none;
+  }
+
+  .contact .formButton {
+    margin-top:
+      clamp(
+        9px,
+        1.7svh,
+        14px
+      );
+
+    padding:
+      clamp(
+        9px,
+        1.3svh,
+        11px
+      );
+
+    font-size:
+      clamp(
+        14px,
+        3.6vw,
+        16px
+      );
+  }
+
+  .contact .formStatus {
+    width: 100%;
+
+    min-height: 2.2em;
+
+    font-size:
+      clamp(
+        11px,
+        3vw,
+        13px
+      );
+
+    line-height: 1.2;
+  }
+}
+
+
+/* =========================================================
+   MEDIUM-HEIGHT PHONE / FOLDED PORTRAIT
+
+   Keep the same visual proportions, but trim the extra vertical margins
+   before they consume the bottom breathing room.
+   ========================================================= */
+
+@media
+  (max-width: 500px)
+  and (orientation: portrait)
+  and (min-height: 641px)
+  and (max-height: 780px) {
+
+  .contact {
+    padding-block:
+      clamp(
+        8px,
+        1.5svh,
+        12px
+      );
+
+    gap:
+      clamp(
+        14px,
+        2.2svh,
+        18px
+      );
+  }
+
+  .contactVisual {
+    margin-top:
+      clamp(
+        6px,
+        1.2svh,
+        10px
+      );
+
+    width:
+      min(
+        60vw,
+        226px,
+        31svh
+      );
+
+    padding:
+      clamp(
+        14px,
+        3.5vw,
+        20px
+      );
+  }
+
+  .contact form {
+    padding-block:
+      clamp(
+        3px,
+        0.6svh,
+        5px
+      );
+
+    gap:
+      clamp(
+        5px,
+        0.9svh,
+        7px
+      );
+  }
+
+  .contact form h1 {
+    margin-bottom:
+      clamp(
+        6px,
+        1.1svh,
+        9px
+      );
+  }
+
+  .contact .formItem {
+    gap:
+      clamp(
+        6px,
+        1svh,
+        8px
+      );
+  }
+
+  .contact input,
+  .contact textarea {
+    margin-bottom:
+      clamp(
+        4px,
+        0.8svh,
+        6px
+      );
+  }
+
+  .contact textarea {
+    height:
+      clamp(
+        68px,
+        11.5svh,
+        88px
+      );
+
+    min-height: 68px;
+  }
+
+  .contact .formButton {
+    margin-top:
+      clamp(
+        7px,
+        1.25svh,
+        10px
+      );
+  }
+
+  .contact .formStatus {
+    min-height: 2em;
+  }
+}
+
+
+/* =========================================================
+   COMPACT-HEIGHT PHONE / FOLDED PORTRAIT
+
+   Short browser heights need a tighter vertical envelope. Horizontal
+   breathing room, readable labels, and the overall SVG-first composition
+   remain unchanged.
+   ========================================================= */
+
+@media
+  (max-width: 500px)
+  and (orientation: portrait)
+  and (max-height: 640px) {
+
+  .contact {
+    padding-block:
+      clamp(
+        6px,
+        1svh,
+        10px
+      );
+
+    gap:
+      clamp(
+        10px,
+        1.8svh,
+        14px
+      );
+  }
+
+  .contactVisual {
+    margin-top:
+      clamp(
+        2px,
+        0.7svh,
+        4px
+      );
+
+    width:
+      min(
+        58vw,
+        210px,
+        31svh
+      );
+
+    padding:
+      clamp(
+        12px,
+        3.2vw,
+        18px
+      );
+  }
+
+  .contact form {
+    padding-block:
+      clamp(
+        2px,
+        0.45svh,
+        4px
+      );
+
+    gap:
+      clamp(
+        4px,
+        0.8svh,
+        6px
+      );
+  }
+
+  .contact form h1 {
+    margin-bottom:
+      clamp(
+        5px,
+        0.9svh,
+        7px
+      );
+  }
+
+  .contact .formItem {
+    gap:
+      clamp(
+        5px,
+        0.9svh,
+        7px
+      );
+  }
+
+  .contact input,
+  .contact textarea {
+    padding:
+      clamp(
+        6px,
+        0.95svh,
+        8px
+      );
+
+    margin-bottom:
+      clamp(
+        2px,
+        0.55svh,
+        4px
+      );
+  }
+
+  .contact textarea {
+    height:
+      clamp(
+        64px,
+        11svh,
+        78px
+      );
+
+    min-height: 64px;
+  }
+
+  .contact .formButton {
+    margin-top:
+      clamp(
+        5px,
+        1svh,
+        8px
+      );
+
+    padding:
+      clamp(
+        8px,
+        1.2svh,
+        10px
+      );
+  }
+
+  .contact .formStatus {
+    min-height: 1.8em;
+  }
+}
