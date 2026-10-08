@@ -1,0 +1,28 @@
+/* =========================================================
+   CONTACT — TALL / NARROW OUTER-FOLDABLE PORTRAIT V1
+
+   The locked phone-portrait geometry remains the base.
+
+   The tall narrow portrait envelope represented by the 400px, 412px and
+   431px outer-display cases has substantially more vertical breathing room,
+   so this candidate increases only the SVG/background footprint.
+
+   The shorter/wider 466px and 475px outer-display portrait cases are left
+   untouched because their existing composition is already accepted.
+   ========================================================= */
+
+@media
+  (orientation: portrait)
+  and (min-width: 400px)
+  and (max-width: 431px)
+  and (min-height: 900px) {
+
+  .contactVisual {
+    width:
+      min(
+        66vw,
+        260px,
+        29svh
+      );
+  }
+}
