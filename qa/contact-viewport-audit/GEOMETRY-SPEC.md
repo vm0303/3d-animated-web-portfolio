@@ -38,6 +38,8 @@ Landscape QA must include short-height and normal-height cases where applicable.
 ## Global Contact rules
 
 - no form field, label, title, button, status message, or SVG may clip or escape the Contact section
+- the Contact title `Let's keep in touch!` must remain on one line in every accepted geometry family; tune title size and available form width rather than allowing the title to wrap
+- success/error status messages may wrap to multiple lines when needed; wrapping by itself is not a failure as long as the message remains contained, readable, and intentionally spaced below the Send button
 - no form/SVG collision
 - labels and typed text must remain readable
 - all controls must remain reachable and usable
@@ -80,7 +82,7 @@ Requirements:
 - SVG/illustration appears first and stays contained near the top of the portrait composition
 - form follows below the SVG and remains the primary interactive content
 - form is centered horizontally within the available viewport
-- form title remains readable; wrapping is allowed only when necessary to preserve good sizing
+- form title remains readable and stays on one line
 - labels left-aligned
 - inputs/textarea use the available width without touching viewport edges
 - textarea remains tall enough to be useful
@@ -104,6 +106,7 @@ Requirements:
 - both vertically centered where practical
 - form remains the priority on very short landscape heights
 - title, fields, textarea, and button must all remain visible and usable
+- title must remain on one line
 - reduce SVG size first when vertical pressure becomes severe
 - reduce form padding/gaps and typography carefully before reducing field usability
 - no form/SVG overlap
@@ -129,6 +132,7 @@ Requirements:
 - message field remains practical
 - SVG scales down without pushing the form out of view
 - spacing should remain intentional rather than compressed
+- title remains on one line
 
 ## 2a. Foldable Phones — Folded/Outer Landscape
 
@@ -144,6 +148,7 @@ Requirements:
 - very short outer-display landscape heights prioritize form usability
 - SVG may become substantially smaller when necessary
 - form controls must not clip
+- title remains on one line
 
 ---
 
@@ -164,6 +169,7 @@ Requirements:
 - increase form width, spacing, and SVG scale appropriately
 - maintain clear hierarchy between illustration and form
 - no excessive unused space between the two regions
+- title remains on one line
 
 ## 2b. Foldables — Unfolded Landscape
 
@@ -179,6 +185,7 @@ Requirements:
 - form remains readable and proportionate
 - SVG scales appropriately for the larger display
 - neither side should dominate excessively
+- title remains on one line
 
 ---
 
@@ -198,6 +205,7 @@ Requirements:
 - fields, textarea, title, and button should use tablet space naturally
 - SVG remains meaningful rather than becoming a tiny header graphic
 - spacing should breathe more than phone layouts when height permits
+- title remains on one line
 
 ## 3. Tablets — Landscape
 
@@ -212,6 +220,7 @@ Requirements:
 - two balanced columns
 - form left, SVG right
 - title and fields remain readable
+- title remains on one line
 - SVG contained within its region
 - short-height tablet landscape requires its own compact treatment if needed
 
@@ -230,6 +239,7 @@ Requirements:
 - preserve the Lama-style two-section composition
 - form and illustration remain visually balanced
 - title, fields, textarea, button, SVG, gaps, and outer padding scale appropriately with viewport size
+- title remains on one line
 - standard laptops must not feel oversized
 - wide/high-resolution desktops must not leave small laptop-sized content floating in excessive empty space
 - wide layouts should scale up without making the form or SVG excessively large
@@ -241,12 +251,12 @@ Requirements:
 
 Every geometry should check:
 
-- title containment
+- title containment and single-line presentation
 - label containment
 - input containment
 - textarea containment
 - button containment
-- success/error message containment
+- success/error message containment; success/error text may wrap when needed
 - minimum readable font sizes
 - adequate field heights
 - textarea usable height
