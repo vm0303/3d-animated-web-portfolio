@@ -1,0 +1,253 @@
+/* =========================================================
+   CONTACT — UNFOLDED INNER LANDSCAPE CANDIDATE V1
+
+   Baseline review showed two problems:
+   - the illustration/background was vertically stretched
+   - the form was too narrow/tall and used excessive textarea height
+
+   Target composition:
+
+     FORM                        SQUARE SVG
+     FORM                        SQUARE SVG
+     FORM                        SQUARE SVG
+
+   Requirements:
+   - square, medium/large illustration/background
+   - title stays on one line
+   - form gets deliberate inside/outside breathing room
+   - controls scale beyond phone-landscape sizing
+   - textarea remains useful without dominating the form
+   - success/error may wrap naturally
+   ========================================================= */
+
+@media
+  (orientation: landscape)
+  and (min-height: 500px)
+  and (max-width: 1114px) {
+
+  .contact,
+  .contact > .cSection,
+  .contact form,
+  .contactVisual {
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  .contact {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding-block: clamp(14px, 2.4svh, 28px);
+    padding-inline: clamp(24px, 4vw, 56px);
+
+    gap: clamp(28px, 4.2vw, 58px);
+  }
+
+  .contact > .cSection {
+    width: auto;
+    height: 100%;
+
+    padding-block: clamp(8px, 1.4svh, 14px);
+    padding-inline: clamp(10px, 1.8vw, 22px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact > .cSection:first-child {
+    flex: 1.08 1 0;
+  }
+
+  .contact > .cSection:last-child {
+    flex: 0.92 1 0;
+  }
+
+  /* =======================================================
+     FORM
+     ======================================================= */
+
+  .contact form {
+    width: min(94%, 470px);
+    max-height: 100%;
+
+    margin-inline: auto;
+
+    padding-block: clamp(8px, 1.4svh, 14px);
+    padding-inline: clamp(14px, 2vw, 24px);
+
+    gap: clamp(10px, 1.7svh, 16px);
+  }
+
+  .contact form h1 {
+    margin: 0;
+    margin-bottom: clamp(10px, 1.7svh, 16px);
+
+    font-size: clamp(26px, 3.8vw, 34px);
+    line-height: 1.04;
+
+    white-space: nowrap;
+  }
+
+  .contact .formItem {
+    gap: clamp(6px, 1svh, 9px);
+  }
+
+  .contact label {
+    font-size: clamp(14px, 2.1vw, 17px);
+    line-height: 1.15;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-width: 0;
+
+    padding: clamp(7px, 1.1svh, 11px);
+
+    font-size: clamp(14px, 1.9vw, 16px);
+  }
+
+  .contact textarea {
+    height: clamp(76px, 15svh, 118px);
+    min-height: 76px;
+
+    resize: none;
+  }
+
+  .contact .formButton {
+    margin-top: clamp(10px, 1.8svh, 16px);
+
+    padding: clamp(8px, 1.2svh, 11px);
+
+    font-size: clamp(14px, 1.9vw, 16px);
+  }
+
+  .contact .formStatus {
+    width: 100%;
+
+    margin-top: clamp(8px, 1.4svh, 13px);
+    min-height: 2em;
+
+    font-size: clamp(13px, 1.7vw, 15px);
+    line-height: 1.25;
+
+    white-space: normal;
+  }
+
+  /* =======================================================
+     SQUARE SVG / BACKGROUND
+     ======================================================= */
+
+  .contactVisual {
+    --contact-unfolded-landscape-visual-size:
+      min(
+        40vw,
+        68svh,
+        420px
+      );
+
+    width: var(--contact-unfolded-landscape-visual-size);
+    height: var(--contact-unfolded-landscape-visual-size);
+
+    flex: 0 0 auto;
+
+    padding: clamp(20px, 3vw, 32px);
+    margin-inline: auto;
+  }
+
+  .contactVisual svg {
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+/* =========================================================
+   SHORT UNFOLDED INNER LANDSCAPE
+   500–620px height
+
+   Preserve the same balanced two-column design while trimming only
+   expendable vertical space. The SVG remains square rather than stretched.
+   ========================================================= */
+
+@media
+  (orientation: landscape)
+  and (min-height: 500px)
+  and (max-height: 620px)
+  and (max-width: 1114px) {
+
+  .contact {
+    padding-block: clamp(8px, 1.6svh, 12px);
+    padding-inline: clamp(20px, 3.2vw, 38px);
+
+    gap: clamp(22px, 3.4vw, 40px);
+  }
+
+  .contact > .cSection {
+    padding-block: clamp(4px, 0.9svh, 7px);
+    padding-inline: clamp(8px, 1.4vw, 14px);
+  }
+
+  .contact form {
+    width: min(94%, 440px);
+
+    padding-block: clamp(4px, 0.8svh, 7px);
+    padding-inline: clamp(12px, 1.7vw, 18px);
+
+    gap: clamp(7px, 1.25svh, 10px);
+  }
+
+  .contact form h1 {
+    margin-bottom: clamp(6px, 1.1svh, 9px);
+    font-size: clamp(24px, 4.6svh, 29px);
+  }
+
+  .contact .formItem {
+    gap: clamp(4px, 0.8svh, 6px);
+  }
+
+  .contact label {
+    font-size: clamp(13px, 2.5svh, 15px);
+  }
+
+  .contact input,
+  .contact textarea {
+    padding: clamp(6px, 1svh, 8px);
+    font-size: clamp(13px, 2.5svh, 15px);
+  }
+
+  .contact textarea {
+    height: clamp(68px, 13svh, 82px);
+    min-height: 68px;
+  }
+
+  .contact .formButton {
+    margin-top: clamp(7px, 1.3svh, 10px);
+    padding: clamp(7px, 1.1svh, 9px);
+  }
+
+  .contact .formStatus {
+    margin-top: clamp(6px, 1svh, 8px);
+    min-height: 1.8em;
+    font-size: clamp(12px, 2.2svh, 14px);
+  }
+
+  .contactVisual {
+    --contact-unfolded-landscape-visual-size:
+      min(
+        38vw,
+        66svh,
+        330px
+      );
+
+    padding: clamp(17px, 2.8vw, 24px);
+  }
+}
