@@ -1,0 +1,24 @@
+/* =========================================================
+   CONTACT — UNFOLDED INNER PORTRAIT V2 STATUS SIZE TUNE
+
+   Geometry remains exactly as accepted in V1.
+   Only increase success/error message text size.
+   Status messages may continue to wrap naturally.
+   ========================================================= */
+
+@media
+  (orientation: portrait)
+  and (min-width: 501px)
+  and (max-width: 743px),
+
+  (orientation: portrait)
+  and (min-width: 744px)
+  and (max-width: 1000px)
+  and (min-aspect-ratio: 6/7) {
+
+  .contact .formStatus {
+    font-size: clamp(14px, 2.1vw, 16px);
+    line-height: 1.3;
+    white-space: normal;
+  }
+}
