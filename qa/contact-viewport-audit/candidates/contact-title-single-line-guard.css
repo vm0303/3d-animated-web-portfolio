@@ -1,0 +1,18 @@
+/* =========================================================
+   CONTACT — SINGLE-LINE TITLE QA GUARD
+
+   Shared by all remaining Contact geometry-family candidate passes.
+
+   The Contact title must remain on one line. This stylesheet deliberately
+   prevents wrapping so the normal geometry containment checks will expose a
+   title/form that is too narrow instead of silently accepting a two-line
+   heading.
+
+   Success and error status messages are intentionally NOT affected; those
+   messages may wrap when needed as long as they remain contained and spaced
+   correctly below the Send button.
+   ========================================================= */
+
+.contact form h1 {
+  white-space: nowrap;
+}
