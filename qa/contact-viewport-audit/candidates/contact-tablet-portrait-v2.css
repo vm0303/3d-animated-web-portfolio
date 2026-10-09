@@ -1,9 +1,8 @@
 /* =========================================================
    CONTACT — TABLET PORTRAIT CANDIDATE V2
 
-   V1 geometry is accepted. V2 changes only the SVG/background footprint,
-   increasing the rendered square by roughly 10–15% across both normal and
-   compact tablet-portrait height envelopes.
+   V1 geometry is accepted. This revision keeps the user's larger tablet
+   portrait visual, but trims it by roughly 3% after real screenshot review.
 
    Form geometry, spacing, typography, title behavior, and status-message
    behavior remain exactly as V1.
@@ -21,14 +20,14 @@
   .contactVisual {
     --contact-tablet-portrait-visual-size:
       min(
-        47vw,
-        32.5svh,
-        440px
+        68vw,
+        39svh,
+        445px
       );
   }
 }
 
-/* Compact-height tablet portrait keeps the same ~12% scale increase. */
+/* Compact-height tablet portrait: same small ~3% reduction. */
 @media
   (orientation: portrait)
   and (min-width: 744px)
@@ -43,9 +42,9 @@
   .contactVisual {
     --contact-tablet-portrait-visual-size:
       min(
-        44vw,
-        30.5svh,
-        340px
+        48.5vw,
+        36svh,
+        350px
       );
   }
 }
