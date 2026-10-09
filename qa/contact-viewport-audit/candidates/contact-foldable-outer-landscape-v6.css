@@ -1,0 +1,29 @@
+/* =========================================================
+   CONTACT — FOLDED-OUTER LANDSCAPE TARGETED V6
+
+   V5 is accepted for phone landscape and for the other folded-outer
+   landscape cases. The 678x466 outer-display case is the only measured
+   composition where the Contact title wraps to a second line.
+
+   Keep the accepted V5 form/SVG geometry unchanged and reduce only the
+   title size in this narrow + relatively tall outer-landscape envelope.
+   ========================================================= */
+
+@media
+  (orientation: landscape)
+  and (min-width: 650px)
+  and (max-width: 700px)
+  and (min-height: 430px)
+  and (max-height: 499px) {
+
+  .contact form h1 {
+    font-size:
+      clamp(
+        20px,
+        5.2svh,
+        24px
+      );
+
+    white-space: nowrap;
+  }
+}
