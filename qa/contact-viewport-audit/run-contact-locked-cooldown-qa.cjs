@@ -18,6 +18,10 @@ const screenshots =
   process.argv.find((arg) => arg.startsWith("--screenshots="))?.split("=")[1] ||
   "all";
 
+const cooldownState =
+  process.argv.find((arg) => arg.startsWith("--cooldown-state="))?.split("=")[1] ||
+  null;
+
 const runs = [
   {
     label: "phone portrait",
@@ -56,18 +60,24 @@ let failed = false;
 for (const run of runs) {
   process.stdout.write(`\n=== Locked Contact cooldown: ${run.label} ===\n`);
 
+  const args = [
+    RUNNER,
+    ...run.args,
+    `--browser=${browser}`,
+    `--screenshots=${screenshots}`,
+    `--output-dir=${path.join(
+      "qa-results/contact/locked-cooldown",
+      run.output
+    )}`,
+  ];
+
+  if (cooldownState) {
+    args.push(`--cooldown-state=${cooldownState}`);
+  }
+
   const result = spawnSync(
     process.execPath,
-    [
-      RUNNER,
-      ...run.args,
-      `--browser=${browser}`,
-      `--screenshots=${screenshots}`,
-      `--output-dir=${path.join(
-        "qa-results/contact/locked-cooldown",
-        run.output
-      )}`,
-    ],
+    args,
     {
       cwd: ROOT,
       stdio: "inherit",
