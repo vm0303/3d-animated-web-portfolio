@@ -13,6 +13,10 @@ const STATUS_VISUAL_RUNNER = path.join(
   __dirname,
   "run-contact-status-visual-qa.cjs"
 );
+const COOLDOWN_VISUAL_RUNNER = path.join(
+  __dirname,
+  "run-contact-cooldown-visual-qa.cjs"
+);
 
 function argValue(name, fallback = null) {
   const prefix = `--${name}=`;
@@ -34,6 +38,10 @@ const statusScreenshotMode = argValue(
   "status-screenshots",
   sharedScreenshotMode
 );
+const cooldownScreenshotMode = argValue(
+  "cooldown-screenshots",
+  sharedScreenshotMode
+);
 
 const forwarded = process.argv
   .slice(2)
@@ -42,7 +50,8 @@ const forwarded = process.argv
       !arg.startsWith("--output-dir=") &&
       !arg.startsWith("--screenshots=") &&
       !arg.startsWith("--geometry-screenshots=") &&
-      !arg.startsWith("--status-screenshots=")
+      !arg.startsWith("--status-screenshots=") &&
+      !arg.startsWith("--cooldown-screenshots=")
   );
 
 function run(label, runner, outputSuffix, screenshotMode) {
@@ -85,6 +94,17 @@ const statusCode = run(
   statusScreenshotMode
 );
 
-if (geometryCode !== 0 || statusCode !== 0) {
+const cooldownCode = run(
+  "Contact cooldown countdown visual QA (NO FORM SUBMISSION)",
+  COOLDOWN_VISUAL_RUNNER,
+  "cooldown-visual",
+  cooldownScreenshotMode
+);
+
+if (
+  geometryCode !== 0 ||
+  statusCode !== 0 ||
+  cooldownCode !== 0
+) {
   process.exitCode = 1;
 }
