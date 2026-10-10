@@ -18,9 +18,8 @@ const contract = JSON.parse(fs.readFileSync(CONTRACT_PATH, "utf8"));
 const viewportContract = JSON.parse(fs.readFileSync(VIEWPORT_PATH, "utf8"));
 
 /*
- * These strings intentionally match the live Contact copy.
- * Use --cooldown-state=cooldown-2h47m to test only the agreed representative
- * production message without rerunning all three countdown lengths.
+ * These strings intentionally match the live Contact copy and exercise each
+ * formatter shape: hours/minutes, mixed hours/minutes, minutes-only, seconds-only.
  */
 const COOLDOWN_STATES = [
   {
@@ -34,6 +33,10 @@ const COOLDOWN_STATES = [
   {
     id: "cooldown-8m",
     text: "Message limit reached. Try again in 8m.",
+  },
+  {
+    id: "cooldown-5s",
+    text: "Message limit reached. Try again in 5s.",
   },
 ];
 
