@@ -1,0 +1,130 @@
+/* =========================================================
+   CONTACT — STANDARD DESKTOP V1 CANDIDATE
+
+   Goals:
+   - add breathing room to the form instead of inheriting the tighter tablet
+     landscape composition at overlapping viewport sizes;
+   - scale title, labels, controls, button, and status text more naturally
+     across 1024–1920px desktop/laptop viewports;
+   - preserve the accepted phone/foldable/tablet geometry by scoping this
+     candidate to fine-pointer / hover-capable landscape layouts only;
+   - keep the Contact visual square and proportionally balanced with the form.
+   ========================================================= */
+
+@media
+  (orientation: landscape)
+  and (min-width: 1024px)
+  and (max-width: 1920px)
+  and (min-height: 700px)
+  and (hover: hover)
+  and (pointer: fine) {
+
+  .contact,
+  .contact > .cSection,
+  .contact form,
+  .contactVisual {
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  .contact {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding-block: clamp(20px, 2.8svh, 34px);
+    padding-inline: clamp(34px, 4vw, 76px);
+    gap: clamp(42px, 5vw, 96px);
+  }
+
+  .contact > .cSection {
+    width: auto;
+    height: 100%;
+    padding-block: clamp(10px, 1.4svh, 16px);
+    padding-inline: clamp(10px, 1.4vw, 24px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact > .cSection:first-child {
+    flex: 1.08 1 0;
+  }
+
+  .contact > .cSection:last-child {
+    flex: 0.92 1 0;
+  }
+
+  .contact form {
+    width: min(94%, 680px);
+    max-height: 100%;
+    margin-inline: auto;
+    padding-block: clamp(10px, 1.35svh, 18px);
+    padding-inline: clamp(16px, 1.5vw, 28px);
+    gap: clamp(14px, 1.65svh, 20px);
+  }
+
+  .contact form h1 {
+    margin: 0;
+    margin-bottom: clamp(12px, 1.55svh, 22px);
+    font-size: clamp(34px, 2.5vw, 48px);
+    line-height: 1.04;
+    white-space: nowrap;
+  }
+
+  .contact .formItem {
+    gap: clamp(8px, 0.95svh, 12px);
+  }
+
+  .contact label {
+    font-size: clamp(16px, 1.05vw, 20px);
+    line-height: 1.15;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-width: 0;
+    padding: clamp(10px, 1.15svh, 14px);
+    font-size: clamp(16px, 1vw, 19px);
+  }
+
+  .contact textarea {
+    height: clamp(110px, 14.5svh, 160px);
+    min-height: 110px;
+    resize: none;
+  }
+
+  .contact .formButton {
+    margin-top: clamp(12px, 1.45svh, 18px);
+    padding: clamp(10px, 1.1svh, 14px);
+    font-size: clamp(16px, 1vw, 19px);
+  }
+
+  .contact .formStatus {
+    width: 100%;
+    margin-top: clamp(9px, 1.05svh, 14px);
+    min-height: 2.1em;
+    font-size: clamp(15px, 0.95vw, 18px);
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .contactVisual {
+    --contact-desktop-standard-visual-size: min(36vw, 72svh, 620px);
+    width: var(--contact-desktop-standard-visual-size);
+    height: var(--contact-desktop-standard-visual-size);
+    flex: 0 0 auto;
+    padding: clamp(26px, 2.6vw, 40px);
+    margin-inline: auto;
+  }
+
+  .contactVisual svg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
