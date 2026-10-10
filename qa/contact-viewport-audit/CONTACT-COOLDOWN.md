@@ -67,18 +67,21 @@ Use a long random value for `CONTACT_COOLDOWN_SECRET`. Raw email addresses and I
 
 Geometry QA must never submit the real form or consume EmailJS quota.
 
-Cooldown geometry is tested by visual DOM injection using the same production wording at representative countdown lengths:
+Cooldown geometry is tested by visual DOM injection using the same short production wording at four representative countdown formats:
 
 ```text
 Message limit reached. Try again in 3h 0m.
 Message limit reached. Try again in 2h 47m.
 Message limit reached. Try again in 8m.
+Message limit reached. Try again in 5s.
 ```
 
-To check only the agreed representative `2h 47m` production copy across every currently locked geometry family:
+These four states exercise the live formatter shapes for hours/minutes, mixed hours/minutes, minutes-only, and seconds-only output.
+
+Run all four states across every currently locked geometry family with:
 
 ```powershell
-node qa/contact-viewport-audit/run-contact-locked-cooldown-qa.cjs --browser=chromium --screenshots=all --cooldown-state=cooldown-2h47m
+node qa/contact-viewport-audit/run-contact-locked-cooldown-qa.cjs --browser=chromium --screenshots=all
 ```
 
 The dedicated interaction runner seeds a future cooldown timestamp into localStorage and tests the real React behavior without waiting hours:
