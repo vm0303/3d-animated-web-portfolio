@@ -1,0 +1,157 @@
+/* =========================================================
+   CONTACT — WIDE DESKTOP V3 CANDIDATE
+
+   V3 keeps the accepted V2 geometry unchanged and only increases the
+   readability of success, error, and cooldown feedback.
+
+   The status container keeps V2's dimensions/spacing. The rendered message
+   itself scales independently so the form/SVG composition and visual
+   separation remain stable while feedback is materially easier to read.
+   ========================================================= */
+
+@media
+  (orientation: landscape)
+  and (min-width: 1921px)
+  and (hover: hover)
+  and (pointer: fine) {
+
+  .contact,
+  .contact > .cSection,
+  .contact form,
+  .contactVisual {
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  .contact {
+    --contact-wide-edge: clamp(64px, 2.8vw, 220px);
+
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: min(
+      calc(100vw - var(--contact-wide-edge) - var(--contact-wide-edge)),
+      6200px
+    );
+    max-width: none;
+    height: 100%;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    padding-block: clamp(28px, 3svh, 64px);
+    padding-inline: clamp(48px, 2.5vw, 150px);
+    gap: clamp(80px, 4.6vw, 280px);
+  }
+
+  .contact > .cSection {
+    width: auto;
+    height: 100%;
+    padding-block: clamp(14px, 1.5svh, 30px);
+    padding-inline: clamp(18px, 1.35vw, 54px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact > .cSection:first-child {
+    flex: 1.07 1 0;
+  }
+
+  .contact > .cSection:last-child {
+    flex: 0.93 1 0;
+  }
+
+  .contact form {
+    width: min(
+      96%,
+      clamp(840px, 42vw, 1800px)
+    );
+    max-height: 100%;
+    margin-inline: auto;
+
+    padding-block: clamp(18px, 1.7svh, 38px);
+    padding-inline: clamp(24px, 1.45vw, 58px);
+
+    gap: clamp(20px, 1.7svh, 34px);
+  }
+
+  .contact form h1 {
+    margin: 0;
+    margin-bottom: clamp(18px, 1.7svh, 34px);
+
+    font-size: clamp(58px, 2.25vw, 104px);
+    line-height: 1.03;
+    white-space: nowrap;
+  }
+
+  .contact .formItem {
+    gap: clamp(12px, 0.95svh, 20px);
+  }
+
+  .contact label {
+    font-size: clamp(24px, 0.9vw, 40px);
+    line-height: 1.15;
+  }
+
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-width: 0;
+
+    padding: clamp(14px, 1.05svh, 22px);
+    font-size: clamp(22px, 0.8vw, 36px);
+  }
+
+  .contact textarea {
+    height: clamp(170px, 16svh, 310px);
+    min-height: 170px;
+    resize: none;
+  }
+
+  .contact .formButton {
+    margin-top: clamp(16px, 1.45svh, 28px);
+    padding: clamp(14px, 1.05svh, 22px);
+
+    font-size: clamp(22px, 0.8vw, 36px);
+  }
+
+  /* Keep V2 status-box geometry; scale the actual feedback separately below. */
+  .contact .formStatus {
+    width: 100%;
+    margin-top: clamp(12px, 1.05svh, 22px);
+    min-height: 2.25em;
+
+    font-size: clamp(24px, 0.9vw, 44px);
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .contact .successMessage,
+  .contact .errorMessage,
+  .contact .cooldownMessage {
+    font-size: clamp(30px, 1.15vw, 64px);
+    line-height: 1.25;
+  }
+
+  .contactVisual {
+    --contact-desktop-wide-visual-size: min(39vw, 80svh, 1800px);
+
+    width: var(--contact-desktop-wide-visual-size);
+    height: var(--contact-desktop-wide-visual-size);
+    flex: 0 0 auto;
+
+    padding: clamp(38px, 2.5vw, 90px);
+    margin-inline: auto;
+  }
+
+  .contactVisual svg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
