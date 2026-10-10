@@ -21,6 +21,20 @@
   color: transparent;
 }
 
+.cooldownMessageText {
+  display: inline-block;
+}
+
+/*
+ * During the cooldown the Send control still looks disabled, but remains
+ * pointer/keyboard interactive so it can explain the active limit.
+ * Contact.jsx continues to block submission before any network request.
+ */
+.formButton.cooldownBlocked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .contactHoneypot {
   position: absolute;
   width: 1px;
