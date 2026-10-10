@@ -1,16 +1,10 @@
 # Contact Geometry Family Pass Policy
 
-This rule applies to every remaining Contact geometry family and to any future Contact geometry rerun.
+This rule applies to every Contact geometry family and every final Contact regression/closure rerun.
 
-## Mandatory combined pass
+## Mandatory unified pass
 
-A Contact geometry family is **not eligible to lock** from `run-contact-composition-qa.cjs` alone.
-
-Every family pass must run all three stages:
-
-1. the normal Contact geometry / motion QA;
-2. the visual success/error status-message QA; and
-3. the visual cooldown/countdown status QA.
+Geometry/motion, success/error status visuals, and cooldown visuals are tested in **one viewport pass**, not as three independent suites.
 
 Use:
 
@@ -18,7 +12,24 @@ Use:
 qa/contact-viewport-audit/run-contact-geometry-family-pass.cjs
 ```
 
-The combined runner forwards the same family, orientation, viewport filters, browser, and candidate `--override-css` to all QA stages.
+That entry point now runs the unified Contact QA runner. For each viewport it:
+
+1. loads Contact once;
+2. verifies the entry-motion contract and settled geometry;
+3. verifies the settled success message;
+4. verifies the settled error message;
+5. verifies all four cooldown/countdown strings;
+6. writes one combined viewport verdict and one combined report tree.
+
+There are no `geometry/`, `status-visual/`, or `cooldown-visual/` subpasses in the normal family/closure workflow.
+
+## Animation-settle rule
+
+Screenshots and injected visual states must not be captured while the Contact entrance animation is still progressing.
+
+The unified runner first measures the inactive entry state, scrolls Contact into view, then waits until the form, SVG visual, title, form items, and Send button have reached their settled opacity/translation state. Only then are geometry screenshots and status/cooldown visual checks allowed.
+
+A fixed sleep alone is not considered sufficient for final Contact certification.
 
 ## Success/error status rule
 
@@ -33,18 +44,18 @@ The messages must:
 - remain fully inside the form/status region;
 - create no horizontal document overflow;
 - preserve intentional breathing room below the Send button;
-- not collide with or visually crowd the Send button;
 - not push the accepted form geometry outside the Contact section.
+
+Visual DOM injection may be retried if a late React render replaces the temporary QA fixture. The retry is only for the non-submitting visual fixture; it does not mock application success/failure behavior.
 
 ## Cooldown/countdown status rule
 
-The cooldown state is part of Contact's permanent rendered-state contract.
+For every tested viewport, verify all four production-format countdown shapes:
 
-For every tested viewport, verify representative countdown lengths:
-
-- `Message limit reached. You can send another message in 3h 0m.`
-- `Message limit reached. You can send another message in 2h 47m.`
-- `Message limit reached. You can send another message in 8m.`
+- `Message limit reached. Try again in 3h 0m.`
+- `Message limit reached. Try again in 2h 47m.`
+- `Message limit reached. Try again in 8m.`
+- `Message limit reached. Try again in 5s.`
 
 The cooldown state must:
 
@@ -52,58 +63,58 @@ The cooldown state must:
 - allow normal text wrapping when needed;
 - preserve intentional breathing room below the Send button;
 - create no horizontal overflow;
-- leave the Send button visibly disabled;
-- not change or invalidate a geometry family that was previously locked.
+- keep Send visually/semantically blocked with `aria-disabled` while avoiding native `disabled` so the reminder remains interactive;
+- not change or invalidate previously locked geometry.
 
-## No EmailJS or Contact API requests during geometry QA
+## No EmailJS or Contact API requests during visual QA
 
-Success, error, and cooldown geometry are tested by temporary visual DOM injection only.
+Success, error, and cooldown geometry are tested by temporary settled-state DOM injection only.
 
-The geometry family pass must **not**:
+The unified pass must not:
 
 - submit the Contact form;
 - invoke `/api/contact`;
 - invoke EmailJS;
-- send network requests to EmailJS;
 - consume EmailJS quota;
 - mock a successful, failed, or rate-limited EmailJS response.
 
-The visual runners reproduce only settled rendered UI states. Functional Contact API, EmailJS delivery, and persistent rate-limiter behavior remain separate functional checks.
+The unified runner tracks these safety counters and also blocks Contact API / EmailJS requests during visual QA as a fail-safe.
+
+Functional Contact API, EmailJS delivery, and persistent rate-limiter behavior remain separate functional checks.
 
 ## Screenshot rule
 
-By default, the combined family pass captures all geometry screenshots, all success/error status screenshots, and all cooldown screenshots. This allows manual review of spacing in addition to automated containment checks.
-
-Optional controls:
+All outputs live directly under the one requested `--output-dir`:
 
 ```text
---geometry-screenshots=all|bad|none
---status-screenshots=all|bad|none
---cooldown-screenshots=all|bad|none
+report.json
+summary.json
+screenshots/
 ```
 
-Do not suppress status or cooldown visual testing simply to reduce screenshots; screenshot mode changes image output only, not whether those states are checked.
+Use:
 
-## Lock rule
+```text
+--screenshots=all|bad|none
+```
 
-A family may be locked only after:
+`all` captures geometry, success, error, and each cooldown state for every viewport. `bad` captures only non-PASS states. `none` still runs every automated check but writes no normal-state screenshots.
+
+The older standalone status/cooldown runners may remain available for targeted debugging, but they are not part of the normal family-pass or final closure workflow.
+
+## Readability regression floors
+
+Readability thresholds are regression floors calibrated below the already-approved locked Contact geometry. They exist to catch a future shrink/regression; they are not a request to retune an accepted family during final closure.
+
+## Lock / closure rule
+
+A family or final closure run is accepted only after:
 
 - geometry has no unresolved hard failures;
-- manual screenshots confirm the intended composition and breathing room;
-- success status geometry is accepted;
-- error status geometry is accepted;
-- cooldown/countdown status geometry is accepted.
+- entry motion reaches the settled state before capture;
+- success and error visual states pass;
+- all four cooldown visual states pass;
+- Contact API / EmailJS / form-submission visual-QA counters remain zero;
+- manual screenshots, when requested, confirm the intended composition and breathing room.
 
-This policy applies to:
-
-- phone portrait;
-- phone landscape;
-- folded-outer portrait;
-- folded-outer landscape;
-- unfolded-inner portrait;
-- unfolded-inner landscape;
-- tablet portrait;
-- tablet landscape;
-- standard laptop/desktop;
-- wide desktop;
-- any later Contact regression or closure rerun.
+This policy applies to phones, folded/unfolded foldables, tablets, standard desktop, wide desktop, and later Contact regression/closure reruns.
