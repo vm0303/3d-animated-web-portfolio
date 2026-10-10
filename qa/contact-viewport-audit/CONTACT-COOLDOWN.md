@@ -15,7 +15,11 @@ If either identity is still cooling down, `/api/contact` returns HTTP `429` with
 Message limit reached. Try again in 2h 47m.
 ```
 
-The Send button remains disabled while the browser knows a cooldown is active.
+The Send control keeps its disabled appearance during cooldown, but uses `aria-disabled` rather than the native `disabled` attribute so it can remain informative and interactive without permitting a submission.
+
+When the cooldown reminder first appears it fades in and shakes briefly. After six seconds of no blocked-send attempts, it fades away. Pressing Send again during the cooldown immediately shows/shakes the reminder again and restarts the six-second inactivity timer. Repeated presses therefore keep the reminder active and keep resetting the fade-out window, while `Contact.jsx` still blocks the form before any Contact API or EmailJS request can occur.
+
+The shake is skipped when the visitor has `prefers-reduced-motion: reduce` enabled.
 
 `localStorage` stores the expiry only for UX continuity after a reload. It is **not** the security boundary. Clearing cache/cookies/localStorage or changing browsers does not remove the server-side cooldown.
 
@@ -71,7 +75,7 @@ Cooldown geometry is tested by visual DOM injection at representative labels:
 8m
 ```
 
-The cooldown visual runner intentionally keeps the previously validated, longer sentence as a conservative stress string. The live UI copy is now shorter, so the already-passing geometry envelope is at least as safe and does not require a geometry rerun solely for this wording change.
+The cooldown visual runner intentionally keeps the previously validated, longer sentence as a conservative stress string. The live UI copy is shorter, so the already-passing geometry envelope is at least as safe and does not require a geometry rerun solely for the wording or interaction change.
 
 Run all currently locked device families with:
 
