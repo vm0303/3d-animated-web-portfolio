@@ -123,32 +123,27 @@ async function startServerIfNeeded() {
   return { child, reused: false };
 }
 
-async function waitForShake(page, timeout = 1200) {
+async function messageVisible(page) {
+  const locator = page.locator(".cooldownMessage");
+  return (await locator.count()) > 0 && (await locator.isVisible());
+}
+
+async function shakeCount(page) {
+  return page.evaluate(() => window.__contactCooldownShakeCount || 0);
+}
+
+async function waitForShakeCount(page, expectedMinimum, timeout = 1400) {
   try {
     await page.waitForFunction(
-      () => {
-        const node = document.querySelector(".cooldownMessageText");
-        if (!node) return false;
-
-        return node.getAnimations().some((animation) => {
-          const frames = animation.effect?.getKeyframes?.() || [];
-          return frames.some((frame) =>
-            String(frame.transform || "").includes("translateX")
-          );
-        });
-      },
-      null,
+      (minimum) =>
+        (window.__contactCooldownShakeCount || 0) >= minimum,
+      expectedMinimum,
       { timeout }
     );
     return true;
   } catch {
     return false;
   }
-}
-
-async function messageVisible(page) {
-  const locator = page.locator(".cooldownMessage");
-  return (await locator.count()) > 0 && (await locator.isVisible());
 }
 
 async function screenshotContact(page, name) {
@@ -174,8 +169,50 @@ async function screenshotContact(page, name) {
       reducedMotion: "no-preference",
     });
 
+    /*
+     * Install the shake observer before application code runs. The initial
+     * 440ms shake can finish before Playwright sees the rendered reminder, so
+     * polling getAnimations() after mount can create a false negative. Counting
+     * calls to Element.animate() records the real shake even if it has already
+     * completed by the time the assertion runs.
+     */
     await context.addInitScript(
       ({ key, duration }) => {
+        window.__contactCooldownShakeCount = 0;
+
+        const originalAnimate = Element.prototype.animate;
+
+        if (typeof originalAnimate === "function") {
+          Element.prototype.animate = function patchedAnimate(
+            keyframes,
+            options
+          ) {
+            try {
+              const frames = Array.isArray(keyframes)
+                ? keyframes
+                : [];
+
+              const isCooldownShake =
+                this.classList?.contains("cooldownMessageText") &&
+                frames.some((frame) =>
+                  String(frame?.transform || "").includes("translateX")
+                );
+
+              if (isCooldownShake) {
+                window.__contactCooldownShakeCount += 1;
+              }
+            } catch {
+              // QA instrumentation must never interfere with the real animation.
+            }
+
+            return originalAnimate.call(
+              this,
+              keyframes,
+              options
+            );
+          };
+        }
+
         try {
           window.localStorage.setItem(
             key,
@@ -248,7 +285,9 @@ async function screenshotContact(page, name) {
       hard.push("BUTTON_NATIVE_DISABLED_PREVENTS_REMINDER_INTERACTION");
     }
 
-    checks.initialShakeDetected = await waitForShake(page);
+    checks.initialShakeDetected = await waitForShakeCount(page, 1);
+    checks.initialShakeCount = await shakeCount(page);
+
     if (!checks.initialShakeDetected) {
       hard.push("INITIAL_SHAKE_NOT_DETECTED");
     }
@@ -263,18 +302,29 @@ async function screenshotContact(page, name) {
     });
     checks.initialFadeOutAfterInactivity = true;
 
-    /* A blocked click must restore the message and shake it again. */
+    /* A blocked click must restore the message and start a new shake. */
+    let previousShakeCount = await shakeCount(page);
+
     await button.click({ force: true });
     await message.waitFor({ state: "visible", timeout: 1200 });
 
     checks.clickRestoresMessage = await messageVisible(page);
     checks.clickRestoresExactCopy =
       ((await message.textContent())?.trim() || "") === EXPECTED_TEXT;
-    checks.clickRestartsShake = await waitForShake(page);
+    checks.clickRestartsShake = await waitForShakeCount(
+      page,
+      previousShakeCount + 1
+    );
 
-    if (!checks.clickRestoresMessage) hard.push("CLICK_DID_NOT_RESTORE_MESSAGE");
-    if (!checks.clickRestoresExactCopy) hard.push("CLICK_COPY_MISMATCH");
-    if (!checks.clickRestartsShake) hard.push("CLICK_DID_NOT_RESTART_SHAKE");
+    if (!checks.clickRestoresMessage) {
+      hard.push("CLICK_DID_NOT_RESTORE_MESSAGE");
+    }
+    if (!checks.clickRestoresExactCopy) {
+      hard.push("CLICK_COPY_MISMATCH");
+    }
+    if (!checks.clickRestartsShake) {
+      hard.push("CLICK_DID_NOT_RESTART_SHAKE");
+    }
 
     await screenshotContact(page, "02-blocked-click-restored-reminder");
 
@@ -284,7 +334,19 @@ async function screenshotContact(page, name) {
      * be visible even though more than six seconds have elapsed since click #1.
      */
     await page.waitForTimeout(3000);
+
+    previousShakeCount = await shakeCount(page);
     await button.click({ force: true });
+
+    checks.timerResetClickRestartedShake = await waitForShakeCount(
+      page,
+      previousShakeCount + 1
+    );
+
+    if (!checks.timerResetClickRestartedShake) {
+      hard.push("TIMER_RESET_CLICK_DID_NOT_RESTART_SHAKE");
+    }
+
     await page.waitForTimeout(3500);
 
     checks.timerResetKeepsMessageVisible = await messageVisible(page);
@@ -297,16 +359,23 @@ async function screenshotContact(page, name) {
     checks.fadeOutUsesLastClick = true;
 
     /*
-     * Spam-click sequence: each click should restart the shake/timer. The
-     * reminder must remain visible until six seconds after the final click.
+     * Spam-click sequence: every click must start a new shake and restart the
+     * timer. The reminder remains visible until six seconds after the last click.
      */
     let spamShakeDetected = true;
 
     for (let i = 0; i < 4; i += 1) {
+      previousShakeCount = await shakeCount(page);
+
       await button.click({ force: true });
       await message.waitFor({ state: "visible", timeout: 1200 });
 
-      if (!(await waitForShake(page))) {
+      if (
+        !(await waitForShakeCount(
+          page,
+          previousShakeCount + 1
+        ))
+      ) {
         spamShakeDetected = false;
       }
 
@@ -316,12 +385,15 @@ async function screenshotContact(page, name) {
     }
 
     checks.repeatedClicksRestartShake = spamShakeDetected;
+    checks.finalShakeCount = await shakeCount(page);
+
     if (!checks.repeatedClicksRestartShake) {
       hard.push("REPEATED_CLICK_SHAKE_NOT_RESTARTED");
     }
 
     await page.waitForTimeout(3500);
     checks.spamTimerStillVisible = await messageVisible(page);
+
     if (!checks.spamTimerStillVisible) {
       hard.push("SPAM_CLICKS_DID_NOT_KEEP_REMINDER_VISIBLE");
     }
