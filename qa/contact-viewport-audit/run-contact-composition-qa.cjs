@@ -362,8 +362,8 @@ async function readMetrics(page) {
     const visualSection = sections[1] || null;
     const form = contact && q("form", contact);
     const title = form && q("h1", form);
-    const labels = form ? qa("label", form) : [];
-    const inputs = form ? qa("input", form) : [];
+    const labels = form ? qa(".formItem > label", form) : [];
+    const inputs = form ? qa(".formItem > input", form) : [];
     const textarea = form && q("textarea", form);
     const button = form && q("button[type='submit']", form);
     const status = form && q(".formStatus", form);
