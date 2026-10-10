@@ -17,18 +17,23 @@ const VIEWPORT_PATH = path.join(
 const contract = JSON.parse(fs.readFileSync(CONTRACT_PATH, "utf8"));
 const viewportContract = JSON.parse(fs.readFileSync(VIEWPORT_PATH, "utf8"));
 
+/*
+ * These strings intentionally match the live Contact copy.
+ * Use --cooldown-state=cooldown-2h47m to test only the agreed representative
+ * production message without rerunning all three countdown lengths.
+ */
 const COOLDOWN_STATES = [
   {
     id: "cooldown-3h00m",
-    text: "Message limit reached. You can send another message in 3h 0m.",
+    text: "Message limit reached. Try again in 3h 0m.",
   },
   {
     id: "cooldown-2h47m",
-    text: "Message limit reached. You can send another message in 2h 47m.",
+    text: "Message limit reached. Try again in 2h 47m.",
   },
   {
     id: "cooldown-8m",
-    text: "Message limit reached. You can send another message in 8m.",
+    text: "Message limit reached. Try again in 8m.",
   },
 ];
 
@@ -52,6 +57,7 @@ const orientation = argValue("orientation");
 const browserName = argValue("browser", "chromium");
 const screenshotMode = argValue("screenshots", "all");
 const overrideCss = argValue("override-css");
+const cooldownStateFilter = argValue("cooldown-state");
 const outputDir = path.resolve(
   ROOT,
   argValue("output-dir", "qa-results/contact/cooldown-visual")
@@ -63,6 +69,18 @@ const minWidth = numArg("min-width");
 const maxWidth = numArg("max-width");
 const minHeight = numArg("min-height");
 const maxHeight = numArg("max-height");
+
+const selectedCooldownStates = cooldownStateFilter
+  ? COOLDOWN_STATES.filter((state) => state.id === cooldownStateFilter)
+  : COOLDOWN_STATES;
+
+if (!selectedCooldownStates.length) {
+  throw new Error(
+    `Unknown cooldown state: ${cooldownStateFilter}. Expected one of: ${COOLDOWN_STATES
+      .map((state) => state.id)
+      .join(", ")}`
+  );
+}
 
 const browserType = { chromium, firefox, webkit }[browserName];
 if (!browserType) {
@@ -287,7 +305,9 @@ async function injectCooldown(page, text) {
     status.appendChild(span);
 
     if (button) {
-      button.disabled = true;
+      button.disabled = false;
+      button.classList.add("cooldownBlocked");
+      button.setAttribute("aria-disabled", "true");
     }
   }, text);
 }
@@ -337,7 +357,8 @@ async function readCooldown(page) {
       form: formRect,
       status: statusRect,
       button: buttonRect,
-      buttonDisabled: Boolean(button?.disabled),
+      buttonNativeDisabled: Boolean(button?.disabled),
+      buttonAriaDisabled: button?.getAttribute("aria-disabled") === "true",
       messageInsideContact: contained(messageRect, contactRect),
       statusInsideContact: contained(statusRect, contactRect),
       formInsideContact: contained(formRect, contactRect),
@@ -358,7 +379,8 @@ function evaluateCooldown(expectedText, state) {
   if (!state.messageInsideContact) hard.push("COOLDOWN_MESSAGE_OUTSIDE_CONTACT");
   if (!state.statusInsideContact) hard.push("COOLDOWN_STATUS_OUTSIDE_CONTACT");
   if (!state.formInsideContact) hard.push("COOLDOWN_FORM_OUTSIDE_CONTACT");
-  if (!state.buttonDisabled) hard.push("COOLDOWN_BUTTON_NOT_DISABLED");
+  if (!state.buttonAriaDisabled) hard.push("COOLDOWN_BUTTON_NOT_ARIA_DISABLED");
+  if (state.buttonNativeDisabled) hard.push("COOLDOWN_BUTTON_NATIVE_DISABLED");
   if (state.opacity != null && state.opacity < 0.99) hard.push("COOLDOWN_MESSAGE_NOT_VISIBLE");
   if (state.visibility === "hidden" || state.display === "none") {
     hard.push("COOLDOWN_MESSAGE_HIDDEN");
@@ -406,7 +428,7 @@ function evaluateCooldown(expectedText, state) {
       const states = {};
       const allHard = [];
 
-      for (const cooldownState of COOLDOWN_STATES) {
+      for (const cooldownState of selectedCooldownStates) {
         await injectCooldown(page, cooldownState.text);
         await page.waitForTimeout(100);
 
@@ -470,7 +492,8 @@ function evaluateCooldown(expectedText, state) {
     pass: results.filter((r) => r.status === "PASS").length,
     fail: results.filter((r) => r.status === "FAIL").length,
     viewportCount: cases.length,
-    cooldownStateCount: COOLDOWN_STATES.length,
+    cooldownStateCount: selectedCooldownStates.length,
+    cooldownStates: selectedCooldownStates.map((state) => state.id),
     family,
     orientation,
     quick,
