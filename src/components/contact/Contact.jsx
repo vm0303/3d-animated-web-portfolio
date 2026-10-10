@@ -1,5 +1,6 @@
 import "./contact.css";
 import "./contact-tablet-portrait.locked.css";
+import "./contact-desktop-standard.locked.css";
 import "./contact-status.css";
 
 import ContactSvg from "./ContactSvg";
