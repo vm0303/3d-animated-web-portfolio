@@ -1,0 +1,33 @@
+/* =========================================================
+   CONTACT STATUS / ANTI-ABUSE UI
+   ========================================================= */
+
+.cooldownMessage {
+  display: block;
+  background: #FFDF00;
+  background: -webkit-linear-gradient(
+    159deg,
+    #FFDF00 0%,
+    #FCDD9F 100%
+  );
+  background: linear-gradient(
+    159deg,
+    #FFDF00 0%,
+    #FCDD9F 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.contactHoneypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
