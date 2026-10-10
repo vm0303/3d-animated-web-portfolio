@@ -12,7 +12,7 @@ The server checks two hashed identities:
 If either identity is still cooling down, `/api/contact` returns HTTP `429` with the remaining seconds. The browser then displays:
 
 ```text
-Message limit reached. You can send another message in 2h 47m.
+Message limit reached. Try again in 2h 47m.
 ```
 
 The Send button remains disabled while the browser knows a cooldown is active.
@@ -70,6 +70,8 @@ Cooldown geometry is tested by visual DOM injection at representative labels:
 2h 47m
 8m
 ```
+
+The cooldown visual runner intentionally keeps the previously validated, longer sentence as a conservative stress string. The live UI copy is now shorter, so the already-passing geometry envelope is at least as safe and does not require a geometry rerun solely for this wording change.
 
 Run all currently locked device families with:
 
