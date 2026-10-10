@@ -12,7 +12,7 @@ Use:
 qa/contact-viewport-audit/run-contact-geometry-family-pass.cjs
 ```
 
-That entry point now runs the unified Contact QA runner. For each viewport it:
+That entry point runs the unified Contact QA runner. For each viewport it:
 
 1. loads Contact once;
 2. verifies the entry-motion contract and settled geometry;
@@ -22,6 +22,18 @@ That entry point now runs the unified Contact QA runner. For each viewport it:
 6. writes one combined viewport verdict and one combined report tree.
 
 There are no `geometry/`, `status-visual/`, or `cooldown-visual/` subpasses in the normal family/closure workflow.
+
+## Three-engine exhaustive closure
+
+For final closure, use:
+
+```text
+--browser=all
+```
+
+The family-pass entry point runs Chromium, Firefox, and WebKit sequentially from the same command and writes one folder per engine under the requested output directory, plus `combined-summary.json` at the root.
+
+Each browser still performs the full unified geometry + success + error + four-cooldown-state validation for every selected viewport.
 
 ## Animation-settle rule
 
@@ -84,21 +96,40 @@ Functional Contact API, EmailJS delivery, and persistent rate-limiter behavior r
 
 ## Screenshot rule
 
-All outputs live directly under the one requested `--output-dir`:
+For exhaustive manual review, use:
 
 ```text
-report.json
-summary.json
-screenshots/
+--screenshots=all
 ```
 
-Use:
+`all` writes exactly **one settled normal-state Contact screenshot per viewport per browser**. Success/error/cooldown states are still fully validated in the same page lifecycle and recorded in `report.json`; they do not multiply the normal screenshot count.
+
+For the full 428-case matrix across Chromium, Firefox, and WebKit, a clean run therefore produces:
 
 ```text
---screenshots=all|bad|none
+428 x 3 = 1,284 PNG screenshots
 ```
 
-`all` captures geometry, success, error, and each cooldown state for every viewport. `bad` captures only non-PASS states. `none` still runs every automated check but writes no normal-state screenshots.
+The three-engine output layout is:
+
+```text
+<output-dir>/
+  combined-summary.json
+  chromium/
+    report.json
+    summary.json
+    screenshots/
+  firefox/
+    report.json
+    summary.json
+    screenshots/
+  webkit/
+    report.json
+    summary.json
+    screenshots/
+```
+
+`--screenshots=bad` remains available for debugging non-PASS states, and `--screenshots=none` runs all automated checks without normal screenshots.
 
 The older standalone status/cooldown runners may remain available for targeted debugging, but they are not part of the normal family-pass or final closure workflow.
 
