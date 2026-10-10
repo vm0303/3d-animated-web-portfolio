@@ -75,10 +75,7 @@ function formatCooldownTime(
 }
 
 
-/*
- * Laptop / desktop / landscape:
- * Form enters from left to right.
- */
+/* Laptop / desktop / landscape: form enters left -> right. */
 const listVariants = {
   initial: {
     x: -100,
@@ -97,10 +94,7 @@ const listVariants = {
 };
 
 
-/*
- * Laptop / desktop / landscape:
- * SVG enters from right to left.
- */
+/* Laptop / desktop / landscape: SVG enters right -> left. */
 const svgVariants = {
   initial: {
     x: 200,
@@ -119,11 +113,7 @@ const svgVariants = {
 };
 
 
-/*
- * Portrait phones, tablets,
- * folded foldables, and unfolded
- * foldables use fade-only motion.
- */
+/* Portrait touch devices use fade-only motion. */
 const portraitFadeVariants = {
   initial: {
     opacity: 0,
@@ -140,77 +130,41 @@ const portraitFadeVariants = {
 };
 
 
-/*
- * Fade-only mode applies only when:
- *
- * - device is portrait
- * - device behaves like a touch device
- *
- * This avoids applying portrait motion
- * to normal desktop/laptop layouts.
- */
 const PORTRAIT_TOUCH_MOTION_QUERY =
   "(orientation: portrait) and (hover: none), " +
   "(orientation: portrait) and (pointer: coarse)";
 
 
 const Contact = () => {
-  const [
-    success,
-    setSuccess,
-  ] = useState(false);
+  const [success, setSuccess] =
+    useState(false);
 
-  const [
-    error,
-    setError,
-  ] = useState(false);
+  const [error, setError] =
+    useState(false);
 
-  const [
-    sending,
-    setSending,
-  ] = useState(false);
+  const [sending, setSending] =
+    useState(false);
 
-  const [
-    cooldownUntil,
-    setCooldownUntil,
-  ] = useState(
-    readStoredCooldownUntil
-  );
+  const [cooldownUntil, setCooldownUntil] =
+    useState(readStoredCooldownUntil);
 
-  const [
-    cooldownNow,
-    setCooldownNow,
-  ] = useState(() => Date.now());
+  const [cooldownNow, setCooldownNow] =
+    useState(() => Date.now());
 
+  const [fadeOnlyMotion, setFadeOnlyMotion] =
+    useState(() => {
+      if (typeof window === "undefined") {
+        return false;
+      }
 
-  /*
-   * Decide the initial motion mode
-   * from the current device/orientation.
-   */
-  const [
-    fadeOnlyMotion,
-    setFadeOnlyMotion,
-  ] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    return window
-      .matchMedia(
-        PORTRAIT_TOUCH_MOTION_QUERY
-      )
-      .matches;
-  });
+      return window
+        .matchMedia(
+          PORTRAIT_TOUCH_MOTION_QUERY
+        )
+        .matches;
+    });
 
 
-  /*
-   * Contact section visibility ref.
-   *
-   * We use this separately from the
-   * form ref because the form element
-   * is also used to gather submission
-   * values.
-   */
   const contactRef =
     useRef(null);
 
@@ -218,11 +172,6 @@ const Contact = () => {
     useRef(null);
 
 
-  /*
-   * Both the form and SVG use this
-   * same visibility state so their
-   * entrance animations stay aligned.
-   */
   const isInView =
     useInView(
       contactRef,
@@ -234,19 +183,14 @@ const Contact = () => {
 
 
   /*
-   * Update the portrait/mobile motion
-   * mode only while Contact is OFF screen.
-   *
-   * This prevents a device rotation while
-   * Contact is visible from replaying or
-   * changing the entrance animation.
+   * Only switch motion mode while Contact is off-screen so rotating a visible
+   * device does not hide, replay, or change the current entrance animation.
    */
   useEffect(() => {
     const mediaQuery =
       window.matchMedia(
         PORTRAIT_TOUCH_MOTION_QUERY
       );
-
 
     const syncMotionMode = () => {
       if (!isInView) {
@@ -256,15 +200,12 @@ const Contact = () => {
       }
     };
 
-
     syncMotionMode();
-
 
     mediaQuery.addEventListener(
       "change",
       syncMotionMode
     );
-
 
     return () => {
       mediaQuery.removeEventListener(
@@ -275,17 +216,11 @@ const Contact = () => {
   }, [isInView]);
 
 
-  /*
-   * Keep the success message visible
-   * for six seconds, then allow the
-   * persistent cooldown message to take
-   * over the status region.
-   */
+  /* Show success for six seconds, then reveal the persistent cooldown state. */
   useEffect(() => {
     if (!success) {
       return;
     }
-
 
     const timer =
       window.setTimeout(
@@ -295,7 +230,6 @@ const Contact = () => {
         6000
       );
 
-
     return () => {
       window.clearTimeout(timer);
     };
@@ -303,17 +237,14 @@ const Contact = () => {
 
 
   /*
-   * Keep the cooldown label current.
-   * The browser-side timestamp is only a
-   * UX convenience. The server remains the
-   * authority for whether another message
-   * is allowed.
+   * localStorage is only a UX convenience. The server-side email/IP cooldown
+   * remains authoritative if cache/cookies are cleared or another browser is
+   * used.
    */
   useEffect(() => {
     if (!cooldownUntil) {
       return;
     }
-
 
     const syncCooldown = () => {
       const now = Date.now();
@@ -329,16 +260,13 @@ const Contact = () => {
       }
     };
 
-
     syncCooldown();
-
 
     const timer =
       window.setInterval(
         syncCooldown,
         1000
       );
-
 
     return () => {
       window.clearInterval(timer);
@@ -389,7 +317,6 @@ const Contact = () => {
   const sendEmail = async (e) => {
     e.preventDefault();
 
-
     if (
       sending ||
       cooldownActive ||
@@ -398,17 +325,14 @@ const Contact = () => {
       return;
     }
 
-
     setSuccess(false);
     setError(false);
     setSending(true);
-
 
     const formData =
       new FormData(
         form.current
       );
-
 
     try {
       const response =
@@ -440,7 +364,6 @@ const Contact = () => {
           }
         );
 
-
       let result = {};
 
       try {
@@ -449,7 +372,6 @@ const Contact = () => {
       } catch {
         result = {};
       }
-
 
       if (
         response.status === 429 &&
@@ -465,14 +387,12 @@ const Contact = () => {
         return;
       }
 
-
       if (!response.ok) {
         throw new Error(
           result?.message ||
           "Failed to send message."
         );
       }
-
 
       setSuccess(true);
       setError(false);
@@ -481,10 +401,6 @@ const Contact = () => {
         result.cooldownSeconds
       );
 
-      /*
-       * Clear the form only after
-       * a successful submission.
-       */
       form.current?.reset();
     } catch {
       setError(true);
@@ -495,18 +411,10 @@ const Contact = () => {
   };
 
 
-  /*
-   * Portrait touch device:
-   * simple fade.
-   *
-   * Everything else:
-   * directional desktop/landscape motion.
-   */
   const activeFormVariants =
     fadeOnlyMotion
       ? portraitFadeVariants
       : listVariants;
-
 
   const activeSvgVariants =
     fadeOnlyMotion
@@ -525,11 +433,8 @@ const Contact = () => {
         <motion.form
           ref={form}
           onSubmit={sendEmail}
-
-          variants={listVariants}
-
+          variants={activeFormVariants}
           initial="initial"
-
           animate={
             isInView
               ? "animate"
@@ -550,7 +455,6 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-
             variants={
               fadeOnlyMotion
                 ? undefined
@@ -559,7 +463,6 @@ const Contact = () => {
           >
             <label htmlFor="name">
               Name
-
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -580,7 +483,6 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-
             variants={
               fadeOnlyMotion
                 ? undefined
@@ -589,7 +491,6 @@ const Contact = () => {
           >
             <label htmlFor="email">
               Email
-
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -610,7 +511,6 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-
             variants={
               fadeOnlyMotion
                 ? undefined
@@ -619,7 +519,6 @@ const Contact = () => {
           >
             <label htmlFor="message">
               Message
-
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -665,22 +564,17 @@ const Contact = () => {
                 : ""
               }`
             }
-
             variants={
               fadeOnlyMotion
                 ? undefined
                 : listVariants
             }
-
             type="submit"
-
             disabled={
               sending ||
               cooldownActive
             }
-
             aria-busy={sending}
-
             aria-describedby=
               "contact-form-status"
           >
@@ -695,7 +589,6 @@ const Contact = () => {
           <div
             id="contact-form-status"
             className="formStatus"
-
             aria-live="polite"
             aria-atomic="true"
           >
@@ -705,22 +598,18 @@ const Contact = () => {
                 success && (
                   <motion.span
                     className="successMessage"
-
                     initial={{
                       opacity: 0,
                       y: 4,
                     }}
-
                     animate={{
                       opacity: 1,
                       y: 0,
                     }}
-
                     exit={{
                       opacity: 0,
                       y: -4,
                     }}
-
                     transition={{
                       duration: 0.4,
                       ease: "easeOut",
@@ -738,22 +627,18 @@ const Contact = () => {
                 error && (
                   <motion.span
                     className="errorMessage"
-
                     initial={{
                       opacity: 0,
                       y: 4,
                     }}
-
                     animate={{
                       opacity: 1,
                       y: 0,
                     }}
-
                     exit={{
                       opacity: 0,
                       y: -4,
                     }}
-
                     transition={{
                       duration: 0.4,
                       ease: "easeOut",
@@ -773,22 +658,18 @@ const Contact = () => {
                 !error && (
                   <motion.span
                     className="cooldownMessage"
-
                     initial={{
                       opacity: 0,
                       y: 4,
                     }}
-
                     animate={{
                       opacity: 1,
                       y: 0,
                     }}
-
                     exit={{
                       opacity: 0,
                       y: -4,
                     }}
-
                     transition={{
                       duration: 0.4,
                       ease: "easeOut",
@@ -811,13 +692,8 @@ const Contact = () => {
 
         <motion.div
           className="contactVisual"
-
-          variants={
-            activeSvgVariants
-          }
-
+          variants={activeSvgVariants}
           initial="initial"
-
           animate={
             isInView
               ? "animate"
