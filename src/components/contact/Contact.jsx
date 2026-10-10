@@ -1,6 +1,7 @@
 import "./contact.css";
+import "./contact-tablet-portrait.locked.css";
+import "./contact-status.css";
 
-import emailjs from "@emailjs/browser";
 import ContactSvg from "./ContactSvg";
 
 import {
@@ -14,6 +15,64 @@ import {
   motion,
   useInView,
 } from "motion/react";
+
+
+const CONTACT_COOLDOWN_STORAGE_KEY =
+  "portfolioContactCooldownUntil";
+
+const DEFAULT_CONTACT_COOLDOWN_SECONDS =
+  3 * 60 * 60;
+
+
+function readStoredCooldownUntil() {
+  if (typeof window === "undefined") {
+    return 0;
+  }
+
+  const value = Number(
+    window.localStorage.getItem(
+      CONTACT_COOLDOWN_STORAGE_KEY
+    )
+  );
+
+  return Number.isFinite(value) &&
+    value > Date.now()
+      ? value
+      : 0;
+}
+
+
+function formatCooldownTime(
+  remainingMilliseconds
+) {
+  const totalSeconds = Math.max(
+    0,
+    Math.ceil(
+      remainingMilliseconds / 1000
+    )
+  );
+
+  const totalMinutes = Math.ceil(
+    totalSeconds / 60
+  );
+
+  const hours = Math.floor(
+    totalMinutes / 60
+  );
+
+  const minutes =
+    totalMinutes % 60;
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+
+  if (totalSeconds >= 60) {
+    return `${Math.max(1, totalMinutes)}m`;
+  }
+
+  return `${totalSeconds}s`;
+}
 
 
 /*
@@ -111,6 +170,18 @@ const Contact = () => {
     setSending,
   ] = useState(false);
 
+  const [
+    cooldownUntil,
+    setCooldownUntil,
+  ] = useState(
+    readStoredCooldownUntil
+  );
+
+  const [
+    cooldownNow,
+    setCooldownNow,
+  ] = useState(() => Date.now());
+
 
   /*
    * Decide the initial motion mode
@@ -136,8 +207,9 @@ const Contact = () => {
    * Contact section visibility ref.
    *
    * We use this separately from the
-   * form ref because EmailJS needs the
-   * actual form element.
+   * form ref because the form element
+   * is also used to gather submission
+   * values.
    */
   const contactRef =
     useRef(null);
@@ -165,22 +237,9 @@ const Contact = () => {
    * Update the portrait/mobile motion
    * mode only while Contact is OFF screen.
    *
-   * This is important for rotation.
-   *
-   * Example:
-   *
-   * 1. User enters Contact in portrait.
-   * 2. Fade animation runs.
-   * 3. User rotates to landscape.
-   * 4. Contact remains visible.
-   * 5. Motion mode stays locked.
-   *
-   * Therefore nothing disappears,
-   * replays, or suddenly starts sliding.
-   *
-   * Once Contact leaves the viewport,
-   * we can safely update the motion mode
-   * for the next time it enters.
+   * This prevents a device rotation while
+   * Contact is visible from replaying or
+   * changing the entrance animation.
    */
   useEffect(() => {
     const mediaQuery =
@@ -198,10 +257,6 @@ const Contact = () => {
     };
 
 
-    /*
-     * Synchronize immediately whenever
-     * Contact is currently off screen.
-     */
     syncMotionMode();
 
 
@@ -222,8 +277,9 @@ const Contact = () => {
 
   /*
    * Keep the success message visible
-   * for six seconds, then allow
-   * AnimatePresence to fade it out.
+   * for six seconds, then allow the
+   * persistent cooldown message to take
+   * over the status region.
    */
   useEffect(() => {
     if (!success) {
@@ -246,16 +302,99 @@ const Contact = () => {
   }, [success]);
 
 
-  const sendEmail = (e) => {
+  /*
+   * Keep the cooldown label current.
+   * The browser-side timestamp is only a
+   * UX convenience. The server remains the
+   * authority for whether another message
+   * is allowed.
+   */
+  useEffect(() => {
+    if (!cooldownUntil) {
+      return;
+    }
+
+
+    const syncCooldown = () => {
+      const now = Date.now();
+
+      setCooldownNow(now);
+
+      if (cooldownUntil <= now) {
+        setCooldownUntil(0);
+
+        window.localStorage.removeItem(
+          CONTACT_COOLDOWN_STORAGE_KEY
+        );
+      }
+    };
+
+
+    syncCooldown();
+
+
+    const timer =
+      window.setInterval(
+        syncCooldown,
+        1000
+      );
+
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [cooldownUntil]);
+
+
+  const activateCooldown = (
+    seconds = DEFAULT_CONTACT_COOLDOWN_SECONDS
+  ) => {
+    const safeSeconds =
+      Number.isFinite(Number(seconds)) &&
+      Number(seconds) > 0
+        ? Number(seconds)
+        : DEFAULT_CONTACT_COOLDOWN_SECONDS;
+
+    const expiresAt =
+      Date.now() +
+      safeSeconds * 1000;
+
+    setCooldownUntil(expiresAt);
+    setCooldownNow(Date.now());
+
+    window.localStorage.setItem(
+      CONTACT_COOLDOWN_STORAGE_KEY,
+      String(expiresAt)
+    );
+  };
+
+
+  const cooldownRemaining =
+    Math.max(
+      0,
+      cooldownUntil - cooldownNow
+    );
+
+  const cooldownActive =
+    cooldownRemaining > 0;
+
+  const cooldownText =
+    cooldownActive
+      ? formatCooldownTime(
+          cooldownRemaining
+        )
+      : "";
+
+
+  const sendEmail = async (e) => {
     e.preventDefault();
 
 
-    /*
-     * Extra protection against
-     * duplicate submissions while
-     * EmailJS is already processing.
-     */
-    if (sending) {
+    if (
+      sending ||
+      cooldownActive ||
+      !form.current
+    ) {
       return;
     }
 
@@ -265,37 +404,94 @@ const Contact = () => {
     setSending(true);
 
 
-    emailjs
-      .sendForm(
-        import.meta.env.VITE_SERVICE_ID,
-        import.meta.env.VITE_TEMPLATE_ID,
-        form.current,
-        {
-          publicKey:
-            import.meta.env.VITE_PUBLIC_KEY,
-        }
-      )
-      .then(
-        () => {
-          setSuccess(true);
-          setError(false);
-
-          /*
-           * Clear the form only after
-           * successful submission.
-           */
-          form.current?.reset();
-        },
-        () => {
-          setError(true);
-          setSuccess(false);
-        }
-      )
-      .finally(
-        () => {
-          setSending(false);
-        }
+    const formData =
+      new FormData(
+        form.current
       );
+
+
+    try {
+      const response =
+        await fetch(
+          "/api/contact",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              name:
+                formData.get("name"),
+
+              email:
+                formData.get("email"),
+
+              message:
+                formData.get("message"),
+
+              company_website:
+                formData.get(
+                  "company_website"
+                ),
+            }),
+          }
+        );
+
+
+      let result = {};
+
+      try {
+        result =
+          await response.json();
+      } catch {
+        result = {};
+      }
+
+
+      if (
+        response.status === 429 &&
+        result?.code ===
+          "CONTACT_COOLDOWN"
+      ) {
+        activateCooldown(
+          result.retryAfterSeconds
+        );
+
+        setSuccess(false);
+        setError(false);
+        return;
+      }
+
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+          "Failed to send message."
+        );
+      }
+
+
+      setSuccess(true);
+      setError(false);
+
+      activateCooldown(
+        result.cooldownSeconds
+      );
+
+      /*
+       * Clear the form only after
+       * a successful submission.
+       */
+      form.current?.reset();
+    } catch {
+      setError(true);
+      setSuccess(false);
+    } finally {
+      setSending(false);
+    }
   };
 
 
@@ -330,9 +526,7 @@ const Contact = () => {
           ref={form}
           onSubmit={sendEmail}
 
-          variants={
-            activeFormVariants
-          }
+          variants={listVariants}
 
           initial="initial"
 
@@ -444,6 +638,26 @@ const Contact = () => {
           </motion.div>
 
 
+          <div
+            className="contactHoneypot"
+            aria-hidden="true"
+          >
+            <label
+              htmlFor="company-website"
+            >
+              Website
+            </label>
+
+            <input
+              id="company-website"
+              type="text"
+              name="company_website"
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
+
+
           <motion.button
             className={
               `formButton ${sending
@@ -460,9 +674,15 @@ const Contact = () => {
 
             type="submit"
 
-            disabled={sending}
+            disabled={
+              sending ||
+              cooldownActive
+            }
 
             aria-busy={sending}
+
+            aria-describedby=
+              "contact-form-status"
           >
             {
               sending
@@ -473,6 +693,7 @@ const Contact = () => {
 
 
           <div
+            id="contact-form-status"
             className="formStatus"
 
             aria-live="polite"
@@ -539,6 +760,41 @@ const Contact = () => {
                     }}
                   >
                     Failed to send message. Please try again later
+                  </motion.span>
+                )
+              }
+            </AnimatePresence>
+
+
+            <AnimatePresence>
+              {
+                cooldownActive &&
+                !success &&
+                !error && (
+                  <motion.span
+                    className="cooldownMessage"
+
+                    initial={{
+                      opacity: 0,
+                      y: 4,
+                    }}
+
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+
+                    exit={{
+                      opacity: 0,
+                      y: -4,
+                    }}
+
+                    transition={{
+                      duration: 0.4,
+                      ease: "easeOut",
+                    }}
+                  >
+                    Message limit reached. You can send another message in {cooldownText}.
                   </motion.span>
                 )
               }
