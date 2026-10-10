@@ -675,7 +675,7 @@ const Contact = () => {
                       ease: "easeOut",
                     }}
                   >
-                    Message limit reached. You can send another message in {cooldownText}.
+                    Message limit reached. Try again in {cooldownText}.
                   </motion.span>
                 )
               }
