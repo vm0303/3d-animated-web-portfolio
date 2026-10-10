@@ -23,6 +23,9 @@ const CONTACT_COOLDOWN_STORAGE_KEY =
 const DEFAULT_CONTACT_COOLDOWN_SECONDS =
   3 * 60 * 60;
 
+const COOLDOWN_REMINDER_VISIBLE_MS =
+  6000;
+
 
 function readStoredCooldownUntil() {
   if (typeof window === "undefined") {
@@ -151,6 +154,11 @@ const Contact = () => {
   const [cooldownNow, setCooldownNow] =
     useState(() => Date.now());
 
+  const [
+    cooldownMessageVisible,
+    setCooldownMessageVisible,
+  ] = useState(false);
+
   const [fadeOnlyMotion, setFadeOnlyMotion] =
     useState(() => {
       if (typeof window === "undefined") {
@@ -169,6 +177,12 @@ const Contact = () => {
     useRef(null);
 
   const form =
+    useRef(null);
+
+  const cooldownHideTimerRef =
+    useRef(null);
+
+  const cooldownShakeRef =
     useRef(null);
 
 
@@ -216,7 +230,7 @@ const Contact = () => {
   }, [isInView]);
 
 
-  /* Show success for six seconds, then reveal the persistent cooldown state. */
+  /* Show success for six seconds, then reveal the cooldown reminder. */
   useEffect(() => {
     if (!success) {
       return;
@@ -314,14 +328,166 @@ const Contact = () => {
       : "";
 
 
+  const shakeCooldownMessage = () => {
+    if (
+      typeof window === "undefined" ||
+      window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches
+    ) {
+      return;
+    }
+
+    window.requestAnimationFrame(
+      () => {
+        const node =
+          cooldownShakeRef.current;
+
+        if (!node) {
+          return;
+        }
+
+        node
+          .getAnimations()
+          .forEach(
+            (animation) => {
+              animation.cancel();
+            }
+          );
+
+        node.animate(
+          [
+            { transform: "translateX(0)" },
+            { transform: "translateX(-7px)" },
+            { transform: "translateX(7px)" },
+            { transform: "translateX(-5px)" },
+            { transform: "translateX(5px)" },
+            { transform: "translateX(-3px)" },
+            { transform: "translateX(3px)" },
+            { transform: "translateX(0)" },
+          ],
+          {
+            duration: 440,
+            easing: "ease-in-out",
+          }
+        );
+      }
+    );
+  };
+
+
+  const restartCooldownReminderTimer = () => {
+    if (cooldownHideTimerRef.current) {
+      window.clearTimeout(
+        cooldownHideTimerRef.current
+      );
+    }
+
+    cooldownHideTimerRef.current =
+      window.setTimeout(
+        () => {
+          setCooldownMessageVisible(false);
+          cooldownHideTimerRef.current = null;
+        },
+        COOLDOWN_REMINDER_VISIBLE_MS
+      );
+  };
+
+
+  const triggerCooldownReminder = () => {
+    if (!cooldownActive) {
+      return;
+    }
+
+    setCooldownMessageVisible(true);
+    restartCooldownReminderTimer();
+    shakeCooldownMessage();
+  };
+
+
+  /*
+   * When a cooldown first becomes visible (including after the six-second
+   * success message), show the reminder once, shake it, and begin its own
+   * six-second inactivity timer.
+   */
+  useEffect(() => {
+    if (!cooldownActive) {
+      setCooldownMessageVisible(false);
+
+      if (cooldownHideTimerRef.current) {
+        window.clearTimeout(
+          cooldownHideTimerRef.current
+        );
+
+        cooldownHideTimerRef.current = null;
+      }
+
+      return;
+    }
+
+    if (success || error) {
+      return;
+    }
+
+    setCooldownMessageVisible(true);
+
+    if (cooldownHideTimerRef.current) {
+      window.clearTimeout(
+        cooldownHideTimerRef.current
+      );
+    }
+
+    cooldownHideTimerRef.current =
+      window.setTimeout(
+        () => {
+          setCooldownMessageVisible(false);
+          cooldownHideTimerRef.current = null;
+        },
+        COOLDOWN_REMINDER_VISIBLE_MS
+      );
+
+    shakeCooldownMessage();
+  }, [cooldownActive, success, error]);
+
+
+  /* Clear the reminder timer if Contact unmounts. */
+  useEffect(() => {
+    return () => {
+      if (cooldownHideTimerRef.current) {
+        window.clearTimeout(
+          cooldownHideTimerRef.current
+        );
+      }
+    };
+  }, []);
+
+
+  const handleSendButtonClick = (e) => {
+    if (!cooldownActive) {
+      return;
+    }
+
+    /*
+     * Cooldown uses aria-disabled instead of the native disabled attribute so
+     * the control can still explain why another submission is blocked.
+     */
+    e.preventDefault();
+    triggerCooldownReminder();
+  };
+
+
   const sendEmail = async (e) => {
     e.preventDefault();
 
     if (
       sending ||
-      cooldownActive ||
       !form.current
     ) {
+      return;
+    }
+
+    if (cooldownActive) {
+      triggerCooldownReminder();
       return;
     }
 
@@ -562,6 +728,9 @@ const Contact = () => {
               `formButton ${sending
                 ? "sending"
                 : ""
+              } ${cooldownActive
+                ? "cooldownBlocked"
+                : ""
               }`
             }
             variants={
@@ -570,13 +739,15 @@ const Contact = () => {
                 : listVariants
             }
             type="submit"
-            disabled={
+            disabled={sending}
+            aria-disabled={
               sending ||
               cooldownActive
             }
             aria-busy={sending}
             aria-describedby=
               "contact-form-status"
+            onClick={handleSendButtonClick}
           >
             {
               sending
@@ -654,6 +825,7 @@ const Contact = () => {
             <AnimatePresence>
               {
                 cooldownActive &&
+                cooldownMessageVisible &&
                 !success &&
                 !error && (
                   <motion.span
@@ -675,7 +847,12 @@ const Contact = () => {
                       ease: "easeOut",
                     }}
                   >
-                    Message limit reached. Try again in {cooldownText}.
+                    <span
+                      ref={cooldownShakeRef}
+                      className="cooldownMessageText"
+                    >
+                      Message limit reached. Try again in {cooldownText}.
+                    </span>
                   </motion.span>
                 )
               }
