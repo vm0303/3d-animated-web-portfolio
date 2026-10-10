@@ -67,20 +67,36 @@ Use a long random value for `CONTACT_COOLDOWN_SECRET`. Raw email addresses and I
 
 Geometry QA must never submit the real form or consume EmailJS quota.
 
-Cooldown geometry is tested by visual DOM injection at representative labels:
+Cooldown geometry is tested by visual DOM injection using the same production wording at representative countdown lengths:
 
 ```text
-3h 0m
-2h 47m
-8m
+Message limit reached. Try again in 3h 0m.
+Message limit reached. Try again in 2h 47m.
+Message limit reached. Try again in 8m.
 ```
 
-The cooldown visual runner intentionally keeps the previously validated, longer sentence as a conservative stress string. The live UI copy is shorter, so the already-passing geometry envelope is at least as safe and does not require a geometry rerun solely for the wording or interaction change.
-
-Run all currently locked device families with:
+To check only the agreed representative `2h 47m` production copy across every currently locked geometry family:
 
 ```powershell
-node qa/contact-viewport-audit/run-contact-locked-cooldown-qa.cjs --browser=chromium --screenshots=all
+node qa/contact-viewport-audit/run-contact-locked-cooldown-qa.cjs --browser=chromium --screenshots=all --cooldown-state=cooldown-2h47m
 ```
+
+The dedicated interaction runner seeds a future cooldown timestamp into localStorage and tests the real React behavior without waiting hours:
+
+```powershell
+node qa/contact-viewport-audit/run-contact-cooldown-interaction-qa.cjs --browser=chromium
+```
+
+It verifies:
+
+- exact `Message limit reached. Try again in 2h 47m.` copy;
+- initial reminder/shake;
+- six-second inactivity fade-out;
+- blocked-click reminder restoration;
+- timer reset after another blocked click;
+- repeated-click shake/timer restart;
+- zero form submissions;
+- zero `/api/contact` requests;
+- zero EmailJS requests.
 
 Future geometry-family passes automatically include geometry, success/error, and cooldown visual checks through `run-contact-geometry-family-pass.cjs`.
