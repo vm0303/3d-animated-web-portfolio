@@ -33,92 +33,92 @@
   },
   "readability": {
     "phone-portrait": {
-      "minTitleFontPx": 26,
-      "minLabelFontPx": 13,
-      "minControlFontPx": 16,
-      "minInputHeightPx": 38,
-      "minTextareaHeightPx": 72,
-      "minButtonHeightPx": 38
-    },
-    "phone-landscape:short": {
-      "minTitleFontPx": 20,
-      "minLabelFontPx": 11,
-      "minControlFontPx": 12,
-      "minInputHeightPx": 28,
-      "minTextareaHeightPx": 46,
-      "minButtonHeightPx": 28
-    },
-    "phone-landscape:normal": {
-      "minTitleFontPx": 22,
-      "minLabelFontPx": 12,
+      "minTitleFontPx": 25,
+      "minLabelFontPx": 14,
       "minControlFontPx": 13,
-      "minInputHeightPx": 30,
-      "minTextareaHeightPx": 54,
+      "minInputHeightPx": 26,
+      "minTextareaHeightPx": 62,
       "minButtonHeightPx": 30
     },
-    "foldable:portrait": {
-      "minTitleFontPx": 26,
-      "minLabelFontPx": 13,
-      "minControlFontPx": 15,
-      "minInputHeightPx": 36,
-      "minTextareaHeightPx": 68,
-      "minButtonHeightPx": 36
+    "phone-landscape:short": {
+      "minTitleFontPx": 17,
+      "minLabelFontPx": 9,
+      "minControlFontPx": 9,
+      "minInputHeightPx": 15,
+      "minTextareaHeightPx": 36,
+      "minButtonHeightPx": 18
     },
-    "foldable:landscape:short": {
+    "phone-landscape:normal": {
       "minTitleFontPx": 20,
       "minLabelFontPx": 11,
-      "minControlFontPx": 12,
-      "minInputHeightPx": 28,
-      "minTextareaHeightPx": 46,
-      "minButtonHeightPx": 28
+      "minControlFontPx": 10,
+      "minInputHeightPx": 18,
+      "minTextareaHeightPx": 47,
+      "minButtonHeightPx": 22
+    },
+    "foldable:portrait": {
+      "minTitleFontPx": 24,
+      "minLabelFontPx": 14,
+      "minControlFontPx": 13,
+      "minInputHeightPx": 27,
+      "minTextareaHeightPx": 64,
+      "minButtonHeightPx": 31
+    },
+    "foldable:landscape:short": {
+      "minTitleFontPx": 22,
+      "minLabelFontPx": 12,
+      "minControlFontPx": 11,
+      "minInputHeightPx": 21,
+      "minTextareaHeightPx": 52,
+      "minButtonHeightPx": 24
     },
     "foldable:landscape:normal": {
-      "minTitleFontPx": 24,
+      "minTitleFontPx": 23,
       "minLabelFontPx": 12,
-      "minControlFontPx": 13,
-      "minInputHeightPx": 32,
-      "minTextareaHeightPx": 60,
-      "minButtonHeightPx": 32
+      "minControlFontPx": 12,
+      "minInputHeightPx": 25,
+      "minTextareaHeightPx": 66,
+      "minButtonHeightPx": 28
     },
     "tablet-portrait": {
-      "minTitleFontPx": 34,
-      "minLabelFontPx": 15,
-      "minControlFontPx": 16,
-      "minInputHeightPx": 42,
-      "minTextareaHeightPx": 100,
-      "minButtonHeightPx": 42
+      "minTitleFontPx": 33,
+      "minLabelFontPx": 17,
+      "minControlFontPx": 17,
+      "minInputHeightPx": 35,
+      "minTextareaHeightPx": 89,
+      "minButtonHeightPx": 37
     },
     "tablet-landscape:short": {
-      "minTitleFontPx": 30,
-      "minLabelFontPx": 14,
-      "minControlFontPx": 15,
-      "minInputHeightPx": 36,
-      "minTextareaHeightPx": 76,
-      "minButtonHeightPx": 36
+      "minTitleFontPx": 29,
+      "minLabelFontPx": 13,
+      "minControlFontPx": 14,
+      "minInputHeightPx": 29,
+      "minTextareaHeightPx": 74,
+      "minButtonHeightPx": 31
     },
     "tablet-landscape:normal": {
-      "minTitleFontPx": 34,
-      "minLabelFontPx": 14,
-      "minControlFontPx": 15,
-      "minInputHeightPx": 38,
-      "minTextareaHeightPx": 84,
-      "minButtonHeightPx": 38
-    },
-    "desktop-standard": {
-      "minTitleFontPx": 32,
+      "minTitleFontPx": 33,
       "minLabelFontPx": 14,
       "minControlFontPx": 14,
-      "minInputHeightPx": 36,
-      "minTextareaHeightPx": 100,
-      "minButtonHeightPx": 36
+      "minInputHeightPx": 33,
+      "minTextareaHeightPx": 97,
+      "minButtonHeightPx": 33
+    },
+    "desktop-standard": {
+      "minTitleFontPx": 37,
+      "minLabelFontPx": 17,
+      "minControlFontPx": 17,
+      "minInputHeightPx": 41,
+      "minTextareaHeightPx": 108,
+      "minButtonHeightPx": 41
     },
     "desktop-wide": {
-      "minTitleFontPx": 38,
-      "minLabelFontPx": 15,
-      "minControlFontPx": 15,
-      "minInputHeightPx": 40,
-      "minTextareaHeightPx": 120,
-      "minButtonHeightPx": 40
+      "minTitleFontPx": 56,
+      "minLabelFontPx": 23,
+      "minControlFontPx": 21,
+      "minInputHeightPx": 52,
+      "minTextareaHeightPx": 168,
+      "minButtonHeightPx": 52
     }
   },
   "supplementalViewports": [
