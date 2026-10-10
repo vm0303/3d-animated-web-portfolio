@@ -241,7 +241,9 @@ async function screenshotContact(page, name) {
       hard.push("BUTTON_NOT_ARIA_DISABLED_DURING_COOLDOWN");
     }
 
-    checks.nativeButtonStillClickable = !(await button.isDisabled());
+    checks.nativeButtonStillClickable = await button.evaluate(
+      (node) => !node.disabled
+    );
     if (!checks.nativeButtonStillClickable) {
       hard.push("BUTTON_NATIVE_DISABLED_PREVENTS_REMINDER_INTERACTION");
     }
