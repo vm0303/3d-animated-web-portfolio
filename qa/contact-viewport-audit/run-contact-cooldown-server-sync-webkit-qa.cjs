@@ -133,6 +133,7 @@ async function state(page) {
   return page.evaluate((key) => {
     const stored = Number(localStorage.getItem(key) || 0);
     const message = document.querySelector(".cooldownMessageText");
+    const outerMessage = document.querySelector(".cooldownMessage");
     const button = document.querySelector(".formButton");
 
     return {
@@ -142,6 +143,11 @@ async function state(page) {
           : 0,
       text: message?.textContent?.trim() || "",
       messagePresent: Boolean(message),
+      messageVisible: Boolean(
+        outerMessage &&
+        getComputedStyle(outerMessage).visibility !== "hidden" &&
+        Number.parseFloat(getComputedStyle(outerMessage).opacity || "1") > 0.1
+      ),
       ariaDisabled: button?.getAttribute("aria-disabled") || null,
       nativeDisabled: Boolean(button?.disabled),
       shakeClass: Boolean(
@@ -161,6 +167,41 @@ async function waitForCooldown(page, timeout = 8000) {
       );
     },
     STORAGE_KEY,
+    { timeout }
+  );
+}
+
+async function waitForReminder(page, timeout = 4000) {
+  await page.waitForFunction(
+    () => {
+      const textNode = document.querySelector(".cooldownMessageText");
+      const outerMessage = document.querySelector(".cooldownMessage");
+
+      if (!textNode || !outerMessage) {
+        return false;
+      }
+
+      const text = textNode.textContent?.trim() || "";
+      const style = getComputedStyle(outerMessage);
+
+      return (
+        /Message limit reached\. Try again in /.test(text) &&
+        style.visibility !== "hidden" &&
+        Number.parseFloat(style.opacity || "1") > 0.1
+      );
+    },
+    undefined,
+    { timeout }
+  );
+}
+
+async function waitForShakeClass(page, timeout = 2000) {
+  await page.waitForFunction(
+    () =>
+      document
+        .querySelector(".cooldownMessageText")
+        ?.classList.contains("cooldownJumpShake") === true,
+    undefined,
     { timeout }
   );
 }
@@ -197,6 +238,7 @@ async function screenshotContact(page, name) {
   const contexts = [];
   const hard = [];
   const checks = {};
+  const diagnostics = {};
 
   let emailJsRequests = 0;
   let contactGetRequests = 0;
@@ -267,6 +309,8 @@ async function screenshotContact(page, name) {
 
     const beforeA = await state(pageA);
     const beforeB = await state(pageB);
+    diagnostics.beforeA = beforeA;
+    diagnostics.beforeB = beforeB;
 
     checks.independentContextsStartClear =
       beforeA.storedRemainingSeconds === 0 &&
@@ -307,12 +351,15 @@ async function screenshotContact(page, name) {
 
     await triggerFocusSync(pageA);
     await waitForCooldown(pageA);
+    await waitForReminder(pageA);
 
     const afterSeedA = await state(pageA);
+    diagnostics.afterSeedA = afterSeedA;
     checks.seedBrowserHydrated =
       afterSeedA.storedRemainingSeconds > 0 &&
       afterSeedA.ariaDisabled === "true" &&
-      afterSeedA.nativeDisabled === false;
+      afterSeedA.nativeDisabled === false &&
+      afterSeedA.messageVisible;
 
     if (!checks.seedBrowserHydrated) {
       hard.push("SEED_BROWSER_DID_NOT_HYDRATE");
@@ -320,15 +367,26 @@ async function screenshotContact(page, name) {
 
     await screenshotContact(pageA, "01-seed-browser-active");
 
+    const getCountBeforeBFocus = contactGetRequests;
     await triggerFocusSync(pageB);
     await waitForCooldown(pageB);
+    await waitForReminder(pageB);
+    const getCountAfterBFocus = contactGetRequests;
 
     const syncedB = await state(pageB);
+    diagnostics.syncedB = syncedB;
+    checks.preexistingFocusIssuedStatusGet =
+      getCountAfterBFocus > getCountBeforeBFocus;
     checks.preexistingIndependentContextSyncedOnFocus =
       syncedB.storedRemainingSeconds > 0 &&
       syncedB.ariaDisabled === "true" &&
       syncedB.nativeDisabled === false &&
+      syncedB.messageVisible &&
       /Message limit reached\. Try again in /.test(syncedB.text);
+
+    if (!checks.preexistingFocusIssuedStatusGet) {
+      hard.push("PREEXISTING_CONTEXT_FOCUS_DID_NOT_REQUEST_STATUS");
+    }
 
     if (!checks.preexistingIndependentContextSyncedOnFocus) {
       hard.push("PREEXISTING_CONTEXT_DID_NOT_SYNC_ON_FOCUS");
@@ -339,6 +397,7 @@ async function screenshotContact(page, name) {
     const contextC = await makeContext();
     const pageC = await contextC.newPage();
 
+    const getCountBeforeCLoad = contactGetRequests;
     await pageC.goto(url, {
       waitUntil: "domcontentloaded",
       timeout: 60000,
@@ -346,12 +405,23 @@ async function screenshotContact(page, name) {
 
     await pageC.waitForSelector(".contact", { timeout: 30000 });
     await waitForCooldown(pageC);
+    await waitForReminder(pageC);
+    const getCountAfterCLoad = contactGetRequests;
 
     const syncedC = await state(pageC);
+    diagnostics.syncedC = syncedC;
+    checks.freshContextIssuedInitialStatusGet =
+      getCountAfterCLoad > getCountBeforeCLoad;
     checks.freshPrivateLikeContextSyncedOnInitialLoad =
       syncedC.storedRemainingSeconds > 0 &&
       syncedC.ariaDisabled === "true" &&
-      syncedC.nativeDisabled === false;
+      syncedC.nativeDisabled === false &&
+      syncedC.messageVisible &&
+      /Message limit reached\. Try again in /.test(syncedC.text);
+
+    if (!checks.freshContextIssuedInitialStatusGet) {
+      hard.push("FRESH_CONTEXT_DID_NOT_REQUEST_STATUS_ON_LOAD");
+    }
 
     if (!checks.freshPrivateLikeContextSyncedOnInitialLoad) {
       hard.push("FRESH_CONTEXT_DID_NOT_SYNC_ON_INITIAL_LOAD");
@@ -365,6 +435,7 @@ async function screenshotContact(page, name) {
     await pageC.waitForTimeout(2200);
 
     const laterC = await state(pageC);
+    diagnostics.laterC = laterC;
     checks.dynamicCountdownTicks =
       laterC.storedRemainingSeconds <= firstRemaining - 1 &&
       laterC.text !== firstText &&
@@ -383,6 +454,7 @@ async function screenshotContact(page, name) {
     );
 
     const afterFade = await state(pageC);
+    diagnostics.afterFade = afterFade;
     checks.fadeDoesNotEndCooldown =
       afterFade.storedRemainingSeconds > 0 &&
       afterFade.ariaDisabled === "true";
@@ -393,23 +465,22 @@ async function screenshotContact(page, name) {
 
     /*
      * Playwright WebKit pointer synthesis is not the behavior under test here.
-     * The manual Safari/TestMU run already covered a real user click. Dispatch
-     * a native DOM click so this automated test deterministically exercises the
-     * same React cooldown handler under WebKit after the reminder has faded.
+     * The real Safari/TestMU run already covered a user click. Dispatch a DOM
+     * click so this automated pass deterministically exercises the same React
+     * cooldown handler after the reminder has faded.
      */
     await pageC.evaluate(() => {
       document.querySelector(".formButton")?.click();
     });
 
-    await pageC.waitForFunction(
-      () => Boolean(document.querySelector(".cooldownMessage")),
-      undefined,
-      { timeout: 3000 }
-    );
+    await waitForReminder(pageC, 3000);
+    await waitForShakeClass(pageC, 2000);
 
     const restoredC = await state(pageC);
+    diagnostics.restoredC = restoredC;
     checks.blockedClickRestoresCurrentCountdown =
       restoredC.messagePresent &&
+      restoredC.messageVisible &&
       restoredC.storedRemainingSeconds > 0 &&
       /Message limit reached\. Try again in /.test(restoredC.text);
 
@@ -447,6 +518,8 @@ async function screenshotContact(page, name) {
 
     const clearedB = await state(pageB);
     const clearedC = await state(pageC);
+    diagnostics.clearedB = clearedB;
+    diagnostics.clearedC = clearedC;
 
     checks.serverClearPropagatesOnFocus =
       clearedB.storedRemainingSeconds === 0 &&
@@ -479,6 +552,7 @@ async function screenshotContact(page, name) {
       reminderVisibleMs: REMINDER_VISIBLE_MS,
       hard,
       checks,
+      diagnostics,
       safety: {
         emailJsRequests,
       },
