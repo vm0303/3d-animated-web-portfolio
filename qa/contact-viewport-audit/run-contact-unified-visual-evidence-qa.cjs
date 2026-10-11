@@ -25,7 +25,14 @@ const runnerPath = path.join(
   "run-contact-unified-qa.cjs"
 );
 
-const source = fs.readFileSync(runnerPath, "utf8");
+/*
+ * Git checkouts on Windows commonly use CRLF line endings. Normalize the
+ * source before applying the small evidence-only screenshot hook so the
+ * wrapper behaves identically on Windows, macOS, and Linux.
+ */
+const source = fs
+  .readFileSync(runnerPath, "utf8")
+  .replace(/\r\n?/g, "\n");
 
 const needle = [
   "async function captureContact(page, stateId, status, v) {",
