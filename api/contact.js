@@ -4,9 +4,8 @@ const DEFAULT_COOLDOWN_SECONDS = 3 * 60 * 60;
 const MAX_BODY_BYTES = 24_000;
 
 /*
- * Local Vite development fallback only.
- * Production/preview deployments must use Upstash Redis so the cooldown
- * survives browser changes, cookie/cache clearing, and serverless instances.
+ * Local development fallback. Production requires persistent Redis storage so
+ * the cooldown survives browser changes and server restarts/instances.
  */
 const localCooldowns = new Map();
 
@@ -103,13 +102,6 @@ function hmac(value, secret) {
     .digest("hex");
 }
 
-function requestUrl(req) {
-  return new URL(
-    req.url || "/api/contact",
-    "http://localhost"
-  );
-}
-
 async function readJsonBody(req) {
   if (req.body && typeof req.body === "object" && !Buffer.isBuffer(req.body)) {
     return req.body;
@@ -155,7 +147,7 @@ function getConfiguration({ requireEmailJs = true } = {}) {
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || "";
   const hasRedis = Boolean(redisUrl && redisToken);
   const hasPartialRedis = Boolean(redisUrl || redisToken) && !hasRedis;
-  const deployedOnVercel = Boolean(process.env.VERCEL_ENV);
+  const production = process.env.NODE_ENV === "production";
 
   if (
     requireEmailJs &&
@@ -176,18 +168,18 @@ function getConfiguration({ requireEmailJs = true } = {}) {
     );
   }
 
-  if (deployedOnVercel && !hasRedis) {
+  if (production && !hasRedis) {
     throw new Error(
-      "Persistent Contact cooldown requires Upstash Redis on Vercel."
+      "Persistent Contact cooldown requires Upstash Redis in production."
     );
   }
 
   const secret =
     process.env.CONTACT_COOLDOWN_SECRET ||
-    (deployedOnVercel ? "" : "local-contact-development-secret");
+    (production ? "" : "local-contact-development-secret");
 
   if (!secret) {
-    throw new Error("CONTACT_COOLDOWN_SECRET is required.");
+    throw new Error("CONTACT_COOLDOWN_SECRET is required in production.");
   }
 
   return {
@@ -391,7 +383,6 @@ async function sendWithEmailJs({ emailJs, name, email, message }) {
 
 export default async function contactHandler(req, res) {
   const method = String(req.method || "GET").toUpperCase();
-  const url = requestUrl(req);
 
   if (method === "GET") {
     let configuration;
@@ -429,36 +420,11 @@ export default async function contactHandler(req, res) {
       `portfolio:contact:ip:${hmac(ip, configuration.secret)}`;
 
     try {
-      /*
-       * During the temporary local cross-browser test, also check the in-memory
-       * Vite seed even if production Redis credentials happen to exist locally.
-       */
-      const localRetryAfter =
-        req.__contactLocalDev
-          ? await lookupCooldown({
-              keys: [ipKey],
-              redis: null,
-            })
-          : 0;
-
-      const persistentRetryAfter =
-        configuration.redis
-          ? await lookupCooldown({
-              keys: [ipKey],
-              redis: configuration.redis,
-            })
-          : req.__contactLocalDev
-            ? 0
-            : await lookupCooldown({
-                keys: [ipKey],
-                redis: null,
-              });
-
       const retryAfterSeconds =
-        Math.max(
-          localRetryAfter,
-          persistentRetryAfter
-        );
+        await lookupCooldown({
+          keys: [ipKey],
+          redis: configuration.redis,
+        });
 
       json(res, 200, {
         ok: true,
@@ -479,107 +445,6 @@ export default async function contactHandler(req, res) {
       });
     }
 
-    return;
-  }
-
-  /*
-   * TEMP LOCAL TEST ONLY.
-   * Vite marks req.__contactLocalDev before calling this handler. Deployed
-   * requests never receive that flag, so they cannot seed or clear cooldowns.
-   */
-  const debugCooldownAction =
-    req.__contactLocalDev &&
-    method === "POST"
-      ? url.searchParams.get(
-          "debugCooldown"
-        )
-      : null;
-
-  if (
-    debugCooldownAction === "seed" ||
-    debugCooldownAction === "clear"
-  ) {
-    let configuration;
-
-    try {
-      configuration = getConfiguration({
-        requireEmailJs: false,
-      });
-    } catch (error) {
-      json(res, 500, {
-        ok: false,
-        code: "CONTACT_CONFIGURATION_ERROR",
-      });
-      return;
-    }
-
-    const ip = clientIp(req);
-
-    if (!ip) {
-      json(res, 400, {
-        ok: false,
-        code: "DEBUG_IP_UNAVAILABLE",
-      });
-      return;
-    }
-
-    const ipKey =
-      `portfolio:contact:ip:${hmac(ip, configuration.secret)}`;
-
-    if (debugCooldownAction === "clear") {
-      localCooldowns.delete(ipKey);
-
-      json(res, 200, {
-        ok: true,
-        cooldownActive: false,
-        retryAfterSeconds: 0,
-      });
-      return;
-    }
-
-    let body = {};
-
-    try {
-      body = await readJsonBody(req);
-    } catch {
-      body = {};
-    }
-
-    const seconds = positiveInteger(
-      body?.seconds,
-      120
-    );
-
-    const existingRetryAfter =
-      await lookupCooldown({
-        keys: [ipKey],
-        redis: null,
-      });
-
-    if (existingRetryAfter > 0) {
-      json(res, 200, {
-        ok: true,
-        cooldownActive: true,
-        retryAfterSeconds:
-          existingRetryAfter,
-      });
-      return;
-    }
-
-    const token = crypto.randomUUID();
-
-    await reserveCooldown({
-      keys: [ipKey],
-      seconds,
-      token,
-      redis: null,
-    });
-
-    json(res, 200, {
-      ok: true,
-      cooldownActive: true,
-      retryAfterSeconds: seconds,
-    });
     return;
   }
 
