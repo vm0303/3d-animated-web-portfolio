@@ -60,7 +60,6 @@ const StageBoundsAnchor = ({ edge }) => {
 
 const AboutModelContainer = ({
     activeScene,
-    isActive,
     onLaptopReady,
 }) => {
     const modelContainerRef = useRef(null);
@@ -582,7 +581,6 @@ const AboutModelContainer = ({
             cancelCarouselTimer();
 
             const canRunCarousel =
-                isActive &&
                 !isInteractingRef.current &&
                 activeScene ===
                     renderSceneId &&
@@ -617,7 +615,6 @@ const AboutModelContainer = ({
                     scene.interval
                 );
         }, [
-            isActive,
             activeScene,
             renderSceneId,
             activeIndex,
@@ -934,12 +931,10 @@ const AboutModelContainer = ({
             "carousel";
 
     const controlsEnabled =
-        isActive &&
         !sceneZoomActive &&
         !isSceneTransition;
 
     const autoRotateEnabled =
-        isActive &&
         !sceneZoomActive &&
         !isSceneTransition;
 
@@ -953,18 +948,12 @@ const AboutModelContainer = ({
                 className="aboutCanvasShell"
                 style={{
                     pointerEvents:
-                        !isActive ||
                         isCarouselTransition
                             ? "none"
                             : "auto",
                 }}
             >
                 <Canvas
-                    frameloop={
-                        isActive
-                            ? "always"
-                            : "demand"
-                    }
                     dpr={[
                         1,
                         1.75,

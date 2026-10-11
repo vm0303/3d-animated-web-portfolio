@@ -81,6 +81,7 @@ const paragraphVariants = {
 
   animate: {
     x: 0,
+    y: 0,
     opacity: 1,
 
     transition: {
@@ -367,14 +368,10 @@ const About = () => {
     );
 
 
-  /*
-   * Every About visit starts from the developer/laptop scene.
-   * The 3D container stays mounted; only the active scene is reset while
-   * About is off-screen so returning does not rebuild the WebGL canvas.
-   */
   useEffect(() => {
     if (!isInView) {
       setActiveScene("developer");
+      setIsLaptopModelReady(false);
     }
   }, [isInView]);
 
@@ -636,72 +633,71 @@ const About = () => {
             : undefined
         }
       >
-        <AboutModelContainer
-          activeScene={
-            activeScene
-          }
+        {isInView && (
+          <>
+            <AboutModelContainer
+              activeScene={
+                activeScene
+              }
 
-          isActive={
-            isInView
-          }
-
-          onLaptopReady={
-            handleLaptopModelReady
-          }
-        />
+              onLaptopReady={
+                handleLaptopModelReady
+              }
+            />
 
 
-        <AnimatePresence>
-          {isInView &&
-            activeScene ===
-              "developer" &&
-            isLaptopModelReady && (
-              <motion.button
-                key=
-                  "view-screen-button"
+            <AnimatePresence>
+              {activeScene ===
+                "developer" &&
+                isLaptopModelReady && (
+                  <motion.button
+                    key=
+                      "view-screen-button"
 
-                ref={
-                  screenTriggerRef
-                }
+                    ref={
+                      screenTriggerRef
+                    }
 
-                type="button"
+                    type="button"
 
-                className=
-                  "aboutScreenTrigger"
+                    className=
+                      "aboutScreenTrigger"
 
-                variants={
-                  buttonVariants
-                }
+                    variants={
+                      buttonVariants
+                    }
 
-                initial="initial"
+                    initial="initial"
 
-                animate="animate"
+                    animate="animate"
 
-                exit="exit"
+                    exit="exit"
 
-                aria-haspopup=
-                  "dialog"
+                    aria-haspopup=
+                      "dialog"
 
-                onClick={
-                  openLaptopScreen
-                }
-              >
-                <span>
-                  View screen
-                </span>
+                    onClick={
+                      openLaptopScreen
+                    }
+                  >
+                    <span>
+                      View screen
+                    </span>
 
 
-                <span
-                  aria-hidden="true"
+                    <span
+                      aria-hidden="true"
 
-                  className=
-                    "aboutScreenTriggerIcon"
-                >
-                  ↗
-                </span>
-              </motion.button>
-            )}
-        </AnimatePresence>
+                      className=
+                        "aboutScreenTriggerIcon"
+                    >
+                      ↗
+                    </span>
+                  </motion.button>
+                )}
+            </AnimatePresence>
+          </>
+        )}
       </motion.div>
 
 
