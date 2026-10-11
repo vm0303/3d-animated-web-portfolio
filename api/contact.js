@@ -10,6 +10,17 @@ const MAX_BODY_BYTES = 24_000;
  */
 const localCooldowns = new Map();
 
+const CHECK_SCRIPT = `
+local max_ttl = 0
+for i, key in ipairs(KEYS) do
+  local ttl = redis.call("TTL", key)
+  if ttl > max_ttl then
+    max_ttl = ttl
+  end
+end
+return max_ttl
+`;
+
 const RESERVE_SCRIPT = `
 local max_ttl = 0
 for i, key in ipairs(KEYS) do
@@ -92,6 +103,13 @@ function hmac(value, secret) {
     .digest("hex");
 }
 
+function requestUrl(req) {
+  return new URL(
+    req.url || "/api/contact",
+    "http://localhost"
+  );
+}
+
 async function readJsonBody(req) {
   if (req.body && typeof req.body === "object" && !Buffer.isBuffer(req.body)) {
     return req.body;
@@ -116,7 +134,7 @@ async function readJsonBody(req) {
   return body ? JSON.parse(body) : {};
 }
 
-function getConfiguration() {
+function getConfiguration({ requireEmailJs = true } = {}) {
   const emailJs = {
     serviceId:
       process.env.EMAILJS_SERVICE_ID ||
@@ -140,9 +158,12 @@ function getConfiguration() {
   const deployedOnVercel = Boolean(process.env.VERCEL_ENV);
 
   if (
-    !emailJs.serviceId ||
-    !emailJs.templateId ||
-    !emailJs.publicKey
+    requireEmailJs &&
+    (
+      !emailJs.serviceId ||
+      !emailJs.templateId ||
+      !emailJs.publicKey
+    )
   ) {
     throw new Error(
       "Contact API is missing EmailJS server environment variables."
@@ -212,6 +233,48 @@ function pruneLocalCooldowns() {
       localCooldowns.delete(key);
     }
   }
+}
+
+async function lookupCooldown({ keys, redis }) {
+  if (!keys.length) {
+    return 0;
+  }
+
+  if (redis) {
+    const result = await redisCommand(redis, [
+      "EVAL",
+      CHECK_SCRIPT,
+      String(keys.length),
+      ...keys,
+    ]);
+
+    return Math.max(
+      0,
+      Number(result) || 0
+    );
+  }
+
+  pruneLocalCooldowns();
+
+  const now = Date.now();
+  let latestExpiry = 0;
+
+  for (const key of keys) {
+    const record = localCooldowns.get(key);
+
+    if (record?.expiresAt > latestExpiry) {
+      latestExpiry = record.expiresAt;
+    }
+  }
+
+  return latestExpiry > now
+    ? Math.max(
+        1,
+        Math.ceil(
+          (latestExpiry - now) / 1000
+        )
+      )
+    : 0;
 }
 
 async function reserveCooldown({ keys, seconds, token, redis }) {
@@ -327,8 +390,201 @@ async function sendWithEmailJs({ emailJs, name, email, message }) {
 }
 
 export default async function contactHandler(req, res) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+  const method = String(req.method || "GET").toUpperCase();
+  const url = requestUrl(req);
+
+  if (method === "GET") {
+    let configuration;
+
+    try {
+      configuration = getConfiguration({
+        requireEmailJs: false,
+      });
+    } catch (error) {
+      console.error(
+        "[Contact API] Cooldown status configuration error:",
+        error
+      );
+
+      json(res, 500, {
+        ok: false,
+        code: "CONTACT_CONFIGURATION_ERROR",
+        message: "Unable to check the contact cooldown right now.",
+      });
+      return;
+    }
+
+    const ip = clientIp(req);
+
+    if (!ip) {
+      json(res, 200, {
+        ok: true,
+        cooldownActive: false,
+        retryAfterSeconds: 0,
+      });
+      return;
+    }
+
+    const ipKey =
+      `portfolio:contact:ip:${hmac(ip, configuration.secret)}`;
+
+    try {
+      /*
+       * During the temporary local cross-browser test, also check the in-memory
+       * Vite seed even if production Redis credentials happen to exist locally.
+       */
+      const localRetryAfter =
+        req.__contactLocalDev
+          ? await lookupCooldown({
+              keys: [ipKey],
+              redis: null,
+            })
+          : 0;
+
+      const persistentRetryAfter =
+        configuration.redis
+          ? await lookupCooldown({
+              keys: [ipKey],
+              redis: configuration.redis,
+            })
+          : req.__contactLocalDev
+            ? 0
+            : await lookupCooldown({
+                keys: [ipKey],
+                redis: null,
+              });
+
+      const retryAfterSeconds =
+        Math.max(
+          localRetryAfter,
+          persistentRetryAfter
+        );
+
+      json(res, 200, {
+        ok: true,
+        cooldownActive:
+          retryAfterSeconds > 0,
+        retryAfterSeconds,
+      });
+    } catch (error) {
+      console.error(
+        "[Contact API] Cooldown status check failed:",
+        error
+      );
+
+      json(res, 503, {
+        ok: false,
+        code: "COOLDOWN_UNAVAILABLE",
+        message: "Unable to check the contact cooldown right now.",
+      });
+    }
+
+    return;
+  }
+
+  /*
+   * TEMP LOCAL TEST ONLY.
+   * Vite marks req.__contactLocalDev before calling this handler. Deployed
+   * requests never receive that flag, so they cannot seed or clear cooldowns.
+   */
+  const debugCooldownAction =
+    req.__contactLocalDev &&
+    method === "POST"
+      ? url.searchParams.get(
+          "debugCooldown"
+        )
+      : null;
+
+  if (
+    debugCooldownAction === "seed" ||
+    debugCooldownAction === "clear"
+  ) {
+    let configuration;
+
+    try {
+      configuration = getConfiguration({
+        requireEmailJs: false,
+      });
+    } catch (error) {
+      json(res, 500, {
+        ok: false,
+        code: "CONTACT_CONFIGURATION_ERROR",
+      });
+      return;
+    }
+
+    const ip = clientIp(req);
+
+    if (!ip) {
+      json(res, 400, {
+        ok: false,
+        code: "DEBUG_IP_UNAVAILABLE",
+      });
+      return;
+    }
+
+    const ipKey =
+      `portfolio:contact:ip:${hmac(ip, configuration.secret)}`;
+
+    if (debugCooldownAction === "clear") {
+      localCooldowns.delete(ipKey);
+
+      json(res, 200, {
+        ok: true,
+        cooldownActive: false,
+        retryAfterSeconds: 0,
+      });
+      return;
+    }
+
+    let body = {};
+
+    try {
+      body = await readJsonBody(req);
+    } catch {
+      body = {};
+    }
+
+    const seconds = positiveInteger(
+      body?.seconds,
+      120
+    );
+
+    const existingRetryAfter =
+      await lookupCooldown({
+        keys: [ipKey],
+        redis: null,
+      });
+
+    if (existingRetryAfter > 0) {
+      json(res, 200, {
+        ok: true,
+        cooldownActive: true,
+        retryAfterSeconds:
+          existingRetryAfter,
+      });
+      return;
+    }
+
+    const token = crypto.randomUUID();
+
+    await reserveCooldown({
+      keys: [ipKey],
+      seconds,
+      token,
+      redis: null,
+    });
+
+    json(res, 200, {
+      ok: true,
+      cooldownActive: true,
+      retryAfterSeconds: seconds,
+    });
+    return;
+  }
+
+  if (method !== "POST") {
+    res.setHeader("Allow", "GET, POST");
     json(res, 405, {
       ok: false,
       code: "METHOD_NOT_ALLOWED",
