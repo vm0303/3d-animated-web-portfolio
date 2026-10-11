@@ -1,4 +1,5 @@
 import "./contact.css";
+import "./contact-cooldown-motion.temp.css";
 
 import ContactSvg from "./ContactSvg";
 import ContactCooldownDebugPanel from "./ContactCooldownDebugPanel";
@@ -23,7 +24,7 @@ const DEFAULT_CONTACT_COOLDOWN_SECONDS =
   3 * 60 * 60;
 
 const COOLDOWN_REMINDER_VISIBLE_MS =
-  15000;
+  12000;
 
 const CONTACT_COOLDOWN_DEBUG_QUERY_KEY =
   "contactCooldownDebug";
@@ -369,9 +370,10 @@ const Contact = () => {
 
 
   /*
-   * One-shot version of the CodePen "Jump & Shake" motion. The outer
-   * cooldownMessage owns the fade; this inner text span owns only the jump and
-   * rotation, so replaying it does not blink/remount the message.
+   * Replay the CSS Jump & Shake on the already-mounted inner text node.
+   * The outer cooldownMessage owns only fade-in/fade-out. Keeping these two
+   * motions on separate elements prevents repeated blocked clicks from
+   * remounting/fading the message instead of visibly shaking it.
    */
   const shakeCooldownMessage = () => {
     if (
@@ -390,57 +392,15 @@ const Contact = () => {
       return;
     }
 
-    node
-      .getAnimations()
-      .forEach(
-        (animation) => {
-          animation.cancel();
-        }
-      );
+    node.classList.remove(
+      "cooldownJumpShake"
+    );
 
-    node.animate(
-      [
-        {
-          transform:
-            "translateY(0) rotate(0deg)",
-          offset: 0,
-        },
-        {
-          transform:
-            "translateY(-9px) rotate(0deg)",
-          offset: 0.25,
-        },
-        {
-          transform:
-            "translateY(-9px) rotate(17deg)",
-          offset: 0.35,
-        },
-        {
-          transform:
-            "translateY(-9px) rotate(-17deg)",
-          offset: 0.55,
-        },
-        {
-          transform:
-            "translateY(-9px) rotate(17deg)",
-          offset: 0.65,
-        },
-        {
-          transform:
-            "translateY(-9px) rotate(-17deg)",
-          offset: 0.75,
-        },
-        {
-          transform:
-            "translateY(0) rotate(0deg)",
-          offset: 1,
-        },
-      ],
-      {
-        duration: 830,
-        easing: "ease-in-out",
-        iterations: 1,
-      }
+    /* Force style recalculation so the same CSS animation can replay. */
+    void node.offsetWidth;
+
+    node.classList.add(
+      "cooldownJumpShake"
     );
   };
 
@@ -478,8 +438,8 @@ const Contact = () => {
 
   /*
    * When a cooldown first becomes visible (including after the six-second
-   * success message), show the reminder once, jump/shake it, and begin its own
-   * 15-second inactivity timer.
+   * success message), show it once, replay Jump & Shake, and begin its own
+   * 12-second inactivity timer.
    */
   useEffect(() => {
     if (!cooldownActive) {
@@ -522,11 +482,7 @@ const Contact = () => {
   }, [cooldownActive, success, error]);
 
 
-  /*
-   * Run the jump/shake only after React has mounted the reminder text. This is
-   * what makes both first reveal and repeated blocked clicks reliably replay
-   * the motion instead of degrading into a fade/blink.
-   */
+  /* Run Jump & Shake only after React has mounted the reminder text. */
   useEffect(() => {
     if (
       !cooldownMessageVisible ||
@@ -581,7 +537,7 @@ const Contact = () => {
         (count) => count + 1
       );
       setDebugLastEvent(
-        "Send blocked by active cooldown; reminder shown with Jump & Shake and the 15-second fade timer restarted."
+        "Send blocked by active cooldown; reminder replayed Jump & Shake and the 12-second fade timer restarted."
       );
     }
 
@@ -710,7 +666,7 @@ const Contact = () => {
     setError(false);
     activateCooldown(seconds);
     setDebugLastEvent(
-      `Started a ${seconds}s test cooldown. Reminder should appear with Jump & Shake, then auto-fade after 15s.`
+      `Started a ${seconds}s test cooldown. Reminder should Jump & Shake, then auto-fade after 12s.`
     );
   };
 
@@ -720,7 +676,7 @@ const Contact = () => {
     setSuccess(true);
     activateCooldown(seconds);
     setDebugLastEvent(
-      `Simulated successful send with a ${seconds}s cooldown. Success should show for 6s, then the cooldown reminder should appear with Jump & Shake.`
+      `Simulated successful send with a ${seconds}s cooldown. Success should show for 6s, then the cooldown reminder should Jump & Shake.`
     );
   };
 
@@ -728,7 +684,7 @@ const Contact = () => {
   const showDebugReminder = () => {
     triggerCooldownReminder();
     setDebugLastEvent(
-      "Reminder manually shown with Jump & Shake; its 15-second fade timer restarted."
+      "Reminder manually replayed Jump & Shake; its 12-second fade timer restarted."
     );
   };
 
