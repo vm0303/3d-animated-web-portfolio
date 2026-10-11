@@ -196,6 +196,31 @@ const Hero = () => {
     };
   }, []);
 
+  const handleSectionScroll = (event, sectionId) => {
+    event.preventDefault();
+
+    const target = document.getElementById(sectionId);
+
+    if (!target) {
+      return;
+    }
+
+    const prefersReducedMotion = window
+      .matchMedia("(prefers-reduced-motion: reduce)")
+      .matches;
+
+    target.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+
+    window.history.replaceState(
+      null,
+      "",
+      `#${sectionId}`
+    );
+  };
+
   const activeCertVariants = isMobile ? certificationsMobileVariants : certificationsVariants;
   const activeBubbleVariants = isMobile ? bubbleMobileVariants : bubbleVariants;
   const activeHeroTitleVariants = isMobile ? heroTitleMobileVariants : heroTitleVariants;
@@ -233,8 +258,10 @@ const Hero = () => {
         {/* SCROLL SVG */}
         <motion.a animate={{ y: [0, 5], opacity: [0, 1, 0] }}
           transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-
-          href="#about" className="scroll">
+          href="#about"
+          onClick={(event) => handleSectionScroll(event, "about")}
+          aria-label="Scroll to About section"
+          className="scroll">
           <svg
             width="50px"
             height="50px"
@@ -282,7 +309,13 @@ const Hero = () => {
         {/* BUBBLE */}
         <Speech variants={activeBubbleVariants} />
         {/* CONTACT ME BUTTON */}
-        <motion.a href="/#contact" className="contactButtonLink" animate={{ x: [300, 0], opacity: [0, 1] }} transition={{ duration: 2 }}>
+        <motion.a
+          href="#contact"
+          onClick={(event) => handleSectionScroll(event, "contact")}
+          aria-label="Scroll to Contact section"
+          className="contactButtonLink"
+          animate={{ x: [300, 0], opacity: [0, 1] }}
+          transition={{ duration: 2 }}>
           <motion.div className="contactButton" animate={{ rotate: [0, 360] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>
             <svg viewBox="0 0 200 200" width="150" height="150">
               <circle cx="100" cy="100" r="90" fill="#010134" />
