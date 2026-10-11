@@ -3,9 +3,9 @@
  *
  * Important rendering detail:
  * The gradient text paint must live on the element that is being transformed.
- * If the parent owns background-clip:text while the child is translated/rotated,
+ * If the parent owns background-clip:text while the child is translated,
  * Blink/WebKit can composite the moving transparent child against the parent's
- * stationary text mask. Visually that looks like blinking instead of movement.
+ * stationary text mask. Visually that can look like blinking instead of motion.
  *
  * This file deliberately does NOT add a background box behind the message.
  * It only moves the existing text gradient from the outer fade wrapper to the
@@ -23,7 +23,6 @@
 
 .cooldownMessageText {
   display: inline-block;
-  transform-origin: center center;
   will-change: transform;
 
   background: #FFDF00;
@@ -43,37 +42,34 @@
   color: transparent;
 }
 
+/*
+ * Horizontal Shake from the reference CodePen, played once per blocked click.
+ * Keeping this horizontal avoids the vertical overlap the Jump & Shake could
+ * create with the Send button immediately above the status line.
+ */
 .cooldownMessageText.cooldownJumpShake {
-  animation: contactCooldownJumpShake 830ms ease-in-out 1;
+  animation: contactCooldownHorizontalShake 350ms ease-in-out 1;
 }
 
-@keyframes contactCooldownJumpShake {
+@keyframes contactCooldownHorizontalShake {
   0% {
     transform: translateX(0);
   }
 
   25% {
-    transform: translateY(-9px);
+    transform: translateX(5px);
   }
 
-  35% {
-    transform: translateY(-9px) rotate(17deg);
-  }
-
-  55% {
-    transform: translateY(-9px) rotate(-17deg);
-  }
-
-  65% {
-    transform: translateY(-9px) rotate(17deg);
+  50% {
+    transform: translateX(-5px);
   }
 
   75% {
-    transform: translateY(-9px) rotate(-17deg);
+    transform: translateX(5px);
   }
 
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateX(0);
   }
 }
 
