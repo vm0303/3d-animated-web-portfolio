@@ -200,6 +200,9 @@ const CooldownDebugPanel = ({
           {cooldownMessageVisible
             ? "visible"
             : "hidden"}
+          <br />
+          <strong>Auto-fade:</strong>{" "}
+          15s after the most recent reminder trigger
         </div>
 
         <label>
@@ -289,7 +292,7 @@ const CooldownDebugPanel = ({
             disabled={!cooldownActive}
             onClick={onShowReminder}
           >
-            Show + shake
+            Show + Jump & Shake
           </button>
 
           <button
@@ -339,7 +342,8 @@ const CooldownDebugPanel = ({
         >
           Debug mode blocks real /api/contact submissions. During an active cooldown,
           click the real Send button repeatedly: the blocked counter should rise,
-          the reminder should reappear/shake, and its 6-second fade timer should restart.
+          the text should replay the Jump & Shake motion without blinking/remounting,
+          and the 15-second fade timer should restart after each blocked click.
         </div>
       </div>
     </aside>
