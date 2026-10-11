@@ -20,6 +20,21 @@ const contactApiDevMiddleware = () => ({
          */
         req.__contactLocalDev = true;
 
+        /*
+         * TEMP cross-browser test normalization.
+         * Different browsers can resolve localhost through different loopback
+         * families (127.0.0.1 vs ::1). The production app sees a real public
+         * client IP, but locally that browser-specific loopback choice would
+         * create different cooldown keys and make Firefox/Safari-engine tests
+         * look broken even though the server logic is shared.
+         *
+         * Force every local browser through one synthetic loopback identity so
+         * Chrome, Edge, Firefox, Opera, WebKit, private windows, etc. all query
+         * the same in-memory cooldown record during this manual test only.
+         */
+        req.headers["x-forwarded-for"] =
+          "127.0.0.1";
+
         Promise
           .resolve(
             contactApiHandler(req, res)
