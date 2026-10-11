@@ -1483,6 +1483,20 @@ label {
 
 .cooldownMessage {
   display: block;
+  overflow: visible;
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+  color: inherit;
+}
+
+.cooldownMessageText {
+  display: inline-block;
+  overflow: visible;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+
   background: #FFDF00;
   background: -webkit-linear-gradient(
     159deg,
@@ -1500,8 +1514,36 @@ label {
   color: transparent;
 }
 
-.cooldownMessageText {
-  display: inline-block;
+.cooldownMessageText.cooldownJumpShake {
+  animation: contactCooldownHorizontalShake 350ms ease-in-out 1;
+}
+
+@keyframes contactCooldownHorizontalShake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(5px);
+  }
+
+  50% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cooldownMessageText.cooldownJumpShake {
+    animation: none;
+  }
 }
 
 .formButton.cooldownBlocked {
