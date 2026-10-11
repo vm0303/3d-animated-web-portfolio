@@ -190,12 +190,12 @@ const App = () => {
 
   return (
     <div className="container">
-      <section id="#hero">
+      <section id="hero">
         <Hero />
       </section>
 
       <LazySection
-        id="#about"
+        id="about"
         rootMargin="0px"
       >
         <Suspense fallback={null}>
@@ -203,13 +203,13 @@ const App = () => {
         </Suspense>
       </LazySection>
 
-      <LazySection id="#portfolio">
+      <LazySection id="portfolio">
         <Suspense fallback={null}>
           <Portfolio />
         </Suspense>
       </LazySection>
 
-      <LazySection id="#contact">
+      <LazySection id="contact">
         <Suspense fallback={null}>
           <Contact />
         </Suspense>
