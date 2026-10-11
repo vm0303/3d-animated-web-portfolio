@@ -13,6 +13,13 @@ const contactApiDevMiddleware = () => ({
       "/api/contact",
 
       (req, res) => {
+        /*
+         * TEMP manual-test marker. The API only allows debug cooldown seeding
+         * when this flag is present, so deployed serverless requests can never
+         * invoke the local cross-browser test controls.
+         */
+        req.__contactLocalDev = true;
+
         Promise
           .resolve(
             contactApiHandler(req, res)
