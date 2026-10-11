@@ -1,18 +1,13 @@
 import {
-  useEffect,
   useRef,
   useState,
 } from "react";
 
 
-const DEBUG_REMINDER_VISIBLE_MS =
-  9000;
-
-
 const panelStyle = {
   position: "fixed",
   zIndex: 99999,
-  width: "min(340px, calc(100vw - 24px))",
+  width: "min(360px, calc(100vw - 24px))",
   maxHeight: "calc(100vh - 24px)",
   overflowY: "auto",
   background: "rgba(8, 15, 38, 0.96)",
@@ -51,7 +46,7 @@ const rowStyle = {
 
 
 const buttonStyle = {
-  flex: "1 1 120px",
+  flex: "1 1 140px",
   minHeight: "34px",
   border: 0,
   borderRadius: "7px",
@@ -82,43 +77,6 @@ const pillStyle = {
 };
 
 
-function formatExactRemaining(
-  cooldownUntil
-) {
-  const totalSeconds = Math.max(
-    0,
-    Math.ceil(
-      (cooldownUntil - Date.now()) / 1000
-    )
-  );
-
-  const hours = Math.floor(
-    totalSeconds / 3600
-  );
-
-  const minutes = Math.floor(
-    (totalSeconds % 3600) / 60
-  );
-
-  const seconds =
-    totalSeconds % 60;
-
-  if (hours > 0) {
-    return seconds > 0
-      ? `${hours}h ${minutes}m ${seconds}s`
-      : `${hours}h ${minutes}m`;
-  }
-
-  if (minutes > 0) {
-    return seconds > 0
-      ? `${minutes}m ${seconds}s`
-      : `${minutes}m`;
-  }
-
-  return `${seconds}s`;
-}
-
-
 const CooldownDebugPanel = ({
   cooldownActive,
   cooldownText,
@@ -135,141 +93,16 @@ const CooldownDebugPanel = ({
   onResetDebugCounters,
 }) => {
   const [durationSeconds, setDurationSeconds] =
-    useState(30);
+    useState(120);
 
   const [position, setPosition] =
     useState({ x: 18, y: 18 });
 
-  const [manualReminderNonce, setManualReminderNonce] =
-    useState(0);
+  const [serverActionStatus, setServerActionStatus] =
+    useState("No shared server action yet.");
 
   const dragRef =
     useRef(null);
-
-  const fadeTimerRef =
-    useRef(null);
-
-  const visibleReminderNodeRef =
-    useRef(null);
-
-  const hideReminderRef =
-    useRef(onHideReminder);
-
-  hideReminderRef.current =
-    onHideReminder;
-
-
-  const restartDebugFadeTimer = () => {
-    if (fadeTimerRef.current) {
-      window.clearTimeout(
-        fadeTimerRef.current
-      );
-    }
-
-    fadeTimerRef.current =
-      window.setTimeout(
-        () => {
-          hideReminderRef.current?.();
-          fadeTimerRef.current = null;
-        },
-        DEBUG_REMINDER_VISIBLE_MS
-      );
-  };
-
-
-  /*
-   * TEMP manual-test behavior:
-   * - show exact remaining seconds in the actual cooldown message
-   * - keep that text ticking until the cooldown expires
-   * - start the 9-second fade only when the message is actually mounted
-   *
-   * Contact.jsx still owns the real cooldown state. This helper only overrides
-   * the displayed debug text and shortens the reminder visibility for this
-   * manual browser-validation pass.
-   */
-  useEffect(() => {
-    if (!cooldownActive || !cooldownUntil) {
-      visibleReminderNodeRef.current = null;
-
-      if (fadeTimerRef.current) {
-        window.clearTimeout(
-          fadeTimerRef.current
-        );
-        fadeTimerRef.current = null;
-      }
-
-      return;
-    }
-
-    const syncReminder = () => {
-      const node =
-        document.querySelector(
-          ".cooldownMessageText"
-        );
-
-      if (!node) {
-        visibleReminderNodeRef.current = null;
-        return;
-      }
-
-      const exactText =
-        formatExactRemaining(
-          cooldownUntil
-        );
-
-      node.textContent =
-        `Message limit reached. Try again in ${exactText}.`;
-
-      if (
-        node !==
-        visibleReminderNodeRef.current
-      ) {
-        visibleReminderNodeRef.current = node;
-        restartDebugFadeTimer();
-      }
-    };
-
-    syncReminder();
-
-    const timer =
-      window.setInterval(
-        syncReminder,
-        250
-      );
-
-    return () => {
-      window.clearInterval(timer);
-    };
-  }, [
-    cooldownActive,
-    cooldownUntil,
-  ]);
-
-
-  /* Every blocked Send click must restart the reminder fade timer. */
-  useEffect(() => {
-    if (
-      cooldownActive &&
-      visibleReminderNodeRef.current
-    ) {
-      restartDebugFadeTimer();
-    }
-  }, [
-    blockedClickCount,
-    manualReminderNonce,
-    cooldownActive,
-  ]);
-
-
-  useEffect(() => {
-    return () => {
-      if (fadeTimerRef.current) {
-        window.clearTimeout(
-          fadeTimerRef.current
-        );
-      }
-    };
-  }, []);
 
 
   const onPointerDown = (event) => {
@@ -336,20 +169,96 @@ const CooldownDebugPanel = ({
     setDurationSeconds(seconds);
   };
 
-  const visibleLastEvent =
-    String(lastEvent || "")
-      .replaceAll(
-        "Jump & Shake",
-        "Horizontal Shake"
-      )
-      .replaceAll(
-        "12-second",
-        "9-second"
-      )
-      .replaceAll(
-        "after 12s",
-        "after 9s"
+
+  const seedSharedServerCooldown = async () => {
+    setServerActionStatus(
+      "Seeding shared local server cooldown..."
+    );
+
+    try {
+      const response =
+        await fetch(
+          "/api/contact?debugCooldown=seed",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              seconds: durationSeconds,
+            }),
+          }
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result?.code ||
+          `HTTP ${response.status}`
+        );
+      }
+
+      const retryAfterSeconds =
+        Math.max(
+          1,
+          Number(
+            result?.retryAfterSeconds
+          ) || durationSeconds
+        );
+
+      onStartCooldown(
+        retryAfterSeconds
       );
+
+      setServerActionStatus(
+        `Shared local server cooldown seeded: ${retryAfterSeconds}s remaining. Switch to another browser or refocus an already-open browser.`
+      );
+    } catch (error) {
+      setServerActionStatus(
+        `Shared seed failed: ${error instanceof Error ? error.message : "unknown error"}`
+      );
+    }
+  };
+
+
+  const clearSharedServerCooldown = async () => {
+    setServerActionStatus(
+      "Clearing shared local server cooldown..."
+    );
+
+    try {
+      const response =
+        await fetch(
+          "/api/contact?debugCooldown=clear",
+          {
+            method: "POST",
+          }
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result?.code ||
+          `HTTP ${response.status}`
+        );
+      }
+
+      onExpireNow();
+
+      setServerActionStatus(
+        "Shared local server cooldown cleared. Other debug browsers should clear on focus/visibility sync."
+      );
+    } catch (error) {
+      setServerActionStatus(
+        `Shared clear failed: ${error instanceof Error ? error.message : "unknown error"}`
+      );
+    }
+  };
 
 
   return (
@@ -419,13 +328,6 @@ const CooldownDebugPanel = ({
           <button
             type="button"
             style={secondaryButtonStyle}
-            onClick={() => setPreset(10)}
-          >
-            10s
-          </button>
-          <button
-            type="button"
-            style={secondaryButtonStyle}
             onClick={() => setPreset(30)}
           >
             30s
@@ -440,6 +342,13 @@ const CooldownDebugPanel = ({
           <button
             type="button"
             style={secondaryButtonStyle}
+            onClick={() => setPreset(180)}
+          >
+            3m
+          </button>
+          <button
+            type="button"
+            style={secondaryButtonStyle}
             onClick={() => setPreset(10800)}
           >
             3h
@@ -450,28 +359,46 @@ const CooldownDebugPanel = ({
           <button
             type="button"
             style={buttonStyle}
-            onClick={() => {
-              setManualReminderNonce(
-                (nonce) => nonce + 1
-              );
-              onStartCooldown(
-                durationSeconds
-              );
-            }}
+            onClick={seedSharedServerCooldown}
           >
-            Start cooldown
+            Seed shared server cooldown
           </button>
 
           <button
             type="button"
-            style={buttonStyle}
+            style={dangerButtonStyle}
+            onClick={clearSharedServerCooldown}
+          >
+            Clear shared server cooldown
+          </button>
+        </div>
+
+        <div style={pillStyle}>
+          <strong>Shared-server test:</strong>{" "}
+          {serverActionStatus}
+        </div>
+
+        <div style={rowStyle}>
+          <button
+            type="button"
+            style={secondaryButtonStyle}
+            onClick={() =>
+              onStartCooldown(durationSeconds)
+            }
+          >
+            Start local-only cooldown
+          </button>
+
+          <button
+            type="button"
+            style={secondaryButtonStyle}
             onClick={() =>
               onSimulateSuccess(
                 Math.max(10, durationSeconds)
               )
             }
           >
-            Success → cooldown
+            Local success → cooldown
           </button>
         </div>
 
@@ -480,12 +407,7 @@ const CooldownDebugPanel = ({
             type="button"
             style={secondaryButtonStyle}
             disabled={!cooldownActive}
-            onClick={() => {
-              setManualReminderNonce(
-                (nonce) => nonce + 1
-              );
-              onShowReminder();
-            }}
+            onClick={onShowReminder}
           >
             Show + Horizontal Shake
           </button>
@@ -506,7 +428,7 @@ const CooldownDebugPanel = ({
             style={dangerButtonStyle}
             onClick={onExpireNow}
           >
-            Expire now
+            Clear this browser only
           </button>
 
           <button
@@ -526,7 +448,7 @@ const CooldownDebugPanel = ({
           {wouldSubmitCount}
           <br />
           <strong>Last event:</strong>{" "}
-          {visibleLastEvent}
+          {lastEvent}
         </div>
 
         <div
@@ -535,10 +457,10 @@ const CooldownDebugPanel = ({
             color: "#ffd479",
           }}
         >
-          Debug mode blocks real /api/contact submissions. During an active cooldown,
-          the visible countdown includes exact seconds and keeps ticking. Repeated
-          Send clicks must stay blocked, replay the Horizontal Shake, and restart
-          the 9-second fade timer after every blocked click.
+          For the cross-browser test, use <strong>Seed shared server cooldown</strong>
+          in one browser. Other browsers using this same debug URL should hydrate
+          automatically on initial load, window focus, or when the tab becomes visible.
+          Real /api/contact email submission remains blocked in debug mode.
         </div>
       </div>
     </aside>
