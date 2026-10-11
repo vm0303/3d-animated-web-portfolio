@@ -408,9 +408,19 @@ const Hero = () => {
           onClick={(event) => handleSectionScroll(event, "contact")}
           aria-label="Scroll to Contact section"
           className="contactButtonLink"
+          style={{
+            position: "relative",
+            zIndex: 20,
+            pointerEvents: "auto",
+            cursor: "pointer",
+          }}
           animate={{ x: [300, 0], opacity: [0, 1] }}
           transition={{ duration: 2 }}>
-          <motion.div className="contactButton" animate={{ rotate: [0, 360] }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>
+          <motion.div
+            className="contactButton"
+            style={{ pointerEvents: "none" }}
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}>
             <svg viewBox="0 0 200 200" width="150" height="150">
               <circle cx="100" cy="100" r="90" fill="#010134" />
               <path
