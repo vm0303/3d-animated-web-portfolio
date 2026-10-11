@@ -80,7 +80,7 @@ function formatCooldownTime(
 }
 
 
-/* Laptop / desktop / landscape: form enters left -> right. */
+/* Laptop / desktop: form enters left -> right. */
 const listVariants = {
   initial: {
     x: -100,
@@ -99,7 +99,7 @@ const listVariants = {
 };
 
 
-/* Laptop / desktop / landscape: SVG enters right -> left. */
+/* Laptop / desktop: SVG enters right -> left. */
 const svgVariants = {
   initial: {
     x: 200,
@@ -118,7 +118,7 @@ const svgVariants = {
 };
 
 
-/* Portrait touch devices use fade-only motion. */
+/* Touch-first phones, foldables, and tablets use fade-only motion. */
 const portraitFadeVariants = {
   initial: {
     opacity: 0,
@@ -136,8 +136,7 @@ const portraitFadeVariants = {
 
 
 const PORTRAIT_TOUCH_MOTION_QUERY =
-  "(orientation: portrait) and (hover: none), " +
-  "(orientation: portrait) and (pointer: coarse)";
+  "(hover: none), (pointer: coarse)";
 
 
 const Contact = () => {
@@ -383,7 +382,7 @@ const Contact = () => {
     const handleVisibilityChange = () => {
       if (
         document.visibilityState ===
-        "visible"
+          "visible"
       ) {
         syncCooldownFromServer();
       }
