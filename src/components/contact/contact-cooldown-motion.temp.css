@@ -1,0 +1,84 @@
+/*
+ * TEMPORARY cooldown motion test override for css-viewport-test only.
+ *
+ * Important rendering detail:
+ * The gradient text paint must live on the element that is being transformed.
+ * If the parent owns background-clip:text while the child is translated/rotated,
+ * Blink/WebKit can composite the moving transparent child against the parent's
+ * stationary text mask. Visually that looks like blinking instead of movement.
+ *
+ * This file deliberately does NOT add a background box behind the message.
+ * It only moves the existing text gradient from the outer fade wrapper to the
+ * inner animated text span while we manually validate the motion.
+ */
+
+.cooldownMessage {
+  display: block;
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+  color: inherit;
+}
+
+.cooldownMessageText {
+  display: inline-block;
+  transform-origin: center center;
+  will-change: transform;
+
+  background: #FFDF00;
+  background: -webkit-linear-gradient(
+    159deg,
+    #FFDF00 0%,
+    #FCDD9F 100%
+  );
+  background: linear-gradient(
+    159deg,
+    #FFDF00 0%,
+    #FCDD9F 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.cooldownMessageText.cooldownJumpShake {
+  animation: contactCooldownJumpShake 830ms ease-in-out 1;
+}
+
+@keyframes contactCooldownJumpShake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateY(-9px);
+  }
+
+  35% {
+    transform: translateY(-9px) rotate(17deg);
+  }
+
+  55% {
+    transform: translateY(-9px) rotate(-17deg);
+  }
+
+  65% {
+    transform: translateY(-9px) rotate(17deg);
+  }
+
+  75% {
+    transform: translateY(-9px) rotate(-17deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cooldownMessageText.cooldownJumpShake {
+    animation: none;
+  }
+}
