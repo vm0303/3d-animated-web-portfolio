@@ -8,9 +8,15 @@
  * in ONE page lifecycle per viewport through the unified runner.
  *
  * --browser=all runs Chromium, Firefox, and WebKit sequentially from this one
- * command. With --screenshots=all, each engine writes exactly ONE settled
- * normal-state Contact screenshot per viewport; success/error/cooldown remain
- * fully tested and recorded in the same report without multiplying PNG output.
+ * command. With --screenshots=all, each engine finishes with exactly ONE PNG
+ * per viewport. That PNG is an evidence sheet containing:
+ * - the settled normal Contact composition;
+ * - success;
+ * - failure;
+ * - cooldown 3h 0m;
+ * - cooldown 2h 47m;
+ * - cooldown 8m;
+ * - cooldown 5s.
  */
 
 const fs = require("fs");
@@ -22,6 +28,10 @@ const RUNNER = path.join(
   __dirname,
   "run-contact-unified-visual-evidence-qa.cjs"
 );
+const COMPOSER = path.join(
+  __dirname,
+  "compose-contact-evidence-sheets.cjs"
+);
 
 function argValue(name, fallback = null) {
   const prefix = `--${name}=`;
@@ -30,6 +40,7 @@ function argValue(name, fallback = null) {
 }
 
 const requestedBrowser = argValue("browser", "chromium");
+const screenshotMode = argValue("screenshots", "bad");
 const baseOutput = argValue(
   "output-dir",
   "qa-results/contact/geometry-family-pass"
@@ -103,6 +114,40 @@ for (let index = 0; index < browsers.length; index++) {
     failed = true;
   }
 
+  const reportPath = path.join(engineOutputAbs, "report.json");
+
+  /*
+   * screenshots=all intentionally captures seven settled raw states while the
+   * viewport is already loaded. Compose those into one reviewable PNG, then
+   * remove the raw state files. The final screenshot count therefore remains
+   * exactly one per viewport/browser.
+   */
+  if (screenshotMode === "all" && fs.existsSync(reportPath)) {
+    process.stdout.write(
+      `\nComposing one evidence sheet per ${browser} viewport...\n`
+    );
+
+    const composeResult = spawnSync(
+      process.execPath,
+      [COMPOSER, `--output-dir=${engineOutputAbs}`],
+      {
+        cwd: ROOT,
+        stdio: "inherit",
+        env: process.env,
+      }
+    );
+
+    const composeExitCode =
+      composeResult.error ? 1 : composeResult.status ?? 1;
+
+    if (composeResult.error) {
+      console.error(composeResult.error);
+    }
+    if (composeExitCode !== 0) {
+      failed = true;
+    }
+  }
+
   const summaryPath = path.join(engineOutputAbs, "summary.json");
   let summary = null;
 
@@ -137,7 +182,7 @@ if (multiBrowser) {
     generatedAt: new Date().toISOString(),
     browsers,
     expectedScreenshotRule:
-      "With --screenshots=all: one settled geometry PNG per viewport per browser.",
+      "With --screenshots=all: one composite evidence PNG per viewport/browser containing geometry, success, failure, and all four cooldown states.",
     totalViewportExecutions: engineResults.reduce(
       (sum, item) => sum + Number(item.summary?.viewportCount || 0),
       0
