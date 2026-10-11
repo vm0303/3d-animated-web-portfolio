@@ -14,6 +14,7 @@
 
 .cooldownMessage {
   display: block;
+  overflow: visible;
   background: none;
   -webkit-background-clip: border-box;
   background-clip: border-box;
@@ -23,7 +24,15 @@
 
 .cooldownMessageText {
   display: inline-block;
-  will-change: transform;
+  overflow: visible;
+
+  /*
+   * Give glyph descenders a little extra paint/compositing room without
+   * changing the surrounding form geometry. This prevents letters such as
+   * g/y/p from being clipped while the text is transformed horizontally.
+   */
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
 
   background: #FFDF00;
   background: -webkit-linear-gradient(
@@ -44,8 +53,7 @@
 
 /*
  * Horizontal Shake from the reference CodePen, played once per blocked click.
- * Keeping this horizontal avoids the vertical overlap the Jump & Shake could
- * create with the Send button immediately above the status line.
+ * Keeping this horizontal avoids disturbing the locked vertical separation.
  */
 .cooldownMessageText.cooldownJumpShake {
   animation: contactCooldownHorizontalShake 350ms ease-in-out 1;
