@@ -5,13 +5,6 @@ import {
 
 
 const Shape = () => {
-  const qaMode =
-    typeof window !== "undefined" &&
-    new URLSearchParams(
-      window.location.search
-    ).get("qa") === "1";
-
-
   return (
     <>
       <Sphere
@@ -25,19 +18,7 @@ const Shape = () => {
 
           distort={0.5}
 
-          /*
-            Normal site:
-              continuously animate at speed 2.
-
-            QA:
-              keep the distorted shape,
-              but stop it from changing.
-          */
-          speed={
-            qaMode
-              ? 0
-              : 2
-          }
+          speed={2}
         />
       </Sphere>
 
