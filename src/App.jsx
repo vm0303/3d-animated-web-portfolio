@@ -8,9 +8,10 @@ import {
 
 import Hero from './components/hero/hero'
 
-const About = lazy(() =>
+const loadAbout = () =>
   import('./components/about/About')
-)
+
+const About = lazy(loadAbout)
 
 const Portfolio = lazy(() =>
   import('./components/portfolio/Portfolio')
@@ -24,6 +25,7 @@ const Contact = lazy(() =>
 const LazySection = ({
   id,
   children,
+  rootMargin = '-100px 0px',
 }) => {
   const sectionRef = useRef(null)
   const [shouldRender, setShouldRender] =
@@ -60,7 +62,7 @@ const LazySection = ({
       },
       {
         root: null,
-        rootMargin: '-100px 0px',
+        rootMargin,
         threshold: 0,
       }
     )
@@ -70,7 +72,10 @@ const LazySection = ({
     return () => {
       observer.disconnect()
     }
-  }, [shouldRender])
+  }, [
+    shouldRender,
+    rootMargin,
+  ])
 
 
   return (
@@ -85,13 +90,78 @@ const LazySection = ({
 
 
 const App = () => {
+  useEffect(() => {
+    let preloadStarted = false
+
+    const cleanup = () => {
+      window.removeEventListener(
+        'wheel',
+        startAboutPreload
+      )
+
+      window.removeEventListener(
+        'touchmove',
+        startAboutPreload
+      )
+
+      window.removeEventListener(
+        'keydown',
+        handleKeyDown
+      )
+    }
+
+    const startAboutPreload = () => {
+      if (preloadStarted) {
+        return
+      }
+
+      preloadStarted = true
+      void loadAbout()
+      cleanup()
+    }
+
+    const handleKeyDown = (event) => {
+      if (
+        event.key === 'ArrowDown' ||
+        event.key === 'PageDown' ||
+        event.key === 'End' ||
+        event.key === ' '
+      ) {
+        startAboutPreload()
+      }
+    }
+
+    window.addEventListener(
+      'wheel',
+      startAboutPreload,
+      { passive: true }
+    )
+
+    window.addEventListener(
+      'touchmove',
+      startAboutPreload,
+      { passive: true }
+    )
+
+    window.addEventListener(
+      'keydown',
+      handleKeyDown
+    )
+
+    return cleanup
+  }, [])
+
+
   return (
     <div className="container">
       <section id="#hero">
         <Hero />
       </section>
 
-      <LazySection id="#about">
+      <LazySection
+        id="#about"
+        rootMargin="0px"
+      >
         <Suspense fallback={null}>
           <About />
         </Suspense>
