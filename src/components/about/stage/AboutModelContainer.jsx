@@ -1,6 +1,5 @@
 import {
     Canvas,
-    useThree,
 } from "@react-three/fiber";
 
 import {
@@ -28,49 +27,14 @@ import CarouselModelSlot
     from "./CarouselModelSlot";
 
 
-/*
- * Carousel-only movement.
- * Text-section changes do NOT use these values.
- */
 const SLIDE_DURATION = 0.85;
 const SLIDE_DISTANCE = 2.8;
 const EDGE_SCALE = 0.88;
-
-
-/*
- * Keep the post-drag grace period.
- * After the grace period ends, a NEW full
- * scene.interval countdown begins.
- */
 const INTERACTION_RESUME_DELAY = 1200;
-
-
-/*
- * Lama's Stage uses Drei Bounds camera fitting.
- * Bounds' default camera transition duration is 1s.
- * We leave the actual camera movement to Stage/Bounds
- * instead of scaling the model ourselves.
- */
 const LAMA_ZOOM_DURATION = 1000;
-
 const DESKTOP_FRAME_EDGE = 2.55;
 
 
-/*
- * Important adaptation:
- *
- * Lama lets Stage fit to each model. In this portfolio,
- * each model already has an approved visualScale.
- * Fitting directly to each model would largely cancel
- * those per-model size choices.
- *
- * Instead Stage fits this fixed frame. That preserves
- * the same Stage/Bounds zoom mechanism while keeping the
- * model sizes from aboutScenes.js meaningful.
- *
- * The frame edge can be set by a scoped layout candidate
- * without changing model normalization or per-model visualScale.
- */
 const StageBoundsAnchor = ({ edge }) => {
     return (
         <mesh>
@@ -94,109 +58,22 @@ const StageBoundsAnchor = ({ edge }) => {
 };
 
 
-const AboutQaWebGLProbe = ({
-    enabled,
-}) => {
-    const {
-        gl,
-        scene,
-        camera,
-    } = useThree();
-
-
-    useEffect(() => {
-        if (!enabled) {
-            return undefined;
-        }
-
-
-        window.__ABOUT_QA_WEBGL_PROBE__ =
-            () => {
-                /*
-                 * Force one render immediately before readback.
-                 * QA mode uses preserveDrawingBuffer so toDataURL
-                 * can verify the WebGL framebuffer independently
-                 * of Playwright's page.screenshot compositor.
-                 */
-                gl.render(
-                    scene,
-                    camera
-                );
-
-
-                const context =
-                    gl.getContext();
-
-
-                context.finish?.();
-
-
-                return {
-                    dataUrl:
-                        gl.domElement
-                            .toDataURL(
-                                "image/png"
-                            ),
-
-                    canvasWidth:
-                        gl.domElement
-                            .width,
-
-                    canvasHeight:
-                        gl.domElement
-                            .height,
-
-                    clientWidth:
-                        gl.domElement
-                            .clientWidth,
-
-                    clientHeight:
-                        gl.domElement
-                            .clientHeight,
-
-                    contextLost:
-                        Boolean(
-                            context
-                                .isContextLost?.()
-                        ),
-
-                    glError:
-                        context
-                            .getError?.() ??
-                        null,
-                };
-            };
-
-
-        return () => {
-            delete window
-                .__ABOUT_QA_WEBGL_PROBE__;
-        };
-    }, [
-        enabled,
-        gl,
-        scene,
-        camera,
-    ]);
-
-
-    return null;
-};
-
-
 const AboutModelContainer = ({
     activeScene,
     onLaptopReady,
-    qaMode = false,
-    qaModelId = null,
 }) => {
     const modelContainerRef = useRef(null);
+
     const [frameEdge, setFrameEdge] =
         useState(DESKTOP_FRAME_EDGE);
 
+
     useLayoutEffect(() => {
         const node = modelContainerRef.current;
-        if (!node) return undefined;
+
+        if (!node) {
+            return undefined;
+        }
 
         const syncFrame = () => {
             const value = Number.parseFloat(
@@ -204,6 +81,7 @@ const AboutModelContainer = ({
                     "--about-stage-frame-edge"
                 )
             );
+
             setFrameEdge(
                 Number.isFinite(value) && value > 0
                     ? value
@@ -212,30 +90,19 @@ const AboutModelContainer = ({
         };
 
         syncFrame();
-        window.addEventListener("resize", syncFrame);
-        return () => window.removeEventListener("resize", syncFrame);
+
+        window.addEventListener(
+            "resize",
+            syncFrame
+        );
+
+        return () => {
+            window.removeEventListener(
+                "resize",
+                syncFrame
+            );
+        };
     }, []);
-
-    const initialScene =
-        ABOUT_SCENES[
-        activeScene
-        ] ??
-        ABOUT_SCENES.developer;
-
-
-    const requestedQaIndex =
-        qaMode && qaModelId
-            ? initialScene.items.findIndex(
-                (item) =>
-                    item.id === qaModelId
-            )
-            : -1;
-
-
-    const initialIndex =
-        requestedQaIndex >= 0
-            ? requestedQaIndex
-            : 0;
 
 
     const [
@@ -243,59 +110,25 @@ const AboutModelContainer = ({
         setRenderSceneId,
     ] = useState(activeScene);
 
-
     const [
         activeIndex,
         setActiveIndex,
-    ] = useState(initialIndex);
+    ] = useState(0);
 
-
-    /*
-     * transition.kind:
-     *
-     * "scene"
-     *   A text keyword changed.
-     *   The incoming model loads invisibly, then the
-     *   scene swaps and Lama's Stage/Bounds camera zoom
-     *   is restarted.
-     *
-     * "carousel"
-     *   Same text section, next model.
-     *   Uses the existing horizontal slide.
-     */
     const [
         transition,
         setTransition,
     ] = useState(null);
 
-
-    /*
-     * Incrementing this remounts the camera + Stage +
-     * OrbitControls, which recreates Lama's container
-     * remount behavior for text-section changes.
-     */
     const [
         sceneZoomEpoch,
         setSceneZoomEpoch,
     ] = useState(0);
 
-
-    /*
-     * About begins with the Laptop, so the initial entry
-     * should receive the same Stage/Bounds zoom.
-     */
     const [
         sceneZoomActive,
         setSceneZoomActive,
-    ] = useState(
-        () => !qaMode
-    );
-
-
-    const [
-        qaModelReady,
-        setQaModelReady,
-    ] = useState(false);
+    ] = useState(true);
 
 
     const transitionSequenceRef =
@@ -303,7 +136,6 @@ const AboutModelContainer = ({
 
     const transitionRef =
         useRef(null);
-
 
     const carouselTimerRef =
         useRef(null);
@@ -329,14 +161,13 @@ const AboutModelContainer = ({
 
     const scene =
         ABOUT_SCENES[
-        renderSceneId
+            renderSceneId
         ] ??
         ABOUT_SCENES.developer;
 
-
     const activeItem =
         scene.items[
-        activeIndex
+            activeIndex
         ] ??
         scene.items[0];
 
@@ -347,20 +178,8 @@ const AboutModelContainer = ({
     }, [transition]);
 
 
-    /*
-     * -----------------------------------------
-     * LAMA STAGE/BOUNDS ZOOM
-     * -----------------------------------------
-     */
-
     const triggerLamaZoom =
         useCallback(() => {
-            if (qaMode) {
-                setSceneZoomActive(false);
-                return;
-            }
-
-
             if (
                 sceneZoomTimerRef
                     .current
@@ -371,14 +190,12 @@ const AboutModelContainer = ({
                 );
             }
 
-
             setSceneZoomActive(true);
 
             setSceneZoomEpoch(
                 (current) =>
                     current + 1
             );
-
 
             sceneZoomTimerRef.current =
                 window.setTimeout(
@@ -393,19 +210,10 @@ const AboutModelContainer = ({
                     },
                     LAMA_ZOOM_DURATION
                 );
-        }, [qaMode]);
+        }, []);
 
 
-    /*
-     * Initial Laptop zoom.
-     */
     useEffect(() => {
-        if (qaMode) {
-            setSceneZoomActive(false);
-            return undefined;
-        }
-
-
         sceneZoomTimerRef.current =
             window.setTimeout(
                 () => {
@@ -420,7 +228,6 @@ const AboutModelContainer = ({
                 LAMA_ZOOM_DURATION
             );
 
-
         return () => {
             if (
                 sceneZoomTimerRef
@@ -432,14 +239,8 @@ const AboutModelContainer = ({
                 );
             }
         };
-    }, [qaMode]);
+    }, []);
 
-
-    /*
-     * -----------------------------------------
-     * CAROUSEL GPU WARM-UP
-     * -----------------------------------------
-     */
 
     const cancelWarmupFrames =
         useCallback(() => {
@@ -453,7 +254,6 @@ const AboutModelContainer = ({
                 );
             }
 
-
             if (
                 warmupFrameTwoRef
                     .current !== null
@@ -463,7 +263,6 @@ const AboutModelContainer = ({
                         .current
                 );
             }
-
 
             warmupFrameOneRef.current =
                 null;
@@ -482,22 +281,19 @@ const AboutModelContainer = ({
                     transitionRef
                         .current;
 
-
                 if (
                     !current ||
                     current.id !==
-                    transitionId ||
+                        transitionId ||
                     current.ready
                 ) {
                     return;
                 }
 
-
                 const readyTransition = {
                     ...current,
                     ready: true,
                 };
-
 
                 transitionRef.current =
                     readyTransition;
@@ -519,15 +315,13 @@ const AboutModelContainer = ({
                     transitionRef
                         .current;
 
-
                 if (
                     !current ||
                     current.id !==
-                    transitionId
+                        transitionId
                 ) {
                     return;
                 }
-
 
                 setRenderSceneId(
                     current.toSceneId
@@ -536,7 +330,6 @@ const AboutModelContainer = ({
                 setActiveIndex(
                     current.toIndex
                 );
-
 
                 transitionRef.current =
                     null;
@@ -556,30 +349,19 @@ const AboutModelContainer = ({
                     transitionRef
                         .current;
 
-
                 if (
                     !current ||
                     current.id !==
-                    transitionId
+                        transitionId
                 ) {
                     return;
                 }
 
-
                 cancelWarmupFrames();
 
-
-                /*
-                 * TEXT SECTION CHANGE:
-                 *
-                 * No model-scale animation.
-                 * Swap to the ready model, then remount
-                 * camera + Stage so Stage/Bounds performs
-                 * Lama's camera-based fit/zoom.
-                 */
                 if (
                     current.kind ===
-                    "scene"
+                        "scene"
                 ) {
                     setRenderSceneId(
                         current.toSceneId
@@ -589,48 +371,28 @@ const AboutModelContainer = ({
                         current.toIndex
                     );
 
-
                     transitionRef.current =
                         null;
 
                     setTransition(null);
 
-
-                    /*
-                     * The incoming Laptop has now genuinely
-                     * loaded and completed normalization.
-                     *
-                     * Notify About only at this point so the
-                     * View Screen button never appears while
-                     * the previous model is still being shown.
-                     */
                     if (
                         current.toSceneId ===
-                        "developer" &&
+                            "developer" &&
                         current.toItem.id ===
-                        "laptop"
+                            "laptop"
                     ) {
                         onLaptopReady?.();
                     }
-
 
                     triggerLamaZoom();
 
                     return;
                 }
 
-
-                /*
-                 * CAROUSEL:
-                 *
-                 * The GLB is already preloaded. Give the
-                 * incoming mounted object two rendered
-                 * frames before starting movement.
-                 */
                 if (current.ready) {
                     return;
                 }
-
 
                 warmupFrameOneRef
                     .current =
@@ -647,7 +409,6 @@ const AboutModelContainer = ({
                                         warmupFrameTwoRef
                                             .current =
                                             null;
-
 
                                         commitCarouselReady(
                                             transitionId
@@ -666,12 +427,6 @@ const AboutModelContainer = ({
         );
 
 
-    /*
-     * -----------------------------------------
-     * BEGIN TRANSITION
-     * -----------------------------------------
-     */
-
     const beginTransition =
         useCallback(
             (
@@ -683,13 +438,6 @@ const AboutModelContainer = ({
                     transitionRef
                         .current;
 
-
-                /*
-                 * Automatic carousel events never stack.
-                 * Explicit keyword changes may override a
-                 * carousel transition because user input
-                 * wins.
-                 */
                 if (
                     currentTransition &&
                     kind !== "scene"
@@ -697,68 +445,58 @@ const AboutModelContainer = ({
                     return;
                 }
 
-
                 if (
                     currentTransition
                         ?.kind ===
-                    "scene" &&
+                        "scene" &&
                     currentTransition
                         .toSceneId ===
-                    toSceneId
+                        toSceneId
                 ) {
                     return;
                 }
 
-
                 const targetScene =
                     ABOUT_SCENES[
-                    toSceneId
+                        toSceneId
                     ] ??
                     ABOUT_SCENES.developer;
 
-
                 const toItem =
                     targetScene.items[
-                    toIndex
+                        toIndex
                     ] ??
                     targetScene.items[0];
-
 
                 if (!toItem) {
                     return;
                 }
 
-
                 if (
                     !currentTransition &&
                     toSceneId ===
-                    renderSceneId &&
+                        renderSceneId &&
                     toIndex ===
-                    activeIndex
+                        activeIndex
                 ) {
                     return;
                 }
 
-
                 cancelWarmupFrames();
-
 
                 transitionSequenceRef
                     .current += 1;
-
 
                 const nextTransition = {
                     id:
                         transitionSequenceRef
                             .current,
-
                     kind,
                     toSceneId,
                     toIndex,
                     toItem,
                     ready: false,
                 };
-
 
                 transitionRef.current =
                     nextTransition;
@@ -775,20 +513,13 @@ const AboutModelContainer = ({
         );
 
 
-    /*
-     * -----------------------------------------
-     * TEXT SECTION CHANGE
-     * -----------------------------------------
-     */
-
     useEffect(() => {
         if (
             activeScene ===
-            renderSceneId
+                renderSceneId
         ) {
             return;
         }
-
 
         beginTransition(
             activeScene,
@@ -802,35 +533,19 @@ const AboutModelContainer = ({
     ]);
 
 
-    /*
-     * -----------------------------------------
-     * CAROUSEL ASSET PRELOAD
-     * -----------------------------------------
-     *
-     * As soon as a multi-model text section is active,
-     * preload ALL other models in that section.
-     *
-     * This still respects the About visibility gate:
-     * AboutModelContainer does not exist until About is
-     * visible. It simply removes first-cycle carousel
-     * network/parse latency once a carousel is selected.
-     */
-
     useEffect(() => {
         const targetScene =
             ABOUT_SCENES[
-            activeScene
+                activeScene
             ] ??
             ABOUT_SCENES.developer;
 
-
         if (
             targetScene.items.length <=
-            1
+                1
         ) {
             return;
         }
-
 
         targetScene.items.forEach(
             (item) => {
@@ -843,19 +558,6 @@ const AboutModelContainer = ({
         );
     }, [activeScene]);
 
-    /*
- * -----------------------------------------
- * CAROUSEL TIMER
- * -----------------------------------------
- *
- * Dragging should never require a React
- * render just to pause or restart the
- * carousel countdown.
- *
- * The timer therefore lives entirely in
- * refs and is restarted imperatively after
- * the post-drag grace period.
- */
 
     const cancelCarouselTimer =
         useCallback(() => {
@@ -868,7 +570,6 @@ const AboutModelContainer = ({
                         .current
                 );
 
-
                 carouselTimerRef.current =
                     null;
             }
@@ -877,33 +578,20 @@ const AboutModelContainer = ({
 
     const scheduleCarouselTimer =
         useCallback(() => {
-            /*
-             * Always begin from a clean timer.
-             */
             cancelCarouselTimer();
 
-
             const canRunCarousel =
-                !qaMode &&
-
                 !isInteractingRef.current &&
-
                 activeScene ===
-                renderSceneId &&
-
+                    renderSceneId &&
                 !transition &&
-
                 !sceneZoomActive &&
-
                 scene.items.length > 1 &&
-
                 Boolean(scene.interval);
-
 
             if (!canRunCarousel) {
                 return;
             }
-
 
             carouselTimerRef.current =
                 window.setTimeout(
@@ -911,14 +599,12 @@ const AboutModelContainer = ({
                         carouselTimerRef.current =
                             null;
 
-
                         const nextIndex =
                             (
                                 activeIndex +
                                 1
                             ) %
                             scene.items.length;
-
 
                         beginTransition(
                             renderSceneId,
@@ -937,29 +623,19 @@ const AboutModelContainer = ({
             transition,
             sceneZoomActive,
             beginTransition,
-            qaMode,
             cancelCarouselTimer,
         ]);
 
 
-    /*
-     * Keep the ref pointed at the newest
-     * scheduler.
-     *
-     * The delayed pointer-release callback can
-     * therefore use current scene/model values
-     * without causing a React state update.
-     */
     useEffect(() => {
         scheduleCarouselTimerRef.current =
             scheduleCarouselTimer;
-
 
         return () => {
             if (
                 scheduleCarouselTimerRef
                     .current ===
-                scheduleCarouselTimer
+                    scheduleCarouselTimer
             ) {
                 scheduleCarouselTimerRef
                     .current =
@@ -971,19 +647,8 @@ const AboutModelContainer = ({
     ]);
 
 
-    /*
-     * Normal React-driven changes such as:
-     *
-     * - switching scenes
-     * - completing a carousel transition
-     * - completing the Stage zoom
-     *
-     * still recalculate the normal automatic
-     * carousel timer.
-     */
     useEffect(() => {
         scheduleCarouselTimer();
-
 
         return () => {
             cancelCarouselTimer();
@@ -993,18 +658,6 @@ const AboutModelContainer = ({
         cancelCarouselTimer,
     ]);
 
-
-
-
-
-    /*
-     * -----------------------------------------
-     * USER INTERACTION
-     * -----------------------------------------
-     *
-     * OrbitControls owns the camera interaction directly.
-     * React state is intentionally kept out of the pointer-down path.
-     */
 
     const handleInteractionStart =
         useCallback(() => {
@@ -1018,18 +671,12 @@ const AboutModelContainer = ({
                 );
             }
 
-
             resumeTimerRef.current =
                 null;
 
             isInteractingRef.current =
                 true;
 
-
-            /*
-             * Pause the carousel immediately without triggering
-             * a React render while the user begins dragging.
-             */
             cancelCarouselTimer();
         }, [cancelCarouselTimer]);
 
@@ -1046,15 +693,6 @@ const AboutModelContainer = ({
                 );
             }
 
-
-            /*
-             * OrbitControls resumes autoRotate
-             * immediately after pointer release.
-             *
-             * This timeout controls ONLY when the
-             * carousel countdown is allowed to
-             * restart.
-             */
             resumeTimerRef.current =
                 window.setTimeout(
                     () => {
@@ -1062,21 +700,9 @@ const AboutModelContainer = ({
                             .current =
                             null;
 
-
                         isInteractingRef.current =
                             false;
 
-
-                        /*
-                         * Start a fresh full carousel
-                         * interval without touching
-                         * React state.
-                         *
-                         * This avoids reconciling the
-                         * R3F tree 1200ms after release,
-                         * which was producing the
-                         * rotation hitch.
-                         */
                         scheduleCarouselTimerRef
                             .current?.();
                     },
@@ -1085,9 +711,6 @@ const AboutModelContainer = ({
         }, []);
 
 
-    /*
-     * About unmounted because it left the viewport.
-     */
     useEffect(() => {
         return () => {
             cancelWarmupFrames();
@@ -1095,7 +718,6 @@ const AboutModelContainer = ({
 
             isInteractingRef.current =
                 false;
-
 
             if (
                 resumeTimerRef
@@ -1106,7 +728,6 @@ const AboutModelContainer = ({
                         .current
                 );
             }
-
 
             if (
                 sceneZoomTimerRef
@@ -1124,93 +745,62 @@ const AboutModelContainer = ({
     ]);
 
 
-    /*
-     * -----------------------------------------
-     * MODEL SLOTS
-     * -----------------------------------------
-     */
-
     let modelSlots;
 
-
-    /*
-     * Same text section = carousel slide.
-     */
     if (
         transition?.kind ===
-        "carousel"
+            "carousel"
     ) {
         modelSlots = [
             {
                 key:
                     `${renderSceneId}-${activeItem.id}`,
-
                 item:
                     activeItem,
-
                 animationId:
                     transition.id,
-
                 playing:
                     transition.ready,
-
                 visible:
                     true,
-
                 fromOffset:
                     0,
-
                 toOffset:
                     -SLIDE_DISTANCE,
-
                 fromScale:
                     1,
-
                 toScale:
                     EDGE_SCALE,
-
                 duration:
                     SLIDE_DURATION,
             },
-
             {
                 key:
                     `${transition.toSceneId}-${transition.toItem.id}`,
-
                 item:
                     transition.toItem,
-
                 animationId:
                     transition.id,
-
                 playing:
                     transition.ready,
-
                 visible:
                     true,
-
                 fromOffset:
                     SLIDE_DISTANCE,
-
                 toOffset:
                     0,
-
                 fromScale:
                     EDGE_SCALE,
-
                 toScale:
                     1,
-
                 duration:
                     SLIDE_DURATION,
-
                 onModelReady:
                     () => {
                         markTransitionReady(
                             transition.id
                         );
                     },
-
                 onComplete:
                     () => {
                         finishTransition(
@@ -1220,86 +810,54 @@ const AboutModelContainer = ({
             },
         ];
     }
-
-
-    /*
-     * Different text section:
-     *
-     * Keep the old model visible only while the new GLB
-     * loads. The incoming model is mounted invisibly so
-     * its bounds/materials can be prepared.
-     *
-     * Once ready, markTransitionReady swaps the scene and
-     * triggers the Stage/Bounds camera zoom.
-     */
     else if (
         transition?.kind ===
-        "scene"
+            "scene"
     ) {
         modelSlots = [
             {
                 key:
                     `${renderSceneId}-${activeItem.id}`,
-
                 item:
                     activeItem,
-
                 animationId:
                     null,
-
                 playing:
                     false,
-
                 visible:
                     true,
-
                 fromOffset:
                     0,
-
                 toOffset:
                     0,
-
                 fromScale:
                     1,
-
                 toScale:
                     1,
-
                 duration:
                     SLIDE_DURATION,
             },
-
             {
                 key:
                     `${transition.toSceneId}-${transition.toItem.id}`,
-
                 item:
                     transition.toItem,
-
                 animationId:
                     transition.id,
-
                 playing:
                     false,
-
                 visible:
                     false,
-
                 fromOffset:
                     0,
-
                 toOffset:
                     0,
-
                 fromScale:
                     1,
-
                 toScale:
                     1,
-
                 duration:
                     SLIDE_DURATION,
-
                 onModelReady:
                     () => {
                         markTransitionReady(
@@ -1309,64 +867,38 @@ const AboutModelContainer = ({
             },
         ];
     }
-
-
-    /*
-     * Stable single model / stable carousel item.
-     */
     else {
         modelSlots = [
             {
                 key:
                     `${renderSceneId}-${activeItem.id}`,
-
                 item:
                     activeItem,
-
                 animationId:
                     null,
-
                 playing:
                     false,
-
                 visible:
                     true,
-
                 fromOffset:
                     0,
-
                 toOffset:
                     0,
-
                 fromScale:
                     1,
-
                 toScale:
                     1,
-
                 duration:
                     SLIDE_DURATION,
-
                 onModelReady:
                     (
-                        qaMode ||
-                        (
-                            renderSceneId === "developer" &&
-                            activeItem.id === "laptop"
-                        )
+                        renderSceneId ===
+                            "developer" &&
+                        activeItem.id ===
+                            "laptop"
                     )
                         ? () => {
-                            if (qaMode) {
-                                setQaModelReady(true);
-                            }
-
-
-                            if (
-                                renderSceneId === "developer" &&
-                                activeItem.id === "laptop"
-                            ) {
-                                onLaptopReady?.();
-                            }
+                            onLaptopReady?.();
                         }
                         : undefined,
             },
@@ -1377,7 +909,7 @@ const AboutModelContainer = ({
     const stageIntensity =
         transition?.kind ===
             "carousel" &&
-            transition.ready
+        transition.ready
             ? (
                 transition
                     .toItem
@@ -1390,94 +922,33 @@ const AboutModelContainer = ({
                 0.65
             );
 
-
-    /*
-     * CRITICAL ROTATION RULE:
-     *
-     * Carousel slides must NOT disable OrbitControls.
-     *
-     * Drei/Three's OrbitControls performs autoRotate from its
-     * per-frame update. Setting `enabled={false}` during a carousel
-     * also stops that update path, which is why the spin visibly
-     * paused even though autoRotate itself was still true.
-     *
-     * Therefore:
-     * - text-section/Lama zoom: controls + autoRotate pause
-     * - carousel slide: controls stay enabled, autoRotate stays on
-     *
-     * Pointer input is blocked at the wrapper during the short
-     * carousel slide so the user cannot grab the camera mid-slide,
-     * while OrbitControls itself remains alive and spinning.
-     */
     const isSceneTransition =
-        transition?.kind === "scene";
+        transition?.kind ===
+            "scene";
 
     const isCarouselTransition =
-        transition?.kind === "carousel";
-
+        transition?.kind ===
+            "carousel";
 
     const controlsEnabled =
-        !qaMode &&
         !sceneZoomActive &&
         !isSceneTransition;
 
-
     const autoRotateEnabled =
-        !qaMode &&
         !sceneZoomActive &&
         !isSceneTransition;
 
 
     return (
         <div
-            className=
-            "aboutModelContainer"
-
+            className="aboutModelContainer"
             ref={modelContainerRef}
-
-            data-about-qa={
-                qaMode
-                    ? "true"
-                    : undefined
-            }
-
-            data-about-scene={
-                qaMode
-                    ? renderSceneId
-                    : undefined
-            }
-
-            data-about-model={
-                qaMode
-                    ? activeItem.id
-                    : undefined
-            }
-
-            data-about-ready={
-                qaMode
-                    ? (
-                        qaModelReady
-                            ? "true"
-                            : "false"
-                    )
-                    : undefined
-            }
         >
             <div
-                className=
-                "aboutCanvasShell"
-
-                /*
-                 * During a carousel slide, block pointer input
-                 * without disabling OrbitControls itself.
-                 *
-                 * This is the key difference: autoRotate keeps
-                 * updating continuously while the models slide.
-                 */
+                className="aboutCanvasShell"
                 style={{
                     pointerEvents:
-                        qaMode ||
-                            isCarouselTransition
+                        isCarouselTransition
                             ? "none"
                             : "auto",
                 }}
@@ -1487,23 +958,11 @@ const AboutModelContainer = ({
                         1,
                         1.75,
                     ]}
-
                     gl={{
                         antialias: true,
-
                         powerPreference:
                             "high-performance",
-
-                        /*
-                         * QA only:
-                         * makes renderer readback deterministic so
-                         * WebKit screenshot/compositor failures can
-                         * be separated from actual Three rendering.
-                         */
-                        preserveDrawingBuffer:
-                            qaMode,
                     }}
-
                     onCreated={({
                         gl
                     }) => {
@@ -1511,113 +970,54 @@ const AboutModelContainer = ({
                             1;
                     }}
                 >
-                    <AboutQaWebGLProbe
-                        enabled={
-                            qaMode
-                        }
-                    />
-
-
                     <Suspense
                         fallback={null}
                     >
-                        {/*
-                          Lama-style section zoom:
-
-                          A fresh camera and Stage are mounted
-                          for every text-section change.
-
-                          The camera starts farther away, then
-                          Stage/Bounds performs its native fit
-                          animation into the fixed framing box.
-
-                          Using the fixed box is what preserves
-                          the approved per-model visualScale.
-                        */}
                         <PerspectiveCamera
                             key={
                                 `camera-${sceneZoomEpoch}-${frameEdge}`
                             }
-
                             makeDefault
-
                             position={[
                                 0,
                                 0,
                                 7,
                             ]}
-
                             fov={38}
                         />
 
-
                         <OrbitControls
                             key={`controls-${sceneZoomEpoch}`}
-
                             makeDefault
-
                             enabled={controlsEnabled}
-
                             enableZoom={false}
                             enablePan={false}
-
                             target={[0, 0, 0]}
-
                             autoRotate={autoRotateEnabled}
-
                             autoRotateSpeed={2.5}
-
-                            /*
-                             * Direct manipulation must track the pointer
-                             * immediately. Damping intentionally stays off:
-                             * retained damping deltas caused both the
-                             * press/drag latency and the release hitch where
-                             * drag inertia briefly opposed autoRotate.
-                             */
                             enableDamping={false}
-
                             rotateSpeed={0.65}
-
                             onStart={handleInteractionStart}
                             onEnd={handleInteractionEnd}
                         />
-
 
                         <Stage
                             key={
                                 `stage-${sceneZoomEpoch}-${frameEdge}`
                             }
-
                             preset="soft"
-
                             environment="city"
-
                             intensity={
                                 stageIntensity
                             }
-
                             shadows={false}
-
-                            /*
-                             * Lama leaves Stage's camera
-                             * adjustment enabled. 1.2 is
-                             * Drei Bounds' standard fit margin.
-                             */
                             adjustCamera={1.2}
                         >
-                            <StageBoundsAnchor edge={frameEdge} />
+                            <StageBoundsAnchor
+                                edge={frameEdge}
+                            />
                         </Stage>
 
-
-                        {/*
-                          Models intentionally live OUTSIDE
-                          Stage's bounds calculation.
-
-                          Stage still contributes lights and the
-                          environment to the same Three scene,
-                          but camera fitting only sees the fixed
-                          anchor. This keeps visualScale intact.
-                        */}
                         {modelSlots.map(
                             (
                                 slot
@@ -1626,52 +1026,39 @@ const AboutModelContainer = ({
                                     key={
                                         slot.key
                                     }
-
-                                    fallback={
-                                        null
-                                    }
+                                    fallback={null}
                                 >
                                     <CarouselModelSlot
                                         item={
                                             slot.item
                                         }
-
                                         animationId={
                                             slot.animationId
                                         }
-
                                         playing={
                                             slot.playing
                                         }
-
                                         visible={
                                             slot.visible
                                         }
-
                                         fromOffset={
                                             slot.fromOffset
                                         }
-
                                         toOffset={
                                             slot.toOffset
                                         }
-
                                         fromScale={
                                             slot.fromScale
                                         }
-
                                         toScale={
                                             slot.toScale
                                         }
-
                                         duration={
                                             slot.duration
                                         }
-
                                         onModelReady={
                                             slot.onModelReady
                                         }
-
                                         onComplete={
                                             slot.onComplete
                                         }
@@ -1680,20 +1067,12 @@ const AboutModelContainer = ({
                             )
                         )}
 
-
-                        {/*
-                          Forces Three to compile the currently
-                          mounted model materials/programs.
-                          The key reruns this when an incoming
-                          model is mounted for a transition.
-                        */}
                         <Preload
                             key={
                                 transition
                                     ? `preload-${transition.id}`
                                     : `preload-${renderSceneId}-${activeIndex}`
                             }
-
                             all
                         />
                     </Suspense>
