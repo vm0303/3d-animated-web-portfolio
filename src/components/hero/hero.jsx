@@ -157,8 +157,9 @@ const Hero = () => {
   useEffect(() => {
     /*
      * Safari 26+ on iPhone/iPad uses the floating Liquid Glass browser UI.
-     * TestMU evidence shows Safari can paint content below the JavaScript
-     * visual viewport, while Chrome on the same device behaves correctly.
+     * Real-device validation shows Safari can paint content below the
+     * JavaScript visual viewport, while Chrome on the same device behaves
+     * correctly.
      *
      * Detect the browser family/version, not an iPhone model, so this applies
      * to every iOS 26-compatible iPhone running Safari 26+.
@@ -180,14 +181,10 @@ const Hero = () => {
       ? Number(safariVersionMatch[1])
       : 0;
 
-    const forceForQa =
-      new URLSearchParams(window.location.search).get("qaForceLiquidSafari") === "1";
-
     const usesLiquidSafariViewport =
-      forceForQa ||
-      (isIOSDevice &&
-       !isOtherIOSBrowser &&
-       safariMajor >= 26);
+      isIOSDevice &&
+      !isOtherIOSBrowser &&
+      safariMajor >= 26;
 
     document.documentElement.classList.toggle(
       "ios-safari-liquid-ui",
