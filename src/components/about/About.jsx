@@ -21,9 +21,6 @@ import AboutModelContainer
 import LaptopScreenModal
   from "./LaptopScreenModal";
 
-import {
-  readAboutQaConfig,
-} from "../../qaSrc/aboutQa";
 
 import "./about.css";
 
