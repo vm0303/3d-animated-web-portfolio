@@ -2,7 +2,7 @@
 "use strict";
 
 /*
- * Final visual-evidence wrapper for the unified Contact QA runner.
+ * Visual-evidence wrapper for the unified Contact QA runner.
  *
  * The unified runner still tests, in one viewport lifecycle:
  * - geometry / settled motion
@@ -10,10 +10,10 @@
  * - error visual state
  * - all four cooldown visual states
  *
- * For --screenshots=all, this wrapper limits file output to ONE settled
- * geometry screenshot per viewport. That keeps exhaustive manual evidence at
- * exactly one PNG per viewport/browser while all injected states are still
- * validated in report.json.
+ * For screenshots=all this wrapper keeps the normal geometry capture as the
+ * full Contact region, but captures success/error/cooldown from the form only.
+ * Those seven raw captures are composed afterward into ONE evidence sheet per
+ * viewport/browser by compose-contact-evidence-sheets.cjs.
  */
 
 const fs = require("fs");
@@ -25,34 +25,22 @@ const runnerPath = path.join(
   "run-contact-unified-qa.cjs"
 );
 
-/*
- * Git checkouts on Windows commonly use CRLF line endings. Normalize the
- * source before applying the small evidence-only screenshot hook so the
- * wrapper behaves identically on Windows, macOS, and Linux.
- */
+/* Normalize Windows CRLF so source patching is platform-independent. */
 const source = fs
   .readFileSync(runnerPath, "utf8")
   .replace(/\r\n?/g, "\n");
 
-const needle = [
-  "async function captureContact(page, stateId, status, v) {",
-  "  if (!shouldScreenshot(status)) return;",
-].join("\n");
-
+const needle = '  await page.locator(".contact").screenshot({';
 const replacement = [
-  "async function captureContact(page, stateId, status, v) {",
-  "  /*",
-  "   * Final exhaustive evidence keeps one settled normal-state screenshot",
-  "   * per viewport/browser. Success/error/cooldown states are still tested",
-  "   * in this same page lifecycle and remain fully recorded in report.json.",
-  "   */",
-  "  if (screenshotMode === \"all\" && stateId !== \"geometry\") return;",
-  "  if (!shouldScreenshot(status)) return;",
+  '  const screenshotTarget =',
+  '    stateId === "geometry" ? ".contact" : ".contact form";',
+  '',
+  '  await page.locator(screenshotTarget).screenshot({',
 ].join("\n");
 
 if (!source.includes(needle)) {
   throw new Error(
-    "Unified Contact runner changed: screenshot hook target was not found."
+    "Unified Contact runner changed: screenshot target hook was not found."
   );
 }
 
