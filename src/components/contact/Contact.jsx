@@ -3,6 +3,7 @@ import "./contact-cooldown-motion.temp.css";
 
 import ContactSvg from "./ContactSvg";
 import ContactCooldownDebugPanel from "./ContactCooldownDebugPanel";
+import ContactCooldownServerSyncTemp from "./ContactCooldownServerSync.temp";
 
 import {
   useEffect,
@@ -24,7 +25,7 @@ const DEFAULT_CONTACT_COOLDOWN_SECONDS =
   3 * 60 * 60;
 
 const COOLDOWN_REMINDER_VISIBLE_MS =
-  12000;
+  9000;
 
 const CONTACT_COOLDOWN_DEBUG_QUERY_KEY =
   "contactCooldownDebug";
@@ -75,26 +76,30 @@ function formatCooldownTime(
     )
   );
 
-  const totalMinutes = Math.ceil(
-    totalSeconds / 60
-  );
-
   const hours = Math.floor(
-    totalMinutes / 60
+    totalSeconds / 3600
   );
 
-  const minutes =
-    totalMinutes % 60;
+  const minutes = Math.floor(
+    (totalSeconds % 3600) / 60
+  );
+
+  const seconds =
+    totalSeconds % 60;
 
   if (hours > 0) {
-    return `${hours}h ${minutes}m`;
+    return seconds > 0
+      ? `${hours}h ${minutes}m ${seconds}s`
+      : `${hours}h ${minutes}m`;
   }
 
-  if (totalSeconds >= 60) {
-    return `${Math.max(1, totalMinutes)}m`;
+  if (minutes > 0) {
+    return seconds > 0
+      ? `${minutes}m ${seconds}s`
+      : `${minutes}m`;
   }
 
-  return `${totalSeconds}s`;
+  return `${seconds}s`;
 }
 
 
@@ -352,6 +357,24 @@ const Contact = () => {
   };
 
 
+  const clearCooldown = () => {
+    if (cooldownHideTimerRef.current) {
+      window.clearTimeout(
+        cooldownHideTimerRef.current
+      );
+      cooldownHideTimerRef.current = null;
+    }
+
+    setCooldownUntil(0);
+    setCooldownNow(Date.now());
+    setCooldownMessageVisible(false);
+
+    window.localStorage.removeItem(
+      CONTACT_COOLDOWN_STORAGE_KEY
+    );
+  };
+
+
   const cooldownRemaining =
     Math.max(
       0,
@@ -370,10 +393,9 @@ const Contact = () => {
 
 
   /*
-   * Replay the CSS Jump & Shake on the already-mounted inner text node.
-   * The outer cooldownMessage owns only fade-in/fade-out. Keeping these two
-   * motions on separate elements prevents repeated blocked clicks from
-   * remounting/fading the message instead of visibly shaking it.
+   * Replay the approved Horizontal Shake on the already-mounted inner text.
+   * The outer cooldownMessage owns only fade-in/fade-out, so a blocked click
+   * replays motion without remounting or blinking the reminder.
    */
   const shakeCooldownMessage = () => {
     if (
@@ -438,8 +460,8 @@ const Contact = () => {
 
   /*
    * When a cooldown first becomes visible (including after the six-second
-   * success message), show it once, replay Jump & Shake, and begin its own
-   * 12-second inactivity timer.
+   * success message), show it once, replay Horizontal Shake, and begin its own
+   * nine-second inactivity timer.
    */
   useEffect(() => {
     if (!cooldownActive) {
@@ -482,7 +504,7 @@ const Contact = () => {
   }, [cooldownActive, success, error]);
 
 
-  /* Run Jump & Shake only after React has mounted the reminder text. */
+  /* Run Horizontal Shake only after React has mounted the reminder text. */
   useEffect(() => {
     if (
       !cooldownMessageVisible ||
@@ -537,7 +559,7 @@ const Contact = () => {
         (count) => count + 1
       );
       setDebugLastEvent(
-        "Send blocked by active cooldown; reminder replayed Jump & Shake and the 12-second fade timer restarted."
+        "Send blocked by active cooldown; reminder replayed Horizontal Shake and the 9-second fade timer restarted."
       );
     }
 
@@ -666,7 +688,7 @@ const Contact = () => {
     setError(false);
     activateCooldown(seconds);
     setDebugLastEvent(
-      `Started a ${seconds}s test cooldown. Reminder should Jump & Shake, then auto-fade after 12s.`
+      `Started a ${seconds}s local test cooldown. Reminder should Horizontal Shake, then auto-fade after 9s.`
     );
   };
 
@@ -676,7 +698,7 @@ const Contact = () => {
     setSuccess(true);
     activateCooldown(seconds);
     setDebugLastEvent(
-      `Simulated successful send with a ${seconds}s cooldown. Success should show for 6s, then the cooldown reminder should Jump & Shake.`
+      `Simulated successful send with a ${seconds}s local cooldown. Success should show for 6s, then the cooldown reminder should Horizontal Shake.`
     );
   };
 
@@ -684,7 +706,7 @@ const Contact = () => {
   const showDebugReminder = () => {
     triggerCooldownReminder();
     setDebugLastEvent(
-      "Reminder manually replayed Jump & Shake; its 12-second fade timer restarted."
+      "Reminder manually replayed Horizontal Shake; its 9-second fade timer restarted."
     );
   };
 
@@ -705,25 +727,12 @@ const Contact = () => {
 
 
   const expireDebugCooldown = () => {
-    if (cooldownHideTimerRef.current) {
-      window.clearTimeout(
-        cooldownHideTimerRef.current
-      );
-      cooldownHideTimerRef.current = null;
-    }
-
     setSuccess(false);
     setError(false);
-    setCooldownUntil(0);
-    setCooldownNow(Date.now());
-    setCooldownMessageVisible(false);
-
-    window.localStorage.removeItem(
-      CONTACT_COOLDOWN_STORAGE_KEY
-    );
+    clearCooldown();
 
     setDebugLastEvent(
-      "Cooldown expired/cleared. Send should now be unblocked."
+      "Local cooldown expired/cleared. Send should now be unblocked unless the shared server cooldown is still active."
     );
   };
 
@@ -748,6 +757,13 @@ const Contact = () => {
 
   return (
     <>
+      <ContactCooldownServerSyncTemp
+        enabled={cooldownDebugEnabled}
+        onCooldown={activateCooldown}
+        onClearCooldown={clearCooldown}
+        onStatus={setDebugLastEvent}
+      />
+
       <div
         className="contact"
         ref={contactRef}
