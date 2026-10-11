@@ -1,6 +1,5 @@
 import "./contact.css";
 
-import emailjs from "@emailjs/browser";
 import ContactSvg from "./ContactSvg";
 
 import {
@@ -16,10 +15,72 @@ import {
 } from "motion/react";
 
 
-/*
- * Laptop / desktop / landscape:
- * Form enters from left to right.
- */
+const CONTACT_COOLDOWN_STORAGE_KEY =
+  "portfolioContactCooldownUntil";
+
+const DEFAULT_CONTACT_COOLDOWN_SECONDS =
+  3 * 60 * 60;
+
+const COOLDOWN_REMINDER_VISIBLE_MS =
+  9000;
+
+
+function readStoredCooldownUntil() {
+  if (typeof window === "undefined") {
+    return 0;
+  }
+
+  const value = Number(
+    window.localStorage.getItem(
+      CONTACT_COOLDOWN_STORAGE_KEY
+    )
+  );
+
+  return Number.isFinite(value) &&
+    value > Date.now()
+      ? value
+      : 0;
+}
+
+
+function formatCooldownTime(
+  remainingMilliseconds
+) {
+  const totalSeconds = Math.max(
+    0,
+    Math.ceil(
+      remainingMilliseconds / 1000
+    )
+  );
+
+  const hours = Math.floor(
+    totalSeconds / 3600
+  );
+
+  const minutes = Math.floor(
+    (totalSeconds % 3600) / 60
+  );
+
+  const seconds =
+    totalSeconds % 60;
+
+  if (hours > 0) {
+    return seconds > 0
+      ? `${hours}h ${minutes}m ${seconds}s`
+      : `${hours}h ${minutes}m`;
+  }
+
+  if (minutes > 0) {
+    return seconds > 0
+      ? `${minutes}m ${seconds}s`
+      : `${minutes}m`;
+  }
+
+  return `${seconds}s`;
+}
+
+
+/* Laptop / desktop / landscape: form enters left -> right. */
 const listVariants = {
   initial: {
     x: -100,
@@ -38,10 +99,7 @@ const listVariants = {
 };
 
 
-/*
- * Laptop / desktop / landscape:
- * SVG enters from right to left.
- */
+/* Laptop / desktop / landscape: SVG enters right -> left. */
 const svgVariants = {
   initial: {
     x: 200,
@@ -60,11 +118,7 @@ const svgVariants = {
 };
 
 
-/*
- * Portrait phones, tablets,
- * folded foldables, and unfolded
- * foldables use fade-only motion.
- */
+/* Portrait touch devices use fade-only motion. */
 const portraitFadeVariants = {
   initial: {
     opacity: 0,
@@ -81,76 +135,64 @@ const portraitFadeVariants = {
 };
 
 
-/*
- * Fade-only mode applies only when:
- *
- * - device is portrait
- * - device behaves like a touch device
- *
- * This avoids applying portrait motion
- * to normal desktop/laptop layouts.
- */
 const PORTRAIT_TOUCH_MOTION_QUERY =
   "(orientation: portrait) and (hover: none), " +
   "(orientation: portrait) and (pointer: coarse)";
 
 
 const Contact = () => {
+  const [success, setSuccess] =
+    useState(false);
+
+  const [error, setError] =
+    useState(false);
+
+  const [sending, setSending] =
+    useState(false);
+
+  const [cooldownUntil, setCooldownUntil] =
+    useState(readStoredCooldownUntil);
+
+  const [cooldownNow, setCooldownNow] =
+    useState(() => Date.now());
+
   const [
-    success,
-    setSuccess,
+    cooldownMessageVisible,
+    setCooldownMessageVisible,
   ] = useState(false);
 
   const [
-    error,
-    setError,
-  ] = useState(false);
+    cooldownShakeNonce,
+    setCooldownShakeNonce,
+  ] = useState(0);
 
-  const [
-    sending,
-    setSending,
-  ] = useState(false);
+  const [fadeOnlyMotion, setFadeOnlyMotion] =
+    useState(() => {
+      if (typeof window === "undefined") {
+        return false;
+      }
 
-
-  /*
-   * Decide the initial motion mode
-   * from the current device/orientation.
-   */
-  const [
-    fadeOnlyMotion,
-    setFadeOnlyMotion,
-  ] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    return window
-      .matchMedia(
-        PORTRAIT_TOUCH_MOTION_QUERY
-      )
-      .matches;
-  });
+      return window
+        .matchMedia(
+          PORTRAIT_TOUCH_MOTION_QUERY
+        )
+        .matches;
+    });
 
 
-  /*
-   * Contact section visibility ref.
-   *
-   * We use this separately from the
-   * form ref because EmailJS needs the
-   * actual form element.
-   */
   const contactRef =
     useRef(null);
 
   const form =
     useRef(null);
 
+  const cooldownHideTimerRef =
+    useRef(null);
 
-  /*
-   * Both the form and SVG use this
-   * same visibility state so their
-   * entrance animations stay aligned.
-   */
+  const cooldownShakeRef =
+    useRef(null);
+
+
   const isInView =
     useInView(
       contactRef,
@@ -162,32 +204,14 @@ const Contact = () => {
 
 
   /*
-   * Update the portrait/mobile motion
-   * mode only while Contact is OFF screen.
-   *
-   * This is important for rotation.
-   *
-   * Example:
-   *
-   * 1. User enters Contact in portrait.
-   * 2. Fade animation runs.
-   * 3. User rotates to landscape.
-   * 4. Contact remains visible.
-   * 5. Motion mode stays locked.
-   *
-   * Therefore nothing disappears,
-   * replays, or suddenly starts sliding.
-   *
-   * Once Contact leaves the viewport,
-   * we can safely update the motion mode
-   * for the next time it enters.
+   * Only switch motion mode while Contact is off-screen so rotating a visible
+   * device does not hide, replay, or change the current entrance animation.
    */
   useEffect(() => {
     const mediaQuery =
       window.matchMedia(
         PORTRAIT_TOUCH_MOTION_QUERY
       );
-
 
     const syncMotionMode = () => {
       if (!isInView) {
@@ -197,19 +221,12 @@ const Contact = () => {
       }
     };
 
-
-    /*
-     * Synchronize immediately whenever
-     * Contact is currently off screen.
-     */
     syncMotionMode();
-
 
     mediaQuery.addEventListener(
       "change",
       syncMotionMode
     );
-
 
     return () => {
       mediaQuery.removeEventListener(
@@ -220,16 +237,11 @@ const Contact = () => {
   }, [isInView]);
 
 
-  /*
-   * Keep the success message visible
-   * for six seconds, then allow
-   * AnimatePresence to fade it out.
-   */
+  /* Show success for six seconds, then reveal the cooldown reminder. */
   useEffect(() => {
     if (!success) {
       return;
     }
-
 
     const timer =
       window.setTimeout(
@@ -239,78 +251,482 @@ const Contact = () => {
         6000
       );
 
-
     return () => {
       window.clearTimeout(timer);
     };
   }, [success]);
 
 
-  const sendEmail = (e) => {
-    e.preventDefault();
-
-
-    /*
-     * Extra protection against
-     * duplicate submissions while
-     * EmailJS is already processing.
-     */
-    if (sending) {
+  /*
+   * localStorage is only a UX convenience. The server-side email/IP cooldown
+   * remains authoritative if cache/cookies are cleared or another browser is
+   * used.
+   */
+  useEffect(() => {
+    if (!cooldownUntil) {
       return;
     }
 
+    const syncCooldown = () => {
+      const now = Date.now();
+
+      setCooldownNow(now);
+
+      if (cooldownUntil <= now) {
+        setCooldownUntil(0);
+
+        window.localStorage.removeItem(
+          CONTACT_COOLDOWN_STORAGE_KEY
+        );
+      }
+    };
+
+    syncCooldown();
+
+    const timer =
+      window.setInterval(
+        syncCooldown,
+        1000
+      );
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [cooldownUntil]);
+
+
+  /*
+   * Proactively hydrate the IP cooldown from the server. This keeps separate
+   * browsers/profiles in sync without requiring another blocked submission.
+   * A failed status request is deliberately non-fatal; POST remains the
+   * authoritative enforcement path and existing local state is preserved.
+   */
+  useEffect(() => {
+    let cancelled = false;
+
+    const syncCooldownFromServer = async () => {
+      try {
+        const response = await fetch(
+          "/api/contact",
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+            },
+            cache: "no-store",
+          }
+        );
+
+        let result = {};
+
+        try {
+          result = await response.json();
+        } catch {
+          result = {};
+        }
+
+        if (
+          cancelled ||
+          !response.ok
+        ) {
+          return;
+        }
+
+        const retryAfterSeconds = Math.max(
+          0,
+          Number(
+            result?.retryAfterSeconds
+          ) || 0
+        );
+
+        if (
+          result?.cooldownActive &&
+          retryAfterSeconds > 0
+        ) {
+          const now = Date.now();
+          const expiresAt =
+            now + retryAfterSeconds * 1000;
+
+          setCooldownUntil(expiresAt);
+          setCooldownNow(now);
+
+          window.localStorage.setItem(
+            CONTACT_COOLDOWN_STORAGE_KEY,
+            String(expiresAt)
+          );
+          return;
+        }
+
+        if (cooldownHideTimerRef.current) {
+          window.clearTimeout(
+            cooldownHideTimerRef.current
+          );
+          cooldownHideTimerRef.current = null;
+        }
+
+        setCooldownUntil(0);
+        setCooldownNow(Date.now());
+        setCooldownMessageVisible(false);
+
+        window.localStorage.removeItem(
+          CONTACT_COOLDOWN_STORAGE_KEY
+        );
+      } catch {
+        /* Keep local UX state if the read-only status check is unavailable. */
+      }
+    };
+
+    const handleFocus = () => {
+      syncCooldownFromServer();
+    };
+
+    const handleVisibilityChange = () => {
+      if (
+        document.visibilityState ===
+        "visible"
+      ) {
+        syncCooldownFromServer();
+      }
+    };
+
+    syncCooldownFromServer();
+
+    window.addEventListener(
+      "focus",
+      handleFocus
+    );
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibilityChange
+    );
+
+    return () => {
+      cancelled = true;
+
+      window.removeEventListener(
+        "focus",
+        handleFocus
+      );
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange
+      );
+    };
+  }, []);
+
+
+  const activateCooldown = (
+    seconds = DEFAULT_CONTACT_COOLDOWN_SECONDS
+  ) => {
+    const safeSeconds =
+      Number.isFinite(Number(seconds)) &&
+      Number(seconds) > 0
+        ? Number(seconds)
+        : DEFAULT_CONTACT_COOLDOWN_SECONDS;
+
+    const expiresAt =
+      Date.now() +
+      safeSeconds * 1000;
+
+    setCooldownUntil(expiresAt);
+    setCooldownNow(Date.now());
+
+    window.localStorage.setItem(
+      CONTACT_COOLDOWN_STORAGE_KEY,
+      String(expiresAt)
+    );
+  };
+
+
+  const cooldownRemaining =
+    Math.max(
+      0,
+      cooldownUntil - cooldownNow
+    );
+
+  const cooldownActive =
+    cooldownRemaining > 0;
+
+  const cooldownText =
+    cooldownActive
+      ? formatCooldownTime(
+          cooldownRemaining
+        )
+      : "";
+
+
+  /*
+   * Replay the approved Horizontal Shake on the already-mounted inner text.
+   * The outer cooldownMessage owns only fade-in/fade-out, so a blocked click
+   * replays motion without remounting or blinking the reminder.
+   */
+  const shakeCooldownMessage = () => {
+    if (
+      typeof window === "undefined" ||
+      window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches
+    ) {
+      return;
+    }
+
+    const node =
+      cooldownShakeRef.current;
+
+    if (!node) {
+      return;
+    }
+
+    node.classList.remove(
+      "cooldownJumpShake"
+    );
+
+    /* Force style recalculation so the same CSS animation can replay. */
+    void node.offsetWidth;
+
+    node.classList.add(
+      "cooldownJumpShake"
+    );
+  };
+
+
+  const restartCooldownReminderTimer = () => {
+    if (cooldownHideTimerRef.current) {
+      window.clearTimeout(
+        cooldownHideTimerRef.current
+      );
+    }
+
+    cooldownHideTimerRef.current =
+      window.setTimeout(
+        () => {
+          setCooldownMessageVisible(false);
+          cooldownHideTimerRef.current = null;
+        },
+        COOLDOWN_REMINDER_VISIBLE_MS
+      );
+  };
+
+
+  const triggerCooldownReminder = () => {
+    if (!cooldownActive) {
+      return;
+    }
+
+    setCooldownMessageVisible(true);
+    setCooldownShakeNonce(
+      (nonce) => nonce + 1
+    );
+    restartCooldownReminderTimer();
+  };
+
+
+  /*
+   * When a cooldown first becomes visible (including after the six-second
+   * success message), show it once, replay Horizontal Shake, and begin its own
+   * nine-second inactivity timer.
+   */
+  useEffect(() => {
+    if (!cooldownActive) {
+      setCooldownMessageVisible(false);
+
+      if (cooldownHideTimerRef.current) {
+        window.clearTimeout(
+          cooldownHideTimerRef.current
+        );
+
+        cooldownHideTimerRef.current = null;
+      }
+
+      return;
+    }
+
+    if (success || error) {
+      return;
+    }
+
+    setCooldownMessageVisible(true);
+    setCooldownShakeNonce(
+      (nonce) => nonce + 1
+    );
+
+    if (cooldownHideTimerRef.current) {
+      window.clearTimeout(
+        cooldownHideTimerRef.current
+      );
+    }
+
+    cooldownHideTimerRef.current =
+      window.setTimeout(
+        () => {
+          setCooldownMessageVisible(false);
+          cooldownHideTimerRef.current = null;
+        },
+        COOLDOWN_REMINDER_VISIBLE_MS
+      );
+  }, [cooldownActive, success, error]);
+
+
+  /* Run Horizontal Shake only after React has mounted the reminder text. */
+  useEffect(() => {
+    if (
+      !cooldownMessageVisible ||
+      success ||
+      error ||
+      cooldownShakeNonce === 0
+    ) {
+      return;
+    }
+
+    const frame =
+      window.requestAnimationFrame(
+        shakeCooldownMessage
+      );
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+    };
+  }, [
+    cooldownMessageVisible,
+    cooldownShakeNonce,
+    success,
+    error,
+  ]);
+
+
+  /* Clear the reminder timer if Contact unmounts. */
+  useEffect(() => {
+    return () => {
+      if (cooldownHideTimerRef.current) {
+        window.clearTimeout(
+          cooldownHideTimerRef.current
+        );
+      }
+    };
+  }, []);
+
+
+  const handleSendButtonClick = (e) => {
+    if (!cooldownActive) {
+      return;
+    }
+
+    /*
+     * Cooldown uses aria-disabled instead of the native disabled attribute so
+     * the control can still explain why another submission is blocked.
+     */
+    e.preventDefault();
+    triggerCooldownReminder();
+  };
+
+
+  const sendEmail = async (e) => {
+    e.preventDefault();
+
+    if (
+      sending ||
+      !form.current
+    ) {
+      return;
+    }
+
+    if (cooldownActive) {
+      triggerCooldownReminder();
+      return;
+    }
 
     setSuccess(false);
     setError(false);
     setSending(true);
 
-
-    emailjs
-      .sendForm(
-        import.meta.env.VITE_SERVICE_ID,
-        import.meta.env.VITE_TEMPLATE_ID,
-        form.current,
-        {
-          publicKey:
-            import.meta.env.VITE_PUBLIC_KEY,
-        }
-      )
-      .then(
-        () => {
-          setSuccess(true);
-          setError(false);
-
-          /*
-           * Clear the form only after
-           * successful submission.
-           */
-          form.current?.reset();
-        },
-        () => {
-          setError(true);
-          setSuccess(false);
-        }
-      )
-      .finally(
-        () => {
-          setSending(false);
-        }
+    const formData =
+      new FormData(
+        form.current
       );
+
+    try {
+      const response =
+        await fetch(
+          "/api/contact",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              name:
+                formData.get("name"),
+
+              email:
+                formData.get("email"),
+
+              message:
+                formData.get("message"),
+
+              company_website:
+                formData.get(
+                  "company_website"
+                ),
+            }),
+          }
+        );
+
+      let result = {};
+
+      try {
+        result =
+          await response.json();
+      } catch {
+        result = {};
+      }
+
+      if (
+        response.status === 429 &&
+        result?.code ===
+          "CONTACT_COOLDOWN"
+      ) {
+        activateCooldown(
+          result.retryAfterSeconds
+        );
+
+        setSuccess(false);
+        setError(false);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+          "Failed to send message."
+        );
+      }
+
+      setSuccess(true);
+      setError(false);
+
+      activateCooldown(
+        result.cooldownSeconds
+      );
+
+      form.current?.reset();
+    } catch {
+      setError(true);
+      setSuccess(false);
+    } finally {
+      setSending(false);
+    }
   };
 
 
-  /*
-   * Portrait touch device:
-   * simple fade.
-   *
-   * Everything else:
-   * directional desktop/landscape motion.
-   */
   const activeFormVariants =
     fadeOnlyMotion
       ? portraitFadeVariants
       : listVariants;
-
 
   const activeSvgVariants =
     fadeOnlyMotion
@@ -329,13 +745,8 @@ const Contact = () => {
         <motion.form
           ref={form}
           onSubmit={sendEmail}
-
-          variants={
-            activeFormVariants
-          }
-
+          variants={activeFormVariants}
           initial="initial"
-
           animate={
             isInView
               ? "animate"
@@ -356,7 +767,6 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-
             variants={
               fadeOnlyMotion
                 ? undefined
@@ -365,7 +775,6 @@ const Contact = () => {
           >
             <label htmlFor="name">
               Name
-
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -386,7 +795,6 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-
             variants={
               fadeOnlyMotion
                 ? undefined
@@ -395,7 +803,6 @@ const Contact = () => {
           >
             <label htmlFor="email">
               Email
-
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -416,7 +823,6 @@ const Contact = () => {
 
           <motion.div
             className="formItem"
-
             variants={
               fadeOnlyMotion
                 ? undefined
@@ -425,7 +831,6 @@ const Contact = () => {
           >
             <label htmlFor="message">
               Message
-
               <span
                 className="requiredMark"
                 aria-hidden="true"
@@ -444,25 +849,51 @@ const Contact = () => {
           </motion.div>
 
 
+          <div
+            className="contactHoneypot"
+            aria-hidden="true"
+          >
+            <label
+              htmlFor="company-website"
+            >
+              Website
+            </label>
+
+            <input
+              id="company-website"
+              type="text"
+              name="company_website"
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
+
+
           <motion.button
             className={
               `formButton ${sending
                 ? "sending"
                 : ""
+              } ${cooldownActive
+                ? "cooldownBlocked"
+                : ""
               }`
             }
-
             variants={
               fadeOnlyMotion
                 ? undefined
                 : listVariants
             }
-
             type="submit"
-
             disabled={sending}
-
+            aria-disabled={
+              sending ||
+              cooldownActive
+            }
             aria-busy={sending}
+            aria-describedby=
+              "contact-form-status"
+            onClick={handleSendButtonClick}
           >
             {
               sending
@@ -473,8 +904,8 @@ const Contact = () => {
 
 
           <div
+            id="contact-form-status"
             className="formStatus"
-
             aria-live="polite"
             aria-atomic="true"
           >
@@ -484,22 +915,18 @@ const Contact = () => {
                 success && (
                   <motion.span
                     className="successMessage"
-
                     initial={{
                       opacity: 0,
                       y: 4,
                     }}
-
                     animate={{
                       opacity: 1,
                       y: 0,
                     }}
-
                     exit={{
                       opacity: 0,
                       y: -4,
                     }}
-
                     transition={{
                       duration: 0.4,
                       ease: "easeOut",
@@ -517,28 +944,61 @@ const Contact = () => {
                 error && (
                   <motion.span
                     className="errorMessage"
-
                     initial={{
                       opacity: 0,
                       y: 4,
                     }}
-
                     animate={{
                       opacity: 1,
                       y: 0,
                     }}
-
                     exit={{
                       opacity: 0,
                       y: -4,
                     }}
-
                     transition={{
                       duration: 0.4,
                       ease: "easeOut",
                     }}
                   >
                     Failed to send message. Please try again later
+                  </motion.span>
+                )
+              }
+            </AnimatePresence>
+
+
+            <AnimatePresence>
+              {
+                cooldownActive &&
+                cooldownMessageVisible &&
+                !success &&
+                !error && (
+                  <motion.span
+                    className="cooldownMessage"
+                    initial={{
+                      opacity: 0,
+                      y: 4,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -4,
+                    }}
+                    transition={{
+                      duration: 0.4,
+                      ease: "easeOut",
+                    }}
+                  >
+                    <span
+                      ref={cooldownShakeRef}
+                      className="cooldownMessageText"
+                    >
+                      Message limit reached. Try again in {cooldownText}.
+                    </span>
                   </motion.span>
                 )
               }
@@ -555,13 +1015,8 @@ const Contact = () => {
 
         <motion.div
           className="contactVisual"
-
-          variants={
-            activeSvgVariants
-          }
-
+          variants={activeSvgVariants}
           initial="initial"
-
           animate={
             isInView
               ? "animate"
