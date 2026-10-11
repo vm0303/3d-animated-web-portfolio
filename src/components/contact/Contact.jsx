@@ -1,6 +1,7 @@
 import "./contact.css";
 
 import ContactSvg from "./ContactSvg";
+import ContactCooldownDebugPanel from "./ContactCooldownDebugPanel";
 
 import {
   useEffect,
@@ -24,6 +25,9 @@ const DEFAULT_CONTACT_COOLDOWN_SECONDS =
 const COOLDOWN_REMINDER_VISIBLE_MS =
   6000;
 
+const CONTACT_COOLDOWN_DEBUG_QUERY_KEY =
+  "contactCooldownDebug";
+
 
 function readStoredCooldownUntil() {
   if (typeof window === "undefined") {
@@ -40,6 +44,23 @@ function readStoredCooldownUntil() {
     value > Date.now()
       ? value
       : 0;
+}
+
+
+function readCooldownDebugEnabled() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const value =
+    new URLSearchParams(
+      window.location.search
+    ).get(
+      CONTACT_COOLDOWN_DEBUG_QUERY_KEY
+    );
+
+  return value === "1" ||
+    value === "true";
 }
 
 
@@ -156,6 +177,22 @@ const Contact = () => {
     cooldownMessageVisible,
     setCooldownMessageVisible,
   ] = useState(false);
+
+  const [cooldownDebugEnabled] =
+    useState(readCooldownDebugEnabled);
+
+  const [
+    debugBlockedClickCount,
+    setDebugBlockedClickCount,
+  ] = useState(0);
+
+  const [
+    debugWouldSubmitCount,
+    setDebugWouldSubmitCount,
+  ] = useState(0);
+
+  const [debugLastEvent, setDebugLastEvent] =
+    useState("Ready");
 
   const [fadeOnlyMotion, setFadeOnlyMotion] =
     useState(() => {
@@ -470,6 +507,16 @@ const Contact = () => {
      * the control can still explain why another submission is blocked.
      */
     e.preventDefault();
+
+    if (cooldownDebugEnabled) {
+      setDebugBlockedClickCount(
+        (count) => count + 1
+      );
+      setDebugLastEvent(
+        "Send blocked by active cooldown; reminder shown/shaken and fade timer restarted."
+      );
+    }
+
     triggerCooldownReminder();
   };
 
@@ -486,6 +533,21 @@ const Contact = () => {
 
     if (cooldownActive) {
       triggerCooldownReminder();
+      return;
+    }
+
+    /*
+     * TEMP manual-test safety: when the explicit debug query flag is present,
+     * never contact the real endpoint. This lets the expired/unblocked state
+     * be exercised without consuming EmailJS quota or creating a real cooldown.
+     */
+    if (cooldownDebugEnabled) {
+      setDebugWouldSubmitCount(
+        (count) => count + 1
+      );
+      setDebugLastEvent(
+        "Cooldown inactive: this submission would proceed, but debug mode blocked the real network request."
+      );
       return;
     }
 
@@ -575,6 +637,80 @@ const Contact = () => {
   };
 
 
+  const startDebugCooldown = (seconds) => {
+    setSuccess(false);
+    setError(false);
+    activateCooldown(seconds);
+    setDebugLastEvent(
+      `Started a ${seconds}s test cooldown. Reminder should appear, shake, then auto-fade after 6s.`
+    );
+  };
+
+
+  const simulateDebugSuccess = (seconds) => {
+    setError(false);
+    setSuccess(true);
+    activateCooldown(seconds);
+    setDebugLastEvent(
+      `Simulated successful send with a ${seconds}s cooldown. Success should show for 6s, then the cooldown reminder should appear/shake.`
+    );
+  };
+
+
+  const showDebugReminder = () => {
+    triggerCooldownReminder();
+    setDebugLastEvent(
+      "Reminder manually shown/shaken; its 6-second fade timer restarted."
+    );
+  };
+
+
+  const hideDebugReminder = () => {
+    if (cooldownHideTimerRef.current) {
+      window.clearTimeout(
+        cooldownHideTimerRef.current
+      );
+      cooldownHideTimerRef.current = null;
+    }
+
+    setCooldownMessageVisible(false);
+    setDebugLastEvent(
+      "Manual fade requested. AnimatePresence should run the reminder exit animation."
+    );
+  };
+
+
+  const expireDebugCooldown = () => {
+    if (cooldownHideTimerRef.current) {
+      window.clearTimeout(
+        cooldownHideTimerRef.current
+      );
+      cooldownHideTimerRef.current = null;
+    }
+
+    setSuccess(false);
+    setError(false);
+    setCooldownUntil(0);
+    setCooldownNow(Date.now());
+    setCooldownMessageVisible(false);
+
+    window.localStorage.removeItem(
+      CONTACT_COOLDOWN_STORAGE_KEY
+    );
+
+    setDebugLastEvent(
+      "Cooldown expired/cleared. Send should now be unblocked."
+    );
+  };
+
+
+  const resetDebugCounters = () => {
+    setDebugBlockedClickCount(0);
+    setDebugWouldSubmitCount(0);
+    setDebugLastEvent("Counters reset");
+  };
+
+
   const activeFormVariants =
     fadeOnlyMotion
       ? portraitFadeVariants
@@ -587,300 +723,322 @@ const Contact = () => {
 
 
   return (
-    <div
-      className="contact"
-      ref={contactRef}
-    >
+    <>
+      <div
+        className="contact"
+        ref={contactRef}
+      >
 
-      <div className="cSection">
+        <div className="cSection">
 
-        <motion.form
-          ref={form}
-          onSubmit={sendEmail}
-          variants={activeFormVariants}
-          initial="initial"
-          animate={
-            isInView
-              ? "animate"
-              : "initial"
-          }
-        >
-
-          <motion.h1
-            variants={
-              fadeOnlyMotion
-                ? undefined
-                : listVariants
+          <motion.form
+            ref={form}
+            onSubmit={sendEmail}
+            variants={activeFormVariants}
+            initial="initial"
+            animate={
+              isInView
+                ? "animate"
+                : "initial"
             }
           >
-            Let's keep in touch!
-          </motion.h1>
 
-
-          <motion.div
-            className="formItem"
-            variants={
-              fadeOnlyMotion
-                ? undefined
-                : listVariants
-            }
-          >
-            <label htmlFor="name">
-              Name
-              <span
-                className="requiredMark"
-                aria-hidden="true"
-              >
-                *
-              </span>
-            </label>
-
-            <input
-              id="name"
-              type="text"
-              name="name"
-              placeholder="Your Full Name"
-              required
-            />
-          </motion.div>
-
-
-          <motion.div
-            className="formItem"
-            variants={
-              fadeOnlyMotion
-                ? undefined
-                : listVariants
-            }
-          >
-            <label htmlFor="email">
-              Email
-              <span
-                className="requiredMark"
-                aria-hidden="true"
-              >
-                *
-              </span>
-            </label>
-
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="Your Email"
-              required
-            />
-          </motion.div>
-
-
-          <motion.div
-            className="formItem"
-            variants={
-              fadeOnlyMotion
-                ? undefined
-                : listVariants
-            }
-          >
-            <label htmlFor="message">
-              Message
-              <span
-                className="requiredMark"
-                aria-hidden="true"
-              >
-                *
-              </span>
-            </label>
-
-            <textarea
-              id="message"
-              rows={10}
-              name="message"
-              placeholder="Write your message..."
-              required
-            />
-          </motion.div>
-
-
-          <div
-            className="contactHoneypot"
-            aria-hidden="true"
-          >
-            <label
-              htmlFor="company-website"
+            <motion.h1
+              variants={
+                fadeOnlyMotion
+                  ? undefined
+                  : listVariants
+              }
             >
-              Website
-            </label>
-
-            <input
-              id="company-website"
-              type="text"
-              name="company_website"
-              tabIndex={-1}
-              autoComplete="off"
-            />
-          </div>
+              Let's keep in touch!
+            </motion.h1>
 
 
-          <motion.button
-            className={
-              `formButton ${sending
-                ? "sending"
-                : ""
-              } ${cooldownActive
-                ? "cooldownBlocked"
-                : ""
-              }`
-            }
-            variants={
-              fadeOnlyMotion
-                ? undefined
-                : listVariants
-            }
-            type="submit"
-            disabled={sending}
-            aria-disabled={
-              sending ||
-              cooldownActive
-            }
-            aria-busy={sending}
-            aria-describedby=
-              "contact-form-status"
-            onClick={handleSendButtonClick}
-          >
-            {
-              sending
-                ? "Sending..."
-                : "Send"
-            }
-          </motion.button>
-
-
-          <div
-            id="contact-form-status"
-            className="formStatus"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-
-            <AnimatePresence>
-              {
-                success && (
-                  <motion.span
-                    className="successMessage"
-                    initial={{
-                      opacity: 0,
-                      y: 4,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      y: -4,
-                    }}
-                    transition={{
-                      duration: 0.4,
-                      ease: "easeOut",
-                    }}
-                  >
-                    Message sent! Thanks! I'll get back to you as soon as I can.
-                  </motion.span>
-                )
+            <motion.div
+              className="formItem"
+              variants={
+                fadeOnlyMotion
+                  ? undefined
+                  : listVariants
               }
-            </AnimatePresence>
+            >
+              <label htmlFor="name">
+                Name
+                <span
+                  className="requiredMark"
+                  aria-hidden="true"
+                >
+                  *
+                </span>
+              </label>
+
+              <input
+                id="name"
+                type="text"
+                name="name"
+                placeholder="Your Full Name"
+                required
+              />
+            </motion.div>
 
 
-            <AnimatePresence>
-              {
-                error && (
-                  <motion.span
-                    className="errorMessage"
-                    initial={{
-                      opacity: 0,
-                      y: 4,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      y: -4,
-                    }}
-                    transition={{
-                      duration: 0.4,
-                      ease: "easeOut",
-                    }}
-                  >
-                    Failed to send message. Please try again later
-                  </motion.span>
-                )
+            <motion.div
+              className="formItem"
+              variants={
+                fadeOnlyMotion
+                  ? undefined
+                  : listVariants
               }
-            </AnimatePresence>
+            >
+              <label htmlFor="email">
+                Email
+                <span
+                  className="requiredMark"
+                  aria-hidden="true"
+                >
+                  *
+                </span>
+              </label>
+
+              <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="Your Email"
+                required
+              />
+            </motion.div>
 
 
-            <AnimatePresence>
+            <motion.div
+              className="formItem"
+              variants={
+                fadeOnlyMotion
+                  ? undefined
+                  : listVariants
+              }
+            >
+              <label htmlFor="message">
+                Message
+                <span
+                  className="requiredMark"
+                  aria-hidden="true"
+                >
+                  *
+                </span>
+              </label>
+
+              <textarea
+                id="message"
+                rows={10}
+                name="message"
+                placeholder="Write your message..."
+                required
+              />
+            </motion.div>
+
+
+            <div
+              className="contactHoneypot"
+              aria-hidden="true"
+            >
+              <label
+                htmlFor="company-website"
+              >
+                Website
+              </label>
+
+              <input
+                id="company-website"
+                type="text"
+                name="company_website"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+
+
+            <motion.button
+              className={
+                `formButton ${sending
+                  ? "sending"
+                  : ""
+                } ${cooldownActive
+                  ? "cooldownBlocked"
+                  : ""
+                }`
+              }
+              variants={
+                fadeOnlyMotion
+                  ? undefined
+                  : listVariants
+              }
+              type="submit"
+              disabled={sending}
+              aria-disabled={
+                sending ||
+                cooldownActive
+              }
+              aria-busy={sending}
+              aria-describedby=
+                "contact-form-status"
+              onClick={handleSendButtonClick}
+            >
               {
-                cooldownActive &&
-                cooldownMessageVisible &&
-                !success &&
-                !error && (
-                  <motion.span
-                    className="cooldownMessage"
-                    initial={{
-                      opacity: 0,
-                      y: 4,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      y: -4,
-                    }}
-                    transition={{
-                      duration: 0.4,
-                      ease: "easeOut",
-                    }}
-                  >
-                    <span
-                      ref={cooldownShakeRef}
-                      className="cooldownMessageText"
+                sending
+                  ? "Sending..."
+                  : "Send"
+              }
+            </motion.button>
+
+
+            <div
+              id="contact-form-status"
+              className="formStatus"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+
+              <AnimatePresence>
+                {
+                  success && (
+                    <motion.span
+                      className="successMessage"
+                      initial={{
+                        opacity: 0,
+                        y: 4,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        y: -4,
+                      }}
+                      transition={{
+                        duration: 0.4,
+                        ease: "easeOut",
+                      }}
                     >
-                      Message limit reached. Try again in {cooldownText}.
-                    </span>
-                  </motion.span>
-                )
-              }
-            </AnimatePresence>
+                      Message sent! Thanks! I'll get back to you as soon as I can.
+                    </motion.span>
+                  )
+                }
+              </AnimatePresence>
 
-          </div>
 
-        </motion.form>
+              <AnimatePresence>
+                {
+                  error && (
+                    <motion.span
+                      className="errorMessage"
+                      initial={{
+                        opacity: 0,
+                        y: 4,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        y: -4,
+                      }}
+                      transition={{
+                        duration: 0.4,
+                        ease: "easeOut",
+                      }}
+                    >
+                      Failed to send message. Please try again later
+                    </motion.span>
+                  )
+                }
+              </AnimatePresence>
+
+
+              <AnimatePresence>
+                {
+                  cooldownActive &&
+                  cooldownMessageVisible &&
+                  !success &&
+                  !error && (
+                    <motion.span
+                      className="cooldownMessage"
+                      initial={{
+                        opacity: 0,
+                        y: 4,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        y: -4,
+                      }}
+                      transition={{
+                        duration: 0.4,
+                        ease: "easeOut",
+                      }}
+                    >
+                      <span
+                        ref={cooldownShakeRef}
+                        className="cooldownMessageText"
+                      >
+                        Message limit reached. Try again in {cooldownText}.
+                      </span>
+                    </motion.span>
+                  )
+                }
+              </AnimatePresence>
+
+            </div>
+
+          </motion.form>
+
+        </div>
+
+
+        <div className="cSection">
+
+          <motion.div
+            className="contactVisual"
+            variants={activeSvgVariants}
+            initial="initial"
+            animate={
+              isInView
+                ? "animate"
+                : "initial"
+            }
+          >
+            <ContactSvg />
+          </motion.div>
+
+        </div>
 
       </div>
 
-
-      <div className="cSection">
-
-        <motion.div
-          className="contactVisual"
-          variants={activeSvgVariants}
-          initial="initial"
-          animate={
-            isInView
-              ? "animate"
-              : "initial"
-          }
-        >
-          <ContactSvg />
-        </motion.div>
-
-      </div>
-
-    </div>
+      {
+        cooldownDebugEnabled && (
+          <ContactCooldownDebugPanel
+            cooldownActive={cooldownActive}
+            cooldownText={cooldownText}
+            cooldownUntil={cooldownUntil}
+            cooldownMessageVisible={cooldownMessageVisible}
+            blockedClickCount={debugBlockedClickCount}
+            wouldSubmitCount={debugWouldSubmitCount}
+            lastEvent={debugLastEvent}
+            onStartCooldown={startDebugCooldown}
+            onSimulateSuccess={simulateDebugSuccess}
+            onShowReminder={showDebugReminder}
+            onHideReminder={hideDebugReminder}
+            onExpireNow={expireDebugCooldown}
+            onResetDebugCounters={resetDebugCounters}
+          />
+        )
+      }
+    </>
   );
 };
 
