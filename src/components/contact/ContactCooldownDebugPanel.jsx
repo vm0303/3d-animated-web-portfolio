@@ -166,6 +166,12 @@ const CooldownDebugPanel = ({
     setDurationSeconds(seconds);
   };
 
+  const visibleLastEvent =
+    String(lastEvent || "").replaceAll(
+      "Jump & Shake",
+      "Horizontal Shake"
+    );
+
 
   return (
     <aside
@@ -292,7 +298,7 @@ const CooldownDebugPanel = ({
             disabled={!cooldownActive}
             onClick={onShowReminder}
           >
-            Show + Jump & Shake
+            Show + Horizontal Shake
           </button>
 
           <button
@@ -331,7 +337,7 @@ const CooldownDebugPanel = ({
           {wouldSubmitCount}
           <br />
           <strong>Last event:</strong>{" "}
-          {lastEvent}
+          {visibleLastEvent}
         </div>
 
         <div
@@ -342,7 +348,7 @@ const CooldownDebugPanel = ({
         >
           Debug mode blocks real /api/contact submissions. During an active cooldown,
           click the real Send button repeatedly: the blocked counter should rise,
-          the text should replay the Jump & Shake motion without blinking/remounting,
+          the text should replay the Horizontal Shake without blinking/remounting,
           and the 12-second fade timer should restart after each blocked click.
         </div>
       </div>
