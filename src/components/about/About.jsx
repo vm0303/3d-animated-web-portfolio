@@ -367,6 +367,18 @@ const About = () => {
     );
 
 
+  /*
+   * Every About visit starts from the developer/laptop scene.
+   * The 3D container stays mounted; only the active scene is reset while
+   * About is off-screen so returning does not rebuild the WebGL canvas.
+   */
+  useEffect(() => {
+    if (!isInView) {
+      setActiveScene("developer");
+    }
+  }, [isInView]);
+
+
   useEffect(() => {
     if (
       activeScene !== "developer"
@@ -640,8 +652,9 @@ const About = () => {
 
 
         <AnimatePresence>
-          {activeScene ===
-            "developer" &&
+          {isInView &&
+            activeScene ===
+              "developer" &&
             isLaptopModelReady && (
               <motion.button
                 key=
