@@ -92,6 +92,8 @@ const LazySection = ({
 const App = () => {
   useEffect(() => {
     let preloadStarted = false
+    let idleHandle = null
+    let fallbackTimer = null
 
     const cleanup = () => {
       window.removeEventListener(
@@ -108,6 +110,19 @@ const App = () => {
         'keydown',
         handleKeyDown
       )
+
+      if (
+        idleHandle !== null &&
+        'cancelIdleCallback' in window
+      ) {
+        window.cancelIdleCallback(idleHandle)
+        idleHandle = null
+      }
+
+      if (fallbackTimer !== null) {
+        window.clearTimeout(fallbackTimer)
+        fallbackTimer = null
+      }
     }
 
     const startAboutPreload = () => {
@@ -147,6 +162,27 @@ const App = () => {
       'keydown',
       handleKeyDown
     )
+
+    if ('requestIdleCallback' in window) {
+      idleHandle = window.requestIdleCallback(
+        () => {
+          idleHandle = null
+          startAboutPreload()
+        },
+        {
+          timeout: 1500,
+        }
+      )
+    }
+    else {
+      fallbackTimer = window.setTimeout(
+        () => {
+          fallbackTimer = null
+          startAboutPreload()
+        },
+        1200
+      )
+    }
 
     return cleanup
   }, [])
