@@ -81,7 +81,6 @@ const paragraphVariants = {
 
   animate: {
     x: 0,
-    y: 0,
     opacity: 1,
 
     transition: {
@@ -369,14 +368,6 @@ const About = () => {
 
 
   useEffect(() => {
-    if (!isInView) {
-      setActiveScene("developer");
-      setIsLaptopModelReady(false);
-    }
-  }, [isInView]);
-
-
-  useEffect(() => {
     if (
       activeScene !== "developer"
     ) {
@@ -633,71 +624,71 @@ const About = () => {
             : undefined
         }
       >
-        {isInView && (
-          <>
-            <AboutModelContainer
-              activeScene={
-                activeScene
-              }
+        <AboutModelContainer
+          activeScene={
+            activeScene
+          }
 
-              onLaptopReady={
-                handleLaptopModelReady
-              }
-            />
+          isActive={
+            isInView
+          }
 
-
-            <AnimatePresence>
-              {activeScene ===
-                "developer" &&
-                isLaptopModelReady && (
-                  <motion.button
-                    key=
-                      "view-screen-button"
-
-                    ref={
-                      screenTriggerRef
-                    }
-
-                    type="button"
-
-                    className=
-                      "aboutScreenTrigger"
-
-                    variants={
-                      buttonVariants
-                    }
-
-                    initial="initial"
-
-                    animate="animate"
-
-                    exit="exit"
-
-                    aria-haspopup=
-                      "dialog"
-
-                    onClick={
-                      openLaptopScreen
-                    }
-                  >
-                    <span>
-                      View screen
-                    </span>
+          onLaptopReady={
+            handleLaptopModelReady
+          }
+        />
 
 
-                    <span
-                      aria-hidden="true"
+        <AnimatePresence>
+          {activeScene ===
+            "developer" &&
+            isLaptopModelReady && (
+              <motion.button
+                key=
+                  "view-screen-button"
 
-                      className=
-                        "aboutScreenTriggerIcon"
-                    >
-                      ↗
-                    </span>
-                  </motion.button>
-                )}
-            </AnimatePresence>
-          </>
-        )}
+                ref={
+                  screenTriggerRef
+                }
+
+                type="button"
+
+                className=
+                  "aboutScreenTrigger"
+
+                variants={
+                  buttonVariants
+                }
+
+                initial="initial"
+
+                animate="animate"
+
+                exit="exit"
+
+                aria-haspopup=
+                  "dialog"
+
+                onClick={
+                  openLaptopScreen
+                }
+              >
+                <span>
+                  View screen
+                </span>
+
+
+                <span
+                  aria-hidden="true"
+
+                  className=
+                    "aboutScreenTriggerIcon"
+                >
+                  ↗
+                </span>
+              </motion.button>
+            )}
+        </AnimatePresence>
       </motion.div>
 
 
