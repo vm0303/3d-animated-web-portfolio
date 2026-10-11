@@ -81,6 +81,7 @@ const paragraphVariants = {
 
   animate: {
     x: 0,
+    y: 0,
     opacity: 1,
 
     transition: {
@@ -256,20 +257,6 @@ const AboutKeyword = ({
 
 const About = () => {
   /*
-   * QA-only deterministic scene/model selection.
-   * Production behavior is unchanged unless about-qa=1
-   * is present in the URL.
-   */
-  const aboutQaRef =
-    useRef(
-      readAboutQaConfig()
-    );
-
-  const aboutQa =
-    aboutQaRef.current;
-
-
-  /*
    * Match Hero.jsx: portrait phones/tablets use fade-only entry motion.
    * Landscape intentionally keeps the existing directional About motion.
    */
@@ -330,11 +317,7 @@ const About = () => {
   const [
     activeScene,
     setActiveScene,
-  ] = useState(
-    () =>
-      aboutQa.scene ??
-      "developer"
-  );
+  ] = useState("developer");
 
 
   const aboutRef =
@@ -386,18 +369,11 @@ const About = () => {
 
 
   useEffect(() => {
-    if (
-      !isInView &&
-      !aboutQa.enabled
-    ) {
+    if (!isInView) {
       setActiveScene("developer");
-
       setIsLaptopModelReady(false);
     }
-  }, [
-    isInView,
-    aboutQa.enabled,
-  ]);
+  }, [isInView]);
 
 
   useEffect(() => {
@@ -666,14 +642,6 @@ const About = () => {
 
               onLaptopReady={
                 handleLaptopModelReady
-              }
-
-              qaMode={
-                aboutQa.enabled
-              }
-
-              qaModelId={
-                aboutQa.model
               }
             />
 
