@@ -140,8 +140,16 @@ const mobileMediaQuery =
   "(max-width: 1024px) and (orientation: portrait), " +
   "(max-height: 1376px) and (orientation: portrait)"
 
+const easeInOutCubic = (progress) =>
+  progress < 0.5
+    ? 4 * progress * progress * progress
+    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
 const Hero = () => {
   const hasMounted = useRef(false);
+  const scrollAnimationFrameRef = useRef(null);
+  const scrollCleanupRef = useRef(null);
+
   const [isMobile, setIsMobile] = useState(
     () => window.matchMedia(mobileMediaQuery).matches
   );
@@ -196,6 +204,18 @@ const Hero = () => {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (scrollAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(
+          scrollAnimationFrameRef.current
+        );
+      }
+
+      scrollCleanupRef.current?.();
+    };
+  }, []);
+
   const handleSectionScroll = (event, sectionId) => {
     event.preventDefault();
 
@@ -209,16 +229,90 @@ const Hero = () => {
       .matchMedia("(prefers-reduced-motion: reduce)")
       .matches;
 
-    target.scrollIntoView({
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "start",
-    });
+    const targetTop =
+      target.getBoundingClientRect().top +
+      window.scrollY;
 
     window.history.replaceState(
       null,
       "",
       `#${sectionId}`
     );
+
+    if (prefersReducedMotion) {
+      window.scrollTo({
+        top: targetTop,
+        behavior: "auto",
+      });
+      return;
+    }
+
+    if (scrollAnimationFrameRef.current !== null) {
+      window.cancelAnimationFrame(
+        scrollAnimationFrameRef.current
+      );
+      scrollAnimationFrameRef.current = null;
+    }
+
+    scrollCleanupRef.current?.();
+
+    const root = document.documentElement;
+    const previousSnapType = root.style.scrollSnapType;
+    const previousScrollBehavior = root.style.scrollBehavior;
+
+    root.style.scrollSnapType = "none";
+    root.style.scrollBehavior = "auto";
+
+    const restoreScrollingStyles = () => {
+      root.style.scrollSnapType = previousSnapType;
+      root.style.scrollBehavior = previousScrollBehavior;
+      scrollCleanupRef.current = null;
+    };
+
+    scrollCleanupRef.current = restoreScrollingStyles;
+
+    const startTop = window.scrollY;
+    const distance = targetTop - startTop;
+    const duration = Math.min(
+      2200,
+      Math.max(1100, Math.abs(distance) * 0.65)
+    );
+    const startTime = performance.now();
+
+    const animateScroll = (currentTime) => {
+      const progress = Math.min(
+        (currentTime - startTime) / duration,
+        1
+      );
+
+      const easedProgress = easeInOutCubic(progress);
+
+      window.scrollTo(
+        0,
+        startTop + distance * easedProgress
+      );
+
+      if (progress < 1) {
+        scrollAnimationFrameRef.current =
+          window.requestAnimationFrame(
+            animateScroll
+          );
+        return;
+      }
+
+      scrollAnimationFrameRef.current = null;
+      restoreScrollingStyles();
+
+      window.scrollTo({
+        top: targetTop,
+        behavior: "auto",
+      });
+    };
+
+    scrollAnimationFrameRef.current =
+      window.requestAnimationFrame(
+        animateScroll
+      );
   };
 
   const activeCertVariants = isMobile ? certificationsMobileVariants : certificationsVariants;
@@ -270,7 +364,7 @@ const Hero = () => {
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M5 9C5 5.13401 8.13401 2 12 2C15.866 2 19 5.13401 19 9V15C19 18.866 15.866 22 12 22C8.13401 22 5 18.866 5 15V9Z"
+              d="M5 9C5 5.13401 8.13401 2 12 2C15.866 2 19 5.13401 19 9V15C19 18.866 15.866 22 12 22C8.13401 22 5 18.13401 5 15V9Z"
               stroke="white"
               strokeWidth="1"
             />
