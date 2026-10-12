@@ -8,6 +8,18 @@
   display: grid;
 }
 
+/* Give the left desktop control a little more breathing room from the project
+ * image on hybrid laptops without changing the accepted Portfolio geometry.
+ */
+.portfolio.pTouchLayout.pMouseInput .pArrowLeft {
+  left:
+    clamp(
+      4px,
+      0.5vw,
+      8px
+    );
+}
+
 /* Preserve the locked phone / short-landscape contract even if a mouse is
  * connected to or emulated on one of those narrow geometries.
  */
