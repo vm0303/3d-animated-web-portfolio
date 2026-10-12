@@ -1,13 +1,18 @@
 import crypto from "node:crypto";
 
 const DEFAULT_COOLDOWN_SECONDS = 3 * 60 * 60;
+const DEFAULT_RATE_LIMIT_MAX = 5;
+const DEFAULT_RATE_LIMIT_WINDOW_SECONDS = 10 * 60;
+const DEFAULT_GLOBAL_DAILY_MAX = 25;
+const GLOBAL_DAILY_WINDOW_SECONDS = 24 * 60 * 60;
 const MAX_BODY_BYTES = 24_000;
 
 /*
- * Local development fallback. Production requires persistent Redis storage so
- * the cooldown survives browser changes and server restarts/instances.
+ * Local development fallbacks. Production requires persistent Redis storage so
+ * cooldowns and rate limits survive browser changes and server restarts/instances.
  */
 const localCooldowns = new Map();
+const localWindows = new Map();
 
 const CHECK_SCRIPT = `
 local max_ttl = 0
@@ -47,6 +52,42 @@ for i, key in ipairs(KEYS) do
   end
 end
 return 1
+`;
+
+const WINDOW_RESERVE_SCRIPT = `
+local current = tonumber(redis.call("GET", KEYS[1]) or "0")
+local max = tonumber(ARGV[2])
+
+if current >= max then
+  local ttl = redis.call("TTL", KEYS[1])
+  if ttl < 1 then
+    ttl = tonumber(ARGV[1])
+  end
+  return {0, ttl, current}
+end
+
+local count = redis.call("INCR", KEYS[1])
+if count == 1 then
+  redis.call("EXPIRE", KEYS[1], ARGV[1])
+end
+
+local ttl = redis.call("TTL", KEYS[1])
+return {1, ttl, count}
+`;
+
+const WINDOW_RELEASE_SCRIPT = `
+local current = tonumber(redis.call("GET", KEYS[1]) or "0")
+
+if current <= 0 then
+  return 0
+end
+
+if current == 1 then
+  redis.call("DEL", KEYS[1])
+  return 0
+end
+
+return redis.call("DECR", KEYS[1])
 `;
 
 function json(res, statusCode, payload) {
@@ -128,18 +169,9 @@ async function readJsonBody(req) {
 
 function getConfiguration({ requireEmailJs = true } = {}) {
   const emailJs = {
-    serviceId:
-      process.env.EMAILJS_SERVICE_ID ||
-      process.env.VITE_SERVICE_ID ||
-      "",
-    templateId:
-      process.env.EMAILJS_TEMPLATE_ID ||
-      process.env.VITE_TEMPLATE_ID ||
-      "",
-    publicKey:
-      process.env.EMAILJS_PUBLIC_KEY ||
-      process.env.VITE_PUBLIC_KEY ||
-      "",
+    serviceId: process.env.EMAILJS_SERVICE_ID || "",
+    templateId: process.env.EMAILJS_TEMPLATE_ID || "",
+    publicKey: process.env.EMAILJS_PUBLIC_KEY || "",
     privateKey: process.env.EMAILJS_PRIVATE_KEY || "",
   };
 
@@ -154,7 +186,8 @@ function getConfiguration({ requireEmailJs = true } = {}) {
     (
       !emailJs.serviceId ||
       !emailJs.templateId ||
-      !emailJs.publicKey
+      !emailJs.publicKey ||
+      (production && !emailJs.privateKey)
     )
   ) {
     throw new Error(
@@ -170,7 +203,7 @@ function getConfiguration({ requireEmailJs = true } = {}) {
 
   if (production && !hasRedis) {
     throw new Error(
-      "Persistent Contact cooldown requires Upstash Redis in production."
+      "Persistent Contact protection requires Upstash Redis in production."
     );
   }
 
@@ -194,6 +227,18 @@ function getConfiguration({ requireEmailJs = true } = {}) {
     cooldownSeconds: positiveInteger(
       process.env.CONTACT_COOLDOWN_SECONDS,
       DEFAULT_COOLDOWN_SECONDS
+    ),
+    rateLimitMax: positiveInteger(
+      process.env.CONTACT_RATE_LIMIT_MAX,
+      DEFAULT_RATE_LIMIT_MAX
+    ),
+    rateLimitWindowSeconds: positiveInteger(
+      process.env.CONTACT_RATE_LIMIT_WINDOW_SECONDS,
+      DEFAULT_RATE_LIMIT_WINDOW_SECONDS
+    ),
+    globalDailyMax: positiveInteger(
+      process.env.CONTACT_GLOBAL_DAILY_MAX,
+      DEFAULT_GLOBAL_DAILY_MAX
     ),
   };
 }
@@ -227,6 +272,16 @@ function pruneLocalCooldowns() {
   }
 }
 
+function pruneLocalWindows() {
+  const now = Date.now();
+
+  for (const [key, record] of localWindows.entries()) {
+    if (record.expiresAt <= now) {
+      localWindows.delete(key);
+    }
+  }
+}
+
 async function lookupCooldown({ keys, redis }) {
   if (!keys.length) {
     return 0;
@@ -240,10 +295,7 @@ async function lookupCooldown({ keys, redis }) {
       ...keys,
     ]);
 
-    return Math.max(
-      0,
-      Number(result) || 0
-    );
+    return Math.max(0, Number(result) || 0);
   }
 
   pruneLocalCooldowns();
@@ -260,12 +312,7 @@ async function lookupCooldown({ keys, redis }) {
   }
 
   return latestExpiry > now
-    ? Math.max(
-        1,
-        Math.ceil(
-          (latestExpiry - now) / 1000
-        )
-      )
+    ? Math.max(1, Math.ceil((latestExpiry - now) / 1000))
     : 0;
 }
 
@@ -303,10 +350,7 @@ async function reserveCooldown({ keys, seconds, token, redis }) {
   if (latestExpiry > now) {
     return {
       allowed: false,
-      retryAfterSeconds: Math.max(
-        1,
-        Math.ceil((latestExpiry - now) / 1000)
-      ),
+      retryAfterSeconds: Math.max(1, Math.ceil((latestExpiry - now) / 1000)),
     };
   }
 
@@ -343,6 +387,82 @@ async function releaseCooldown({ keys, token, redis }) {
       localCooldowns.delete(key);
     }
   }
+}
+
+async function reserveWindow({ key, seconds, max, redis }) {
+  if (redis) {
+    const result = await redisCommand(redis, [
+      "EVAL",
+      WINDOW_RESERVE_SCRIPT,
+      "1",
+      key,
+      String(seconds),
+      String(max),
+    ]);
+
+    const allowed = Number(result?.[0]) === 1;
+    const ttl = Math.max(1, Number(result?.[1]) || seconds);
+
+    return {
+      allowed,
+      retryAfterSeconds: allowed ? 0 : ttl,
+    };
+  }
+
+  pruneLocalWindows();
+
+  const now = Date.now();
+  const existing = localWindows.get(key);
+
+  if (existing && existing.count >= max) {
+    return {
+      allowed: false,
+      retryAfterSeconds: Math.max(
+        1,
+        Math.ceil((existing.expiresAt - now) / 1000)
+      ),
+    };
+  }
+
+  if (existing) {
+    existing.count += 1;
+  } else {
+    localWindows.set(key, {
+      count: 1,
+      expiresAt: now + seconds * 1000,
+    });
+  }
+
+  return {
+    allowed: true,
+    retryAfterSeconds: 0,
+  };
+}
+
+async function releaseWindow({ key, redis }) {
+  if (redis) {
+    await redisCommand(redis, [
+      "EVAL",
+      WINDOW_RELEASE_SCRIPT,
+      "1",
+      key,
+    ]);
+    return;
+  }
+
+  pruneLocalWindows();
+
+  const record = localWindows.get(key);
+  if (!record) {
+    return;
+  }
+
+  if (record.count <= 1) {
+    localWindows.delete(key);
+    return;
+  }
+
+  record.count -= 1;
 }
 
 async function sendWithEmailJs({ emailJs, name, email, message }) {
@@ -416,20 +536,17 @@ export default async function contactHandler(req, res) {
       return;
     }
 
-    const ipKey =
-      `portfolio:contact:ip:${hmac(ip, configuration.secret)}`;
+    const ipKey = `portfolio:contact:ip:${hmac(ip, configuration.secret)}`;
 
     try {
-      const retryAfterSeconds =
-        await lookupCooldown({
-          keys: [ipKey],
-          redis: configuration.redis,
-        });
+      const retryAfterSeconds = await lookupCooldown({
+        keys: [ipKey],
+        redis: configuration.redis,
+      });
 
       json(res, 200, {
         ok: true,
-        cooldownActive:
-          retryAfterSeconds > 0,
+        cooldownActive: retryAfterSeconds > 0,
         retryAfterSeconds,
       });
     } catch (error) {
@@ -453,6 +570,53 @@ export default async function contactHandler(req, res) {
     json(res, 405, {
       ok: false,
       code: "METHOD_NOT_ALLOWED",
+    });
+    return;
+  }
+
+  let configuration;
+
+  try {
+    configuration = getConfiguration();
+  } catch (error) {
+    console.error("[Contact API] Configuration error:", error);
+    json(res, 500, {
+      ok: false,
+      code: "CONTACT_CONFIGURATION_ERROR",
+      message: "The contact form is temporarily unavailable.",
+    });
+    return;
+  }
+
+  const ip = clientIp(req);
+  const rateIdentity = ip || "unknown-client";
+  const rateLimitKey =
+    `portfolio:contact:rate:${hmac(rateIdentity, configuration.secret)}`;
+
+  try {
+    const rateLimit = await reserveWindow({
+      key: rateLimitKey,
+      seconds: configuration.rateLimitWindowSeconds,
+      max: configuration.rateLimitMax,
+      redis: configuration.redis,
+    });
+
+    if (!rateLimit.allowed) {
+      res.setHeader("Retry-After", String(rateLimit.retryAfterSeconds));
+      json(res, 429, {
+        ok: false,
+        code: "CONTACT_RATE_LIMIT",
+        retryAfterSeconds: rateLimit.retryAfterSeconds,
+        message: "Too many contact requests. Please try again later.",
+      });
+      return;
+    }
+  } catch (error) {
+    console.error("[Contact API] Rate limit check failed:", error);
+    json(res, 503, {
+      ok: false,
+      code: "RATE_LIMIT_UNAVAILABLE",
+      message: "The contact form is temporarily unavailable.",
     });
     return;
   }
@@ -482,7 +646,7 @@ export default async function contactHandler(req, res) {
   if (honeypot) {
     json(res, 200, {
       ok: true,
-      cooldownSeconds: DEFAULT_COOLDOWN_SECONDS,
+      cooldownSeconds: configuration.cooldownSeconds,
     });
     return;
   }
@@ -502,21 +666,6 @@ export default async function contactHandler(req, res) {
     return;
   }
 
-  let configuration;
-
-  try {
-    configuration = getConfiguration();
-  } catch (error) {
-    console.error("[Contact API] Configuration error:", error);
-    json(res, 500, {
-      ok: false,
-      code: "CONTACT_CONFIGURATION_ERROR",
-      message: "The contact form is temporarily unavailable.",
-    });
-    return;
-  }
-
-  const ip = clientIp(req);
   const identityKeys = [
     `portfolio:contact:email:${hmac(email, configuration.secret)}`,
   ];
@@ -548,15 +697,74 @@ export default async function contactHandler(req, res) {
   }
 
   if (!reservation.allowed) {
-    res.setHeader(
-      "Retry-After",
-      String(reservation.retryAfterSeconds)
-    );
+    res.setHeader("Retry-After", String(reservation.retryAfterSeconds));
 
     json(res, 429, {
       ok: false,
       code: "CONTACT_COOLDOWN",
       retryAfterSeconds: reservation.retryAfterSeconds,
+    });
+    return;
+  }
+
+  const globalSendKey = "portfolio:contact:global:daily";
+  let globalReservation;
+
+  try {
+    globalReservation = await reserveWindow({
+      key: globalSendKey,
+      seconds: GLOBAL_DAILY_WINDOW_SECONDS,
+      max: configuration.globalDailyMax,
+      redis: configuration.redis,
+    });
+  } catch (error) {
+    console.error("[Contact API] Global send limit check failed:", error);
+
+    try {
+      await releaseCooldown({
+        keys: identityKeys,
+        token: reservationToken,
+        redis: configuration.redis,
+      });
+    } catch (releaseError) {
+      console.error(
+        "[Contact API] Failed to release cooldown reservation:",
+        releaseError
+      );
+    }
+
+    json(res, 503, {
+      ok: false,
+      code: "RATE_LIMIT_UNAVAILABLE",
+      message: "The contact form is temporarily unavailable.",
+    });
+    return;
+  }
+
+  if (!globalReservation.allowed) {
+    try {
+      await releaseCooldown({
+        keys: identityKeys,
+        token: reservationToken,
+        redis: configuration.redis,
+      });
+    } catch (releaseError) {
+      console.error(
+        "[Contact API] Failed to release cooldown reservation:",
+        releaseError
+      );
+    }
+
+    res.setHeader(
+      "Retry-After",
+      String(globalReservation.retryAfterSeconds)
+    );
+
+    json(res, 429, {
+      ok: false,
+      code: "CONTACT_DAILY_LIMIT",
+      retryAfterSeconds: globalReservation.retryAfterSeconds,
+      message: "The contact form has reached its daily send limit. Please try again later.",
     });
     return;
   }
@@ -575,6 +783,18 @@ export default async function contactHandler(req, res) {
     });
   } catch (error) {
     console.error("[Contact API] Email send failed:", error);
+
+    try {
+      await releaseWindow({
+        key: globalSendKey,
+        redis: configuration.redis,
+      });
+    } catch (releaseError) {
+      console.error(
+        "[Contact API] Failed to release global send reservation:",
+        releaseError
+      );
+    }
 
     try {
       await releaseCooldown({
