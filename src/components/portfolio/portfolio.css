@@ -1425,3 +1425,34 @@
     display: none;
   }
 }
+
+/* =========================
+   HYBRID TOUCH LAPTOPS
+   ========================= */
+
+/*
+ * Hybrid touch laptops can report a coarse/touch-first primary pointer even
+ * while a real mouse or trackpad is being used. Portfolio.jsx adds
+ * .pMouseInput after actual mouse pointer activity so desktop arrow controls
+ * can coexist with the accepted touch layout and swipe behavior.
+ */
+.portfolio.pTouchLayout.pMouseInput .pArrow {
+  display: grid;
+}
+
+/* Give the left desktop control extra breathing room from the project image
+ * on hybrid laptops without changing the accepted Portfolio geometry.
+ */
+.portfolio.pTouchLayout.pMouseInput .pArrowLeft {
+  left: -8px;
+}
+
+/* Preserve the locked phone / short-landscape contract even if a mouse is
+ * connected to or emulated on one of those narrow geometries.
+ */
+@media (max-width: 500px),
+       (orientation: landscape) and (max-height: 500px) {
+  .portfolio.pTouchLayout.pMouseInput .pArrow {
+    display: none;
+  }
+}

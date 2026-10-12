@@ -1,5 +1,4 @@
 import "./portfolio.css"
-import "./portfolio-hybrid.css"
 
 import {
   motion,
