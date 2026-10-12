@@ -12,12 +12,7 @@
  * image on hybrid laptops without changing the accepted Portfolio geometry.
  */
 .portfolio.pTouchLayout.pMouseInput .pArrowLeft {
-  left:
-    clamp(
-      4px,
-      0.5vw,
-      8px
-    );
+  left: -8px;
 }
 
 /* Preserve the locked phone / short-landscape contract even if a mouse is
