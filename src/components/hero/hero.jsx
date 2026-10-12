@@ -386,14 +386,38 @@ const Hero = () => {
       </div>
       <div className="heroSection right">
         {/* SOCIALS */}
-        <motion.div variants={socialVariants} initial="initial" animate="animate" className="socials">
-          <motion.a variants={socialVariants} href="https://github.com/vm0303" target="_blank" rel="noreferrer">
+        <motion.div
+          variants={socialVariants}
+          initial="initial"
+          animate="animate"
+          className="socials"
+          style={{
+            position: "relative",
+            zIndex: 20,
+            pointerEvents: "auto",
+          }}>
+          <motion.a
+            variants={socialVariants}
+            href="https://github.com/vm0303"
+            target="_blank"
+            rel="noreferrer"
+            style={{ position: "relative", zIndex: 21, pointerEvents: "auto" }}>
             <img src="/github.png" alt="GitHub" title="GitHub" />
           </motion.a>
-          <motion.a variants={socialVariants} href="https://www.linkedin.com/in/vishal-madhav/" target="_blank" rel="noreferrer">
+          <motion.a
+            variants={socialVariants}
+            href="https://www.linkedin.com/in/vishal-madhav/"
+            target="_blank"
+            rel="noreferrer"
+            style={{ position: "relative", zIndex: 21, pointerEvents: "auto" }}>
             <img src="/linkedin.png" alt="LinkedIn" title="LinkedIn" />
           </motion.a>
-          <motion.a variants={socialVariants} href="https://www.instagram.com/vmadhav33/" target="_blank" rel="noreferrer">
+          <motion.a
+            variants={socialVariants}
+            href="https://www.instagram.com/vmadhav33/"
+            target="_blank"
+            rel="noreferrer"
+            style={{ position: "relative", zIndex: 21, pointerEvents: "auto" }}>
             <img src="/instagram.png" alt="Instagram" title="Instagram" />
           </motion.a>
           <div className="socialsTextContainer">
