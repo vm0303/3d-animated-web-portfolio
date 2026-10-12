@@ -1,4 +1,5 @@
 import "./portfolio.css"
+import "./portfolio-hybrid.css"
 
 import {
   motion,
@@ -351,6 +352,11 @@ const Portfolio = () => {
       .matches
   })
 
+  const [
+    mouseInputDetected,
+    setMouseInputDetected,
+  ] = useState(false)
+
   useEffect(() => {
     const mediaQuery =
       window.matchMedia(
@@ -380,9 +386,11 @@ const Portfolio = () => {
 
 
   /*
-   * Laptop/desktop arrows use true mouse inactivity.
+   * Laptop/desktop arrows use true mouse inactivity. Hybrid touchscreen
+   * laptops keep their touch layout, but actual mouse input enables the same
+   * arrow behavior without changing the accepted responsive geometry.
    *
-   * - entering Portfolio reveals the arrows
+   * - entering Portfolio reveals the arrows on mouse-capable sessions
    * - meaningful mouse movement keeps them visible
    * - movement updates one last-activity timestamp instead of restarting
    *   competing visibility/re-arm timers
@@ -433,6 +441,8 @@ const Portfolio = () => {
           return
         }
 
+        setMouseInputDetected(true)
+
         const nextPosition = {
           x: event.clientX,
           y: event.clientY,
@@ -478,7 +488,7 @@ const Portfolio = () => {
   useEffect(() => {
     if (
       !portfolioControlsInView ||
-      fadeOnlyMotion
+      (fadeOnlyMotion && !mouseInputDetected)
     ) {
       clearIdleCheck()
       lastPointerActivityAtRef.current = null
@@ -516,6 +526,7 @@ const Portfolio = () => {
   }, [
     portfolioControlsInView,
     fadeOnlyMotion,
+    mouseInputDetected,
     clearIdleCheck,
     recordPointerActivity,
   ])
@@ -618,11 +629,16 @@ const Portfolio = () => {
           fadeOnlyMotion
             ? "pTouchLayout"
             : ""
+        } ${
+          mouseInputDetected
+            ? "pMouseInput"
+            : ""
         }`
       }
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onPointerMove={handlePointerMove}
+      onPointerDown={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       aria-label="Portfolio projects"
     >
