@@ -1462,8 +1462,14 @@
   right: -8px;
 }
 
-/* Fade active Portfolio arrows in instead of letting them pop into view. */
-@keyframes portfolioArrowFadeIn {
+/*
+ * A hybrid layout changes the arrows from display:none to display:grid when
+ * real mouse input is first detected. Give that first reveal its own one-time
+ * fade. After it finishes, the normal opacity transition above owns every
+ * active/idle change, so the arrows ease down to the faint 0.18 idle state
+ * instead of snapping there when the five-second activity window expires.
+ */
+@keyframes portfolioHybridArrowInitialFadeIn {
   from {
     opacity: 0;
   }
@@ -1473,16 +1479,15 @@
   }
 }
 
-.portfolio.pControlsActive .pArrow {
+.portfolio.pTouchLayout.pMouseInput .pArrow {
   animation:
-    portfolioArrowFadeIn
+    portfolioHybridArrowInitialFadeIn
     1200ms
-    ease
-    both;
+    ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .portfolio.pControlsActive .pArrow {
+  .portfolio.pTouchLayout.pMouseInput .pArrow {
     animation: none;
   }
 }
