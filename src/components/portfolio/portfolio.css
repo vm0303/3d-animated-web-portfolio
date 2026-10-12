@@ -1456,3 +1456,33 @@
     display: none;
   }
 }
+
+/* Match the right hybrid control to the left control's viewport spacing. */
+.portfolio.pTouchLayout.pMouseInput .pArrowRight {
+  right: -8px;
+}
+
+/* Fade active Portfolio arrows in instead of letting them pop into view. */
+@keyframes portfolioArrowFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.portfolio.pControlsActive .pArrow {
+  animation:
+    portfolioArrowFadeIn
+    1200ms
+    ease
+    both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio.pControlsActive .pArrow {
+    animation: none;
+  }
+}
