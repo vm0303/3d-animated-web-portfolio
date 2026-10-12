@@ -464,7 +464,7 @@ const Hero = () => {
           </Canvas>
         </HeroCanvasErrorBoundary>
         <div className="hImg">
-          <img src="/Hero.png" alt="Hero" title="Hero" />
+          <img src="/hero.png" alt="Hero" title="Hero" />
         </div>
       </motion.div>
     </div >
