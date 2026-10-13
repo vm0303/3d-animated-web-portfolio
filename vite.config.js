@@ -69,6 +69,17 @@ export default defineConfig(({ mode }) => {
       contactApiDevMiddleware(),
     ],
 
+    /*
+     * Vite 8 defaults CSS minification to Lightning CSS. This project uses
+     * individual transform properties (for example `rotate`) alongside
+     * `transform` overrides in responsive CSS. Lightning CSS can merge those
+     * declarations and change their cascade behavior. Keep the authored CSS
+     * semantics intact instead of rewriting frozen responsive geometry.
+     */
+    build: {
+      cssMinify: false,
+    },
+
     server: {
       host: true,
     },
