@@ -138,11 +138,10 @@ const portraitFadeVariants = {
 const PORTRAIT_TOUCH_MOTION_QUERY =
   "(hover: none), (pointer: coarse)";
 
-const DESKTOP_POINTER_QUERY =
-  "(any-hover: hover) and (any-pointer: fine)";
 
-
-const Contact = () => {
+const Contact = ({
+  desktopInputDetected = false,
+}) => {
   const [success, setSuccess] =
     useState(false);
 
@@ -174,23 +173,13 @@ const Contact = () => {
         return false;
       }
 
-      const touchFirst =
+      return (
         window
           .matchMedia(
             PORTRAIT_TOUCH_MOTION_QUERY
           )
-          .matches;
-
-      const desktopPointerAvailable =
-        window
-          .matchMedia(
-            DESKTOP_POINTER_QUERY
-          )
-          .matches;
-
-      return (
-        touchFirst &&
-        !desktopPointerAvailable
+          .matches &&
+        !desktopInputDetected
       );
     });
 
@@ -228,16 +217,11 @@ const Contact = () => {
         PORTRAIT_TOUCH_MOTION_QUERY
       );
 
-    const desktopPointerQuery =
-      window.matchMedia(
-        DESKTOP_POINTER_QUERY
-      );
-
     const syncMotionMode = () => {
       if (!isInView) {
         setFadeOnlyMotion(
           touchQuery.matches &&
-          !desktopPointerQuery.matches
+          !desktopInputDetected
         );
       }
     };
@@ -249,23 +233,16 @@ const Contact = () => {
       syncMotionMode
     );
 
-    desktopPointerQuery.addEventListener(
-      "change",
-      syncMotionMode
-    );
-
     return () => {
       touchQuery.removeEventListener(
         "change",
         syncMotionMode
       );
-
-      desktopPointerQuery.removeEventListener(
-        "change",
-        syncMotionMode
-      );
     };
-  }, [isInView]);
+  }, [
+    isInView,
+    desktopInputDetected,
+  ]);
 
 
   /* Show success for six seconds, then reveal the cooldown reminder. */
