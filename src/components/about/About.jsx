@@ -362,7 +362,7 @@ const About = () => {
     useInView(
       aboutRef,
       {
-        amount: 0.15,
+        amount: 0.10,
         once: false,
       }
     );
