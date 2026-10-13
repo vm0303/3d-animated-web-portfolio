@@ -31,7 +31,7 @@ const SLIDE_DURATION = 0.85;
 const SLIDE_DISTANCE = 2.8;
 const EDGE_SCALE = 0.88;
 const INTERACTION_RESUME_DELAY = 1200;
-const LAMA_ZOOM_DURATION = 1000;
+const LAMA_ZOOM_DURATION = 900;
 const DESKTOP_FRAME_EDGE = 2.55;
 
 
@@ -1012,6 +1012,7 @@ const AboutModelContainer = ({
                             }
                             shadows={false}
                             adjustCamera={1.2}
+                            maxDuration={0.9}
                         >
                             <StageBoundsAnchor
                                 edge={frameEdge}
