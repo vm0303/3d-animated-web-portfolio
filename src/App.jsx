@@ -89,7 +89,101 @@ const LazySection = ({
 }
 
 
+const isTouchOnlyMobilePlatform = () => {
+  if (typeof navigator === 'undefined') {
+    return false
+  }
+
+  if (navigator.userAgentData?.mobile) {
+    return true
+  }
+
+  const userAgent =
+    navigator.userAgent || ''
+
+  const platform =
+    navigator.platform || ''
+
+  const isIPadOS =
+    platform === 'MacIntel' &&
+    navigator.maxTouchPoints > 1
+
+  return (
+    /Android|iPhone|iPad|iPod/i
+      .test(userAgent) ||
+    isIPadOS
+  )
+}
+
+
 const App = () => {
+  const [
+    desktopInputDetected,
+    setDesktopInputDetected,
+  ] = useState(false)
+
+
+  /*
+   * Hybrid Windows/ChromeOS/Linux laptops can advertise touch as their
+   * primary pointer even while a real mouse or trackpad is in use. Track
+   * demonstrated desktop input once for the whole session instead of asking
+   * pointer-capability media queries to classify the device.
+   *
+   * iOS/iPadOS/Android stay touch-first even if an external pointer exists so
+   * the accepted phone/tablet/foldable Motion behavior remains unchanged.
+   */
+  useEffect(() => {
+    if (isTouchOnlyMobilePlatform()) {
+      return undefined
+    }
+
+    const markDesktopInput = () => {
+      setDesktopInputDetected(true)
+    }
+
+    const handlePointerInput = (event) => {
+      if (event.pointerType === 'mouse') {
+        markDesktopInput()
+      }
+    }
+
+    window.addEventListener(
+      'pointermove',
+      handlePointerInput,
+      { passive: true }
+    )
+
+    window.addEventListener(
+      'pointerdown',
+      handlePointerInput,
+      { passive: true }
+    )
+
+    window.addEventListener(
+      'wheel',
+      markDesktopInput,
+      { passive: true }
+    )
+
+    return () => {
+      window.removeEventListener(
+        'pointermove',
+        handlePointerInput
+      )
+
+      window.removeEventListener(
+        'pointerdown',
+        handlePointerInput
+      )
+
+      window.removeEventListener(
+        'wheel',
+        markDesktopInput
+      )
+    }
+  }, [])
+
+
   useEffect(() => {
     let preloadStarted = false
     let idleHandle = null
@@ -205,13 +299,21 @@ const App = () => {
 
       <LazySection id="portfolio">
         <Suspense fallback={null}>
-          <Portfolio />
+          <Portfolio
+            desktopInputDetected={
+              desktopInputDetected
+            }
+          />
         </Suspense>
       </LazySection>
 
       <LazySection id="contact">
         <Suspense fallback={null}>
-          <Contact />
+          <Contact
+            desktopInputDetected={
+              desktopInputDetected
+            }
+          />
         </Suspense>
       </LazySection>
     </div>
