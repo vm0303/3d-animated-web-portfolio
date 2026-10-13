@@ -138,6 +138,9 @@ const portraitFadeVariants = {
 const PORTRAIT_TOUCH_MOTION_QUERY =
   "(hover: none), (pointer: coarse)";
 
+const DESKTOP_POINTER_QUERY =
+  "(any-hover: hover) and (any-pointer: fine)";
+
 
 const Contact = () => {
   const [success, setSuccess] =
@@ -171,11 +174,24 @@ const Contact = () => {
         return false;
       }
 
-      return window
-        .matchMedia(
-          PORTRAIT_TOUCH_MOTION_QUERY
-        )
-        .matches;
+      const touchFirst =
+        window
+          .matchMedia(
+            PORTRAIT_TOUCH_MOTION_QUERY
+          )
+          .matches;
+
+      const desktopPointerAvailable =
+        window
+          .matchMedia(
+            DESKTOP_POINTER_QUERY
+          )
+          .matches;
+
+      return (
+        touchFirst &&
+        !desktopPointerAvailable
+      );
     });
 
 
@@ -207,28 +223,44 @@ const Contact = () => {
    * device does not hide, replay, or change the current entrance animation.
    */
   useEffect(() => {
-    const mediaQuery =
+    const touchQuery =
       window.matchMedia(
         PORTRAIT_TOUCH_MOTION_QUERY
+      );
+
+    const desktopPointerQuery =
+      window.matchMedia(
+        DESKTOP_POINTER_QUERY
       );
 
     const syncMotionMode = () => {
       if (!isInView) {
         setFadeOnlyMotion(
-          mediaQuery.matches
+          touchQuery.matches &&
+          !desktopPointerQuery.matches
         );
       }
     };
 
     syncMotionMode();
 
-    mediaQuery.addEventListener(
+    touchQuery.addEventListener(
+      "change",
+      syncMotionMode
+    );
+
+    desktopPointerQuery.addEventListener(
       "change",
       syncMotionMode
     );
 
     return () => {
-      mediaQuery.removeEventListener(
+      touchQuery.removeEventListener(
+        "change",
+        syncMotionMode
+      );
+
+      desktopPointerQuery.removeEventListener(
         "change",
         syncMotionMode
       );
