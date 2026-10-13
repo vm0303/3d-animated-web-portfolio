@@ -145,9 +145,6 @@ const touchFadeVariants = {
 const TOUCH_LAYOUT_QUERY =
   "(hover: none), (pointer: coarse)"
 
-const DESKTOP_POINTER_QUERY =
-  "(any-hover: hover) and (any-pointer: fine)"
-
 const ARROW_IDLE_MS = 5000
 const ARROW_IDLE_CHECK_MS = 250
 const POINTER_ACTIVITY_THRESHOLD_PX = 3
@@ -303,7 +300,9 @@ const ProjectSlide = ({
 }
 
 
-const Portfolio = () => {
+const Portfolio = ({
+  desktopInputDetected = false,
+}) => {
   const portfolioRef = useRef(null)
 
   /* Project content can wait until the section is meaningfully visible. */
@@ -354,22 +353,9 @@ const Portfolio = () => {
       .matches
   })
 
-  const [
-    desktopPointerAvailable,
-    setDesktopPointerAvailable,
-  ] = useState(() => {
-    if (typeof window === "undefined") {
-      return false
-    }
-
-    return window
-      .matchMedia(DESKTOP_POINTER_QUERY)
-      .matches
-  })
-
   const fadeOnlyMotion =
     touchLayout &&
-    !desktopPointerAvailable
+    !desktopInputDetected
 
   const [
     mouseInputDetected,
@@ -382,42 +368,23 @@ const Portfolio = () => {
         TOUCH_LAYOUT_QUERY
       )
 
-    const desktopPointerQuery =
-      window.matchMedia(
-        DESKTOP_POINTER_QUERY
-      )
-
-    const syncInputCapabilities = () => {
+    const syncTouchLayout = () => {
       setTouchLayout(
         touchQuery.matches
       )
-
-      setDesktopPointerAvailable(
-        desktopPointerQuery.matches
-      )
     }
 
-    syncInputCapabilities()
+    syncTouchLayout()
 
     touchQuery.addEventListener(
       "change",
-      syncInputCapabilities
-    )
-
-    desktopPointerQuery.addEventListener(
-      "change",
-      syncInputCapabilities
+      syncTouchLayout
     )
 
     return () => {
       touchQuery.removeEventListener(
         "change",
-        syncInputCapabilities
-      )
-
-      desktopPointerQuery.removeEventListener(
-        "change",
-        syncInputCapabilities
+        syncTouchLayout
       )
     }
   }, [])
