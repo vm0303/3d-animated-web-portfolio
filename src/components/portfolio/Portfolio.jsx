@@ -397,10 +397,9 @@ const Portfolio = ({
    *
    * - entering Portfolio reveals the arrows on mouse-capable sessions
    * - meaningful mouse movement keeps them visible
-   * - movement updates one last-activity timestamp instead of restarting
-   *   competing visibility/re-arm timers
-   * - tiny pointer jitter under the threshold is ignored
-   * - after five seconds with no meaningful mouse movement, CSS fades them out
+   * - clicking an arrow counts as activity even if the pointer does not move
+   * - hovering or keyboard-focusing an arrow pins it fully visible
+   * - after five seconds with no meaningful interaction, CSS fades them out
    * - moving the mouse again immediately reveals them
    */
   const [
@@ -416,6 +415,9 @@ const Portfolio = ({
 
   const lastPointerPositionRef =
     useRef(null)
+
+  const arrowInteractionActiveRef =
+    useRef(false)
 
   const clearIdleCheck =
     useCallback(() => {
@@ -485,10 +487,67 @@ const Portfolio = ({
       [recordPointerActivity]
     )
 
+  const handlePointerDown =
+    useCallback(
+      (event) => {
+        if (
+          event.pointerType &&
+          event.pointerType !== "mouse"
+        ) {
+          return
+        }
+
+        setMouseInputDetected(true)
+
+        lastPointerPositionRef.current = {
+          x: event.clientX,
+          y: event.clientY,
+        }
+
+        recordPointerActivity()
+      },
+      [recordPointerActivity]
+    )
+
   const handlePointerLeave =
     useCallback(() => {
       lastPointerPositionRef.current = null
     }, [])
+
+  const handleArrowPointerEnter =
+    useCallback(
+      (event) => {
+        if (
+          event.pointerType &&
+          event.pointerType !== "mouse"
+        ) {
+          return
+        }
+
+        arrowInteractionActiveRef.current = true
+        setMouseInputDetected(true)
+        recordPointerActivity()
+      },
+      [recordPointerActivity]
+    )
+
+  const handleArrowPointerLeave =
+    useCallback(() => {
+      arrowInteractionActiveRef.current = false
+      recordPointerActivity()
+    }, [recordPointerActivity])
+
+  const handleArrowFocus =
+    useCallback(() => {
+      arrowInteractionActiveRef.current = true
+      recordPointerActivity()
+    }, [recordPointerActivity])
+
+  const handleArrowBlur =
+    useCallback(() => {
+      arrowInteractionActiveRef.current = false
+      recordPointerActivity()
+    }, [recordPointerActivity])
 
   useEffect(() => {
     if (
@@ -498,6 +557,7 @@ const Portfolio = ({
       clearIdleCheck()
       lastPointerActivityAtRef.current = null
       lastPointerPositionRef.current = null
+      arrowInteractionActiveRef.current = false
       setControlsActive(false)
       return
     }
@@ -509,6 +569,12 @@ const Portfolio = ({
     idleCheckRef.current =
       window.setInterval(
         () => {
+          if (
+            arrowInteractionActiveRef.current
+          ) {
+            return
+          }
+
           const lastActivity =
             lastPointerActivityAtRef.current
 
@@ -539,6 +605,7 @@ const Portfolio = ({
   useEffect(() => {
     return () => {
       clearIdleCheck()
+      arrowInteractionActiveRef.current = false
     }
   }, [clearIdleCheck])
 
@@ -612,11 +679,13 @@ const Portfolio = ({
   const handleKeyDown = (event) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault()
+      recordPointerActivity()
       scrollPrev()
     }
 
     if (event.key === "ArrowRight") {
       event.preventDefault()
+      recordPointerActivity()
       scrollNext()
     }
   }
@@ -643,7 +712,7 @@ const Portfolio = ({
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onPointerMove={handlePointerMove}
-      onPointerDown={handlePointerMove}
+      onPointerDown={handlePointerDown}
       onPointerLeave={handlePointerLeave}
       aria-label="Portfolio projects"
     >
@@ -680,6 +749,14 @@ const Portfolio = ({
         type="button"
         className="pArrow pArrowLeft"
         onClick={scrollPrev}
+        onPointerEnter={
+          handleArrowPointerEnter
+        }
+        onPointerLeave={
+          handleArrowPointerLeave
+        }
+        onFocus={handleArrowFocus}
+        onBlur={handleArrowBlur}
         aria-label="Previous project"
       >
         <ArrowIcon direction="left" />
@@ -690,6 +767,14 @@ const Portfolio = ({
         type="button"
         className="pArrow pArrowRight"
         onClick={scrollNext}
+        onPointerEnter={
+          handleArrowPointerEnter
+        }
+        onPointerLeave={
+          handleArrowPointerLeave
+        }
+        onFocus={handleArrowFocus}
+        onBlur={handleArrowBlur}
         aria-label="Next project"
       >
         <ArrowIcon direction="right" />
