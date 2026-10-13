@@ -142,8 +142,11 @@ const touchFadeVariants = {
 }
 
 
-const TOUCH_MOTION_QUERY =
+const TOUCH_LAYOUT_QUERY =
   "(hover: none), (pointer: coarse)"
+
+const DESKTOP_POINTER_QUERY =
+  "(any-hover: hover) and (any-pointer: fine)"
 
 const ARROW_IDLE_MS = 5000
 const ARROW_IDLE_CHECK_MS = 250
@@ -339,17 +342,34 @@ const Portfolio = () => {
 
 
   const [
-    fadeOnlyMotion,
-    setFadeOnlyMotion,
+    touchLayout,
+    setTouchLayout,
   ] = useState(() => {
     if (typeof window === "undefined") {
       return false
     }
 
     return window
-      .matchMedia(TOUCH_MOTION_QUERY)
+      .matchMedia(TOUCH_LAYOUT_QUERY)
       .matches
   })
+
+  const [
+    desktopPointerAvailable,
+    setDesktopPointerAvailable,
+  ] = useState(() => {
+    if (typeof window === "undefined") {
+      return false
+    }
+
+    return window
+      .matchMedia(DESKTOP_POINTER_QUERY)
+      .matches
+  })
+
+  const fadeOnlyMotion =
+    touchLayout &&
+    !desktopPointerAvailable
 
   const [
     mouseInputDetected,
@@ -357,28 +377,47 @@ const Portfolio = () => {
   ] = useState(false)
 
   useEffect(() => {
-    const mediaQuery =
+    const touchQuery =
       window.matchMedia(
-        TOUCH_MOTION_QUERY
+        TOUCH_LAYOUT_QUERY
       )
 
-    const syncMotionMode = () => {
-      setFadeOnlyMotion(
-        mediaQuery.matches
+    const desktopPointerQuery =
+      window.matchMedia(
+        DESKTOP_POINTER_QUERY
+      )
+
+    const syncInputCapabilities = () => {
+      setTouchLayout(
+        touchQuery.matches
+      )
+
+      setDesktopPointerAvailable(
+        desktopPointerQuery.matches
       )
     }
 
-    syncMotionMode()
+    syncInputCapabilities()
 
-    mediaQuery.addEventListener(
+    touchQuery.addEventListener(
       "change",
-      syncMotionMode
+      syncInputCapabilities
+    )
+
+    desktopPointerQuery.addEventListener(
+      "change",
+      syncInputCapabilities
     )
 
     return () => {
-      mediaQuery.removeEventListener(
+      touchQuery.removeEventListener(
         "change",
-        syncMotionMode
+        syncInputCapabilities
+      )
+
+      desktopPointerQuery.removeEventListener(
+        "change",
+        syncInputCapabilities
       )
     }
   }, [])
@@ -487,7 +526,7 @@ const Portfolio = () => {
   useEffect(() => {
     if (
       !portfolioControlsInView ||
-      (fadeOnlyMotion && !mouseInputDetected)
+      (touchLayout && !mouseInputDetected)
     ) {
       clearIdleCheck()
       lastPointerActivityAtRef.current = null
@@ -524,7 +563,7 @@ const Portfolio = () => {
     }
   }, [
     portfolioControlsInView,
-    fadeOnlyMotion,
+    touchLayout,
     mouseInputDetected,
     clearIdleCheck,
     recordPointerActivity,
@@ -625,7 +664,7 @@ const Portfolio = () => {
             ? "pControlsActive"
             : ""
         } ${
-          fadeOnlyMotion
+          touchLayout
             ? "pTouchLayout"
             : ""
         } ${
